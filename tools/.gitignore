@@ -1,0 +1,4 @@
+build*
+doc
+.settings
+DICT.txt

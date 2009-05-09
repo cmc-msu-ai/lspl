@@ -1,0 +1,141 @@
+cmake_minimum_required(VERSION 2.6)
+project(LSPL_CORE)
+
+set(CMAKE_BUILD_TYPE Release)
+
+if(MINGW)
+    include_directories( ../deps/ src/main ../deps-win32/include/ )
+
+    link_directories(
+    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/AgramtabLib/
+    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/GraphanLib/
+    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/LemmatizerLib/
+    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/MorphWizardLib/
+    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/StructDictLib/
+    	${LSPL_CORE_SOURCE_DIR}/../deps-win32/lib/
+    )
+
+
+    SET(MY_TARGETLIB_PREFIX "")
+    SET(MY_TARGETLIB_SUFFIX ".dll")
+else(MINGW)
+    include_directories( ../deps/ src/main )
+
+    link_directories(
+    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/AgramtabLib/
+    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/GraphanLib/
+    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/LemmatizerLib/
+    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/MorphWizardLib/
+    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/StructDictLib/
+    )
+
+    SET(MY_TARGETLIB_PREFIX "lib")
+    SET(MY_TARGETLIB_SUFFIX ".so")
+endif(MINGW)
+
+### lspl-core library
+
+set(LSPL_CORE_SOURCES
+	src/main/lspl/Namespace.cpp
+	src/main/lspl/morphology/WordForm.cpp
+	src/main/lspl/morphology/Morphology.cpp
+	src/main/lspl/morphology/AotMorphology.cpp
+	src/main/lspl/patterns/Alternative.cpp
+	src/main/lspl/patterns/matchers/Context.cpp
+	src/main/lspl/patterns/matchers/LoopMatcher.cpp
+	src/main/lspl/patterns/matchers/Matcher.cpp
+	src/main/lspl/patterns/matchers/WordMatcher.cpp
+	src/main/lspl/patterns/matchers/Variable.cpp
+	src/main/lspl/patterns/matchers/TokenMatcher.cpp
+	src/main/lspl/patterns/matchers/RegexpMatcher.cpp
+	src/main/lspl/patterns/matchers/PatternMatcher.cpp
+	src/main/lspl/patterns/matchers/MatcherContainer.cpp
+	src/main/lspl/patterns/expressions/ConcatenationExpression.cpp
+	src/main/lspl/patterns/expressions/Expression.cpp
+	src/main/lspl/patterns/expressions/VariableExpression.cpp
+	src/main/lspl/patterns/expressions/CurrentAnnotationExpression.cpp
+	src/main/lspl/patterns/expressions/ConstantExpression.cpp
+	src/main/lspl/patterns/expressions/AttributeExpression.cpp
+	src/main/lspl/patterns/restrictions/DictionaryRestriction.cpp
+	src/main/lspl/patterns/restrictions/AgreementRestriction.cpp
+	src/main/lspl/patterns/restrictions/Restriction.cpp
+	src/main/lspl/patterns/parsers/Functions.cpp
+	src/main/lspl/patterns/Pattern.cpp
+	src/main/lspl/patterns/PatternBuilder.cpp
+	src/main/lspl/utils/Conversion.cpp
+	src/main/lspl/utils/Console.cpp
+	src/main/lspl/dictionaries/MemoryDictionary.cpp
+	src/main/lspl/dictionaries/Dictionary.cpp
+	src/main/lspl/text/markup/Word.cpp
+	src/main/lspl/text/markup/Token.cpp
+	src/main/lspl/text/Transition.cpp
+	src/main/lspl/text/Text.cpp
+	src/main/lspl/text/Match.cpp
+	src/main/lspl/text/writers/JsonTextWriter.cpp
+	src/main/lspl/text/writers/TextWriter.cpp
+	src/main/lspl/text/readers/JsonTextReader.cpp
+	src/main/lspl/text/readers/TextReader.cpp
+	src/main/lspl/text/readers/PlainTextReader.cpp
+	src/main/lspl/text/indexes/Index.cpp
+	src/main/lspl/text/indexes/PatternIndex.cpp
+	src/main/lspl/text/indexes/SpeechPartIndex.cpp
+	src/main/lspl/text/Node.cpp
+	src/main/lspl/text/Loop.cpp
+	src/main/lspl/text/TextBuilder.cpp
+	src/main/lspl/text/attributes/AttributeContainer.cpp
+	src/main/lspl/text/attributes/AttributeValue.cpp
+	src/main/lspl/text/attributes/AttributeKey.cpp
+	src/main/lspl/text/attributes/SpeechPart.cpp
+	src/main/lspl/text/attributes/AttributeType.cpp
+)
+
+add_library(lspl SHARED ${LSPL_CORE_SOURCES})
+
+set_target_properties(lspl
+    PROPERTIES
+    PREFIX "${MY_TARGETLIB_PREFIX}"
+    SUFFIX "${MY_TARGETLIB_SUFFIX}"
+)
+
+if(MINGW)
+	target_link_libraries(lspl pcrecpp iconv Graphanrmst Lemmatizerrmst StructDictrmst MorphWizardrmst Agramtabrmst pcre boost_regex)
+else(MINGW)
+	target_link_libraries(lspl pcrecpp pcre Graphanrst Lemmatizerrst StructDictrst MorphWizardrst Agramtabrst boost_regex)
+endif(MINGW)
+
+### lspl-test binary
+
+set(LSPL_TEST_SOURCES
+    src/test/assertions/MatchingAssertions.cpp
+    src/test/assertions/PatternsAssertions.cpp
+    src/test/tests/DictionariesTest.cpp
+    src/test/tests/MatchingTest.cpp
+    src/test/tests/PatternsTest.cpp
+    src/test/tests/TextReadersTest.cpp
+    src/test/LsplTests.cpp
+)
+
+add_executable(lspl-test ${LSPL_TEST_SOURCES})
+
+target_link_libraries(lspl-test lspl)
+
+### lspl-benchmark binary
+
+set(LSPL_BENCHMARK_SOURCES
+    src/test/LsplBenchmarks.cpp
+)
+
+add_executable(lspl-benchmark ${LSPL_BENCHMARK_SOURCES})
+
+target_link_libraries(lspl-benchmark lspl)
+
+# Flags for effective error parsing
+
+if(CMAKE_COMPILER_IS_GNUCC)
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
+endif(CMAKE_COMPILER_IS_GNUCC)
+
+if(CMAKE_COMPILER_IS_GNUCXX)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
+endif(CMAKE_COMPILER_IS_GNUCXX)
+
