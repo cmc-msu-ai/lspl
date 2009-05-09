@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="lspl-patterns" size="1222,822" id="ru.lspl.patterns" metadata="uml2-1.0" initialized="true" tag="1000" key="32303037303533312D31303030204C73706C4775692F616C6E6F">
+  <children xsi:type="editmodel:ClassEditModel" name="Alternative" location="50,199" size="150,104" id="ru.lspl.patterns/Alternative">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="127,54">
+      <children xsi:type="editmodel:MethodEditModel" name="dump" id="ru.lspl.patterns/Alternative#dump()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getMatcherCount" id="ru.lspl.patterns/Alternative#getMatcherCount()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSource" id="ru.lspl.patterns/Alternative#getSource()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.3/@sourceConnections.0 //@children.2/@sourceConnections.0" autoLocated="true" id="ru.lspl/LsplObject&lt;-ru.lspl.patterns/Alternative" source="//@children.0" target="//@children.1" targetEnd="//@children.0/@sourceConnections.0/@children.1" sourceEnd="//@children.0/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="75,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="60,99" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.0/@sourceConnections.0" name="LsplObject" location="278,45" size="120,99" id="ru.lspl/LsplObject">
+    <children xsi:type="editmodel:CompartmentEditModel" size="51,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="id" id="ru.lspl/LsplObject#id"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="69,18">
+      <children xsi:type="editmodel:MethodEditModel" name="equals" id="ru.lspl/LsplObject#equals(Ljava.lang.Object;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="PatternBuilder" location="475,199" size="219,176" id="ru.lspl.patterns/PatternBuilder">
+    <children xsi:type="editmodel:CompartmentEditModel" size="196,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="definedPatterns" id="ru.lspl.patterns/PatternBuilder#definedPatterns"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="170,108">
+      <children xsi:type="editmodel:MethodEditModel" name="build" id="ru.lspl.patterns/PatternBuilder#build(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="create" id="ru.lspl.patterns/PatternBuilder#create()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getDefinedPattern" id="ru.lspl.patterns/PatternBuilder#getDefinedPattern(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getDefinedPattern" location="565,445" id="ru.lspl.patterns/PatternBuilder#getDefinedPattern(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getDefinedPatternCount" id="ru.lspl.patterns/PatternBuilder#getDefinedPatternCount()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getDefinedPatternsArray" id="ru.lspl.patterns/PatternBuilder#getDefinedPatternsArray()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="ru.lspl/LsplObject&lt;-ru.lspl.patterns/PatternBuilder" source="//@children.2" target="//@children.0/@sourceConnections.0" targetEnd="//@children.2/@sourceConnections.0/@children.1" sourceEnd="//@children.2/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="108,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="Pattern" location="230,199" size="215,158" id="ru.lspl.patterns/Pattern">
+    <children xsi:type="editmodel:CompartmentEditModel" size="192,36">
+      <children xsi:type="editmodel:AttributeEditModel" name="alternatives" id="ru.lspl.patterns/Pattern#alternatives"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="name" id="ru.lspl.patterns/Pattern#name"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="142,72">
+      <children xsi:type="editmodel:MethodEditModel" name="dump" id="ru.lspl.patterns/Pattern#dump()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAlternative" id="ru.lspl.patterns/Pattern#getAlternative(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAlternativeCount" id="ru.lspl.patterns/Pattern#getAlternativeCount()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getSource" id="ru.lspl.patterns/Pattern#getSource()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="ru.lspl/LsplObject&lt;-ru.lspl.patterns/Pattern" source="//@children.3" target="//@children.0/@sourceConnections.0" targetEnd="//@children.3/@sourceConnections.0/@children.1" sourceEnd="//@children.3/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="107,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" properties="wireOptions=1;Product=eUML2" autoName="false"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="15,15" gridOrigin="0,0" rulerUnit="pixel" gridVisibility="false">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showPopupBars="true" showConnectionHandles="true" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" showDependencyStereotype="true" showInterfaceStereotype="true" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+</editmodel:ClassDiagramEditModel>

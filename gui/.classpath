@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="tests"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="lib" path="bin/lspl.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.commands.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.swt.gtk.linux.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.jface.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.equinox.common.jar"/>
+	<classpathentry kind="lib" path="lib/org.apache.poi.jar"/>
+	<classpathentry kind="lib" path="lib/org.apache.poi-ooxml.jar"/>
+	<classpathentry kind="lib" path="lib/org.apache.poi-scratchpad.jar"/>
+	<classpathentry kind="lib" path="lib/org.apache.ooxml-schemas.jar"/>
+	<classpathentry kind="lib" path="lib/org.apache.xmlbeans.jar"/>
+	<classpathentry kind="lib" path="lib/org.apache.log4j.jar"/>
+	<classpathentry kind="output" path="build"/>
+</classpath>

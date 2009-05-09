@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="lspl-text" size="1182,894" id="ru.lspl.text" metadata="uml2-1.0" initialized="true" tag="1000" key="32303037303533312D31303030204C73706C4775692F616C6E6F">
+  <children xsi:type="editmodel:ClassEditModel" name="Text" location="360,210" size="164,536" id="ru.lspl.text/Text">
+    <children xsi:type="editmodel:CompartmentEditModel" size="129,36">
+      <children xsi:type="editmodel:AttributeEditModel" name="nodes" id="ru.lspl.text/Text#nodes"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="words" id="ru.lspl.text/Text#words"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="141,450">
+      <children xsi:type="editmodel:MethodEditModel" name="create" id="ru.lspl.text/Text#create(Ljava.lang.String;Lru.lspl.text.TextConfig;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="create" id="ru.lspl.text/Text#create(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="dump" id="ru.lspl.text/Text#dump()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getContent" id="ru.lspl.text/Text#getContent()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getMatch" id="ru.lspl.text/Text#getMatch(Lru.lspl.patterns.Pattern;I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getMatchCount" id="ru.lspl.text/Text#getMatchCount(Lru.lspl.patterns.Pattern;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getMatches" id="ru.lspl.text/Text#getMatches(Lru.lspl.patterns.Pattern;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getMatches" id="ru.lspl.text/Text#getMatches(Ljava.lang.Iterable;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getNode" id="ru.lspl.text/Text#getNode(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getNodeCount" id="ru.lspl.text/Text#getNodeCount()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getTransitions" id="ru.lspl.text/Text#getTransitions()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getTransitionsArray" id="ru.lspl.text/Text#getTransitionsArray()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getWord" id="ru.lspl.text/Text#getWord(Lru.lspl.text.attributes.SpeechPart;I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getWord" id="ru.lspl.text/Text#getWord(II)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getWord" id="ru.lspl.text/Text#getWord(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getWordCount" id="ru.lspl.text/Text#getWordCount(Lru.lspl.text.attributes.SpeechPart;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getWordCount" id="ru.lspl.text/Text#getWordCount()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getWordCount" id="ru.lspl.text/Text#getWordCount(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getWords" id="ru.lspl.text/Text#getWords(Lru.lspl.text.attributes.SpeechPart;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getWords" id="ru.lspl.text/Text#getWords(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="hasAllMatches" id="ru.lspl.text/Text#hasAllMatches([Lru.lspl.patterns.Pattern;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="hasAllMatches" id="ru.lspl.text/Text#hasAllMatches(Ljava.lang.Iterable;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="hasAnyMatches" id="ru.lspl.text/Text#hasAnyMatches(Ljava.lang.Iterable;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="hasAnyMatches" id="ru.lspl.text/Text#hasAnyMatches([Lru.lspl.patterns.Pattern;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="selectMatched" id="ru.lspl.text/Text#selectMatched([Lru.lspl.patterns.Pattern;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="ru.lspl/LsplObject&lt;-ru.lspl.text/Text" source="//@children.0" target="//@children.2/@sourceConnections.0" targetEnd="//@children.0/@sourceConnections.0/@children.1" sourceEnd="//@children.0/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="82,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="Punctuation" location="960,465" size="130,58" id="ru.lspl.text/Punctuation">
+    <children xsi:type="editmodel:CompartmentEditModel" size="92,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="token" id="ru.lspl.text/Punctuation#token"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="ru.lspl.text/Transition&lt;-ru.lspl.text/Punctuation" source="//@children.1" target="//@children.6/@sourceConnections.0" targetEnd="//@children.1/@sourceConnections.0/@children.1" sourceEnd="//@children.1/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="65,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.6/@sourceConnections.0" name="Transition" location="718,210" size="226,158" id="ru.lspl.text/Transition">
+    <children xsi:type="editmodel:CompartmentEditModel" size="203,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="attributes" id="ru.lspl.text/Transition#attributes"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="157,90">
+      <children xsi:type="editmodel:MethodEditModel" name="dump" id="ru.lspl.text/Transition#dump()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAttribute" id="ru.lspl.text/Transition#getAttribute(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getFragment" id="ru.lspl.text/Transition#getFragment()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="includesPosition" id="ru.lspl.text/Transition#includesPosition(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="selectIncludesPosition" id="ru.lspl.text/Transition#selectIncludesPosition([Lru.lspl.text.Transition;I)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.4/@sourceConnections.0 //@children.0/@sourceConnections.0" autoLocated="true" id="ru.lspl/LsplObject&lt;-ru.lspl.text/Transition" source="//@children.2" target="//@children.5" targetEnd="//@children.2/@sourceConnections.0/@children.1" sourceEnd="//@children.2/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="113,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="60,99" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="ru.lspl.text.attributes/AttributeContainer&lt;-ru.lspl.text/Transition" source="//@children.2" target="//@children.3" targetEnd="//@children.2/@sourceConnections.1/@children.1" sourceEnd="//@children.2/@sourceConnections.1/@children.0" connectionRouterKind="Manual">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="181,0" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="44,112"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:InterfaceEditModel" targetConnections="//@children.2/@sourceConnections.1" name="AttributeContainer" location="855,50" size="179,112" id="ru.lspl.text.attributes/AttributeContainer">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="104,36">
+      <children xsi:type="editmodel:MethodEditModel" name="getAttribute" id="ru.lspl.text.attributes/AttributeContainer#getAttribute(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAttributes" id="ru.lspl.text.attributes/AttributeContainer#getAttributes()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="Node" location="50,212" size="204,176" id="ru.lspl.text/Node">
+    <children xsi:type="editmodel:CompartmentEditModel" size="181,54">
+      <children xsi:type="editmodel:AttributeEditModel" name="endOffset" id="ru.lspl.text/Node#endOffset"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="startOffset" id="ru.lspl.text/Node#startOffset"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="transitions" id="ru.lspl.text/Node#transitions"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="137,72">
+      <children xsi:type="editmodel:MethodEditModel" name="dump" id="ru.lspl.text/Node#dump()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getTransition" id="ru.lspl.text/Node#getTransition(I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getTransitionCount" id="ru.lspl.text/Node#getTransitionCount()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getWordsArray" id="ru.lspl.text/Node#getWordsArray()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="ru.lspl/LsplObject&lt;-ru.lspl.text/Node" source="//@children.4" target="//@children.2/@sourceConnections.0" targetEnd="//@children.4/@sourceConnections.0/@children.1" sourceEnd="//@children.4/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="102,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.2/@sourceConnections.0" name="LsplObject" location="382,50" size="120,99" id="ru.lspl/LsplObject">
+    <children xsi:type="editmodel:CompartmentEditModel" size="51,18">
+      <children xsi:type="editmodel:AttributeEditModel" name="id" id="ru.lspl/LsplObject#id"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="69,18">
+      <children xsi:type="editmodel:MethodEditModel" name="equals" id="ru.lspl/LsplObject#equals(Ljava.lang.Object;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="Match" location="600,465" size="87,30" id="ru.lspl.text/Match">
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.7/@sourceConnections.0 //@children.1/@sourceConnections.0" autoLocated="true" id="ru.lspl.text/Transition&lt;-ru.lspl.text/Match" source="//@children.6" target="//@children.2" targetEnd="//@children.6/@sourceConnections.0/@children.1" sourceEnd="//@children.6/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="43,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="113,158" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="Word" location="775,465" size="112,76" id="ru.lspl.text/Word">
+    <children xsi:type="editmodel:CompartmentEditModel" size="89,36">
+      <children xsi:type="editmodel:AttributeEditModel" name="base" id="ru.lspl.text/Word#base"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="form" id="ru.lspl.text/Word#form"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <children xsi:type="editmodel:CompartmentEditModel"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="ru.lspl.text/Transition&lt;-ru.lspl.text/Word" source="//@children.7" target="//@children.6/@sourceConnections.0" targetEnd="//@children.7/@sourceConnections.0/@children.1" sourceEnd="//@children.7/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="56,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" properties="wireOptions=1;Product=eUML2" autoName="false"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="15,15" gridOrigin="0,0" rulerUnit="pixel" gridVisibility="false">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showPopupBars="true" showConnectionHandles="true" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" showDependencyStereotype="true" showInterfaceStereotype="true" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+</editmodel:ClassDiagramEditModel>

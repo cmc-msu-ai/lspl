@@ -1,0 +1,163 @@
+<project name="LsplGui" default="build">
+	
+	<property name="dir.lib" value="${basedir}/lib/" />
+	<property name="dir.bin" value="${basedir}/bin/" />
+	<property name="dir.data" value="${basedir}/data/" />
+	<property name="dir.build" value="${basedir}/build/" />
+	<property name="dir.src" value="${basedir}/src/" />
+	
+	<property name="version" value="0.2" />
+		
+	<target name="clean">
+		<delete includeemptydirs="true">
+			<fileset dir="${dir.bin}" includes="**/*" />
+			<fileset dir="${dir.build}" includes="**/*" />
+			<fileset dir="${dir.data}" includes="**/*" />
+		</delete>
+	</target>
+	
+	<target name="build">
+	
+		<!-- Prepare libraries -->
+		
+		<mkdir dir="${dir.bin}"/>
+		
+		<copy todir="${dir.bin}">
+			<fileset dir="${basedir}/../core/build/">
+				<include name="lspl*" />
+			</fileset>
+			<fileset dir="${basedir}/../core/build-win32/">
+				<include name="lspl*.exe" />
+			</fileset>
+			<fileset dir="${basedir}/../tools/build/">
+				<include name="lspl*" />
+			</fileset>
+			<fileset dir="${basedir}/../tools/build-win32/">
+				<include name="lspl*.exe" />
+			</fileset>
+		</copy>
+		<exec executable="chmod">
+			<arg value="+x" />
+			<arg value="bin/lspl-test" />
+			<arg value="bin/lspl-find" />
+			<arg value="bin/lspl-console" />
+			<arg value="bin/lspl-gen" />
+		</exec>
+		
+		<mkdir dir="${dir.bin}"/>
+		
+		<copy todir="${dir.bin}">
+			<fileset dir="${basedir}/../deps-win32/bin/">
+				<include name="iconv.dll" />
+				<include name="libpcre.dll" />
+				<include name="libpcrecpp.dll" />
+			</fileset>
+			<fileset dir="${basedir}/../core/build/">
+				<include name="*.so" />
+			</fileset>
+			<fileset dir="${basedir}/../core/build-win32/">
+				<include name="*.dll" />
+			</fileset>
+			<fileset dir="${basedir}/../bindings-java/build/">
+				<include name="*.so" />
+				<include name="*.jar" />
+			</fileset>
+			<fileset dir="${basedir}/../bindings-java/build-win32/">
+				<include name="*.dll" />
+				<include name="*.jar" />
+			</fileset>
+		</copy>
+		
+		<!-- Compiling -->
+		
+		<mkdir dir="${dir.build}"/>
+		
+		<javac destdir="${dir.build}" debug="on">
+			<src path="${dir.src}" />
+			<include name="**/*.java" />
+			<classpath>
+				<pathelement path="${java.class.path}" />
+				<fileset dir="${dir.bin}">
+					<include name="**/*.jar"/>
+				</fileset>
+				<fileset dir="${dir.lib}">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+		</javac>
+		
+		<!-- Packaging -->
+		
+		<mkdir dir="${dir.bin}"/>
+		
+		<jar destfile="${dir.bin}/lspl-gui.jar" basedir="${dir.build}" />
+		
+		<!-- Prepare data -->
+		
+		<mkdir dir="${dir.data}"/>
+		
+		<copy todir="${dir.data}">			
+			<fileset dir="${basedir}/../deps/aot">
+				<include name="Dicts/GraphAn/**/*" />
+				<include name="Dicts/Morph/**/*" />
+				<include name="Dicts/Obor/**/*" />
+				<include name="Bin/rml.ini" />
+				<exclude name="**/.svn/*" />
+			</fileset>
+		</copy>
+		
+	</target>
+	
+	<target name="run" depends="build">
+		<java classname="ru.lspl.gui.MainWindow" fork="true">
+			<classpath>
+				<pathelement path="${java.class.path}" />
+				<fileset dir="${dir.lib}">
+					<include name="**/*.jar"/>
+				</fileset>
+				<fileset dir="${dir.bin}">
+					<include name="**/*.jar"/>
+				</fileset>
+			</classpath>
+			
+			<env key="LD_LIBRARY_PATH" value="${dir.bin}:${dir.lib}:${env.LD_LIBRARY_PATH}" />
+			<env key="RML" value="${dir.data}" />
+		</java>
+	</target>
+	
+	<target name="package" depends="build">
+		<zip destfile="lspl-gui-${version}-win32.zip">
+			<zipfileset dir="${dir.data}" prefix="data" />	
+			<zipfileset dir="${dir.bin}" prefix="bin">
+				<include name="*.jar" />
+				<include name="*.dll" />
+				<include name="*.exe" />
+			</zipfileset>
+			<zipfileset dir="${dir.lib}" prefix="lib">
+				<include name="*.jar" />
+				<exclude name="*.linux.*" />
+			</zipfileset>		
+			<fileset dir="${basedir}">
+				<include name="*.bat" />
+			</fileset>			
+		</zip>
+		
+		<zip destfile="lspl-gui-${version}-linux.zip">
+			<zipfileset dir="${dir.data}" prefix="data" />	
+			<zipfileset dir="${dir.bin}" prefix="bin">
+				<include name="*.jar" />
+				<include name="*.so" />
+				<include name="lspl-*" />
+				<exclude name="lspl-*.exe" />
+			</zipfileset>
+			<zipfileset dir="${dir.lib}" prefix="lib">
+				<include name="*.jar" />
+				<exclude name="*.win32.*" />
+			</zipfileset>		
+			<fileset dir="${basedir}">
+				<include name="*.sh" />
+			</fileset>
+		</zip>
+	</target>
+	
+</project>

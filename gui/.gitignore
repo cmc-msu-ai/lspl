@@ -1,0 +1,7 @@
+*.zip
+data
+bin
+build
+.settings
+.euml2
+.umlproject

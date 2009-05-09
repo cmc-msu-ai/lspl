@@ -1,0 +1,5 @@
+Ap = A(A) | Pa(Pa)
+NN = {Ap} N <N=Ap>
+NM = {A} N <N=A>
+Actor = N V <N=V>
+Act = V {A} N <A=N>
