@@ -1,0 +1,30 @@
+<project name="LsplJavaBindings" default="build">
+	
+	<property name="dir.bin" value="${basedir}/build/" />
+	<property name="dir.build" value="${basedir}/build/java/" />
+	<property name="dir.src" value="${basedir}/src_java/" />
+		
+	<target name="clean">
+		<delete includeemptydirs="true">
+			<fileset dir="${dir.bin}" includes="lspl.jar" />
+			<fileset dir="${dir.build}" includes="**/*" />
+		</delete>
+	</target>
+	
+	<target name="build">
+		<mkdir dir="${dir.build}"/>
+		
+		<javac destdir="${dir.build}" debug="on">
+			<src path="${dir.src}" />
+			<include name="**/*.java" />
+			<classpath>
+				<pathelement path="${java.class.path}" />
+			</classpath>
+		</javac>
+		
+		<mkdir dir="${dir.bin}"/>
+		
+		<jar destfile="${dir.bin}/lspl.jar" basedir="${dir.build}" />		
+	</target>
+	
+</project>
