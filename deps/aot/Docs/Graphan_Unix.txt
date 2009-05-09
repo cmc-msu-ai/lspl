@@ -1,0 +1,68 @@
+This is a program of graphematical analysis (Russian, German, and English languages).
+
+This program is distributed under the Library GNU Public Licence, which is in the file
+COPYING.  
+
+This program was  written by  Alexey Sokirko.  
+
+The system has been developed under Windows 2000 (MS VS 6.0), but
+has also been compiled and run under Linux(GCC).  It should work with
+minor changes on other systems.
+
+Website of DDC: www.aot.ru
+
+I compiled all sources with gcc 3.2. Lower versions are not supported.
+
+
+Contents of the this source archive
+
+1.	The main graphematical  library (Source/GraphanLib ).
+2.	Test graphematical program  (Source/GraphmatThick ).
+3.	Library for dictionaries of fix expreesions (Source/StructDictLib ).
+4.	Compiler of dictionaries of fix expreesions  (Source/StructDictLoader).
+
+
+
+=================================================
+====== 					 Installation       =====
+=================================================
+
+
+Unpacking
+
+* Create  a catalog and  register a system variable RML, which  points 
+to this catalog:
+	mkdir /home/sokirko/RML
+	export  RML=/home/sokirko/RML
+
+* Put "graphan.tar.gz", "graphan_dicts.tar.gz"  and 
+unpack them
+	tar xfz graphan.tar.gz
+	tar xfz graphan_dicts.tar.gz
+
+
+
+==================================================
+   Building Graphematical Dictionaries
+
+1.  cd $RML
+
+2. ./gen_graphan_bin.sh <lang>
+     where <lang> can be Russian, or German
+
+
+
+
+==================================================
+   Compiling Test programs
+
+1. cd $RML
+
+2. ./compile_and_check_graphan.sh  <lang>
+     where <lang> can be Russian, or German
+
+
+
+If something goes wrong, write me to sokirko@yandex.ru.
+
+

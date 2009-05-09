@@ -1,0 +1,108 @@
+This is a program for shallow syntax anlaysis (Russian and German languages).
+
+This program is distributed under the Library GNU Public Licence, which is in the file
+COPYING.  
+
+This program was  written by Dmitry Pankratov, Igor Nozhov, Lev Gershenzon, 
+Alexey Sokirko.  The project started in Moscow in Dialing 
+Company (Russian Language). The German part was created  
+at Berlin-Brandenburg Academy of Sciences and Humanities in  Berlin (the project DWDS). 
+
+
+The system has been developed under Windows 2000 (MS VS 6.0), but
+has also been compiled and run under Linux(GCC).  It should work with
+minor changes on other systems.
+
+Website of DDC: www.aot.ru, www.dwds.de
+
+I compiled all sources with gcc 3.2. Lower versions are not supported.
+
+
+The project uses a regular expression library "PCRE" (Perl Compatible Regular Expressions).
+We test compilation only with version 6.4. Other versions were not tested. 
+One should download this version  from the official site and install it 
+to the default place. If you do not want to install it or you do not have enough
+rights to do it, then you should  create two environment variables: 
+	1.  RML_PCRE_LIB, that  points to PCRE library directory, where
+libpcre.a and libpcrecpp.a should be located, for example:
+	export RML_PCRE_LIB=~/RML/contrib/pcre-6.4/.libs
+    2  RML_PCRE_INCLUDE, that points to PCRE include catalog, 
+where "pcrecpp.h" is located, for example
+    export RML_PCRE_INCLUDE=~/RML/contrib/pcre-6.4
+
+
+
+
+=================================================
+====== 					 Installation       =====
+=================================================
+
+
+Unpacking
+
+* Create  a catalog and  register a system variable RML, which  points 
+to this catalog:
+	mkdir /home/sokirko/RML
+	export  RML=/home/sokirko/RML
+
+* Put "synan.tar.gz", "graphan_dicts.tar.gz",  "???-src-morph.tar.gz",
+"???-syn-dicts.tar.gz" to this catalog, "???" can be "rus" or "ger", 
+according to what you have downloaded. Unpack it 
+ 	tar xfz synan.tar.gz
+	tar xfz graphan_dicts.tar.gz
+	tar xfz ???-src-morph.tar.gz
+	tar xfz ???-syn-dicts.tar.gz
+
+
+
+Compiling morphology
+
+  1.  cd $RML
+	
+
+  2.   ./compile_morph.sh  
+      This step should create all libraries and a test program $RML\Bin\TestLem.
+
+  3.   ./generate_morph_bin.sh <lang>
+     where <lang> can be Russian, German according to the dictionary
+    yo have  downloaded.
+
+  The script should terminate with message "Everything is OK". 
+  You can test the morphology 
+	$RML\Bin\TestLem <lang>
+
+
+Compiling Syntax
+
+1.  cd $RML
+
+2. ./compile_synan.sh 
+   This script should build $RML/Bin/TestSynan
+
+
+
+
+Building Graphematics dicts
+
+1.  cd $RML
+
+2. ./gen_graphan_bin.sh <lang>
+   This script should build $RML/Bin/TestSynan
+     where <lang> can be Russian, German according to the dictionary
+    yo have  downloaded.
+
+
+Building Synan dicts
+
+1.  cd $RML
+
+3. ./generate_syn_bin.sh  <lang>
+     where <lang> can be Russian, German according to the dictionary
+    yo have  downloaded.
+   This script should build $RML/Bin/TestSynan, a command line program which 
+you can use to test syntax.
+
+
+Each script should output "Everything is OK", otherwise something is wrong,
+so you can write me (sokirko@yandex.ru)
+
