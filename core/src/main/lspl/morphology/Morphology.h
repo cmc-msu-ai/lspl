@@ -6,6 +6,8 @@
 
 #include "WordForm.h"
 
+#include <boost/ptr_container/ptr_vector.hpp>
+
 namespace lspl { namespace morphology {
 
 class LSPL_EXPORT MorphologyInitException : public base::Exception{
@@ -30,7 +32,7 @@ public:
 	Morphology();
 	virtual ~Morphology();
 
-	virtual void appendWordForms( std::string token, WordFormList & forms ) = 0;
+	virtual void appendWordForms( std::string token, boost::ptr_vector<WordForm> & forms ) = 0;
 
 	virtual std::string getAttributesString( uint64 attValues ) = 0;
 

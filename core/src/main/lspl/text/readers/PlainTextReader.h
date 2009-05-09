@@ -9,16 +9,11 @@
 #include "TextReader.h"
 
 #include <string>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 class CGraLine;
 
-namespace lspl { namespace morphology {
-
-class WordForm;
-
-LSPL_REFCOUNT_FORWARD(WordForm);
-
-} }
+#include "../../morphology/WordForm.h"
 
 namespace lspl { namespace text { namespace readers {
 
@@ -33,7 +28,7 @@ public:
 public:
 	TextConfig config;
 private:
-	void addTransitions( TextBuilder & builder, Node & start, Node & end, const CGraLine & unit, morphology::WordFormList & forms );
+	void addTransitions( TextBuilder & builder, Node & start, Node & end, const CGraLine & unit, boost::ptr_vector<morphology::WordForm> & forms );
 };
 
 } } }

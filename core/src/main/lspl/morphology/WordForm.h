@@ -22,9 +22,7 @@
 
 namespace lspl { namespace morphology {
 
-LSPL_REFCOUNT_FORWARD(WordForm);
-
-class LSPL_EXPORT WordForm : public base::RefCountObject<WordForm> {
+class LSPL_EXPORT WordForm {
 public:
 	WordForm( text::attributes::SpeechPart speechPart, const std::string & base, uint64 * attributeSets, uint attributeSetCount ) :
 		speechPart( speechPart ), base( base ), attributeSets( attributeSets ), attributeSetCount( attributeSetCount ) {}

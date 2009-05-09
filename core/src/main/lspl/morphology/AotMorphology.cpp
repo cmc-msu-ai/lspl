@@ -90,7 +90,7 @@ AotMorphology::AotMorphology() {
 #endif
 }
 
-void AotMorphology::appendWordForms( std::string token, WordFormList & forms ) {
+void AotMorphology::appendWordForms( std::string token, boost::ptr_vector<WordForm> & forms ) {
 	std::vector<CFormInfo> aotForms;
 	lemmatizer->CreateParadigmCollection(false, token, is_russian_upper( (BYTE)token[0] ), true, aotForms);
 

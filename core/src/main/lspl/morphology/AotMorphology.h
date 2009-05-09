@@ -23,7 +23,7 @@ public:
 	const char * findRml();
 
 	void setupRml();
-	void appendWordForms( std::string token, WordFormList & forms );
+	void appendWordForms( std::string token, boost::ptr_vector<WordForm> & forms );
 
 	text::attributes::SpeechPart getSpeechPart( const char * gramCode );
 

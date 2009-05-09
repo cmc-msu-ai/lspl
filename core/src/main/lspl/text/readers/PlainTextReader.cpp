@@ -69,7 +69,7 @@ TextRef PlainTextReader::readFromString( const std::string & content ) {
 	const CGraLine * lastUnit = 0;
 	uint lastUnitEnd = 0;
 
-	WordFormList wordForms; // Массив для форм слова
+	boost::ptr_vector<morphology::WordForm> wordForms; // Массив для форм слова
 
 	for (size_t unitIndex = 1; unitIndex < units.size(); ++unitIndex) { // Пробегаем все строки графематической таблицы
 		const CGraLine & unit = units[ unitIndex ]; // Извлекаем текущую лексема
@@ -93,7 +93,7 @@ TextRef PlainTextReader::readFromString( const std::string & content ) {
 	return builder.getText(); // Возвращаем результат
 }
 
-void PlainTextReader::addTransitions( TextBuilder & builder, Node & start, Node & end, const CGraLine & unit, WordFormList & wordForms ) {
+void PlainTextReader::addTransitions( TextBuilder & builder, Node & start, Node & end, const CGraLine & unit, boost::ptr_vector<morphology::WordForm> & wordForms ) {
 	Morphology & morphology = Morphology::instance();
 
 	const char * tokenStart = unit.GetToken(); // Получаем указатель на начало лексемы
@@ -109,10 +109,10 @@ void PlainTextReader::addTransitions( TextBuilder & builder, Node & start, Node 
 		Morphology::instance().appendWordForms( token->getToken(), wordForms ); // Проводим морфологический анализ
 
 		for ( uint formIndex = 0; formIndex < wordForms.size(); ++ formIndex ) {
-			WordFormRef form = wordForms[ formIndex ];
+			WordForm & form = wordForms[ formIndex ];
 
-			for ( uint i = 0, e = form->getAttributeSetCount(); i < e; ++ i )
-				builder.addWord( new Word( start, end, token, form->getBase(), form->getSpeechPart(), form->getAttributeSet( i ) ) ); // Создаем новый переход-слово и добавляем в список переходов из узла
+			for ( uint i = 0, e = form.getAttributeSetCount(); i < e; ++ i )
+				builder.addWord( new Word( start, end, token, form.getBase(), form.getSpeechPart(), form.getAttributeSet( i ) ) ); // Создаем новый переход-слово и добавляем в список переходов из узла
 		}
 	} else if ( unit.IsPunct() && config.analyzePunctuation ) {
 		builder.addToken( new Token( start, end, std::string( tokenStart, tokenLength ) ) );
