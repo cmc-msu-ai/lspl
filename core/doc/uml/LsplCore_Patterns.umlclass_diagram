@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<notation:Diagram xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:notation="http://www.eclipse.org/gmf/runtime/1.0.1/notation" xmlns:uml="http://www.eclipse.org/uml2/2.1.0/UML" xmi:id="_caMR4B9QEd2KS4ihctGnfA" type="UMLClass" measurementUnit="Pixel">
+  <styles xmi:type="notation:DiagramStyle" xmi:id="_caM48B9QEd2KS4ihctGnfA"/>
+  <styles xmi:type="notation:FilteringStyle" xmi:id="_caM48R9QEd2KS4ihctGnfA"/>
+  <element xmi:type="uml:Package" href="LsplCore.uml#_VU0KoB9QEd2KS4ihctGnfA"/>
+</notation:Diagram>
