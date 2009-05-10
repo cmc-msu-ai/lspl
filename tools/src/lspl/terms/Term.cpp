@@ -79,12 +79,12 @@ bool Token::needChildren() const {
 
 Word::Word(const std::string & token) {
 	Morphology & morphology = Morphology::instance();
-	WordFormList wordForms;
+	boost::ptr_vector<WordForm> wordForms;
 
 	morphology.appendWordForms( token, wordForms );
 
-	speechPart = wordForms.empty() ? SpeechPart::NOUN : wordForms[0]->getSpeechPart();
-	base = morphology.lowcase( wordForms[0]->getBase() );
+	speechPart = wordForms.empty() ? SpeechPart::NOUN : wordForms[0].getSpeechPart();
+	base = morphology.lowcase( wordForms[0].getBase() );
 }
 
 void Word::appendPatternTo( std::ostream & out, std::vector<std::pair<SpeechPart,uint> > & ctx ) const {

@@ -14,6 +14,7 @@
 class CGraLine;
 
 #include "../../morphology/WordForm.h"
+#include "../../graphan/Unit.h"
 
 namespace lspl { namespace text { namespace readers {
 
@@ -28,7 +29,7 @@ public:
 public:
 	TextConfig config;
 private:
-	void addTransitions( TextBuilder & builder, Node & start, Node & end, const CGraLine & unit, boost::ptr_vector<morphology::WordForm> & forms );
+	void addTransitions( TextBuilder & builder, Node & start, Node & end, const graphan::Unit & unit, boost::ptr_vector<morphology::WordForm> & forms );
 };
 
 } } }

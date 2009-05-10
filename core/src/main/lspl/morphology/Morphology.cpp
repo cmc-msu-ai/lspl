@@ -13,7 +13,6 @@
 
 using namespace lspl::text::attributes;
 
-
 namespace lspl { namespace morphology {
 
 Morphology * Morphology::singletonInstance = 0;

@@ -4,8 +4,7 @@
 
 #include "../TextBuilder.h"
 #include "../../morphology/Morphology.h"
-
-#include "aot/Source/GraphanLib/GraphmatFile.h"
+#include "../../graphan/Graphan.h"
 
 #include <string>
 
@@ -40,48 +39,31 @@ TextRef PlainTextReader::readFromStream( std::istream & is ) {
 }
 
 TextRef PlainTextReader::readFromString( const std::string & content ) {
-	CGraphmatFile file;
+	boost::ptr_vector<graphan::Unit> units; // Лексемы
+	boost::ptr_vector<morphology::WordForm> wordForms; // Массив для форм слова
+
+	graphan::Graphan::instance().analyzeString( content, units );
+
 	TextBuilder builder;
-
-	Morphology::instance(); // Инициализируем морфологию
-
-#ifdef MSVC
-	if ( !file.LoadDicts() ) // Загружаем словари
-		throw new TextBuildingException( file.GetLastError().c_str(), __FILE__, 0 );
-
-	if ( !file.LoadStringToGraphan( content ) ) // Загружаем файл
-		throw new TextBuildingException( file.GetLastError().c_str(), __FILE__, 0 );
-#else
-	if ( !file.LoadDicts() ) // Загружаем словари
-		throw new TextBuildingException( file.GetLastError().c_str(), __FILE__, __LINE__ );
-
-	if ( !file.LoadStringToGraphan( content ) ) // Загружаем файл
-		throw new TextBuildingException( file.GetLastError().c_str(), __FILE__, __LINE__ );
-#endif
-
 	builder.start(); // Создаем новый текст
 	builder.setContent( content ); // Устанавливаем содержимое текста
 	builder.setConfig( config ); // Устанавливаем конфигурацию текста
 
-	const std::vector<CGraLine> & units = file.GetUnits(); // Получаем графематическую таблицу
-
 	Node * lastNode; // Создаем начальный узел текста
-	const CGraLine * lastUnit = 0;
+	const graphan::Unit * lastUnit = 0;
 	uint lastUnitEnd = 0;
 
-	boost::ptr_vector<morphology::WordForm> wordForms; // Массив для форм слова
-
 	for (size_t unitIndex = 1; unitIndex < units.size(); ++unitIndex) { // Пробегаем все строки графематической таблицы
-		const CGraLine & unit = units[ unitIndex ]; // Извлекаем текущую лексема
+		const graphan::Unit & unit = units[ unitIndex ]; // Извлекаем текущую лексема
 
-		if ( unit.IsWordOrNumberOrAbbr() || ( unit.IsPunct() && config.analyzePunctuation ) ) {
-			Node * nextNode = &builder.createNode( lastUnitEnd, unit.GetInputOffset() ); // Создаем новый текстовый узел
+		if ( unit.getType() == graphan::Unit::WORD || ( unit.getType() == graphan::Unit::PUNCT && config.analyzePunctuation ) ) {
+			Node * nextNode = &builder.createNode( lastUnitEnd, unit.getOffset() ); // Создаем новый текстовый узел
 
 			if (lastUnit)
 				addTransitions( builder, *lastNode, *nextNode, *lastUnit, wordForms );
 
 			lastUnit = &unit;
-			lastUnitEnd = unit.GetInputOffset() + unit.GetTokenLength();
+			lastUnitEnd = unit.getOffset() + unit.getLength();
 			lastNode = nextNode; // Меняем текущий узел
 		}
 	}
@@ -93,14 +75,11 @@ TextRef PlainTextReader::readFromString( const std::string & content ) {
 	return builder.getText(); // Возвращаем результат
 }
 
-void PlainTextReader::addTransitions( TextBuilder & builder, Node & start, Node & end, const CGraLine & unit, boost::ptr_vector<morphology::WordForm> & wordForms ) {
+void PlainTextReader::addTransitions( TextBuilder & builder, Node & start, Node & end, const graphan::Unit & unit, boost::ptr_vector<morphology::WordForm> & wordForms ) {
 	Morphology & morphology = Morphology::instance();
 
-	const char * tokenStart = unit.GetToken(); // Получаем указатель на начало лексемы
-	uint tokenLength = unit.GetTokenLength(); // Получаем длину лексемы
-
-	if ( unit.IsWordOrNumberOrAbbr() ) {
-		TokenRef token = new Token( start, end, std::string( tokenStart, tokenLength ) ); // Получаем лексему
+	if ( unit.getType() == graphan::Unit::WORD ) {
+		TokenRef token = new Token( start, end, unit.getString() ); // Получаем лексему
 
 		builder.addToken( token );
 
@@ -114,8 +93,8 @@ void PlainTextReader::addTransitions( TextBuilder & builder, Node & start, Node 
 			for ( uint i = 0, e = form.getAttributeSetCount(); i < e; ++ i )
 				builder.addWord( new Word( start, end, token, form.getBase(), form.getSpeechPart(), form.getAttributeSet( i ) ) ); // Создаем новый переход-слово и добавляем в список переходов из узла
 		}
-	} else if ( unit.IsPunct() && config.analyzePunctuation ) {
-		builder.addToken( new Token( start, end, std::string( tokenStart, tokenLength ) ) );
+	} else if ( unit.getType() == graphan::Unit::PUNCT && config.analyzePunctuation ) {
+		builder.addToken( new Token( start, end, unit.getString() ) );
 	}
 }
 

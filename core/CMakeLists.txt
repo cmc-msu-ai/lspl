@@ -37,6 +37,9 @@ endif(MINGW)
 
 set(LSPL_CORE_SOURCES
 	src/main/lspl/Namespace.cpp
+	src/main/lspl/graphan/Unit.cpp
+	src/main/lspl/graphan/Graphan.cpp
+	src/main/lspl/graphan/AotGraphan.cpp
 	src/main/lspl/morphology/WordForm.cpp
 	src/main/lspl/morphology/Morphology.cpp
 	src/main/lspl/morphology/AotMorphology.cpp

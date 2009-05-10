@@ -16,13 +16,18 @@ public:
 		Exception( description, sourceFileName, sourceLineNumber) {}
 };
 
-class LSPL_EXPORT Morphology
-{
-
+class LSPL_EXPORT Morphology {
 public:
 	static text::attributes::AttributeValue extractAttributeValue( uint64 attributeSet, text::attributes::AttributeKey key );
 
+	/**
+	 * Получить экземпляр морфологии
+	 */
 	static Morphology & instance();
+
+	/**
+	 * Завершить работу модуля морфологии
+	 */
 	static void shutdown();
 
 private:

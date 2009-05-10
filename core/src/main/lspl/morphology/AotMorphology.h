@@ -20,9 +20,6 @@ public:
 	AotMorphology();
 	~AotMorphology();
 
-	const char * findRml();
-
-	void setupRml();
 	void appendWordForms( std::string token, boost::ptr_vector<WordForm> & forms );
 
 	text::attributes::SpeechPart getSpeechPart( const char * gramCode );
@@ -33,7 +30,9 @@ public:
 
 	std::string upcase( const char * str );
 	std::string lowcase( const char * str );
-
+private:
+	const char * findRml();
+	void setupRml();
 private:
 	CLemmatizer * lemmatizer;
 	CAgramtab * agramtab;
