@@ -22,11 +22,4 @@ void Loop::dump( std::ostream & out, std::string tabs ) const {
 			<< ", end = " << end.index << " }";
 }
 
-AttributeValue Loop::getAttribute( AttributeKey key ) const {
-	if ( key == AttributeKey::TEXT ) // Если запрашиваемый аттрибут - текст
-		return AttributeValue( getText() ); // Возвращаем текст, как строковый аттрибут
-
-	return AttributeValue::UNDEFINED;
-}
-
 } }

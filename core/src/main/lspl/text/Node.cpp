@@ -5,6 +5,7 @@
 
 #include "Node.h"
 #include "Transition.h"
+#include "Text.h"
 
 LSPL_REFCOUNT_CLASS( lspl::text::Node )
 
@@ -15,6 +16,10 @@ Node::Node( uint index, uint startOffset, uint endOffset, const Text & text ) :
 }
 
 Node::~Node() {
+}
+
+std::string Node::getRangeString() const {
+	return text.getContent().substr( startOffset, endOffset - startOffset );
 }
 
 void Node::dump(std::ostream & out, std::string tabs) const {

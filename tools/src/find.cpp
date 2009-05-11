@@ -101,8 +101,8 @@ void processGoal( const lspl::patterns::PatternRef & goal, const lspl::text::Tex
 	for ( uint matchIndex = 0; matchIndex < matches.size(); ++ matchIndex ) {
 		lspl::text::MatchRef match = matches[ matchIndex ];
 
-		out << "\t\t\t<match startPos=\"" << match->getStartOffset() << "\" endPos=\"" << match->getEndOffset() << "\">\n";
-		out << "\t\t\t\t<fragment>" << match->getText() << "</fragment>\n";
+		out << "\t\t\t<match startPos=\"" << match->getRangeStart() << "\" endPos=\"" << match->getRangeEnd() << "\">\n";
+		out << "\t\t\t\t<fragment>" << match->getRangeString() << "</fragment>\n";
 		out << "\t\t\t</match>\n";
 	}
 

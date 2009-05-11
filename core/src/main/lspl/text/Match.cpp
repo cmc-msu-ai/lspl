@@ -79,10 +79,7 @@ AttributeValue Match::getAttribute( AttributeKey key ) const {
 	if ( it != attributes.end() )
 		return it->second;
 
-	if ( key == AttributeKey::TEXT )
-		return AttributeValue( getText() );
-
-	return AttributeValue::UNDEFINED;
+	return Transition::getAttribute( key );
 }
 
 void Match::dump( std::ostream & out, std::string tabs ) const {

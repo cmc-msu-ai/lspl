@@ -40,19 +40,21 @@ public:
 	virtual ~Transition();
 
 	/**
-	 * Получить фрагмент текста, соответствующий аннотации
+	 * Получить текст отрезка, соответствующего вершине
 	 */
-	std::string getText() const;
+	std::string getRangeString() const;
 
 	/**
-	 * Получить позицию начала (в символах) фрагмента текста, соответствующего аннотации
+	 * Получить позицию начала (в символах) отрезка текста, соответствующего ребру
 	 */
-	uint getStartOffset() const;
+	uint getRangeStart() const;
 
 	/**
-	 * Получить позицию конца (в символах) фрагмента текста, соответствующего аннотации
+	 * Получить позицию конца (в символах) отрезка текста, соответствующего ребру
 	 */
-	uint getEndOffset() const;
+	uint getRangeEnd() const;
+
+	virtual attributes::AttributeValue getAttribute( attributes::AttributeKey key ) const;
 
 	virtual void dump( std::ostream & out, std::string tabs = "" ) const = 0;
 public:

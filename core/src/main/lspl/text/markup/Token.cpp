@@ -23,11 +23,4 @@ void Token::dump( std::ostream & out, std::string tabs ) const {
 	out << "Token{ token = \"" << token << "\" }";
 }
 
-AttributeValue Token::getAttribute( AttributeKey key ) const {
-	if ( key == AttributeKey::TEXT ) // Если запрашиваемый аттрибут - текст
-		return AttributeValue( getText() ); // Возвращаем текст, как строковый аттрибут
-
-	return AttributeValue::UNDEFINED;
-}
-
 } } } // namespace lspl::text::markup

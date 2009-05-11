@@ -37,7 +37,7 @@ attributes::AttributeValue Word::getAttribute( attributes::AttributeKey key ) co
 		return AttributeValue( base ); // Возвращаем основу, как строковый аттрибут
 
 	if ( key == AttributeKey::TEXT ) // Если запрашиваемый аттрибут - текст
-		return AttributeValue( getText() ); // Возвращаем текст, как строковый аттрибут
+		return AttributeValue( getRangeString() ); // Возвращаем текст, как строковый аттрибут
 
 	return Morphology::extractAttributeValue( attributes, key );
 }

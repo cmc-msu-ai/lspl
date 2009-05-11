@@ -14,7 +14,6 @@ public:
 	virtual ~Loop();
 
 	virtual void dump( std::ostream & out, std::string tabs = "" ) const;
-	virtual attributes::AttributeValue getAttribute( attributes::AttributeKey attributeType ) const;
 public:
 	const TransitionList transitions;
 };

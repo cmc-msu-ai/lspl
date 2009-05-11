@@ -20,7 +20,7 @@ using lspl::text::attributes::AttributeValue;
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_text_Transition_getFragment( JNIEnv * env, jobject obj_transition ) {
-	return out( env, JavaTransition::get( env, obj_transition )->getText() );
+	return out( env, JavaTransition::get( env, obj_transition )->getRangeString() );
 }
 
 /*

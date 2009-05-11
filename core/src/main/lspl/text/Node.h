@@ -25,6 +25,25 @@ public:
 	}
 
 	void dump( std::ostream & out, std::string tabs = "" ) const;
+
+	/**
+	 * Получить текст незначимого отрезка, соответствующего вершине
+	 */
+	std::string getRangeString() const;
+
+	/**
+	 * Получить позицию начала (в символах) отрезка текста, соответствующего вершине
+	 */
+	uint getRangeStart() const {
+		return startOffset;
+	}
+
+	/**
+	 * Получить позицию конца (в символах) отрезка текста, соответствующего вершине
+	 */
+	uint getRangeEnd() const {
+		return endOffset;
+	}
 public:
 
 	/**
