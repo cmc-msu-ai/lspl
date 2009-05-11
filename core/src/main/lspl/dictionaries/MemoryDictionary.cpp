@@ -44,7 +44,7 @@ MemoryDictionary::MemoryDictionary( const std::string & name ) :
 MemoryDictionary::~MemoryDictionary() {
 }
 
-bool MemoryDictionary::acceptsVector( const std::vector<std::string> & words ) const {
+bool MemoryDictionary::accepts( const std::vector<std::string> & words ) const {
 	if ( words.size() <= 0 )
 		return false;
 

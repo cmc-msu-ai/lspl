@@ -24,28 +24,22 @@ public:
 	virtual ~Dictionary();
 
 	/**
-	 * Проверить, принимает ли словарь заданный набор слов
-	 * @param words вектор слов
-	 * @return true, если набор слов принимается словарем
+	 * Проверить, принимает ли словарь заданное слово
+	 * @param w1 слово
+	 * @return true, если слово принимается словарем
 	 */
-	bool accepts( const std::vector<std::string> & words ) const {
-		return acceptsVector( words );
-	};
-
 	bool accepts( const std::string & w1 ) const;
 
 	bool accepts( const std::string & w1, const std::string & w2 ) const;
 
 	bool accepts( const std::string & w1, const std::string & w2, const std::string & w3 ) const;
 
-protected:
-
 	/**
 	 * Проверить, принимает ли словарь заданный набор слов. Этот метод является полностью вирутальным и требует перегрузки в классах-потомках.
 	 * @param words вектор слов
 	 * @return true, если набор слов принимается словарем
 	 */
-	virtual bool acceptsVector( const std::vector<std::string> & words ) const = 0;
+	virtual bool accepts( const std::vector<std::string> & words ) const = 0;
 
 public:
 

@@ -23,7 +23,7 @@ bool Dictionary::accepts( const std::string & w1 ) const {
 	std::vector<std::string> v;
 	v.push_back( w1 );
 
-	return acceptsVector( v );
+	return accepts( v );
 }
 
 bool Dictionary::accepts( const std::string & w1, const std::string & w2 ) const {
@@ -31,7 +31,7 @@ bool Dictionary::accepts( const std::string & w1, const std::string & w2 ) const
 	v.push_back( w1 );
 	v.push_back( w2 );
 
-	return acceptsVector( v );
+	return accepts( v );
 }
 
 bool Dictionary::accepts( const std::string & w1, const std::string & w2, const std::string & w3 ) const {
@@ -40,7 +40,7 @@ bool Dictionary::accepts( const std::string & w1, const std::string & w2, const 
 	v.push_back( w2 );
 	v.push_back( w3 );
 
-	return acceptsVector( v );
+	return accepts( v );
 }
 
 } } // namespace lspl::dictionaries
