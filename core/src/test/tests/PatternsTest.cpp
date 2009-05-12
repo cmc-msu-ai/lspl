@@ -33,9 +33,11 @@ void testPatterns() {
 	assertBuilds( "Act = N<бизнес> V" );
 	assertBuilds( "Act = N<бизнес-вумен> V" );
 	assertBuilds( "Act = N<g=fem> V" );
+	assertBuilds( "N2<координата, n=plur>" );
 	assertFails( "Act1 = N1 N1" ); // Wrong rule naming: Act1
 	assertFails( "Act = N1 N1 <3270 0" );
 	assertFails( "Act = N1 N1 <3=7>" );
+	assertFails( "N2<координата, n=frdscx>" );
 
 	// Names
 	assertBuilds( "бизнесвуман = N<бизнес-вумен> V" );

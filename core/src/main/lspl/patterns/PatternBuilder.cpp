@@ -119,7 +119,8 @@ public:
 		NoRestrictionBody,
 		InvalidPatternName,
 		ClosingSglQuoteMissed,
-		ClosingDblQuoteMissed
+		ClosingDblQuoteMissed,
+		AttributeValueExpected
 	};
 
     template <typename ScannerT> class definition {
@@ -138,6 +139,7 @@ public:
         	assertion<Errors> expect_valid_pattern_name(InvalidPatternName);
         	assertion<Errors> expect_closing_sgl_quote(ClosingSglQuoteMissed);
         	assertion<Errors> expect_closing_dbl_quote(ClosingDblQuoteMissed);
+        	assertion<Errors> expect_attribute_value(AttributeValueExpected);
 
         	function<AddImpl> add;
 
@@ -239,7 +241,7 @@ public:
 
         	restrictions = '<' >> expect_restriction_body( ( patternRestriction | dictionaryRestriction ) % ',' ) >> endRestriction;
 
-        	matcherRestriction = ( attributeKey[ matcherRestriction.attribute = arg1 ] >> '=' >> attributeValue[ matcherRestriction.value = arg1 ] )
+        	matcherRestriction = ( attributeKey[ matcherRestriction.attribute = arg1 ] >> '=' >> expect_attribute_value( attributeValue[ matcherRestriction.value = arg1 ] ) )
         		[ addMatcherRestriction( matcher.restrictions, matcherRestriction.attribute, matcherRestriction.value ) ];
 
         	patternRestriction = (
@@ -334,6 +336,8 @@ public:
     			throw PatternBuildingException( "Closing single quote missed" );
     		case ClosingDblQuoteMissed:
     			throw PatternBuildingException( "Closing double quote missed" );
+    		case AttributeValueExpected:
+    			throw PatternBuildingException( "Invalid or no attribute value" );
     		default:
         		throw PatternBuildingException( "Error parsing template" );
     		}
