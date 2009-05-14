@@ -3,6 +3,7 @@
 #include "Conversion.h"
 
 #include <iconv.h>
+#include <string.h>
 
 namespace lspl {
 namespace utils {
@@ -58,6 +59,10 @@ void Conversion::free() {
 
 	refcount = 0;
 	descriptor = 0;
+}
+
+std::string Conversion::convert( const char * str ) const {
+	return convert( str, strlen( str ) );
 }
 
 std::string Conversion::convert( const char * in_data, size_t in_size ) const {
