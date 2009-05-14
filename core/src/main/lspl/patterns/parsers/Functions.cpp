@@ -64,7 +64,7 @@ void AddTokenMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, con
 void AddLoopMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, uint min, uint max, std::vector<uint> & alternativesCount ) const {
 	LoopMatcher * matcher = new LoopMatcher( min, max );
 
-	for ( uint i = 0; i < alternativesCount.size(); ++ i ) {
+	for ( int i = alternativesCount.size() - 1; i >= 0 ; -- i ) { // Важно!! Здесь перебираем в обратном порядке!
 		MatcherContainer * matcherGroup = new MatcherContainer(); // Создаем контейнер для альтернативы
 
 		matcherGroup->addMatchers( matchers.end() - alternativesCount[ i ], matchers.end(), matchers );

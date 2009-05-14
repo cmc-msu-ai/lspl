@@ -34,12 +34,18 @@ public:
 
 	bool accepts( const std::string & w1, const std::string & w2, const std::string & w3 ) const;
 
+	bool accepts( const std::vector<std::string> & words ) const {
+		return acceptsWords( words );
+	}
+
+
+protected:
 	/**
 	 * Проверить, принимает ли словарь заданный набор слов. Этот метод является полностью вирутальным и требует перегрузки в классах-потомках.
 	 * @param words вектор слов
 	 * @return true, если набор слов принимается словарем
 	 */
-	virtual bool accepts( const std::vector<std::string> & words ) const = 0;
+	virtual bool acceptsWords( const std::vector<std::string> & words ) const = 0;
 
 public:
 

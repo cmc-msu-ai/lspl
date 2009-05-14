@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 project(LSPL_CORE)
 
-set(CMAKE_BUILD_TYPE Release)
-
 if(MINGW)
     include_directories( ../deps/ src/main ../deps-win32/include/ )
 

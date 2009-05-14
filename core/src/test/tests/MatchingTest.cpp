@@ -26,6 +26,7 @@ void testMatching() {
 	std::cout << "Testing matching..." << std::endl;
 
 	// Regexp tokens
+	assertMatches( "Мама", 0, 1, "'мама'" );
 	assertMatches( "Мама", 0, 1, "'ма.*а'" );
 	assertMatches( "Маша", 0, 1, "'ма.*а'" );
 	assertMatches( "Мамаша", 0, 1, "'ма.*а'" );
@@ -36,10 +37,15 @@ void testMatching() {
 	assertMatches( "Мама мыла раму", 0, 2, "Act = N<мама> V" );
 	assertMatches( "Мама мыла раму", 0, 2, "Act = N V<N=V>" );
 	assertMatches( "Мама мыла раму", 0, 2, "Act = N { V<N=V> }<1,1>" );
+	assertMatches( "Мама мыла раму", 0, 2, "Act = N { { V<N=V> }<1,1> }<1,1>" );
 	assertMatches( "Мама мыла раму", 0, 2, "Act = N V<N.g=V.g>" );
 	assertMatches( "Мама мыла раму", 0, 2, "Act = N<g=fem> V" );
 	assertMatches( "Мама мыла раму", 0, 2, "Act = \"мама\" V" );
 	assertNoMatches( "Мама мыла раму", "Act = N<папа> V" );
+
+	// Term
+	assertMatches( "Процессор базы данных", 0, 3, "\"процессор\" \"базы\" \"данных\"" );
+	assertMatches( "Процессор базы данных", 0, 3, "N1<процессор> { \"базы\" \"данных\" | \"ввода-вывода\" }<1,1>" );
 
 	// Loop restrictions: positive
 	assertMatches( "Мама мыла раму", 0, 2, "Act = {N} V" );
@@ -47,6 +53,7 @@ void testMatching() {
 	assertMatches( "Мама мыла раму", 0, 2, "Act = {N} V<N.g=V.g>" );
 
 	// Loop restriction: empty loop
+	assertMatches( "Мама мыла раму", 0, 1, "Act = [A] N" );
 	assertMatches( "Мама мыла раму", 0, 1, "Act = {A} N" );
 	assertMatches( "Мама мыла раму", 0, 1, "Act = {A} N <A=N>" );
 

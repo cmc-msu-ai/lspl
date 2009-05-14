@@ -90,8 +90,6 @@ static void processLoop( const LoopMatchState & state, std::vector< std::pair<Tr
 			return;
 	}
 
-	std::vector< TransitionRef > nextTransitions = static_cast<const AnnotationMatcher&>( currentMatcher ).buildTransitions( currentNode, state.context );
-
 	if ( const AnnotationMatcher * curMatcher = dynamic_cast<const AnnotationMatcher *>( &state.getCurrentMatcher() ) ) {
 		TransitionList nextTransitions = curMatcher->buildTransitions( currentNode, state.context );
 

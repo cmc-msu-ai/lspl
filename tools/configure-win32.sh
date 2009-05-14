@@ -14,4 +14,4 @@ export RESCOMP=i586-mingw32msvc-windres
 
 rm -Rf build-win32
 
-mkdir build-win32 && cd build-win32 && cmake -DCMAKE_SYSTEM_NAME=Windows ..
+mkdir build-win32 && cd build-win32 && cmake -DCMAKE_SYSTEM_NAME=Windows -DCMAKE_BUILD_TYPE=Release ..

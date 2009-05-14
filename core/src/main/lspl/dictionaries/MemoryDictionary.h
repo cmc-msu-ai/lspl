@@ -27,7 +27,8 @@ public:
 
 	void add( const std::string & w1, const std::string & w2, const std::string & w3 );
 
-	virtual bool accepts( const std::vector<std::string> & words ) const;
+protected:
+	virtual bool acceptsWords( const std::vector<std::string> & words ) const;
 private:
 	class WordListMap;
 private:
