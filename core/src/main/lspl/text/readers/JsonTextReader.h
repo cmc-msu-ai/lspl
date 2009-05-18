@@ -13,6 +13,7 @@ public:
 	virtual ~JsonTextReader();
 
 	virtual TextRef readFromStream( std::istream & is );
+	virtual TextRef readFromStream( std::istream & is, const std::string & enc );
 private:
 	class Parser;
 private:

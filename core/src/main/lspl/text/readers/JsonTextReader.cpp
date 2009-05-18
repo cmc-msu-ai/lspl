@@ -339,4 +339,8 @@ TextRef JsonTextReader::readFromStream( std::istream & is ) {
 	return tb.getText();
 }
 
+TextRef JsonTextReader::readFromStream( std::istream & is, const std::string & enc ) {
+	return readFromStream( is );
+}
+
 } } } // namespace lspl::text::readers

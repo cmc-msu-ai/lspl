@@ -15,6 +15,7 @@ public:
 	virtual ~TextReader();
 
 	virtual TextRef readFromStream( std::istream & is ) = 0;
+	virtual TextRef readFromStream( std::istream & is, const std::string & enc ) = 0;
 };
 
 } } }

@@ -6,6 +6,8 @@
 #include "../../morphology/Morphology.h"
 #include "../../graphan/Graphan.h"
 
+#include "../../utils/Conversion.h"
+
 #include <string>
 
 using namespace lspl::morphology;
@@ -13,12 +15,29 @@ using namespace lspl::morphology;
 using namespace lspl::text::attributes;
 using namespace lspl::text::markup;
 
+using lspl::utils::Conversion;
+
 namespace lspl { namespace text { namespace readers {
 
 PlainTextReader::PlainTextReader() {
 }
 
 PlainTextReader::~PlainTextReader() {
+}
+
+TextRef PlainTextReader::readFromStream( std::istream & is, const std::string & enc ) {
+	is.seekg( 0, std::ios_base::end );
+	int size = is.tellg();
+	char * buffer = new char[ size ];
+
+	is.seekg( 0, std::ios_base::beg );
+	is.read( buffer, size );
+
+	TextRef text = readFromString( Conversion( enc, Conversion::DEFAULT_ENCODING ).convert( buffer, size ) );
+
+	delete[] buffer;
+
+	return text;
 }
 
 TextRef PlainTextReader::readFromStream( std::istream & is ) {
@@ -36,6 +55,10 @@ TextRef PlainTextReader::readFromStream( std::istream & is ) {
 	delete[] buffer;
 
 	return readFromString( content ); // Создаем новый экзмпляр текста
+}
+
+TextRef PlainTextReader::readFromString( const std::string & content, const std::string & enc ) {
+	return readFromString( Conversion( enc, Conversion::DEFAULT_ENCODING ).convert( content ) );
 }
 
 TextRef PlainTextReader::readFromString( const std::string & content ) {

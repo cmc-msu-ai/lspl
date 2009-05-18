@@ -5,8 +5,9 @@
 #include <iconv.h>
 #include <string.h>
 
-namespace lspl {
-namespace utils {
+namespace lspl { namespace utils {
+
+const std::string Conversion::DEFAULT_ENCODING("CP1251");
 
 Conversion::Conversion() :
 	descriptor( 0 ), refcount( 0 ) {

@@ -25,7 +25,10 @@ public:
 	virtual ~PlainTextReader();
 
 	TextRef readFromStream( std::istream & is );
+	TextRef readFromStream( std::istream & is, const std::string & enc );
+
 	TextRef readFromString( const std::string & str );
+	TextRef readFromString( const std::string & str, const std::string & enc );
 public:
 	TextConfig config;
 private:

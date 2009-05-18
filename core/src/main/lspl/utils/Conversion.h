@@ -16,8 +16,9 @@ namespace lspl { namespace utils {
  * std::cout << out( "Сообщение" );
  * std::cout << out.convert( "Сообщение" );
  */
-class LSPL_EXPORT Conversion
-{
+class LSPL_EXPORT Conversion {
+public:
+	static const std::string DEFAULT_ENCODING;
 public:
 	/**
 	 * Конструктор пустого преобразования (то есть не выполняющий никаких действий вообще)
