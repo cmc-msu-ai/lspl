@@ -22,5 +22,10 @@ public class OoxmlExtractor implements TextExtractor {
 			throw new IOException( "Wrong format", e );
 		}
 	}
+	
+	@Override
+	public boolean isLossless() {
+		return false;
+	}
 
 }

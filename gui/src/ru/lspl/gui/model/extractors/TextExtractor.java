@@ -7,4 +7,6 @@ public interface TextExtractor {
 
 	String extractText( InputStream is ) throws IOException;
 	
+	boolean isLossless();
+	
 }

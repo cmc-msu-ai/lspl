@@ -27,4 +27,9 @@ public class DocExtractor implements TextExtractor {
 		return text.toString();
 	}
 
+	@Override
+	public boolean isLossless() {
+		return false;
+	}
+
 }

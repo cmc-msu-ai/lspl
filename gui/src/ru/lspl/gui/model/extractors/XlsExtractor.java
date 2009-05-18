@@ -17,5 +17,10 @@ public class XlsExtractor implements TextExtractor {
 		
 		return extractor.getText();
 	}
+	
+	@Override
+	public boolean isLossless() {
+		return false;
+	}
 
 }

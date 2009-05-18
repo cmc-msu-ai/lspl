@@ -171,7 +171,7 @@ public class Document {
 				
 		setSourceText( text );
 
-		savedFileName = fileName;
+		savedFileName = extractor.isLossless() ? fileName : null;
 	}
 
 	private TextExtractor selectTextExtractor( String fileName ) {

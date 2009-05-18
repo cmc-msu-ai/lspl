@@ -12,5 +12,10 @@ public class PlainTextExtractor implements TextExtractor {
 		
 		return new String( data );
 	}
+	
+	@Override
+	public boolean isLossless() {
+		return true;
+	}
 
 }
