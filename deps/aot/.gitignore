@@ -1,1 +1,10 @@
 Dists
+
+Dicts/Ross/
+Dicts/SrcMorph/
+Dicts/SynAn/
+Dicts/Trigram/
+Test/Synan/
+Thes/
+compile_synan.sh
+generate_syn_bin.sh

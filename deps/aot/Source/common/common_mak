@@ -59,6 +59,7 @@ endif
 
 ifdef MINGW
 	ct := $(ct)m
+	ExeExten := .exe
 endif
 
 ifeq ($(libmode), static)

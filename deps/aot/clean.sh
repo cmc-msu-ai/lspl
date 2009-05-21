@@ -1,3 +1,3 @@
 #!/bin/sh
 
-find | egrep "\\.d$|\\.otst$|\\.orst$|\\.a$" | xargs rm
+find | egrep "\\.d$|\\.otst$|\\.orst$|\\.ormst$|\\.a$|\\.exe$|\\.dll$" | xargs rm

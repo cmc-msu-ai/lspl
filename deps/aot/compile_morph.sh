@@ -18,10 +18,10 @@ if [ -z $RML ]; then
 fi;
 
 
-if [ -x /usr/bin/gmake ]; then
+if [ -x /usr/bin/gmake ] || [ -x /usr/local/bin/gmake ]; then
 	make_tool=gmake
 else
-    make_tool=make
+	make_tool=make
 fi
 
 
