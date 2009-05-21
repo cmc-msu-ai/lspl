@@ -99,9 +99,9 @@ set_target_properties(lspl
 )
 
 if(MINGW)
-	target_link_libraries(lspl pcrecpp iconv Graphanrmst Lemmatizerrmst StructDictrmst MorphWizardrmst Agramtabrmst pcre boost_regex)
+	target_link_libraries(lspl pcrecpp iconv Graphanrmst Lemmatizerrmst StructDictrmst MorphWizardrmst Agramtabrmst pcre)
 else(MINGW)
-	target_link_libraries(lspl pcrecpp pcre Graphanrst Lemmatizerrst StructDictrst MorphWizardrst Agramtabrst boost_regex)
+	target_link_libraries(lspl pcrecpp pcre Graphanrst Lemmatizerrst StructDictrst MorphWizardrst Agramtabrst)
 endif(MINGW)
 
 ### lspl-test binary

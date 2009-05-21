@@ -21,7 +21,7 @@ RegexpMatcher::RegexpMatcher( const std::string & token ) : AnnotationMatcher( R
 bool RegexpMatcher::matchTransition( const Transition & transition, const Context & context ) const {
 	switch ( transition.type ) {
 	case Transition::TOKEN: // Слово
-		return boost::regex_match( static_cast<const Token&>( transition ).getToken(), exp );
+		return exp.FullMatch( static_cast<const Token&>( transition ).getToken() );
 	default:
 		return false;
 	}
@@ -40,7 +40,7 @@ TransitionList RegexpMatcher::buildTransitions( const text::Node & node, const C
 }
 
 void RegexpMatcher::dump( std::ostream & out, const std::string & tabs ) const {
-	out << "RegexpMatcher{ exp = \"" << exp.str() << "\" }";
+	out << "RegexpMatcher{ exp = \"" << exp.pattern() << "\" }";
 }
 
 } } } //namespace lspl::patterns::matchers

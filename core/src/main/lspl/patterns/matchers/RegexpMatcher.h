@@ -4,7 +4,7 @@
 #include "Forward.h"
 #include "Matcher.h"
 
-#include <boost/regex.hpp>
+#include <pcrecpp.h>
 
 namespace lspl { namespace patterns { namespace matchers {
 
@@ -19,7 +19,7 @@ public:
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
 
 public:
-	const boost::regex exp;
+	const pcrecpp::RE exp;
 };
 
 } } } // namespace lspl::patterns::matchers
