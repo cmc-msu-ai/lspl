@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 2.6)
 project(LSPL_CORE)
 
+find_package(Boost)
+
 if(MINGW)
-    include_directories( ../deps/ src/main ../deps-win32/include/ )
+    include_directories( ../deps/ src/main ../deps-win32/include/ ${Boost_INCLUDE_DIR})
 
     link_directories(
     	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/AgramtabLib/
@@ -17,7 +19,7 @@ if(MINGW)
     SET(MY_TARGETLIB_PREFIX "")
     SET(MY_TARGETLIB_SUFFIX ".dll")
 else(MINGW)
-    include_directories( ../deps/ src/main )
+    include_directories( ../deps/ src/main ${Boost_INCLUDE_DIR} )
 
     link_directories(
     	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/AgramtabLib/

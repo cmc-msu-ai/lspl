@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 project(LSPL_JAVA)
 
+find_package(Boost)
 find_package(JNI)
 
 if(MINGW)
@@ -11,7 +12,7 @@ else(MINGW)
     SET(MY_TARGETLIB_SUFFIX ".so")
 endif(MINGW)
 
-include_directories( ../deps/ ../core/src/main/ src_cpp ${JNI_INCLUDE_DIRS} )
+include_directories( ../deps/ ../core/src/main/ src_cpp ${JNI_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} )
 link_directories(
 	${LSPL_JAVA_SOURCE_DIR}/../core/build/
 	${LSPL_JAVA_SOURCE_DIR}/../core/build-win32/

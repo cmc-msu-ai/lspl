@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 project(LSPL_TOOLS)
 
-include_directories( ../deps/ ../core/src/main/ )
+find_package(Boost)
+
+include_directories( ../deps/ ../core/src/main/ ${Boost_INCLUDE_DIR} )
 link_directories(
 	${LSPL_TOOLS_SOURCE_DIR}/../core/build/
 	${LSPL_TOOLS_SOURCE_DIR}/../core/build-win32/
