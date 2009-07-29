@@ -175,8 +175,9 @@ namespace lspl {
 				RangeSetDecartTree::FindDecartTreeElementExtension(
 				const Range &range) {
 			RangeSetDecartTreeElement* element = root();
-			//while (element.Range)
-			return NULL;
+			while (element != NULL && !element->range()->IsIncludeRange(range)) {
+			}
+			return element;
 		}
 	}
 }
