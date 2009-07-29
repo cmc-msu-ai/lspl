@@ -41,6 +41,20 @@ add_executable(lspl-find ${LSPL_FIND_SOURCES})
 
 target_link_libraries(lspl-find lspl)
 
+### lspl-DictionaryRecognizer
+
+set(LSPL_DICTIONARY_RECOGNIZER_SOURCES
+	src/DictionaryRecognizer.cpp
+	src/DictionaryMain.cpp
+	src/RangeSetDecartTreeElement.cpp
+	src/RangeSetDecartTree.cpp
+)
+
+add_executable(lspl-dictionary-recognizer ${LSPL_DICTIONARY_RECOGNIZER_SOURCES})
+
+target_link_libraries(lspl-dictionary-recognizer lspl)
+
+
 # Flags for effective error parsing
 
 if(CMAKE_COMPILER_IS_GNUCC)
