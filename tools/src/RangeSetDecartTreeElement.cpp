@@ -35,22 +35,18 @@ namespace lspl {
 			set_subtree_size(1);
 			set_subtree_height(1);
 			set_subtree_max_right_part_of_ranges(NULL);
-			std::cout << "RenewSubtreeParameters" << std::endl;
 			if (left_child() != NULL) {
 				set_subtree_size(subtree_size() + left_child()->subtree_size());
 				set_subtree_height(1 + left_child()->subtree_height());
 				set_subtree_max_right_part_of_ranges(
 						left_child()->subtree_max_right_part_of_ranges());
-			std::cout << "RenewSubtreeParameters left" << std::endl;
 				if (subtree_max_right_part_of_ranges() == NULL ||
 						left_child()->range()->end >
 						subtree_max_right_part_of_ranges()->end) {
-			std::cout << "RenewSubtreeParameters left" << std::endl;
 					set_subtree_max_right_part_of_ranges(left_child()->range());
 				}
 			}
 			if (right_child() != NULL) {
-			std::cout << "RenewSubtreeParameters right" << std::endl;
 				set_subtree_size(subtree_size() + right_child()->subtree_size());
 				set_subtree_height(std::max(subtree_height(),
 						1 + right_child()->subtree_height()));
@@ -67,7 +63,6 @@ namespace lspl {
 					set_subtree_max_right_part_of_ranges(right_child()->range());
 				}
 			}
-			std::cout << "RenewSubtreeParameters end" << std::endl;
 		}
 
 		// Getters.
@@ -140,7 +135,6 @@ namespace lspl {
 			if (IsRoot()) {
 				return;
 			}
-			std::cout << "RotateLeft" << std::endl;
 			parent_node()->set_right_child(left_child());
 			if (left_child() != NULL) {
 				left_child()->set_parent_node(parent_node());
@@ -162,7 +156,6 @@ namespace lspl {
 			if (IsRoot()) {
 				return;
 			}
-			std::cout << "RotateLeft" << std::endl;
 			parent_node()->set_left_child(right_child());
 			if (right_child() != NULL) {
 				right_child()->set_parent_node(parent_node());

@@ -61,6 +61,9 @@ namespace lspl {
 			// After that find element with this range.
 			RangeSetDecartTreeElement* FindDecartTreeElementExtension(
 					const Range &range) const;
+
+			void PrintSubtree(RangeSetDecartTreeElement *element,
+					const int deep = 0) const;
 		 public:
 			RangeSetDecartTree(bool need_srand = true);
 
@@ -84,6 +87,9 @@ namespace lspl {
 			// Function returns copy of the found range, so, user must delete it
 			// after using.
 			const Range* FindRangeExtension(const Range &range) const;
+
+			// Print tree to the stdout.
+			void Print() const;
 		};
 	}
 }

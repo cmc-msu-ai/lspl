@@ -49,31 +49,24 @@ namespace lspl {
 
 		void RangeSetDecartTree::AddRange(
 				const Range &range) {
-			std::cout << "?" << std::endl;
 			RangeSetDecartTreeElement *element =
 					new RangeSetDecartTreeElement(range);
-			std::cout << "?" << std::endl;
 			AddDecartTreeElement(element);
-			std::cout << "?" << std::endl;
 			set_size(size() + 1);
-			std::cout << "?" << std::endl;
 		}
 		
 		void RangeSetDecartTree::AddDecartTreeElement(
 				RangeSetDecartTreeElement *element) {
 			if (element == NULL) {
-				// TODO: Think aboyt exception.
+				// TODO: Think about exception.
 				return;
 			}
 			if (root() == NULL) {
 				set_root(element);
 				return;
 			}
-			std::cout << "AddDecartTreeElement" << std::endl;
 			DecartTreeElementPushDown(root(), element);
-			std::cout << "AddDecartTreeElement" << std::endl;
 			DecartTreeElementPushUp(element);
-			std::cout << "AddDecartTreeElement" << std::endl;
 		}
 
 		void RangeSetDecartTree::DecartTreeElementPushDown(
@@ -83,9 +76,7 @@ namespace lspl {
 				// TODO: Think about exception.
 				return;
 			}
-			std::cout << "DecartTreeElementPushDown" << std::endl;
-			if (*root < *element) {
-				std::cout << "<" << std::endl;
+			if (*root > *element) {
 				if (root->left_child() == NULL) {
 					root->set_left_child(element);
 					element->set_parent_node(root);
@@ -93,7 +84,6 @@ namespace lspl {
 					DecartTreeElementPushDown(root->left_child(), element);
 				}
 			} else {
-				std::cout << ">" << std::endl;
 				if (root->right_child() == NULL) {
 					root->set_right_child(element);
 					element->set_parent_node(root);
@@ -108,9 +98,11 @@ namespace lspl {
 			if (element == NULL || element->IsRoot() ||
 					element->parent_node()->priority() >= element->priority()) {
 				// TODO: Think about exception on NULL element.
+				if (element != NULL && element->IsRoot()) {
+					set_root(element);
+				}
 				return;
 			}
-			std::cout << "DecartTreeElementPushUp" << std::endl;
 			if (element->IsLeftChild()) {
 				// Element is left child.
 				element->RotateRight();
@@ -133,6 +125,7 @@ namespace lspl {
 				// TODO: Think about exception.
 				return;
 			}
+			//Print();
 			if (element->IsLeaf()) {
 				if (element->IsRoot()) {
 					set_root(NULL);
@@ -144,17 +137,30 @@ namespace lspl {
 					}
 				}
 				delete element;
+				set_size(size() - 1);
 				return;
 			}
 			if (element->left_child() == NULL) {
-				element->RotateLeft();
+				if (element->IsRoot()) {
+					set_root(element->right_child());
+				}
+				element->right_child()->RotateLeft();
 			} else if (element->right_child() == NULL) {
-				element->RotateRight();
+				if (element->IsRoot()) {
+					set_root(element->left_child());
+				}
+				element->left_child()->RotateRight();
 			} else if (element->left_child()->priority() >
 					element->right_child()->priority()) {
-				element->RotateLeft();
+				if (element->IsRoot()) {
+					set_root(element->left_child());
+				}
+				element->left_child()->RotateRight();
 			} else {
-				element->RotateRight();
+				if (element->IsRoot()) {
+					set_root(element->right_child());
+				}
+				element->right_child()->RotateLeft();
 			}
 			DeleteDecartTreeElement(element);
 		}
@@ -205,6 +211,29 @@ namespace lspl {
 				}
 			}
 			return element;
+		}
+
+		void RangeSetDecartTree::Print() const {
+			PrintSubtree(root());
+		}
+
+		void RangeSetDecartTree::PrintSubtree(
+				RangeSetDecartTreeElement *element, const int deep) const {
+			if (element == NULL) {
+				return;
+			}
+			for(int i = 0; i < deep; ++i) {
+				printf("  ");
+			}
+			printf("P:%d range:(%d, %d)", element->priority(),
+					element->range()->start, element->range()->end);
+			printf("\r\n");
+			printf("Left:");
+			PrintSubtree(element->left_child(), deep + 1);
+			printf("\r\n");
+			printf("Right:");
+			PrintSubtree(element->right_child(), deep + 1);
+			printf("\r\n");
 		}
 	}
 }
