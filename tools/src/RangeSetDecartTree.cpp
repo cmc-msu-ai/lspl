@@ -1,9 +1,10 @@
-/*
+/**
  * Author: Vadim Antonov(avadim@gmail.com)
  */
 #include <cstring>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
 
 #include "RangeSetDecartTree.h"
 
@@ -48,10 +49,14 @@ namespace lspl {
 
 		void RangeSetDecartTree::AddRange(
 				const Range &range) {
+			std::cout << "?" << std::endl;
 			RangeSetDecartTreeElement *element =
 					new RangeSetDecartTreeElement(range);
+			std::cout << "?" << std::endl;
 			AddDecartTreeElement(element);
+			std::cout << "?" << std::endl;
 			set_size(size() + 1);
+			std::cout << "?" << std::endl;
 		}
 		
 		void RangeSetDecartTree::AddDecartTreeElement(
@@ -62,9 +67,13 @@ namespace lspl {
 			}
 			if (root() == NULL) {
 				set_root(element);
+				return;
 			}
+			std::cout << "AddDecartTreeElement" << std::endl;
 			DecartTreeElementPushDown(root(), element);
+			std::cout << "AddDecartTreeElement" << std::endl;
 			DecartTreeElementPushUp(element);
+			std::cout << "AddDecartTreeElement" << std::endl;
 		}
 
 		void RangeSetDecartTree::DecartTreeElementPushDown(
@@ -74,7 +83,9 @@ namespace lspl {
 				// TODO: Think about exception.
 				return;
 			}
+			std::cout << "DecartTreeElementPushDown" << std::endl;
 			if (*root < *element) {
+				std::cout << "<" << std::endl;
 				if (root->left_child() == NULL) {
 					root->set_left_child(element);
 					element->set_parent_node(root);
@@ -82,6 +93,7 @@ namespace lspl {
 					DecartTreeElementPushDown(root->left_child(), element);
 				}
 			} else {
+				std::cout << ">" << std::endl;
 				if (root->right_child() == NULL) {
 					root->set_right_child(element);
 					element->set_parent_node(root);
@@ -98,6 +110,7 @@ namespace lspl {
 				// TODO: Think about exception on NULL element.
 				return;
 			}
+			std::cout << "DecartTreeElementPushUp" << std::endl;
 			if (element->IsLeftChild()) {
 				// Element is left child.
 				element->RotateRight();
@@ -110,6 +123,8 @@ namespace lspl {
 		
 		void RangeSetDecartTree::DeleteRange(
 				const Range &range) {
+			RangeSetDecartTreeElement *element = FindDecartTreeElement(range);
+			DeleteDecartTreeElement(element);
 		}
 
 		void RangeSetDecartTree::DeleteDecartTreeElement(
@@ -144,12 +159,12 @@ namespace lspl {
 			DeleteDecartTreeElement(element);
 		}
 
-		bool RangeSetDecartTree::FindRange(const Range &range) {
+		bool RangeSetDecartTree::FindRange(const Range &range) const {
 			return FindDecartTreeElement(range) != NULL;
 		}
 
 		RangeSetDecartTreeElement* RangeSetDecartTree::FindDecartTreeElement(
-				const Range &range) {
+				const Range &range) const {
 			RangeSetDecartTreeElement* element = root();
 			while (element != NULL and *(element->range()) != range) {
 				if (*(element->range()) > range) {
@@ -162,7 +177,7 @@ namespace lspl {
 		}
 
 		const Range* RangeSetDecartTree::FindRangeExtension(
-				const Range &range) {
+				const Range &range) const {
 			RangeSetDecartTreeElement* element =
 					FindDecartTreeElementExtension(range);
 			if (element == NULL) {
@@ -173,9 +188,21 @@ namespace lspl {
 
 		RangeSetDecartTreeElement* 
 				RangeSetDecartTree::FindDecartTreeElementExtension(
-				const Range &range) {
+				const Range &range) const {
 			RangeSetDecartTreeElement* element = root();
 			while (element != NULL && !element->range()->IsIncludeRange(range)) {
+				if (element->range()->start > range.start) {
+					element = element->left_child();
+					continue;
+				}
+				// Now elements in the left tree have their starts less than
+				// range.start.
+				if (element->left_child() != NULL && 
+						element->subtree_max_right_part_of_ranges()->end >= range.end) {
+					element = element->left_child();
+				} else {
+					element = element->right_child();
+				}
 			}
 			return element;
 		}

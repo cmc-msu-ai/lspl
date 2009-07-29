@@ -1,4 +1,4 @@
-/*
+/**
  * Author: Vadim Antonov(avadim@gmail.com).
  *
  * This class represents modified Decart tree element for the RangeSet purposes.
@@ -23,10 +23,9 @@ namespace lspl {
 			boost::scoped_ptr<Range> _range;
 			int _priority;
 			int _subtree_height;
-			// It doesn't include this element. Only it's children.
+			// It doesn't include the element. Only it's children.
 			const Range *_subtree_max_right_part_of_ranges;
 			int _subtree_size;
-			// TODO: add sizeOfSubtree, maxRightPartOfRanges.
 
 			// New object will use range elements, which we will pass
 			// into the constructor.

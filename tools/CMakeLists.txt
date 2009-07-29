@@ -54,6 +54,18 @@ add_executable(lspl-dictionary-recognizer ${LSPL_DICTIONARY_RECOGNIZER_SOURCES})
 
 target_link_libraries(lspl-dictionary-recognizer lspl)
 
+### lspl-RangeSetDecartTreeTest
+
+set(LSPL_RANGESET_DECART_TREE_TEST_SOURCES
+	src/RangeSetDecartTreeTest.cpp
+	src/RangeSetDecartTreeElement.cpp
+	src/RangeSetDecartTree.cpp
+)
+
+add_executable(lspl-rangeset-decart-tree-test ${LSPL_RANGESET_DECART_TREE_TEST_SOURCES})
+
+target_link_libraries(lspl-rangeset-decart-tree-test lspl)
+
 
 # Flags for effective error parsing
 

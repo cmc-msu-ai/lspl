@@ -1,8 +1,9 @@
-/*
+/**
  * Author: Vadim Antonov(avadim@gmail.com).
  */
 
 #include <algorithm>
+#include <iostream>
 #include "RangeSetDecartTreeElement.h"
 
 namespace lspl {
@@ -23,9 +24,9 @@ namespace lspl {
 		void RangeSetDecartTreeElement::Initialization(const Range &range,
 				RangeSetDecartTreeElement *parent_node) {
 			_range.reset(new Range(range));
-			set_parent_node(parent_node);
-			set_left_child(NULL);
-			set_right_child(NULL);
+			_parent_node = parent_node;
+			_left_child = NULL;
+			_right_child = NULL;
 			_priority = rand() % MAX_PRIORITY;
 			RenewSubtreeParameters();
 		}
@@ -34,30 +35,39 @@ namespace lspl {
 			set_subtree_size(1);
 			set_subtree_height(1);
 			set_subtree_max_right_part_of_ranges(NULL);
+			std::cout << "RenewSubtreeParameters" << std::endl;
 			if (left_child() != NULL) {
 				set_subtree_size(subtree_size() + left_child()->subtree_size());
 				set_subtree_height(1 + left_child()->subtree_height());
 				set_subtree_max_right_part_of_ranges(
 						left_child()->subtree_max_right_part_of_ranges());
-				if (left_child()->range()->end >
+			std::cout << "RenewSubtreeParameters left" << std::endl;
+				if (subtree_max_right_part_of_ranges() == NULL ||
+						left_child()->range()->end >
 						subtree_max_right_part_of_ranges()->end) {
+			std::cout << "RenewSubtreeParameters left" << std::endl;
 					set_subtree_max_right_part_of_ranges(left_child()->range());
 				}
 			}
 			if (right_child() != NULL) {
+			std::cout << "RenewSubtreeParameters right" << std::endl;
 				set_subtree_size(subtree_size() + right_child()->subtree_size());
 				set_subtree_height(std::max(subtree_height(),
 						1 + right_child()->subtree_height()));
-				if (right_child()->subtree_max_right_part_of_ranges()->end >
-						subtree_max_right_part_of_ranges()->end) {
+				if (subtree_max_right_part_of_ranges() == NULL ||
+						(right_child()->subtree_max_right_part_of_ranges() != NULL &&
+						right_child()->subtree_max_right_part_of_ranges()->end >
+						subtree_max_right_part_of_ranges()->end)) {
 					set_subtree_max_right_part_of_ranges(
 							right_child()->subtree_max_right_part_of_ranges());
 				}
-				if (right_child()->range()->end >
+				if (subtree_max_right_part_of_ranges() == NULL ||
+						right_child()->range()->end >
 						subtree_max_right_part_of_ranges()->end) {
 					set_subtree_max_right_part_of_ranges(right_child()->range());
 				}
 			}
+			std::cout << "RenewSubtreeParameters end" << std::endl;
 		}
 
 		// Getters.
@@ -130,8 +140,11 @@ namespace lspl {
 			if (IsRoot()) {
 				return;
 			}
+			std::cout << "RotateLeft" << std::endl;
 			parent_node()->set_right_child(left_child());
-			left_child()->set_parent_node(parent_node());
+			if (left_child() != NULL) {
+				left_child()->set_parent_node(parent_node());
+			}
 			set_left_child(parent_node());
 			if (!parent_node()->IsRoot()) {
 				if (parent_node()->IsLeftChild()) {
@@ -149,8 +162,11 @@ namespace lspl {
 			if (IsRoot()) {
 				return;
 			}
+			std::cout << "RotateLeft" << std::endl;
 			parent_node()->set_left_child(right_child());
-			right_child()->set_parent_node(parent_node());
+			if (right_child() != NULL) {
+				right_child()->set_parent_node(parent_node());
+			}
 			set_right_child(parent_node());
 			if (!parent_node()->IsRoot()) {
 				if (parent_node()->IsLeftChild()) {

@@ -1,4 +1,4 @@
-/*
+/**
  * Author: Vadim Antonov(avadim@gmail.com)
  *
  * This class represents modified Decart tree for the RangeSet purposes.
@@ -50,7 +50,8 @@ namespace lspl {
 			// Find RangeSetDecartTreeElement by range in the tree.
 			// Returns RangeSetDecartTreeElement with this range, if it exists 
 			// or NULL otherwise.
-			RangeSetDecartTreeElement* FindDecartTreeElement(const Range &range);
+			RangeSetDecartTreeElement*
+				FindDecartTreeElement(const Range &range) const;
 
 			// Find RangeSetDecartTreeElement in the tree, which includes range.
 			// Returns RangeSetDecartTreeElement, which includes this range, 
@@ -59,7 +60,7 @@ namespace lspl {
 			// Findind range is similar with Range Max Query.
 			// After that find element with this range.
 			RangeSetDecartTreeElement* FindDecartTreeElementExtension(
-					const Range &range);
+					const Range &range) const;
 		 public:
 			RangeSetDecartTree(bool need_srand = true);
 
@@ -76,13 +77,13 @@ namespace lspl {
 
 			// Find range in the tree.
 			// Retruns true, if it's in the tree.
-			bool FindRange(const Range &range);
+			bool FindRange(const Range &range) const;
 
 			// Find range in the tree, which includes range from the parameter.
 			// Returns range, if it exists, or NULL otherwise.
 			// Function returns copy of the found range, so, user must delete it
 			// after using.
-			const Range* FindRangeExtension(const Range &range);
+			const Range* FindRangeExtension(const Range &range) const;
 		};
 	}
 }

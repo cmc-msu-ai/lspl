@@ -21,8 +21,8 @@ public:
 
 	uint length() const { return end - start; }
 
-	bool IsIncludeRange(const Range &range);
-	bool IsIntersectRange(const Range &range);
+	bool IsIncludeRange(const Range &range) const;
+	bool IsIntersectRange(const Range &range) const;
 
 	friend bool operator<(const Range& rang1, const Range& range2);
 	friend bool operator>(const Range& rang1, const Range& range2);
