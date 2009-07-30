@@ -91,6 +91,7 @@ namespace lspl {
 					DecartTreeElementPushDown(root->right_child(), element);
 				}
 			}
+			root->RenewSubtreeParameters();
 		}
 
 		void RangeSetDecartTree::DecartTreeElementPushUp(
@@ -135,6 +136,11 @@ namespace lspl {
 					} else {
 						element->parent_node()->set_right_child(NULL);
 					}
+				}
+				RangeSetDecartTreeElement *parent= element->parent_node();
+				while (parent != NULL) {
+					parent->RenewSubtreeParameters();
+					parent = parent->parent_node();
 				}
 				delete element;
 				set_size(size() - 1);
@@ -204,7 +210,10 @@ namespace lspl {
 				// Now elements in the left tree have their starts less than
 				// range.start.
 				if (element->left_child() != NULL && 
-						element->subtree_max_right_part_of_ranges()->end >= range.end) {
+						(element->left_child()->range()->end >= range.end ||
+						(element->left_child()->subtree_max_right_part_of_ranges() != NULL
+						&& element->left_child()->subtree_max_right_part_of_ranges()->end >=
+						range.end))) {
 					element = element->left_child();
 				} else {
 					element = element->right_child();
@@ -225,13 +234,20 @@ namespace lspl {
 			for(int i = 0; i < deep; ++i) {
 				printf("  ");
 			}
-			printf("P:%d range:(%d, %d)", element->priority(),
-					element->range()->start, element->range()->end);
+			if (element->subtree_max_right_part_of_ranges() == NULL) {
+				printf("P:%d range:(%d, %d)", element->priority(),
+						element->range()->start, element->range()->end);
+			} else {
+				printf("P:%d range:(%d, %d) mrp:(%d %d)", element->priority(),
+						element->range()->start, element->range()->end,
+						element->subtree_max_right_part_of_ranges()->start,
+						element->subtree_max_right_part_of_ranges()->end);
+			}
 			printf("\r\n");
-			printf("Left:");
+			printf("L:");
 			PrintSubtree(element->left_child(), deep + 1);
 			printf("\r\n");
-			printf("Right:");
+			printf("R:");
 			PrintSubtree(element->right_child(), deep + 1);
 			printf("\r\n");
 		}
