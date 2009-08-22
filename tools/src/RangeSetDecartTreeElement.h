@@ -90,7 +90,7 @@ namespace lspl {
 
 			friend class RangeSetDecartTree;
 		};
-	}
-}
+	} // namespace base
+} // namespace lspl
 
 #endif // __LSPL_BASE_RANGE_SET_DECART_TREE_ELEMENT

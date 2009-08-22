@@ -48,6 +48,7 @@ set(LSPL_DICTIONARY_RECOGNIZER_SOURCES
 	src/DictionaryMain.cpp
 	src/RangeSetDecartTreeElement.cpp
 	src/RangeSetDecartTree.cpp
+	src/RangeSet.cpp
 )
 
 add_executable(lspl-dictionary-recognizer ${LSPL_DICTIONARY_RECOGNIZER_SOURCES})

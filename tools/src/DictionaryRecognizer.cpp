@@ -2,8 +2,9 @@
  * Author: Antonov Vadim (avadim@gmail.com)
  */
 
-#include <iostream>
+#include <algorithm>
 #include <fstream>
+#include <iostream>
 #include <string>
 
 #include "DictionaryRecognizer.h"
@@ -11,6 +12,7 @@
 #include "lspl/text/Match.h"
 #include "lspl/text/readers/PlainTextReader.h"
 #include "lspl/utils/Conversion.h"
+#include "RangeSet.h"
 
 
 namespace lspl {
@@ -73,19 +75,42 @@ namespace lspl {
 		_text = text;
 	}
 
-	std::list<std::pair<lspl::patterns::PatternRef, int> >
+	std::vector<std::pair<lspl::patterns::PatternRef, int> >
 			DictionaryRecognizer::RecognizeAndSearch() const {
-		std::list<std::pair<lspl::patterns::PatternRef, int> > result;
+		std::vector<std::pair<lspl::patterns::PatternRef, int> > result;
 
 		for(uint i = 0; i < _patterns_namespace->getPatternCount(); i++) {
-			lspl::patterns::PatternRef pattern = _patterns_namespace->getPatternByIndex(i);
-			lspl::text::MatchList matches = _text->getMatches(*pattern);
+			lspl::patterns::PatternRef pattern =
+					_patterns_namespace->getPatternByIndex(i);
+			lspl::text::MatchList matches = _text->getMatches(pattern);
 			if (matches.size() != 0) {
-				//std::cout << std::endl << "Pattern: " << out.convert( pt->name ) << std::endl;
-				for(uint j = 0; j < matches.size(); j++) {
-					lspl::text::MatchRef match = matches[j];
-					lspl::base::Range range = match->getFragment(0);
-					//std::cout << "Match '" << out.convert( match->getFragment(0).getText() ) << std::endl;
+				result.push_back(
+						std::pair<lspl::patterns::PatternRef, int>(pattern, 0));
+				std::cout << "Pattern: " << out.convert( pattern->name ) << std::endl;
+			}
+		}
+
+		std::sort(result.begin(), result.end(),
+				ComparePatternsMatches);
+
+		lspl::base::RangeSet range_set;
+		for(int i = 0; i < result.size(); ++i) {
+			lspl::patterns::PatternRef pattern = result[i].first;
+			std::cout << " Pattern: " << out.convert( pattern->name ) << std::endl;
+			lspl::text::MatchList matches = _text->getMatches(pattern);
+			for(uint j = 0; j < matches.size(); j++) {
+				lspl::text::MatchRef match = matches[j];
+				lspl::base::Range range = match->getFragment(0);
+				if (!range_set.FindRangeExtension(range)) {
+					range_set.AddRange(range);
+					++(result[i].second);
+					std::cout << "Match '" <<
+							out.convert( match->getFragment(0).getText() ) << "'" <<
+							std::endl;
+				} else {
+					std::cout << "Don't include match '" <<
+							out.convert( match->getFragment(0).getText() ) << "'" <<
+							std::endl;
 				}
 			}
 		}
@@ -93,4 +118,9 @@ namespace lspl {
 		return result;
 	}
 
+	bool DictionaryRecognizer::ComparePatternsMatches(
+				const std::pair<lspl::patterns::PatternRef, int> &i,
+				const std::pair<lspl::patterns::PatternRef, int> &j) {
+		return i.first->name.size() >= j.first->name.size();
+	}
 } // namespace lspl.

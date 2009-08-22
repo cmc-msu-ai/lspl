@@ -17,6 +17,7 @@
 #ifndef __LSPL_BASE_RANGE_SET_DECART_TREE
 #define __LSPL_BASE_RANGE_SET_DECART_TREE
 
+#include "lspl/base/Range.h"
 #include "RangeSetDecartTreeElement.h"
 
 namespace lspl {
@@ -65,6 +66,7 @@ namespace lspl {
 			void PrintSubtree(RangeSetDecartTreeElement *element,
 					const int deep = 0) const;
 		 public:
+			// If parameter need_srand is true, it calls srand(time(NULL)).
 			RangeSetDecartTree(bool need_srand = true);
 
 			virtual ~RangeSetDecartTree();
@@ -84,14 +86,12 @@ namespace lspl {
 
 			// Find range in the tree, which includes range from the parameter.
 			// Returns range, if it exists, or NULL otherwise.
-			// Function returns copy of the found range, so, user must delete it
-			// after using.
 			const Range* FindRangeExtension(const Range &range) const;
 
 			// Print tree to the stdout.
 			void Print() const;
 		};
-	}
-}
+	} // namespace base
+} // namespace lspl
 
 #endif // __LSPL_BASE_RANGE_SET_DECART_TREE

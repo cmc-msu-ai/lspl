@@ -3,7 +3,6 @@
  */
 
 #include <algorithm>
-#include <iostream>
 #include "RangeSetDecartTreeElement.h"
 
 namespace lspl {
@@ -183,6 +182,6 @@ namespace lspl {
 		bool RangeSetDecartTreeElement::operator==(const RangeSetDecartTreeElement &element) {
 			return *range() == *(element.range());
 		}
-	}
-}
+	} // namespace base
+} // namepsace lspl
 

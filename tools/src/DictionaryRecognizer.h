@@ -7,7 +7,7 @@
 #ifndef __LSPL_DICITONARY_RECONGNIZER
 #define __LSPL_DICITONARY_RECONGNIZER
 
-#include <list>
+#include <vector>
 
 #include "lspl/Namespace.h"
 #include "lspl/text/Text.h"
@@ -32,8 +32,14 @@ class DictionaryRecognizer {
 	DictionaryRecognizer(const lspl::NamespaceRef patterns_namespace,
 			const lspl::text::TextRef text);
 
-	std::list<std::pair<lspl::patterns::PatternRef, int> > 
+	// Find dicrionary terms in the text.
+	std::vector<std::pair<lspl::patterns::PatternRef, int> > 
 			RecognizeAndSearch() const;
+
+	// Compare function for the std::sort for patterns sorting.
+	static bool ComparePatternsMatches(
+			const std::pair<lspl::patterns::PatternRef, int> &i,
+			const std::pair<lspl::patterns::PatternRef, int> &j);
 };
 
 } // namespace lspl.

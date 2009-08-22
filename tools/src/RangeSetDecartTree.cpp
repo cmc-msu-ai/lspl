@@ -4,7 +4,6 @@
 #include <cstring>
 #include <cstdlib>
 #include <ctime>
-#include <iostream>
 
 #include "RangeSetDecartTree.h"
 
@@ -251,5 +250,5 @@ namespace lspl {
 			PrintSubtree(element->right_child(), deep + 1);
 			printf("\r\n");
 		}
-	}
-}
+	} // namespace base
+} // namespace lspl
