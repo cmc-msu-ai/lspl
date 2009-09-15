@@ -13,6 +13,7 @@
 #include <lspl/Namespace.h>
 
 #include <string>
+#include <iostream>
 
 namespace lspl { namespace assertions {
 
@@ -23,6 +24,16 @@ void assertFails( const std::string & patternSource );
 
 void assertFalse( bool exp, const char * message = 0);
 void assertTrue( bool exp, const char * message = 0);
+
+template< typename A, typename B >
+void assertEquals( A a, B b ) {
+	if ( a != b ) {
+		std::cout << "ERROR: " << a << " expected, but got " << b << std::endl;
+		std::cout.flush();
+
+		exit(1);
+	}
+}
 
 } }
 

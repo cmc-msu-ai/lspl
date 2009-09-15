@@ -56,6 +56,26 @@ void Pattern::updateDependencies() {
 	}
 }
 
+void Pattern::removeDuplicateAlternatives() {
+	uint i = 0;
+
+	while ( i < alternatives.size() ) {
+		bool found = false;
+		for ( uint j = 0; j < i; ++ j ) {
+			if ( alternatives[i].equals( alternatives[j] ) ) {
+				found = true;
+				break;
+			}
+		}
+
+		if ( found ) {
+			alternatives.erase( alternatives.begin() + i );
+		} else {
+			++ i;
+		}
+	}
+}
+
 std::string Pattern::getSource() const {
 	std::string result = "";
 

@@ -62,6 +62,11 @@ public:
 	void updateDependencies();
 
 	/**
+	 * Удалить дублирующиеся альтернативы
+	 */
+	void removeDuplicateAlternatives();
+
+	/**
 	 * Получить список зависимостей
 	 */
 	const std::vector<const Pattern *> & getDependencies() const {

@@ -229,6 +229,27 @@ void testPatternStructure() {
 
 		assertFalse( ab.equals( ab3 ), "ab shouldn't be equal ab3" );
 	}
+
+	// Remove duplicate test
+	{
+		Pattern p2("TP");
+		Alternative & a1 = p2.newAlternative( "A N" );
+		a1.newWordMatcher( "",SpeechPart::ADJECTIVE );
+		a1.newWordMatcher( "",SpeechPart::NOUN );
+
+		Alternative & a2 = p2.newAlternative( "A N" );
+		a2.newWordMatcher( "",SpeechPart::ADJECTIVE );
+		a2.newWordMatcher( "",SpeechPart::NOUN );
+
+		Alternative & a3 = p2.newAlternative( "A" );
+		a3.newWordMatcher( "",SpeechPart::ADJECTIVE );
+
+		p2.removeDuplicateAlternatives();
+
+		assertEquals( 2, p2.alternatives.size() );
+		assertEquals( &p2.alternatives[0], &a1 );
+		assertEquals( &p2.alternatives[1], &a3 );
+	}
 }
 
 } }
