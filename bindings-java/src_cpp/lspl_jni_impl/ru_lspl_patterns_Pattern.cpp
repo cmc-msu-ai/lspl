@@ -74,6 +74,15 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_patterns_Pattern_dump(JNIEnv * env, jobje
 }
 
 /*
+ * Class:     ru_lspl_patterns_Pattern
+ * Method:    removeDuplicateAlternatives
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_ru_lspl_patterns_Pattern_removeDuplicateAlternatives(JNIEnv * env, jobject obj) {
+	JavaPattern::get( env, obj )->removeDuplicateAlternatives();
+}
+
+/*
  * Class:     ru_lspl_Pattern
  * Method:    finalize
  * Signature: ()V
