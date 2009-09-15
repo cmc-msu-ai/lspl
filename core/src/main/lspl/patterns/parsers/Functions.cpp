@@ -150,7 +150,7 @@ void AddPatternRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matcher
 			LoopMatcher & loopMatcher = dynamic_cast<LoopMatcher &>( matcher );
 
 			for ( uint i = 0; i < loopMatcher.alternatives.size(); ++ i ) {
-				(*this)( const_cast<boost::ptr_vector<Matcher> &>( loopMatcher.alternatives[i]->getMatchers() ), elems );
+				(*this)( const_cast<boost::ptr_vector<Matcher> &>( loopMatcher.alternatives[i].getMatchers() ), elems );
 			}
 		}
 	}

@@ -10,6 +10,7 @@
 
 namespace lspl { namespace tests {
 
+void testPatternStructure();
 void testPatterns();
 void testDictionaries();
 void testMatching();

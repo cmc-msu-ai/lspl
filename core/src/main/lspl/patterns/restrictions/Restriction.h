@@ -35,6 +35,14 @@ public:
 
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const = 0;
 
+	/**
+	 * Сравнить на равенство с заданным ограничением.
+	 *
+	 * @param r ограничение, с которым сравнивать
+	 * @return true, если ограничения равны
+	 */
+	virtual bool equals( const Restriction & r ) const = 0;
+
 public:
 
 	/**

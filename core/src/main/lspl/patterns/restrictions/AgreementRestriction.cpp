@@ -94,4 +94,18 @@ bool AgreementRestriction::checkAgreement( AttributeValue val1, AttributeValue v
 	}
 }
 
+bool AgreementRestriction::equals( const Restriction & r ) const {
+	if ( const AgreementRestriction * ar = dynamic_cast<const AgreementRestriction *>( &r ) ) {
+		if ( ar->args.size() != args.size() ) return false;
+
+		for ( uint i = 0, l = args.size(); i < l; ++ i )
+			if ( !ar->args[i].equals( args[i] ) )
+				return false;
+
+		return true;
+	} else {
+		return false;
+	}
+}
+
 } } }

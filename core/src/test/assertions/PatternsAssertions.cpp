@@ -15,6 +15,25 @@
 
 namespace lspl { namespace assertions {
 
+void assertTrue( bool exp, const char * message ) {
+	if ( !exp ) {
+		std::cout << "ERROR: " << ( message ? message : "Assertion failed" ) << std::endl;
+		std::cout.flush();
+
+		exit(1);
+	}
+}
+
+void assertFalse( bool exp, const char * message ) {
+	if ( exp ) {
+		std::cout << "ERROR: " << ( message ? message : "Assertion failed" ) << std::endl;
+		std::cout.flush();
+
+		exit(1);
+	}
+}
+
+
 void assertBuilds( const NamespaceRef & ns, const std::string & patternSource ) {
 	patterns::PatternBuilder builder( ns );
 

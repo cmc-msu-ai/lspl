@@ -37,9 +37,10 @@ public:
 			args.transfer( args.end(), r.begin(), r.end(), r );
 	}
 
-	text::attributes::AttributeValue evaluate( const text::Transition & annotation, const matchers::Context & ctx ) const;
+	virtual text::attributes::AttributeValue evaluate( const text::Transition & annotation, const matchers::Context & ctx ) const;
 
-	void dump( std::ostream & out, const std::string & tabs = "" ) const;
+	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
+	virtual bool equals( const Expression & e ) const;
 public:
 	boost::ptr_vector<Expression> args;
 };

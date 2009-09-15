@@ -29,4 +29,12 @@ void VariableExpression::dump( std::ostream & out, const std::string & tabs ) co
 	out << variable;
 }
 
+bool VariableExpression::equals( const Expression & e ) const {
+	if ( const VariableExpression * exp = dynamic_cast<const VariableExpression *>( &e ) ) {
+		return exp->variable == variable;
+	} else {
+		return false;
+	}
+}
+
 } } }

@@ -21,6 +21,9 @@ void assertBuilds( const std::string & patternSource );
 void assertFails( const NamespaceRef & ns, const std::string & patternSource );
 void assertFails( const std::string & patternSource );
 
+void assertFalse( bool exp, const char * message = 0);
+void assertTrue( bool exp, const char * message = 0);
+
 } }
 
 #endif//_LSPL_ASSERTIONS_PATTERNSASSERTIONS_H_

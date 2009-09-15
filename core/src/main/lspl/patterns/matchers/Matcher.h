@@ -45,6 +45,14 @@ public:
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const = 0;
 
 	/**
+	 * Сравнить на равенство с заданным сопоставителем.
+	 *
+	 * @param m сопоставитель, с которым сравнивать
+	 * @return true, если сопоставители равны
+	 */
+	virtual bool equals( const Matcher & m ) const;
+
+	/**
 	 * Добавить ограничение к сопоставителю
 	 * @param r ограничение
 	 */

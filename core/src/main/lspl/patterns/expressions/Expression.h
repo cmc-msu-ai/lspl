@@ -39,6 +39,14 @@ public:
 	virtual text::attributes::AttributeValue evaluate( const text::Transition & annotation, const matchers::Context & ctx ) const = 0;
 
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const = 0;
+
+	/**
+	 * Сравнить на равенство с заданным выражением.
+	 *
+	 * @param е выражение, с которым сравнивать
+	 * @return true, если выражения равны
+	 */
+	virtual bool equals( const Expression & e ) const = 0;
 };
 
 inline std::ostream & operator << ( std::ostream & out, const Expression & val ) {

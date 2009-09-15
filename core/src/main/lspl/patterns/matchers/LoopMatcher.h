@@ -5,6 +5,8 @@
 #include "Matcher.h"
 #include "MatcherContainer.h"
 
+#include <boost/ptr_container/ptr_vector.hpp>
+
 namespace lspl { namespace patterns { namespace matchers {
 
 /**
@@ -48,6 +50,16 @@ public:
 		alternatives.push_back( alternative );
 	}
 
+	/**
+	 * Создать новую альтернативу
+	 * @return ссылка на альтерантиву
+	 */
+	MatcherContainer & newAlternative() {
+		MatcherContainer * a = new MatcherContainer();
+		alternatives.push_back( a );
+		return *a;
+	}
+
 	void buildChains( const text::Node & node, const Context & context, ChainList & results ) const;
 
 	void buildChains( const text::Transition & transition, const Context & context, ChainList & results ) const;
@@ -68,7 +80,7 @@ public:
 	/**
 	 * Список альтернатив последовательности.
 	 */
-	std::vector<MatcherContainer*> alternatives;
+	boost::ptr_vector<MatcherContainer> alternatives;
 };
 
 } } } // namespace lspl::patterns::matchers

@@ -5,8 +5,6 @@
 #include "../../text/Transition.h"
 #include "../../text/Node.h"
 
-#include <iostream>
-
 using lspl::text::Transition;
 using lspl::text::TransitionList;
 using lspl::text::TransitionRef;
@@ -26,6 +24,18 @@ Matcher::Matcher( Type type ) :
 
 Matcher::~Matcher() {
 	-- aliveObjectsCount;
+}
+
+bool Matcher::equals( const Matcher & m ) const {
+	if ( m.type != type ) return false; // Разные типы
+	if ( m.variable != variable ) return false; // Разные переменные
+	if ( m.restrictions.size() != restrictions.size() ) return false; // Разное количество ограничений
+
+	for ( uint i = 0, l = restrictions.size(); i < l; ++ i )
+		if ( !m.restrictions[i].equals( restrictions[i] ) )
+			return false;
+
+	return true;
 }
 
 bool Matcher::matchRestrictions( const Transition & annotation, const Context & ctx ) const {

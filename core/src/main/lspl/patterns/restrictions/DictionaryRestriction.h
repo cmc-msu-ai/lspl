@@ -26,8 +26,9 @@ public:
 
 	virtual ~DictionaryRestriction();
 
-	bool matches( const text::Transition & annotation, const matchers::Context & ctx ) const;
-	void dump( std::ostream & out, const std::string & tabs = "" ) const;
+	virtual bool matches( const text::Transition & annotation, const matchers::Context & ctx ) const;
+	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
+	virtual bool equals( const Restriction & r ) const;
 private:
 	dictionaries::DictionaryConstRef dictionary;
 	std::vector<matchers::Variable> variables;

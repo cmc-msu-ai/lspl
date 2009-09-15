@@ -21,9 +21,10 @@ public:
 	AttributeExpression( const Expression * base, const text::attributes::AttributeKey & attribute );
 	virtual ~AttributeExpression();
 
-	text::attributes::AttributeValue evaluate( const text::Transition & annotation, const matchers::Context & ctx ) const;
+	virtual text::attributes::AttributeValue evaluate( const text::Transition & annotation, const matchers::Context & ctx ) const;
 
-	void dump( std::ostream & out, const std::string & tabs = "" ) const;
+	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
+	virtual bool equals( const Expression & e ) const;
 public:
 	boost::scoped_ptr<const Expression> base;
 	text::attributes::AttributeKey attribute;

@@ -170,4 +170,14 @@ void PatternMatcher::dump( std::ostream & out, const std::string & tabs ) const 
 	out << " }";
 }
 
+bool PatternMatcher::equals( const Matcher & m ) const {
+	if ( !Matcher::equals( m ) ) return false; // Разные сопоставители
+
+	const PatternMatcher & pm = static_cast<const PatternMatcher &>( m );
+
+	if ( &pm.pattern != &pattern ) return false; // Ссылаются на разные шаблоны
+
+	return true;
+}
+
 } } } // namespace lspl::patterns::matchers

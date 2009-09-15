@@ -11,9 +11,10 @@ using namespace lspl::tests;
 
 int main() {
 
+	testPatternStructure();
 	testPatterns();
 	testDictionaries();
-	testTextReaders();
+	//testTextReaders();
 	testMatching();
 
 	std::cout << "Success!!!" << std::endl;

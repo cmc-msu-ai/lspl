@@ -30,6 +30,7 @@ public:
 
 	virtual bool matchTransition(const text::Transition & transition, const Context & context) const;
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
+	virtual bool equals( const Matcher & m ) const;
 
 public:
 

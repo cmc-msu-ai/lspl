@@ -36,6 +36,8 @@ public:
 	 * в список альтернатив шаблона.
 	 *
 	 * @param source исходный текст альтернативы
+	 *
+	 * @return ссылка на новую альтернативу
 	 */
 	Alternative & newAlternative( const std::string & source );
 
@@ -70,6 +72,13 @@ public:
 	 * Получить исходный текст объявления шаблона, полученный путем склеивания объявлений его альтернатив с переносом строки в качестве разделителя
 	 */
 	std::string getSource() const;
+
+	/**
+	 * Получить список внешних альтернатив шаблона
+	 */
+	const boost::ptr_vector<Alternative> & getAlternatives() const {
+		return alternatives;
+	}
 public:
 
 	/**

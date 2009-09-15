@@ -14,6 +14,24 @@ using namespace lspl::patterns::matchers;
 
 namespace lspl { namespace patterns {
 
+bool Alternative::equals( const Alternative & alt ) const {
+	if ( alt.getMatcherCount() != getMatcherCount() ) return false; // Различное количество сопоставителей
+	if ( alt.bindings.size() != bindings.size() ) return false; // Различное количество связываний
+
+	for ( uint i = 0, l = getMatcherCount(); i < l; ++ i ) // Сравниваем все сопоставители
+		if ( !alt.getMatcher( i ).equals( getMatcher( i ) ) )
+			return false;
+
+	for ( BindingMap::const_iterator it = bindings.begin(); it != bindings.end(); ++ it ) { // Перебираем все связывания
+		BindingMap::const_iterator ait = alt.bindings.find( it->first ); // Находим соответствующие
+
+		if ( ait == alt.bindings.end() ) return false; // Если соответствующего нет - альтернативы не равны
+		if ( !it->second->equals( *ait->second ) ) return false; // Если соответствующее отличается - альтернативы не равны
+	}
+
+	return true;
+}
+
 void Alternative::updateDependencies() {
 	dependencies.clear();
 
@@ -37,8 +55,8 @@ void Alternative::appendDependencies( const matchers::Matcher & matcher ) {
 			dependencies.push_back( ptr );
 		}
 	} else if ( const LoopMatcher * loopMatcher = dynamic_cast<const LoopMatcher *>( &matcher ) ) {
-		foreach( const MatcherContainer * alt, loopMatcher->alternatives )
-			foreach( const Matcher & m, alt->getMatchers() )
+		foreach( const MatcherContainer & alt, loopMatcher->alternatives )
+			foreach( const Matcher & m, alt.getMatchers() )
 				appendDependencies( m );
 	}
 }
@@ -50,7 +68,7 @@ void Alternative::appendIndexInfo( const boost::ptr_vector<Matcher> & matchers )
 		const LoopMatcher & matcher = dynamic_cast<const LoopMatcher&>( matchers[i] );
 
 		for ( uint j = 0; j < matcher.alternatives.size(); ++ j )
-			appendIndexInfo( matcher.alternatives[j]->getMatchers() );
+			appendIndexInfo( matcher.alternatives[j].getMatchers() );
 
 		if ( matcher.minLoops > 0 )
 			return;

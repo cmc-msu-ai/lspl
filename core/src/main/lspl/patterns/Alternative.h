@@ -56,6 +56,14 @@ public:
 	}
 
 	/**
+	 * Сравнить на равенство с заданной альтернативой.
+	 *
+	 * @param alt альтернатива, с которой сравнивать
+	 * @return true, если альтернативы равны
+	 */
+	bool equals( const Alternative & alt ) const;
+
+	/**
 	 * Добавить связывания
 	 */
 	template <class PtrMap>

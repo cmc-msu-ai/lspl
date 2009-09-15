@@ -22,6 +22,7 @@ public:
 	virtual text::TransitionList buildTransitions( const text::Node & node, const Context & context ) const;
 	virtual bool matchTransition(const text::Transition & transition, const Context & context) const;
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
+	virtual bool equals( const Matcher & m ) const;
 
 	void buildTransitions( const text::Node & node, const patterns::Pattern & pattern, const patterns::Alternative & alt, const Context & context, text::TransitionList & results ) const;
 	void buildTransitions( const text::Transition & transition, const patterns::Pattern & pattern, const patterns::Alternative & alt, const Context & context, text::TransitionList & results ) const;

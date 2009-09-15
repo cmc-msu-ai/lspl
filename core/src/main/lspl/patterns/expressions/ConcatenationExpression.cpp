@@ -43,4 +43,18 @@ void ConcatenationExpression::dump( std::ostream & out, const std::string & tabs
 	}
 }
 
+bool ConcatenationExpression::equals( const Expression & e ) const {
+	if ( const ConcatenationExpression * exp = dynamic_cast<const ConcatenationExpression *>( &e ) ) {
+		if ( exp->args.size() != args.size() ) return false;
+
+		for ( uint i = 0, l = args.size(); i < l; ++ i )
+			if ( !exp->args[i].equals( args[i] ) )
+				return false;
+
+		return true;
+	} else {
+		return false;
+	}
+}
+
 } } }

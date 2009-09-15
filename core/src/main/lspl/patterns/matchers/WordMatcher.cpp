@@ -43,4 +43,15 @@ void WordMatcher::dump( std::ostream & out, const std::string & tabs ) const {
 	out << " }";
 }
 
+bool WordMatcher::equals( const Matcher & m ) const {
+	if ( !Matcher::equals( m ) ) return false; // Разные сопоставители
+
+	const WordMatcher & wm = static_cast<const WordMatcher &>( m );
+
+	if ( wm.speechPart != speechPart ) return false; // Различная часть речи
+	if ( wm.base != base ) return false; // Различная основа
+
+	return true;
+}
+
 } } } // namespace lspl::patterns::matchers

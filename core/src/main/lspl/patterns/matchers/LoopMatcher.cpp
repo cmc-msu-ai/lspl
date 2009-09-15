@@ -113,9 +113,6 @@ LoopMatcher::LoopMatcher( uint min, uint max ) : AnnotationChainMatcher( LOOP ),
 }
 
 LoopMatcher::~LoopMatcher() {
-	for ( uint i = 0; i < alternatives.size(); ++i )
-		if ( MatcherContainer * alternative = alternatives[i] )
-			delete alternative;
 }
 
 void LoopMatcher::buildChains( const text::Node & node, const Context & context, ChainList & results ) const {
@@ -123,7 +120,7 @@ void LoopMatcher::buildChains( const text::Node & node, const Context & context,
 		results.push_back( std::make_pair( new Loop( node, node, TransitionList() ), context ) );
 
 	for ( uint i = 0; i < alternatives.size(); ++ i )
-		processLoop( LoopMatchState( *this, node, context, alternatives[i]->getMatchers() ), results );
+		processLoop( LoopMatchState( *this, node, context, alternatives[i].getMatchers() ), results );
 }
 
 void LoopMatcher::buildChains( const text::Transition & transition, const Context & context, ChainList & results ) const {
@@ -131,7 +128,7 @@ void LoopMatcher::buildChains( const text::Transition & transition, const Contex
 		results.push_back( std::make_pair( new Loop( transition.start, transition.start, TransitionList() ), context ) );
 
 	for ( uint i = 0; i < alternatives.size(); ++ i ) {
-		const LoopMatchState s0( *this, transition.start, context, alternatives[i]->getMatchers() );
+		const LoopMatchState s0( *this, transition.start, context, alternatives[i].getMatchers() );
 
 		if ( const AnnotationMatcher * curMatcher = dynamic_cast<const AnnotationMatcher *>( &s0.getCurrentMatcher() ) ) {
 			if ( !curMatcher->matchTransition( transition, Context() ) )
@@ -161,7 +158,7 @@ void LoopMatcher::dump( std::ostream & out, const std::string & tabs ) const {
 
 		out << "[\n\t\t";
 
-		const boost::ptr_vector<Matcher> & matchers = alternatives[j]->getMatchers();
+		const boost::ptr_vector<Matcher> & matchers = alternatives[j].getMatchers();
 
 		for ( uint i = 0; i < matchers.size(); ++ i ) {
 			if ( i != 0 )

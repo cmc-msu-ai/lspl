@@ -35,8 +35,9 @@ public:
 			args.transfer( args.end(), r.begin(), r.end(), r );
 	}
 
-	bool matches( const text::Transition & annotation, const matchers::Context & ctx ) const;
-	void dump( std::ostream & out, const std::string & tabs = "" ) const;
+	virtual bool matches( const text::Transition & annotation, const matchers::Context & ctx ) const;
+	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
+	virtual bool equals( const Restriction & r ) const;
 private:
 	bool checkAgreement( text::attributes::AttributeValue val1, text::attributes::AttributeValue val2 ) const;
 private:

@@ -27,4 +27,12 @@ void ConstantExpression::dump( std::ostream & out, const std::string & tabs ) co
 	out << value;
 }
 
+bool ConstantExpression::equals( const Expression & e ) const {
+	if ( const ConstantExpression * exp = dynamic_cast<const ConstantExpression *>( &e ) ) {
+		return exp->value == value;
+	} else {
+		return false;
+	}
+}
+
 } } } // namespace lspl::patterns::expressions

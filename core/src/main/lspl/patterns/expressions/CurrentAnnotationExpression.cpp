@@ -28,4 +28,12 @@ void CurrentAnnotationExpression::dump( std::ostream & out, const std::string & 
 	out << "$";
 }
 
+bool CurrentAnnotationExpression::equals( const Expression & e ) const {
+	if ( const CurrentAnnotationExpression * exp = dynamic_cast<const CurrentAnnotationExpression *>( &e ) ) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
 } } }

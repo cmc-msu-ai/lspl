@@ -35,4 +35,12 @@ void AttributeExpression::dump( std::ostream & out, const std::string & tabs ) c
 	out << base << "." << attribute.getAbbrevation();
 }
 
+bool AttributeExpression::equals( const Expression & e ) const {
+	if ( const AttributeExpression * exp = dynamic_cast<const AttributeExpression *>( &e ) ) {
+		return base->equals( *exp->base ) && (attribute == exp->attribute);
+	} else {
+		return false;
+	}
+}
+
 } } }

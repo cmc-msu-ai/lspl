@@ -58,4 +58,20 @@ void DictionaryRestriction::dump( std::ostream & out, const std::string & tabs )
 	out << variables[0];
 }
 
+bool DictionaryRestriction::equals( const Restriction & r ) const {
+	if ( const DictionaryRestriction * dr = dynamic_cast<const DictionaryRestriction *>( &r ) ) {
+		if ( dr->dictionary != dictionary ) return false;
+		if ( dr->currentVariable != currentVariable ) return false;
+		if ( dr->variables.size() != variables.size() ) return false;
+
+		for ( uint i = 0, l = variables.size(); i < l; ++ i )
+			if ( dr->variables[i] != variables[i] )
+				return false;
+
+		return true;
+	} else {
+		return false;
+	}
+}
+
 } } }
