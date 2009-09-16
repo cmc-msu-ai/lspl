@@ -47,6 +47,17 @@ public:
 	 * @return true, если выражения равны
 	 */
 	virtual bool equals( const Expression & e ) const = 0;
+
+public:
+
+	bool operator == ( const Expression & e ) const {
+		return equals( e );
+	}
+
+	bool operator != ( const Expression & e ) const {
+		return !equals( e );
+	}
+
 };
 
 inline std::ostream & operator << ( std::ostream & out, const Expression & val ) {

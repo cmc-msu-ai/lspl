@@ -22,7 +22,9 @@ public:
 
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
 	virtual bool equals( const Expression & e ) const;
+
 private:
+
 	text::attributes::AttributeValue value;
 };
 

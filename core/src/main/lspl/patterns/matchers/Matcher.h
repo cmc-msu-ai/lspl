@@ -70,6 +70,16 @@ public:
 			restrictions.transfer( restrictions.end(), r.begin(), r.end(), r );
 	}
 
+public:
+
+	bool operator == ( const Matcher & m ) const {
+		return equals( m );
+	}
+
+	bool operator != ( const Matcher & m ) const {
+		return !equals( m );
+	}
+
 protected:
 	bool matchRestrictions( const text::Transition & transition, const Context & context ) const;
 

@@ -45,6 +45,16 @@ public:
 
 public:
 
+	bool operator == ( const Restriction & r ) const {
+		return equals( r );
+	}
+
+	bool operator != ( const Restriction & r ) const {
+		return !equals( r );
+	}
+
+public:
+
 	/**
 	 * Количество объектов в памяти
 	 */

@@ -199,7 +199,7 @@ Expression * CreateConcatExpression::operator()( Expression * exp1, Expression *
 		static_cast<ConcatenationExpression*>( exp2 )->args.insert( static_cast<ConcatenationExpression*>( exp2 )->args.begin(), exp1 );
 		return exp2;
 	} else if ( dynamic_cast<ConcatenationExpression*>( exp1 ) ) { // Слева конкатенация - наращиваем ее справа
-		static_cast<ConcatenationExpression*>( exp1 )->args.push_back( exp2 );
+		static_cast<ConcatenationExpression*>( exp1 )->addArgument( exp2 );
 		return exp1;
 	} else { // Создаем новую конкатенацию
 		ConcatenationExpression * res = new ConcatenationExpression();

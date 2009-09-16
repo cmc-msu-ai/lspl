@@ -17,6 +17,7 @@ namespace lspl { namespace patterns { namespace matchers {
 
 class LSPL_EXPORT Variable {
 public:
+
 	explicit Variable( uint type, uint index ) : type( type ), index( index ) {}
 	explicit Variable( text::attributes::SpeechPart sp, uint index ) : type( sp.id ), index( index ) {}
 	explicit Variable( const Pattern & pt, uint index );
@@ -24,6 +25,8 @@ public:
 
 	bool isSpeechPart() { return type < text::attributes::SpeechPart::COUNT; }
 	bool isPattern() { return type >= text::attributes::SpeechPart::COUNT; }
+
+public:
 
 	bool operator == ( const Variable & p ) const {
 		return ( type == p.type ) && ( index == p.index );
@@ -36,9 +39,12 @@ public:
 	bool operator < ( const Variable & p ) const {
 		return ( type < p.type ) || ( ( type == p.type ) && ( index < p.index ) );
 	}
+
 public:
+
 	uint type;
 	uint index;
+
 };
 
 inline std::ostream & operator << ( std::ostream & out, const Variable var ) {

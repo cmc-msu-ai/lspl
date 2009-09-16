@@ -117,6 +117,16 @@ public:
 
 	void dump( std::ostream & out, const std::string & tabs = "" ) const;
 
+public:
+
+	bool operator == ( const Alternative & alt ) const {
+		return equals( alt );
+	}
+
+	bool operator != ( const Alternative & alt ) const {
+		return !equals( alt );
+	}
+
 private:
 	void appendDependencies( const matchers::Matcher & matcher );
 	void appendIndexInfo( const boost::ptr_vector<matchers::Matcher> & matchers ) const;
