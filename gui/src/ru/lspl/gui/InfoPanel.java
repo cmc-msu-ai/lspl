@@ -1,6 +1,7 @@
 package ru.lspl.gui;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -202,5 +203,13 @@ public class InfoPanel extends Composite implements DocumentHolder{
 	@Override
 	public Document getDocument() {
 		return document;
+	}
+
+	public void extendViewMenu( MenuManager viewMenu ) {
+		viewMenu.add( showPatternInfoAction );
+		viewMenu.add( showTextInfoAction );
+		viewMenu.add( showTransitionInfoAction );
+		viewMenu.add( showMatchesAction );
+		viewMenu.add( showWordsAction );
 	}
 }

@@ -10,6 +10,9 @@ import java.util.LinkedList;
 import java.util.Scanner;
 import java.util.Set;
 
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
@@ -27,6 +30,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
@@ -45,6 +49,49 @@ import ru.lspl.patterns.Alternative;
  * @author  alno
  */
 public class PatternEditor extends Composite {
+	
+	private final FileDialog openFileDialog;
+	private final FileDialog saveFileDialog;
+	
+	private final Action clearPatternsAction = new Action("Очистить") {
+		
+		@Override
+		public void run() {
+			clear();
+		}
+	};
+	
+	private final Action importPatternsAction = new Action("Загрузить...") {
+		
+		@Override
+		public void run() {
+			try {
+				String fileName = openFileDialog.open();
+				
+				if ( fileName == null )
+					return;
+				
+				load(fileName);
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
+	};
+	
+	private final Action exportPatternsAction = new Action("Сохранить..") {
+		
+		@Override
+		public void run() {
+			try {
+				String fileName = saveFileDialog.open();
+
+				if (fileName != null)
+					save(fileName);
+			} catch (Throwable e) {
+				e.printStackTrace();
+			}
+		}
+	};
 
 	private Tree patternsTree = null;	
 	private CheckboxTreeViewer patternsViewer = null;
@@ -93,6 +140,12 @@ public class PatternEditor extends Composite {
 	public PatternEditor(Composite parent, int style) {
 		super(parent, style);
 		initialize();
+		
+		openFileDialog = new FileDialog(getShell());
+		openFileDialog.setText("Открыть файл с шаблонами");
+		
+		saveFileDialog = new FileDialog(getShell());
+		saveFileDialog.setText("Сохранить файл с шаблонами");
 	}
 
 	private void initialize() {		
@@ -351,5 +404,12 @@ public class PatternEditor extends Composite {
 		
 		for (IPatternListener listener : patternListeners)
 			listener.patternChecked( pattern, checked, checkedPatterns );
+	}
+
+	public void extendPatternsMenu( MenuManager patternsMenu ) {
+		patternsMenu.add( clearPatternsAction );
+		patternsMenu.add( importPatternsAction );
+		patternsMenu.add( new Separator() );
+		patternsMenu.add( exportPatternsAction );
 	}
 }

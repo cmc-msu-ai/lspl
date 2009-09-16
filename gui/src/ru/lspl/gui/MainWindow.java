@@ -34,10 +34,7 @@ import ru.lspl.text.Word;
 public class MainWindow extends ApplicationWindow {
 	
 	private static final String WINDOW_TITLE = "Lspl Text Analyzer";
-	/**
-	 * @uml.property  name="nO_TRANSITIONS"
-	 * @uml.associationEnd  multiplicity="(0 -1)"
-	 */
+
 	private static final Transition[] NO_TRANSITIONS = new Transition[0];
 
 	private final MenuManager textMenu = new MenuManager( "&Текст", "textMenu" );
@@ -45,31 +42,14 @@ public class MainWindow extends ApplicationWindow {
 	private final MenuManager analyzeMenu = new MenuManager( "&Анализ", "analyzeMenu" );
 	private final MenuManager viewMenu = new MenuManager( "&Вид", "viewMenu" );
 	
-	/**
-	 * @uml.property  name="lastSelection"
-	 * @uml.associationEnd  multiplicity="(0 -1)"
-	 */
 	private Transition[] lastSelection = NO_TRANSITIONS;
-	/**
-	 * @uml.property  name="transitions"
-	 * @uml.associationEnd  multiplicity="(0 -1)"
-	 */
+
 	private Transition[] transitions = NO_TRANSITIONS;
 
-	/**
-	 * @uml.property  name="textEditor"
-	 * @uml.associationEnd  
-	 */
 	private TextEditor textEditor = null;
-	/**
-	 * @uml.property  name="infoPanel"
-	 * @uml.associationEnd  
-	 */
+
 	private InfoPanel infoPanel = null;
-	/**
-	 * @uml.property  name="editPanel"
-	 * @uml.associationEnd  
-	 */
+
 	private EditPanel editPanel = null;
 
 	private int infoSelectionIndex = -1;
@@ -77,10 +57,6 @@ public class MainWindow extends ApplicationWindow {
 	private FileDialog openFileDialog = null;
 	private FileDialog saveFileDialog = null;
 	
-	/**
-	 * @uml.property  name="document"
-	 * @uml.associationEnd  
-	 */
 	private Document document = new Document();
 	
 	private final Action clearFileAction = new Action("&Новый") {
@@ -165,46 +141,6 @@ public class MainWindow extends ApplicationWindow {
 		}
 	};
 	
-	private final Action clearPatternsAction = new Action("Очистить") {
-		
-		@Override
-		public void run() {
-			editPanel.patternEditor.clear();
-		}
-	};
-	
-	private final Action importPatternsAction = new Action("Загрузить...") {
-		
-		@Override
-		public void run() {
-			try {
-				String fileName = openFileDialog.open();
-				
-				if ( fileName == null )
-					return;
-				
-				editPanel.patternEditor.load(fileName);
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}
-		}
-	};
-	
-	private final Action exportPatternsAction = new Action("Сохранить..") {
-		
-		@Override
-		public void run() {
-			try {
-				String fileName = saveFileDialog.open();
-
-				if (fileName != null)
-					editPanel.patternEditor.save(fileName);
-			} catch (Throwable e) {
-				e.printStackTrace();
-			}
-		}
-	};
- 
 	/**
 	 * @uml.property  name="patternListener"
 	 * @uml.associationEnd  
@@ -387,33 +323,27 @@ public class MainWindow extends ApplicationWindow {
 	 * Создать содержимое меню в окне
 	 */
 	private void createMenuBar() {
-		getMenuBarManager().add( textMenu ); // Добавляем меню "Teкст"
+		MenuManager menuManager = getMenuBarManager();
+		
+		menuManager.add( textMenu ); // Добавляем меню "Teкст"
 		textMenu.add( clearFileAction );
 		textMenu.add( openTextAction );
 		textMenu.add( new Separator() );
 		textMenu.add( saveTextAction );
 		textMenu.add( saveAsTextAction );		
 
-		getMenuBarManager().add( patternsMenu ); // Добавляем меню "Шаблоны"
-		patternsMenu.add( clearPatternsAction );
-		patternsMenu.add( importPatternsAction );
-		patternsMenu.add( new Separator() );
-		patternsMenu.add( exportPatternsAction );
+		menuManager.add( patternsMenu ); // Добавляем меню "Шаблоны"
+		editPanel.extendPatternsMenu( patternsMenu );
 		
-		getMenuBarManager().add( analyzeMenu ); // Добавляем меню "Анализ"
+		menuManager.add( analyzeMenu ); // Добавляем меню "Анализ"
 		analyzeMenu.add( analyzeTextAction );		
 
-		getMenuBarManager().add( viewMenu ); // Добавляем меню "Вид"
-		viewMenu.add( infoPanel.showPatternInfoAction );
-		viewMenu.add( infoPanel.showTextInfoAction );
-		viewMenu.add( infoPanel.showTransitionInfoAction );
-		viewMenu.add( infoPanel.showMatchesAction );
-		viewMenu.add( infoPanel.showWordsAction );
+		menuManager.add( viewMenu ); // Добавляем меню "Вид"
+		infoPanel.extendViewMenu( viewMenu );
 		viewMenu.add( new Separator() );
-		viewMenu.add( editPanel.showPatternsAction );		
-		viewMenu.add( editPanel.showConfigAction );
+		editPanel.extendViewMenu( viewMenu );		
 		
-		getMenuBarManager().update( true ); // Обновляем содержимое меню
+		menuManager.update( true ); // Обновляем содержимое меню
 	}
 
 	/**
