@@ -2,6 +2,7 @@
  * Author: Vadim Antonov(avadim@gmail.com)
  */
 #include <cstring>
+#include <cstdio>
 #include <cstdlib>
 #include <ctime>
 
