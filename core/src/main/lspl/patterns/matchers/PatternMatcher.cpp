@@ -10,6 +10,7 @@
 #include "../../text/Node.h"
 
 #include <stdexcept>
+#include <memory>
 
 using lspl::text::attributes::SpeechPart;
 
@@ -27,69 +28,86 @@ struct PatternMatchState {
 
 	const Node & startNode;
 
-	MatchVariant variant; // Вариант сопоставления
-
 	Context context;
 
 	PatternMatchState( const patterns::Pattern & pattern, const patterns::Alternative & alternative, const Node & startNode ) :
-		pattern( pattern ), variant( alternative ), startNode( startNode ) {}
+		pattern( pattern ), variant( new MatchVariant( alternative ) ), startNode( startNode ) {}
 
 	PatternMatchState( const PatternMatchState & state, const TransitionRef & transition ) :
-		pattern( state.pattern ), startNode( state.startNode ), variant( state.variant ), context( state.context ) {
+		pattern( state.pattern ), startNode( state.startNode ), variant( new MatchVariant( *state.variant ) ), context( state.context ) {
 
 		if ( &transition->start != &getCurrentNode() )
 			throw std::logic_error("Illegal transition");
 
 		context.setVariable( getCurrentMatcher().variable, transition );
 
-		variant.push_back( transition );
+		variant->push_back( transition );
 	}
 
 	PatternMatchState( const PatternMatchState & state, const TransitionRef & transition, const Context & ctx ) :
-		pattern( state.pattern ), startNode( state.startNode ), variant( state.variant ), context( ctx ) {
+		pattern( state.pattern ), startNode( state.startNode ), variant( new MatchVariant( *state.variant ) ), context( ctx ) {
 
 		if ( &transition->start != &getCurrentNode() )
 			throw std::logic_error("Illegal transition");
 
 		context.setVariable( getCurrentMatcher().variable, transition );
 
-		variant.push_back( transition );
+		variant->push_back( transition );
 	}
 
 	const Node & getCurrentNode() const {
-		if ( variant.empty() )
+		if ( variant->empty() )
 			return startNode;
 
-		return variant[ variant.size() - 1 ]->end;
+		return (*variant)[ variant->size() - 1 ]->end;
 	}
 
 	const matchers::Matcher & getCurrentMatcher() const {
-		return variant.alternative.getMatcher( variant.size() );
+		return variant->alternative.getMatcher( variant->size() );
 	}
 
-	bool complete() const {
-		return variant.alternative.getMatcherCount() == variant.size();
+	const patterns::Alternative & getAlternative() const {
+		return variant->alternative;
 	}
+
+	/**
+	 * Освободить вариант сопоставления для дальнейшего использования.
+	 * После вызова этого метода состояние становится невалидным и не может быть больше использовано.
+	 * Вариант сопоставления освобождается из-под управления состояния и должен быть передан под управление другого контейнера.
+	 */
+	MatchVariant * releaseVariant() const {
+		return variant.release();
+	}
+
+	/**
+	 * Проверить является ли состояние завершенным.
+	 */
+	bool isComplete() const {
+		return variant->alternative.getMatcherCount() == variant->size();
+	}
+
+private:
+	mutable std::auto_ptr<MatchVariant> variant; // Вариант сопоставления
 };
 
 static void processCompoundPattern( const PatternMatchState & state, TransitionList & newTransitions ) {
 	const Node & currentNode = state.getCurrentNode();
 
-	if ( state.complete() ) { // Сопоставление завершено
+	if ( state.isComplete() ) { // Сопоставление завершено
 		Match::AttributesMap attributes;
 
-		state.context.addAttributes( attributes, state.variant.alternative.getBindings() ); // Строим набор аттрибутов
+		state.context.addAttributes( attributes, state.getAlternative().getBindings() ); // Строим набор аттрибутов
 
 		for ( uint i = 0; i < newTransitions.size(); ++ i ) {
 			Match & match = static_cast<Match&>( *newTransitions[i] );
 
 			if ( match.equals( state.pattern, state.startNode, currentNode, attributes ) ) {
-				match.addVariant( new MatchVariant( state.variant ) ); // TODO Optimize
+				match.addVariant( state.releaseVariant() );
 				return; // Если сопоставление уже было найдено
 			}
 		}
 
-		newTransitions.push_back( new Match( state.startNode, currentNode, state.pattern, new MatchVariant( state.variant ), attributes ) ); // TODO Optimize
+		newTransitions.push_back( new Match( state.startNode, currentNode, state.pattern, state.releaseVariant(), attributes ) ); // TODO Optimize
 
 		return;
 	}
@@ -165,7 +183,7 @@ void PatternMatcher::buildTransitions( const text::Transition & transition, cons
 
 		chainMatcher.buildChains( transition, s0.context, chains ); // Заполняем список цепочек
 
-		// TODO Необходимо отдельнор рассмотреть случайп пустой цепи
+		// TODO Optimize: Необходимо отдельно рассмотреть случай пустой цепи
 		for ( uint i = 0; i < chains.size(); ++ i )
 			processCompoundPattern( PatternMatchState( s0, chains[i].first, chains[i].second ), results );
 	}
