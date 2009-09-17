@@ -34,4 +34,23 @@ AttributeValue Context::getVariable( Variable variable ) const {
 	return AttributeValue( *i->second );
 }
 
+void Context::addAttributes( std::map<text::attributes::AttributeKey,text::attributes::AttributeValue> & attributes, const Alternative::BindingMap & bindings ) const {
+	for ( Alternative::BindingMap::const_iterator it = bindings.begin(), e = bindings.end(); it != e; ++ it ) {
+		AttributeKey key = it->first;
+		AttributeValue value = it->second->evaluate( 0, *this );
+
+		if ( key == AttributeKey::UNDEFINED ) {
+			for ( uint attr = 0; attr < AttributeKey::count(); ++ attr ) {
+				AttributeKey k = AttributeKey( attr );
+				AttributeValue v = value.getContainer().getAttribute( k );
+
+				if ( v != AttributeValue::UNDEFINED )
+					attributes.insert( std::make_pair( k, v ) );
+			}
+		} else {
+			attributes.insert( std::make_pair( key, value ) );
+		}
+	}
+}
+
 } } } // namespace lspl::patterns::matchers

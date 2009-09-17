@@ -20,8 +20,8 @@ CurrentAnnotationExpression::CurrentAnnotationExpression() {
 CurrentAnnotationExpression::~CurrentAnnotationExpression() {
 }
 
-AttributeValue CurrentAnnotationExpression::evaluate( const text::Transition & annotation, const Context & ctx ) const {
-	return AttributeValue( annotation );
+AttributeValue CurrentAnnotationExpression::evaluate( const text::Transition * annotation, const Context & ctx ) const {
+	return AttributeValue( *annotation );
 }
 
 void CurrentAnnotationExpression::dump( std::ostream & out, const std::string & tabs ) const {

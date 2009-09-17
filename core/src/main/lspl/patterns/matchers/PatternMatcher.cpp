@@ -13,63 +13,62 @@
 
 using lspl::text::attributes::SpeechPart;
 
+using lspl::text::Node;
 using lspl::text::Transition;
 using lspl::text::TransitionRef;
 using lspl::text::TransitionList;
 using lspl::text::Match;
-
-using lspl::text::Node;
+using lspl::text::MatchVariant;
 
 namespace lspl { namespace patterns { namespace matchers {
 
 struct PatternMatchState {
 	const patterns::Pattern & pattern;
-	const patterns::Alternative & alternative;
 
 	const Node & startNode;
 
-	TransitionList transitions;
+	MatchVariant variant; // Вариант сопоставления
 
 	Context context;
 
 	PatternMatchState( const patterns::Pattern & pattern, const patterns::Alternative & alternative, const Node & startNode ) :
-		pattern( pattern ), alternative( alternative ), startNode( startNode ) {}
+		pattern( pattern ), variant( alternative ), startNode( startNode ) {}
 
 	PatternMatchState( const PatternMatchState & state, const TransitionRef & transition ) :
-		pattern( state.pattern ), alternative( state.alternative ), startNode( state.startNode ), transitions( state.transitions ), context( state.context ) {
+		pattern( state.pattern ), startNode( state.startNode ), variant( state.variant ), context( state.context ) {
 
 		if ( &transition->start != &getCurrentNode() )
 			throw std::logic_error("Illegal transition");
 
 		context.setVariable( getCurrentMatcher().variable, transition );
 
-		transitions.push_back( transition );
+		variant.push_back( transition );
 	}
 
 	PatternMatchState( const PatternMatchState & state, const TransitionRef & transition, const Context & ctx ) :
-		pattern( state.pattern ), alternative( state.alternative ), startNode( state.startNode ), transitions( state.transitions ), context( ctx ) {
+		pattern( state.pattern ), startNode( state.startNode ), variant( state.variant ), context( ctx ) {
 
 		if ( &transition->start != &getCurrentNode() )
 			throw std::logic_error("Illegal transition");
 
 		context.setVariable( getCurrentMatcher().variable, transition );
 
-		transitions.push_back( transition );
+		variant.push_back( transition );
 	}
 
 	const Node & getCurrentNode() const {
-		if ( transitions.empty() )
+		if ( variant.empty() )
 			return startNode;
 
-		return transitions[ transitions.size() - 1 ]->end;
+		return variant[ variant.size() - 1 ]->end;
 	}
 
 	const matchers::Matcher & getCurrentMatcher() const {
-		return alternative.getMatcher( transitions.size() );
+		return variant.alternative.getMatcher( variant.size() );
 	}
 
 	bool complete() const {
-		return alternative.getMatcherCount() == transitions.size();
+		return variant.alternative.getMatcherCount() == variant.size();
 	}
 };
 
@@ -77,13 +76,21 @@ static void processCompoundPattern( const PatternMatchState & state, TransitionL
 	const Node & currentNode = state.getCurrentNode();
 
 	if ( state.complete() ) { // Сопоставление завершено
-		base::Reference<Match> match( new Match( state.startNode, currentNode, state.pattern, state.alternative, state.context ) );
+		Match::AttributesMap attributes;
 
-		for ( uint i = 0; i < newTransitions.size(); ++ i )
-			if ( match->equals( *newTransitions[i] ) )
+		state.context.addAttributes( attributes, state.variant.alternative.getBindings() ); // Строим набор аттрибутов
+
+		for ( uint i = 0; i < newTransitions.size(); ++ i ) {
+			Match & match = static_cast<Match&>( *newTransitions[i] );
+
+			if ( match.equals( state.pattern, state.startNode, currentNode, attributes ) ) {
+				match.addVariant( new MatchVariant( state.variant ) ); // TODO Optimize
 				return; // Если сопоставление уже было найдено
+			}
+		}
 
-		newTransitions.push_back( match );
+		newTransitions.push_back( new Match( state.startNode, currentNode, state.pattern, new MatchVariant( state.variant ), attributes ) ); // TODO Optimize
+
 		return;
 	}
 

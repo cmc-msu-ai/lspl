@@ -22,7 +22,7 @@ AttributeExpression::AttributeExpression( const Expression * base, const Attribu
 AttributeExpression::~AttributeExpression() {
 }
 
-AttributeValue AttributeExpression::evaluate( const text::Transition & annotation, const Context & ctx ) const {
+AttributeValue AttributeExpression::evaluate( const text::Transition * annotation, const Context & ctx ) const {
 	AttributeValue baseVal = base->evaluate( annotation, ctx );
 
 	if ( baseVal == AttributeValue::UNDEFINED )

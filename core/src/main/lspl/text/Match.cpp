@@ -8,7 +8,6 @@
 
 #include "../patterns/Pattern.h"
 #include "../patterns/Alternative.h"
-#include "../patterns/matchers/Context.h"
 
 #include <iostream>
 
@@ -29,32 +28,20 @@ std::string Fragment::getPatternedText( uint opts ) const {
 	return match->start.text.getContent().substr( start, end - start );
 }
 
-Match::Match( const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, const Alternative & alternative, const matchers::Context & context ) :
-	Transition( MATCH, start, end ), pattern( pattern ), fragments( 0 ) {
+MatchVariant::MatchVariant( const patterns::Alternative & alternative ) :
+	TransitionList(), alternative( alternative ) {
 
-	/*
-	 * Инициализируем аттрибуты
-	 */
-	for ( Alternative::BindingMap::const_iterator it = alternative.getBindings().begin(), e = alternative.getBindings().end(); it != e; ++ it ) {
-		AttributeKey key = it->first;
-		AttributeValue value = it->second->evaluate( *this, context );
-
-		if ( key == AttributeKey::UNDEFINED ) {
-			for ( uint attr = 0; attr < AttributeKey::count(); ++ attr ) {
-				AttributeKey k = AttributeKey( attr );
-				AttributeValue v = value.getContainer().getAttribute( k );
-
-				if ( v != AttributeValue::UNDEFINED )
-					attributes.insert( std::make_pair( k, v ) );
-			}
-		} else {
-			attributes.insert( std::make_pair( key, value ) );
-		}
-	}
 }
 
-Match::Match( const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, const AttributesMap & attributes ) :
+MatchVariant::MatchVariant( const MatchVariant & variant ) :
+	TransitionList( variant ), alternative( variant.alternative ) {
+
+}
+
+Match::Match( const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, MatchVariant * variant, const AttributesMap & attributes ) :
 	Transition( MATCH, start, end ), pattern( pattern ), attributes( attributes ), fragments( 0 ) {
+
+	variants.push_back( variant ); // Добавляем вариант
 }
 
 Match::~Match() {
@@ -96,14 +83,14 @@ void Match::dump( std::ostream & out, std::string tabs ) const {
 	out << "\n" << tabs << "] }";
 }
 
-bool Match::equals( const Match & match ) const {
-	if ( &match.pattern != &pattern || &match.start != &start || &match.end != &end )
-		return false; // Если не совпадают шаблоны или узлы сопоставлений, то сопоставления не равны
+bool Match::equals( const patterns::Pattern & p, const Node & s, const Node & e, const AttributesMap & atts ) const {
+	if ( &p != &pattern || &s != &start || &e != &end )
+			return false; // Если не совпадают шаблоны или узлы сопоставлений, то сопоставления не равны
 
 	AttributesMap::const_iterator self_it = attributes.begin(); // Итератор аттрибутов карты текущего сопоставления
-	AttributesMap::const_iterator match_it = match.attributes.begin(); // Итератор аттрибутов карты сравниваемого сопоставления
+	AttributesMap::const_iterator match_it = atts.begin(); // Итератор аттрибутов карты сравниваемого сопоставления
 
-	while ( ( self_it != attributes.end() ) && ( match_it != match.attributes.end() ) ) {
+	while ( ( self_it != attributes.end() ) && ( match_it != atts.end() ) ) {
 		if ( self_it->first != match_it->first || self_it->second != match_it->second )
 			return false; // Если значения карты не совпадают, то сопоставления не равны
 
@@ -112,7 +99,7 @@ bool Match::equals( const Match & match ) const {
 		++ match_it;
 	}
 
-	return ( self_it == attributes.end() ) && ( match_it == match.attributes.end() );
+	return ( self_it == attributes.end() ) && ( match_it == atts.end() );
 }
 
 } }

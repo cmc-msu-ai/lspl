@@ -18,7 +18,7 @@ namespace lspl { namespace patterns { namespace expressions {
 ConcatenationExpression::~ConcatenationExpression() {
 }
 
-AttributeValue ConcatenationExpression::evaluate( const text::Transition & annotation, const Context & ctx ) const {
+AttributeValue ConcatenationExpression::evaluate( const text::Transition * annotation, const Context & ctx ) const {
 	std::ostringstream out;
 
 	if ( !args.empty() ) {

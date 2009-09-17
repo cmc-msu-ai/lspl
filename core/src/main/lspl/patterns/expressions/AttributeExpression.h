@@ -21,7 +21,7 @@ public:
 	AttributeExpression( const Expression * base, const text::attributes::AttributeKey & attribute );
 	virtual ~AttributeExpression();
 
-	virtual text::attributes::AttributeValue evaluate( const text::Transition & annotation, const matchers::Context & ctx ) const;
+	virtual text::attributes::AttributeValue evaluate( const text::Transition * annotation, const matchers::Context & ctx ) const;
 
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
 	virtual bool equals( const Expression & e ) const;

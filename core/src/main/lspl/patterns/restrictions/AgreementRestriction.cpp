@@ -28,11 +28,11 @@ bool AgreementRestriction::matches( const text::Transition & annotation, const m
 		throw std::logic_error( "Too less arguments" );
 
 	AttributeValue val1;
-	AttributeValue val2 = args[0].evaluate( annotation, ctx );
+	AttributeValue val2 = args[0].evaluate( &annotation, ctx );
 
 	for ( uint i = 1; i < args.size(); ++i ) {
 		val1 = val2;
-		val2 = args[i].evaluate( annotation, ctx );
+		val2 = args[i].evaluate( &annotation, ctx );
 
 		if ( !checkAgreement( val1, val2 ) )
 			return false;

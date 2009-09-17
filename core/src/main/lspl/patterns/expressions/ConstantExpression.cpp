@@ -19,7 +19,7 @@ ConstantExpression::ConstantExpression( const AttributeValue & value ) :
 ConstantExpression::~ConstantExpression() {
 }
 
-AttributeValue ConstantExpression::evaluate( const text::Transition & annotation, const Context & ctx ) const {
+AttributeValue ConstantExpression::evaluate( const text::Transition * annotation, const Context & ctx ) const {
 	return value;
 }
 

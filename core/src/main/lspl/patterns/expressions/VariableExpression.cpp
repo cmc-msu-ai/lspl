@@ -21,7 +21,7 @@ VariableExpression::VariableExpression( const matchers::Variable & variable ) :
 VariableExpression::~VariableExpression() {
 }
 
-AttributeValue VariableExpression::evaluate( const text::Transition & annotation, const Context & ctx ) const {
+AttributeValue VariableExpression::evaluate( const text::Transition * annotation, const Context & ctx ) const {
 	return ctx.getVariable( variable );
 }
 

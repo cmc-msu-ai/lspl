@@ -36,7 +36,7 @@ public:
 	 * @param ctx контекст
 	 * @return значение выражения
 	 */
-	virtual text::attributes::AttributeValue evaluate( const text::Transition & annotation, const matchers::Context & ctx ) const = 0;
+	virtual text::attributes::AttributeValue evaluate( const text::Transition * annotation, const matchers::Context & ctx ) const = 0;
 
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const = 0;
 

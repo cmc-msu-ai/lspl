@@ -4,6 +4,7 @@
 #include "Forward.h"
 #include "Variable.h"
 
+#include "../Alternative.h"
 #include "../../base/RefCountPtr.h"
 #include "../../text/Forward.h"
 #include "../../text/attributes/AttributeKey.h"
@@ -25,6 +26,8 @@ public:
 
 	text::attributes::AttributeValue getAttribute( Variable variable, text::attributes::AttributeKey attribute ) const;
 	text::attributes::AttributeValue getVariable( Variable variable ) const;
+
+	void addAttributes( std::map<text::attributes::AttributeKey,text::attributes::AttributeValue> & atts, const Alternative::BindingMap & bindings ) const;
 private:
 	typedef std::map< Variable, text::TransitionConstRef > Map;
 private:
