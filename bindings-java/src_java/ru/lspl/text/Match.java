@@ -4,14 +4,13 @@ import ru.lspl.patterns.Pattern;
 
 /**
  * Сопоставление в тексте.
- * @author  alno
+ * 
+ * @author alno
  */
 public class Match extends Transition {
 
 	/**
 	 * Шаблон, который был сопоставлен
-	 * @uml.property  name="pattern"
-	 * @uml.associationEnd  
 	 */
 	public final Pattern pattern;
 
@@ -19,4 +18,14 @@ public class Match extends Transition {
 		super(id, text, start, end);
 		this.pattern = pattern;
 	}
+	
+	/**
+	 * Получить количество вариантов сопоставления
+	 */
+	public native int getVariantCount();
+	
+	/**
+	 * Получить вариант сопоставления по его индексу
+	 */
+	public native MatchVariant getVariant(int index);
 }

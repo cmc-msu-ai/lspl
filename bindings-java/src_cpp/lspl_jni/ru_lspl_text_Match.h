@@ -7,6 +7,22 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+/*
+ * Class:     ru_lspl_text_Match
+ * Method:    getVariantCount
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_ru_lspl_text_Match_getVariantCount
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     ru_lspl_text_Match
+ * Method:    getVariant
+ * Signature: (I)Lru/lspl/text/MatchVariant;
+ */
+JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariant
+  (JNIEnv *, jobject, jint);
+
 #ifdef __cplusplus
 }
 #endif

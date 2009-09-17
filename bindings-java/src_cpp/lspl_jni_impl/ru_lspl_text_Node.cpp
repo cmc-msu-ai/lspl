@@ -4,10 +4,11 @@
 
 #include "lspl/text/Node.h"
 #include "lspl/text/java/JavaNode.h"
-#include "lspl/text/java/JavaTransition.h"
+#include "lspl/text/JavaTransition.h"
 #include "lspl/java/Utils.h"
 
 using namespace lspl::java;
+using namespace lspl::text;
 using namespace lspl::text::java;
 
 /*

@@ -10,8 +10,6 @@
 
 namespace lspl { namespace text { namespace java {
 
-class JavaTransition;
-
 class JavaNode {
 public:
 	JavaNode( NodeRef node, JNIEnv * env );

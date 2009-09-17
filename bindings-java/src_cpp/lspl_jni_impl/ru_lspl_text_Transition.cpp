@@ -3,12 +3,12 @@
 #include "lspl_jni/ru_lspl_text_Transition.h"
 
 #include "lspl/text/Transition.h"
-#include "lspl/text/java/JavaTransition.h"
+#include "lspl/text/JavaTransition.h"
 #include "lspl/text/attributes/java/JavaAttributeValue.h"
 #include "lspl/java/Utils.h"
 
 using namespace lspl::java;
-using namespace lspl::text::java;
+using namespace lspl::text;
 using namespace lspl::text::attributes::java;
 
 using lspl::text::attributes::AttributeKey;

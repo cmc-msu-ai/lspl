@@ -11,7 +11,6 @@
 namespace lspl { namespace text { namespace java {
 
 class JavaNode;
-class JavaTransition;
 
 class JavaText {
 public:
