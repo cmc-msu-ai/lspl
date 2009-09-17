@@ -54,9 +54,15 @@ public class MatchVariant {
 		return transitions;
 	}
 	
-	public native int getTransitionCount();
+	public int getTransitionCount() {
+		return match.getVariantTransitionCount( index );
+	}
 	
-	public native Transition getTransition(int index);
+	public Transition getTransition( int transitionIndex ) {
+		return match.getVariantTransition( index, transitionIndex );
+	}
 		
-	protected native void finalize();
+	protected void finalize() {
+		match.finalizeVariant( index );
+	}
 }

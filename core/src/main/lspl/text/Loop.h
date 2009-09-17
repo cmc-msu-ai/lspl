@@ -14,6 +14,11 @@ public:
 	virtual ~Loop();
 
 	virtual void dump( std::ostream & out, std::string tabs = "" ) const;
+
+	const TransitionList & getTransitions() const {
+		return transitions;
+	}
+
 public:
 	const TransitionList transitions;
 };

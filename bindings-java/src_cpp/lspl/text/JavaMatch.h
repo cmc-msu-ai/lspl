@@ -10,11 +10,19 @@ public:
 	JavaMatch( Transition * transition, JNIEnv * env );
 	virtual ~JavaMatch();
 
+	static JavaMatch * get( JNIEnv * env, jobject obj ) { return static_cast<JavaMatch*>( JavaTransition::get(env,obj) ); }
 	static void init( JNIEnv * env );
 
+	jobject getVariant( JNIEnv * env, int index );
+	void freeVariant( int index );
+
 private:
-	static jclass	 clazz;
-	static jmethodID constructor;
+
+	std::vector<jobject> variants;
+
+private:
+	static jclass	 clazz, variantClazz;
+	static jmethodID constructor, variantConstructor;
 };
 
 } }

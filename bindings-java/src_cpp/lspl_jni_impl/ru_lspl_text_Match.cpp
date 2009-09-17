@@ -1,5 +1,6 @@
 #include "lspl_jni/ru_lspl_text_Match.h"
 
+#include "lspl/text/Match.h"
 #include "lspl/text/JavaMatch.h"
 #include "lspl/java/Utils.h"
 
@@ -12,7 +13,7 @@ using namespace lspl::text;
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_ru_lspl_text_Match_getVariantCount(JNIEnv * env, jobject obj) {
-
+	return JavaTransition::get(env,obj)->transition.cast<Match>()->getVariants().size();
 }
 
 /*
@@ -21,6 +22,32 @@ JNIEXPORT jint JNICALL Java_ru_lspl_text_Match_getVariantCount(JNIEnv * env, job
  * Signature: (I)Lru/lspl/text/MatchVariant;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariant(JNIEnv * env, jobject obj, jint index) {
-
+	return JavaMatch::get(env,obj)->getVariant( env, index );
 }
 
+/*
+ * Class:     ru_lspl_text_Match
+ * Method:    getVariantTransitionCount
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_ru_lspl_text_Match_getVariantTransitionCount(JNIEnv * env, jobject obj, jint vindex) {
+	return JavaMatch::get(env,obj)->transition.cast<Match>()->getVariants().at( vindex ).size();
+}
+
+/*
+ * Class:     ru_lspl_text_Match
+ * Method:    getVariantTransition
+ * Signature: (II)Lru/lspl/text/Transition;
+ */
+JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantTransition(JNIEnv * env, jobject obj, jint vindex, jint tindex) {
+	return JavaTransition::get( env, JavaMatch::get(env,obj)->transition.cast<Match>()->getVariants().at( vindex ).at( tindex ).get() )->object;
+}
+
+/*
+ * Class:     ru_lspl_text_Match
+ * Method:    finalizeVariant
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_ru_lspl_text_Match_finalizeVariant(JNIEnv * env, jobject obj, jint vindex) {
+	JavaMatch::get(env,obj)->freeVariant( vindex );
+}

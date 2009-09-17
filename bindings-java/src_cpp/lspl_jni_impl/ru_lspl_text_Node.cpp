@@ -28,7 +28,7 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_text_Node_dump(JNIEnv * env, jobject obj_
  * Signature: (I)Lru/lspl/text/Transition;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Node_getTransition(JNIEnv * env, jobject obj_node, jint index) {
-	return JavaTransition::get( env, JavaNode::get( env, obj_node )->transitions[ index ].get() );
+	return JavaTransition::get( env, JavaNode::get( env, obj_node )->transitions[ index ].get() )->object;
 }
 
 /*

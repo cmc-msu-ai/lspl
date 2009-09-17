@@ -80,7 +80,7 @@ JNIEXPORT jint JNICALL Java_ru_lspl_text_Text_getWordCount(JNIEnv * env, jobject
  * Signature: (II)Lru/lspl/text/Word;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_getWord(JNIEnv * env, jobject obj_text, jint sp, jint index) {
-	return JavaTransition::get( env, JavaText::get( env, obj_text ).text->getWords( lspl::text::attributes::SpeechPart( sp ) ).at( index ).get() );
+	return JavaTransition::get( env, JavaText::get( env, obj_text ).text->getWords( lspl::text::attributes::SpeechPart( sp ) ).at( index ).get() )->object;
 }
 
 /*
@@ -98,7 +98,7 @@ JNIEXPORT jint JNICALL Java_ru_lspl_text_Text_getMatchCount(JNIEnv * env, jobjec
  * Signature: (Lru/lspl/Pattern;I)Lru/lspl/text/Match;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_getMatch(JNIEnv * env, jobject obj_text, jobject obj_pattern, jint index) {
-	return JavaTransition::get( env, JavaText::get( env, obj_text ).text->getMatches( *JavaPattern::get( env, obj_pattern ).pattern ).at( index ).get() );
+	return JavaTransition::get( env, JavaText::get( env, obj_text ).text->getMatches( *JavaPattern::get( env, obj_pattern ).pattern ).at( index ).get() )->object;
 }
 
 /*

@@ -10,6 +10,8 @@ public:
 	JavaLoop( Transition * transition, JNIEnv * env );
 	virtual ~JavaLoop();
 
+	static JavaLoop * get( JNIEnv * env, jobject obj ) { return static_cast<JavaLoop*>( JavaTransition::get(env,obj) ); }
+
 	static void init( JNIEnv * env );
 
 private:

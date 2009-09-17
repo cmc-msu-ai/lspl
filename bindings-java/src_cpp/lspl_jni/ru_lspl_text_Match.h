@@ -23,6 +23,30 @@ JNIEXPORT jint JNICALL Java_ru_lspl_text_Match_getVariantCount
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariant
   (JNIEnv *, jobject, jint);
 
+/*
+ * Class:     ru_lspl_text_Match
+ * Method:    getVariantTransitionCount
+ * Signature: (I)I
+ */
+JNIEXPORT jint JNICALL Java_ru_lspl_text_Match_getVariantTransitionCount
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     ru_lspl_text_Match
+ * Method:    getVariantTransition
+ * Signature: (II)Lru/lspl/text/Transition;
+ */
+JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantTransition
+  (JNIEnv *, jobject, jint, jint);
+
+/*
+ * Class:     ru_lspl_text_Match
+ * Method:    finalizeVariant
+ * Signature: (I)V
+ */
+JNIEXPORT void JNICALL Java_ru_lspl_text_Match_finalizeVariant
+  (JNIEnv *, jobject, jint);
+
 #ifdef __cplusplus
 }
 #endif

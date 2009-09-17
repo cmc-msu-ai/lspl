@@ -58,11 +58,11 @@ JavaTransition * JavaTransition::create( Transition * transition, JNIEnv * env )
 JavaTransition::~JavaTransition() {
 }
 
-TransitionRef JavaTransition::get( JNIEnv * env, jobject obj ) {
-	return transitions.at( env->GetIntField( obj, transitionIdField ) )->transition;
+JavaTransition * JavaTransition::get( JNIEnv * env, jobject obj ) {
+	return transitions.at( env->GetIntField( obj, transitionIdField ) );
 }
 
-jobject JavaTransition::get( JNIEnv * env, Transition * transition ) {
+JavaTransition * JavaTransition::get( JNIEnv * env, Transition * transition ) {
 	if ( transitions.size() <= transition->id )
 		transitions.resize( transition->id + 1 );
 
@@ -72,7 +72,7 @@ jobject JavaTransition::get( JNIEnv * env, Transition * transition ) {
 		result = transitions[ transition->id ] = create( transition, env );
 	}
 
-	return result->object;
+	return result;
 }
 
 

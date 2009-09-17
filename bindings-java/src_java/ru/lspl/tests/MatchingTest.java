@@ -3,7 +3,12 @@ package ru.lspl.tests;
 import ru.lspl.patterns.Pattern;
 import ru.lspl.patterns.PatternBuilder;
 import ru.lspl.text.Match;
+import ru.lspl.text.Loop;
+import ru.lspl.text.MatchVariant;
+import ru.lspl.text.Transition;
 import ru.lspl.text.Text;
+
+import java.util.List;
 
 public class MatchingTest {
 	
@@ -31,14 +36,25 @@ public class MatchingTest {
 			t2.getMatches( p );
 			t3.getMatches( p );			
 
-			for ( Match m : t0.getMatches( p ) ) {
-				System.out.println( m.dump() );
-			}
+			printTransitions( t0.getMatches( p ) );
 		}
 		
 		System.out.println( t0.dump() );
 		System.out.println( t1.dump() );
 		System.out.println( t2.dump() );
 		System.out.println( t3.dump() );
+	}
+	
+	public static void printTransitions( List<? extends Transition> trans ) {
+		for ( Transition t : trans ) {
+			System.out.println( t.dump() );
+			
+			if ( t instanceof Match ) {
+				for ( MatchVariant v : ((Match)t).getVariants() )
+					printTransitions( v.getTransitions() );
+			} else if ( t instanceof Loop ) {
+				printTransitions( ((Loop)t).getTransitions() );
+			}
+		}
 	}
 }

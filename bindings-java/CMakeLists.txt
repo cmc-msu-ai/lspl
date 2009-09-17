@@ -42,7 +42,6 @@ ADD_CUSTOM_TARGET(jni-stubs
          ru.lspl.text.Transition
          ru.lspl.text.Loop
          ru.lspl.text.Match
-         ru.lspl.text.MatchVariant
          ru.lspl.LsplObject
          ru.lspl.text.attributes.SpeechPart
          ru.lspl.text.attributes.IndexedAttribute
@@ -73,15 +72,20 @@ set(LSPL_JAVA_SOURCES
 	src_cpp/lspl/text/attributes/java/JavaAttributeValue.cpp
 
 	src_cpp/lspl_jni_impl/ru_lspl_LsplObject.cpp
-	src_cpp/lspl_jni_impl/ru_lspl_text_Node.cpp
-	src_cpp/lspl_jni_impl/ru_lspl_text_attributes_AttributeKey.cpp
-	src_cpp/lspl_jni_impl/ru_lspl_patterns_Pattern.cpp
-	src_cpp/lspl_jni_impl/ru_lspl_text_Transition.cpp
-	src_cpp/lspl_jni_impl/ru_lspl_patterns_PatternBuilder.cpp
-	src_cpp/lspl_jni_impl/ru_lspl_text_attributes_IndexedAttribute.cpp
-	src_cpp/lspl_jni_impl/ru_lspl_text_Text.cpp
-	src_cpp/lspl_jni_impl/ru_lspl_text_attributes_SpeechPart.cpp
+	
 	src_cpp/lspl_jni_impl/ru_lspl_patterns_Alternative.cpp
+	src_cpp/lspl_jni_impl/ru_lspl_patterns_Pattern.cpp
+	src_cpp/lspl_jni_impl/ru_lspl_patterns_PatternBuilder.cpp
+	
+	src_cpp/lspl_jni_impl/ru_lspl_text_attributes_AttributeKey.cpp
+	src_cpp/lspl_jni_impl/ru_lspl_text_attributes_IndexedAttribute.cpp	
+	src_cpp/lspl_jni_impl/ru_lspl_text_attributes_SpeechPart.cpp
+	
+	src_cpp/lspl_jni_impl/ru_lspl_text_Loop.cpp
+	src_cpp/lspl_jni_impl/ru_lspl_text_Match.cpp
+	src_cpp/lspl_jni_impl/ru_lspl_text_Node.cpp
+	src_cpp/lspl_jni_impl/ru_lspl_text_Text.cpp
+	src_cpp/lspl_jni_impl/ru_lspl_text_Transition.cpp
 )
 
 add_library(lspl-java SHARED ${LSPL_JAVA_SOURCES})

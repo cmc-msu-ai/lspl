@@ -16,8 +16,8 @@ public:
 
 	static void init( JNIEnv * env );
 	static void remove( JNIEnv * env, jobject obj );
-	static TransitionRef get( JNIEnv * env, jobject obj );
-	static jobject get( JNIEnv * env, Transition * transition );
+	static JavaTransition * get( JNIEnv * env, jobject obj );
+	static JavaTransition * get( JNIEnv * env, Transition * transition );
 
 private:
 
