@@ -62,14 +62,14 @@ JavaTransition * JavaTransition::get( JNIEnv * env, jobject obj ) {
 	return transitions.at( env->GetIntField( obj, transitionIdField ) );
 }
 
-JavaTransition * JavaTransition::get( JNIEnv * env, Transition * transition ) {
+JavaTransition * JavaTransition::get( JNIEnv * env, const Transition * transition ) {
 	if ( transitions.size() <= transition->id )
 		transitions.resize( transition->id + 1 );
 
 	JavaTransition * result = transitions[ transition->id ];
 
 	if ( !result ) {
-		result = transitions[ transition->id ] = create( transition, env );
+		result = transitions[ transition->id ] = create( const_cast<Transition*>( transition ), env );
 	}
 
 	return result;

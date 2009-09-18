@@ -10,6 +10,8 @@
 
 #include "Functions.h"
 
+#include "../Pattern.h"
+
 #include "../matchers/Matcher.h"
 #include "../matchers/Variable.h"
 #include "../matchers/WordMatcher.h"
@@ -100,12 +102,11 @@ void AddPatternMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, c
 }
 
 void AddAlternativeDefinitionImpl::operator()( boost::ptr_vector<Alternative> & alts, boost::ptr_vector<Matcher> & matchers, boost::ptr_map<AttributeKey,Expression> & bindings, const std::string & source, const std::string & transformSource ) const {
-	Alternative * alternative = new Alternative( source ); // Добавляем новую альтернативу к шаблону
+	Alternative * alternative = new Alternative( source, transformSource ); // Добавляем новую альтернативу к шаблону
 
 	alternative->addMatchers( matchers ); // Добавляем сопоставители
 	alternative->addBindings( bindings ); // Добавляем связывания
 	alternative->updateDependencies(); // Обновляем зависимости альтернативы
-	alternative->setTransform( std::auto_ptr<transforms::Transform>( transformBuilder.build( *alternative, transformSource ) ) ); // Устанавливаем преобразование
 
 	alts.push_back( alternative );
 }
@@ -115,6 +116,10 @@ void AddPatternDefinitionImpl::operator()( const std::string & name, boost::ptr_
 
 	pattern->addAlternatives( alts ); // Добавляем альтернативы к шаблону
 	pattern->updateDependencies(); // Обновляем зависимости шаблона
+
+	foreach( Alternative & alt, pattern->alternatives ) {
+		alt.setTransform( std::auto_ptr<transforms::Transform>( transformBuilder.build( alt, alt.getTransformSource() ) ) ); // Устанавливаем преобразование
+	}
 }
 
 

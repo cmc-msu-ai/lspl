@@ -16,8 +16,8 @@ using namespace lspl::patterns::matchers;
 
 namespace lspl { namespace patterns {
 
-Alternative::Alternative( const std::string & source ) :
-	source( source ) {
+Alternative::Alternative( const std::string & source, const std::string & transformSource ) :
+	source( source ), transformSource( transformSource ) {
 }
 
 Alternative::~Alternative() {

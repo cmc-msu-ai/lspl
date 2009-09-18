@@ -45,7 +45,7 @@ public:
 class LSPL_EXPORT DummyTransformBuilder : public TypedTransformBuilder<int> {
 public:
 
-	virtual DummyTransform * build( const patterns::Alternative & alternative, const std::string & source );
+	virtual TypedTransform<int> * build( const patterns::Alternative & alternative, const std::string & source );
 
 };
 

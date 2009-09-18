@@ -15,7 +15,7 @@ jfieldID JavaAlternative::idField;
 jfieldID JavaAlternative::patternField;
 jmethodID JavaAlternative::constructor;
 
-static uint findIndex(Pattern * pattern,Alternative * alternative) {
+static uint findIndex( const Pattern * pattern, const Alternative * alternative ) {
 	for ( uint i = 0; i < pattern->alternatives.size(); ++ i )
 		if ( &pattern->alternatives[i] == alternative )
 			return i;
@@ -23,7 +23,7 @@ static uint findIndex(Pattern * pattern,Alternative * alternative) {
 	throw std::logic_error( "Alternative not in pattern" );
 }
 
-JavaAlternative::JavaAlternative(Pattern * pattern,Alternative * alt, JNIEnv * env ) : alternative( alt ),
+JavaAlternative::JavaAlternative(Pattern * pattern, Alternative * alt, JNIEnv * env ) : alternative( alt ),
 	object( env->NewGlobalRef( env->NewObject( clazz, constructor, (jint)findIndex( pattern, alt ), JavaPattern::get( env, pattern ).object ) ) ) {
 }
 
@@ -34,7 +34,7 @@ JavaAlternative & JavaAlternative::get( JNIEnv * env, jobject obj ) {
 	return *JavaPattern::get( env, env->GetObjectField( obj, patternField ) ).alternatives.at( env->GetIntField( obj, idField ) );
 }
 
-JavaAlternative & JavaAlternative::get( JNIEnv * env, Pattern * patternPtr,Alternative * alternative ) {
+JavaAlternative & JavaAlternative::get( JNIEnv * env, const Pattern * patternPtr, const Alternative * alternative ) {
 	JavaPattern & pattern = JavaPattern::get( env, patternPtr );
 	uint index = findIndex( patternPtr, alternative );
 
@@ -45,7 +45,7 @@ JavaAlternative & JavaAlternative::get( JNIEnv * env, Pattern * patternPtr,Alter
 
 	if ( result ) return *result;
 
-	return *(result = pattern.alternatives[ index ] = new JavaAlternative( patternPtr, alternative, env ) );
+	return *(result = pattern.alternatives[ index ] = new JavaAlternative( const_cast<Pattern*>( patternPtr ), const_cast<Alternative*>( alternative ), env ) );
 }
 
 void JavaAlternative::init( JNIEnv * env ) {

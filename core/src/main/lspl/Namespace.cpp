@@ -2,6 +2,8 @@
 
 #include "Namespace.h"
 
+#include "patterns/Pattern.h"
+
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/random_access_index.hpp>

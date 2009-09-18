@@ -13,17 +13,26 @@
 #include "lspl/patterns/PatternBuilder.h"
 #include "lspl/patterns/Pattern.h"
 
+#include "lspl/transforms/JavaTransformBuilder.h"
+
 using namespace lspl::java;
 using namespace lspl::patterns;
 using namespace lspl::patterns::java;
 
+using lspl::Namespace;
+using lspl::transforms::TransformBuilder;
+using lspl::transforms::DummyTransformBuilder;
+using lspl::transforms::JavaTransformBuilder;
+
 /*
- * Class:     ru_lspl_PatternBuilder
+ * Class:     ru_lspl_patterns_PatternBuilder
  * Method:    create
- * Signature: ()I
+ * Signature: (Lru/lspl/transforms/TransformBuilder;)Lru/lspl/patterns/PatternBuilder;
  */
-JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_PatternBuilder_create(JNIEnv * env, jclass) {
-	return JavaPatternBuilder::get( env, new PatternBuilder() ).object;
+JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_PatternBuilder_create(JNIEnv * env, jclass, jobject tb) {
+	TransformBuilder * tBuilder = tb ? static_cast<TransformBuilder *>( new JavaTransformBuilder( env, tb ) ) : static_cast<TransformBuilder *>( new DummyTransformBuilder() );
+
+	return JavaPatternBuilder::get( env, new PatternBuilder( new Namespace(), tBuilder ) ).object;
 }
 
 /*

@@ -21,8 +21,8 @@ TransformBuilder::~TransformBuilder() {
 	// TODO Auto-generated destructor stub
 }
 
-DummyTransform * DummyTransformBuilder::build( const patterns::Alternative & alternative, const std::string & source ) {
-	return new DummyTransform();
+TypedTransform<int> * DummyTransformBuilder::build( const patterns::Alternative & alternative, const std::string & source ) {
+	return 0;
 }
 
 } } // namespace lspl::transforms

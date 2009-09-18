@@ -16,7 +16,7 @@ public:
 	virtual ~JavaAlternative();
 
 	static JavaAlternative & get( JNIEnv * env, jobject obj );
-	static JavaAlternative & get( JNIEnv * env, patterns::Pattern * pattern, patterns::Alternative * alternative );
+	static JavaAlternative & get( JNIEnv * env, const patterns::Pattern * pattern, const patterns::Alternative * alternative );
 	static void init( JNIEnv * env );
 	static void remove( JNIEnv * env, jobject obj );
 

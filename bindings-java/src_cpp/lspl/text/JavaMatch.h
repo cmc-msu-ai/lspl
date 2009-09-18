@@ -11,6 +11,7 @@ public:
 	virtual ~JavaMatch();
 
 	static JavaMatch * get( JNIEnv * env, jobject obj ) { return static_cast<JavaMatch*>( JavaTransition::get(env,obj) ); }
+	static JavaMatch * get( JNIEnv * env, const Transition * match ) { return static_cast<JavaMatch*>( JavaTransition::get(env,match) ); }
 	static void init( JNIEnv * env );
 
 	jobject getVariant( JNIEnv * env, int index );

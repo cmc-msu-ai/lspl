@@ -16,6 +16,9 @@
 #include "lspl/text/JavaWord.h"
 #include "lspl/text/attributes/java/JavaAttributeValue.h"
 
+#include "lspl/transforms/JavaTransform.h"
+#include "lspl/transforms/JavaTransformBuilder.h"
+
 #include <stdlib.h>
 
 #ifdef WIN32
@@ -28,6 +31,7 @@ using namespace lspl::patterns::java;
 using namespace lspl::text;
 using namespace lspl::text::java;
 using namespace lspl::text::attributes::java;
+using namespace lspl::transforms;
 
 /*
  * Class:     ru_lspl_LsplObject
@@ -35,6 +39,8 @@ using namespace lspl::text::attributes::java;
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_initStatic(JNIEnv * env, jclass cls) {
+	setupVM( env );
+
 	JavaText::init( env );
 	JavaNode::init( env );
 	JavaTransition::init( env );
@@ -50,6 +56,9 @@ JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_initStatic(JNIEnv * env, jclass c
 	JavaPattern::init( env );
 	JavaPatternBuilder::init( env );
 	
+	JavaTransform::init( env );
+	JavaTransformBuilder::init( env );
+
 	TextDataBuilderConfig::init( env );	
 }
 

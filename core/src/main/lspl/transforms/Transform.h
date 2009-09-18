@@ -49,13 +49,6 @@ public:
 
 };
 
-class LSPL_EXPORT DummyTransform : public TypedTransform<int> {
-public:
-
-	virtual TypedTransformResult<int> * apply( const text::MatchVariant & matchVariant ) const { return new TypedTransformResult<int>( 0 ); }
-
-};
-
 } } // namespace lspl::transforms
 
 #endif /* _LSPL_TRANSFORMS_TRANSFORM_H_ */

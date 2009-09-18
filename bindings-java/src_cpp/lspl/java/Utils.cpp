@@ -2,6 +2,8 @@
 
 #include "lspl/utils/Conversion.h"
 
+static JavaVM * vm;
+
 namespace lspl { namespace java {
 
 lspl::utils::Conversion inputConverter( "UTF-8", "CP1251" );
@@ -21,6 +23,16 @@ jstring out( JNIEnv * env, const std::string & str ) {
 
 jstring out( JNIEnv * env, const char * str ) {
 	return env->NewStringUTF( outputConverter.convert( str ).c_str() );
+}
+
+JNIEnv * getCurrentEnv() {
+	JNIEnv * env;
+	vm->AttachCurrentThread( (void**)&env, NULL );
+	return env;
+}
+
+void setupVM( JNIEnv * env ) {
+	env->GetJavaVM( &vm );
 }
 
 } }

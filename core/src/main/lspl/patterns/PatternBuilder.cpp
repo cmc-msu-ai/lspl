@@ -154,7 +154,7 @@ public:
         	function<AddTokenMatcherImpl> addTokenMatcher;
         	function<AddLoopMatcherImpl> addLoopMatcher;
         	function<AddAlternativeDefinitionImpl> addAlternativeDefinition( AddAlternativeDefinitionImpl( *self.transformBuilder ) );
-        	function<AddPatternDefinitionImpl> addPatternDefinition( AddPatternDefinitionImpl( *self.space, typeSymbol ) );
+        	function<AddPatternDefinitionImpl> addPatternDefinition( AddPatternDefinitionImpl( *self.space, typeSymbol, *self.transformBuilder ) );
         	function<AddDictionaryRestrictionImpl> addDictionaryRestriction( *self.space );
 
         	function<CreateVariableExpression> createVariableExpression;

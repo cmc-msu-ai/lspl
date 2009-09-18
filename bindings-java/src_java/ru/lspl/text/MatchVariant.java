@@ -49,6 +49,10 @@ public class MatchVariant {
 		this.match = match;
 		this.index = index;
 	}
+	
+	public Object getTransformResult() {
+		return match.getVariantTransformResult( index );
+	}
 
 	public List<Transition> getTransitions() {
 		return transitions;

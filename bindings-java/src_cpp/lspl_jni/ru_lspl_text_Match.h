@@ -25,6 +25,14 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariant
 
 /*
  * Class:     ru_lspl_text_Match
+ * Method:    getVariantTransformResult
+ * Signature: (I)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantTransformResult
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     ru_lspl_text_Match
  * Method:    getVariantTransitionCount
  * Signature: (I)I
  */

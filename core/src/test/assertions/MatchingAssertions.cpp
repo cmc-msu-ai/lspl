@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include <lspl/Namespace.h>
+#include <lspl/patterns/Pattern.h>
 #include <lspl/patterns/PatternBuilder.h>
 #include <lspl/text/Text.h>
 #include <lspl/text/readers/PlainTextReader.h>

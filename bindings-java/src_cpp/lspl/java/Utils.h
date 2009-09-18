@@ -11,6 +11,10 @@ std::string in( JNIEnv * env, jstring str );
 jstring out( JNIEnv * env, const std::string & str );
 jstring out( JNIEnv * env, const char * str );
 
+JNIEnv * getCurrentEnv();
+
+void setupVM( JNIEnv * env );
+
 } }
 
 #endif /*_LSPL_JAVA_UTILS_H_*/

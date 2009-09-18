@@ -54,7 +54,7 @@ public:
 	typedef boost::ptr_map<text::attributes::AttributeKey,expressions::Expression> BindingMap;
 public:
 
-	Alternative( const std::string & source );
+	Alternative( const std::string & source, const std::string & transformSource = std::string() );
 	~Alternative();
 
 	/**
@@ -90,6 +90,13 @@ public:
 	}
 
 	/**
+	 * Получить исходный код альтернативы
+	 */
+	const std::string & getTransformSource() const {
+		return transformSource;
+	}
+
+	/**
 	 * Получить набор связываний альтернативы
 	 */
 	const BindingMap & getBindings() const {
@@ -101,6 +108,10 @@ public:
 	 */
 	const transforms::Transform & getTransform() const {
 		return *transform;
+	}
+
+	bool hasTransform() const {
+		return transform.get() != 0;
 	}
 
 	void dump( std::ostream & out, const std::string & tabs = "" ) const;
@@ -148,6 +159,8 @@ public:
 	 */
 	void updateDependencies();
 
+	const Pattern * pattern;
+
 private:
 	void appendDependencies( const matchers::Matcher & matcher );
 	void appendIndexInfo( const boost::ptr_vector<matchers::Matcher> & matchers ) const;
@@ -162,6 +175,8 @@ private:
 	 * Исходный текст альтернативы
 	 */
 	std::string source;
+
+	std::string transformSource;
 
 	/**
 	 * Список связываний аттрибутов шаблона

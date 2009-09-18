@@ -4,6 +4,8 @@
 #include "../base/Base.h"
 #include "../base/RefCountPtr.h"
 
+#include <vector>
+
 namespace lspl { namespace patterns {
 
 class Alternative;

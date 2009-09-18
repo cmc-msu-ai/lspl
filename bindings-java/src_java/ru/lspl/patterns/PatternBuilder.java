@@ -4,6 +4,7 @@ import java.util.AbstractList;
 import java.util.List;
 
 import ru.lspl.LsplObject;
+import ru.lspl.transforms.TransformBuilder;
 
 /**
  * @author  alno
@@ -31,7 +32,11 @@ public class PatternBuilder extends LsplObject {
 	 */
 	public final List<Pattern> definedPatterns = new DefinedPatternList();
 	
-	public static native PatternBuilder create();
+	public static native PatternBuilder create( TransformBuilder transformBuilder );
+	
+	public static PatternBuilder create() {
+		return create( null );
+	}
 				
 	public native int getDefinedPatternCount();
 	

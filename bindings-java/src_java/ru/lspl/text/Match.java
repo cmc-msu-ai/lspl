@@ -62,6 +62,8 @@ public class Match extends Transition {
 	 */
 	public native MatchVariant getVariant( int variantIndex );
 	
+	public native Object getVariantTransformResult( int variantIndex );
+	
 	public native int getVariantTransitionCount( int variantIndex );
 	
 	public native Transition getVariantTransition( int variantIndex, int transitionIndex );

@@ -44,13 +44,12 @@ MatchVariant::~MatchVariant() {
 }
 
 transforms::TransformResult * MatchVariant::calculateTransformResult() const {
-	return alternative.getTransform().apply( *this );
+	return alternative.hasTransform() ? alternative.getTransform().apply( *this ) : new transforms::TypedTransformResult<int>( 0 );
 }
 
 Match::Match( const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, MatchVariant * variant, const AttributesMap & attributes ) :
 	Transition( MATCH, start, end ), pattern( pattern ), attributes( attributes ), fragments( 0 ) {
-
-	variants.push_back( variant ); // Добавляем вариант
+	addVariant( variant );
 }
 
 Match::~Match() {

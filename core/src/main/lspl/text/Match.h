@@ -79,6 +79,8 @@ private:
 
 public:
 	const patterns::Alternative & alternative;
+	const Match * match;
+	int index;
 private:
 
 	/**
@@ -146,6 +148,9 @@ public:
 	 * @param variant вариант сопоставления
 	 */
 	void addVariant( MatchVariant * variant ) {
+		variant->index = variants.size();
+		variant->match = this;
+
 		variants.push_back( variant );
 	}
 

@@ -27,6 +27,19 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariant(JNIEnv * env, jobje
 
 /*
  * Class:     ru_lspl_text_Match
+ * Method:    getVariantTransformResult
+ * Signature: (I)Ljava/lang/Object;
+ */
+JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantTransformResult(JNIEnv * env, jobject obj, jint index) {
+	try {
+		return JavaMatch::get(env,obj)->transition.cast<Match>()->getVariants().at( index ).getTransformResult<jobject>();
+	} catch ( lspl::base::Exception & e ) {
+		return 0;
+	}
+}
+
+/*
+ * Class:     ru_lspl_text_Match
  * Method:    getVariantTransitionCount
  * Signature: (I)I
  */

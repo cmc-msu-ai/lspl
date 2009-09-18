@@ -19,8 +19,11 @@
 #include "../expressions/Expression.h"
 
 #include "../../text/attributes/SpeechPart.h"
+#include "../../text/attributes/AttributeKey.h"
 
 #include <boost/spirit/symbols.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
+#include <boost/ptr_container/ptr_map.hpp>
 
 #include <functional>
 #include <iostream>
@@ -101,10 +104,13 @@ struct AddPatternDefinitionImpl : public DefinePattern {
 	template <typename Arg1, typename Arg2>
 	   struct result { typedef void type; };
 
-	AddPatternDefinitionImpl( Namespace & space, boost::spirit::symbols<uint> & typeSymbol ) :
-		DefinePattern( space, typeSymbol ) {}
+	AddPatternDefinitionImpl( Namespace & space, boost::spirit::symbols<uint> & typeSymbol, transforms::TransformBuilder & transformBuilder ) :
+		DefinePattern( space, typeSymbol ), transformBuilder( transformBuilder ) {}
 
 	void operator()( const std::string & name, boost::ptr_vector<Alternative> & alts ) const;
+
+private:
+	transforms::TransformBuilder & transformBuilder;
 };
 
 struct AddImpl {

@@ -5,7 +5,7 @@
 #include "base/RefCountObject.h"
 #include "base/RefCountPtr.h"
 
-#include "patterns/Pattern.h"
+#include "patterns/Forward.h"
 #include "dictionaries/Dictionary.h"
 
 #include <boost/scoped_ptr.hpp>

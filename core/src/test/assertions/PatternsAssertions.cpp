@@ -8,6 +8,7 @@
 #include "PatternsAssertions.h"
 
 #include <lspl/Namespace.h>
+#include <lspl/patterns/Pattern.h>
 #include <lspl/patterns/PatternBuilder.h>
 
 #include <iostream>

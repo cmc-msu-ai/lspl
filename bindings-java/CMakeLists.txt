@@ -70,6 +70,8 @@ set(LSPL_JAVA_SOURCES
 	src_cpp/lspl/text/JavaToken.cpp
 	src_cpp/lspl/text/JavaWord.cpp
 	src_cpp/lspl/text/attributes/java/JavaAttributeValue.cpp
+	src_cpp/lspl/transforms/JavaTransform.cpp
+	src_cpp/lspl/transforms/JavaTransformBuilder.cpp
 
 	src_cpp/lspl_jni_impl/ru_lspl_LsplObject.cpp
 	

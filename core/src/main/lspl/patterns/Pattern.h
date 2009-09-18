@@ -45,6 +45,7 @@ public:
 	 * Добавить новую альтернативу к шаблону
 	 */
 	void addAlternative( Alternative * alt ) {
+		alt->pattern = this;
 		alternatives.push_back( alt );
 	}
 
@@ -54,6 +55,9 @@ public:
 	template <class PtrContainer>
 	void addAlternatives( PtrContainer & r ) {
 		alternatives.transfer( alternatives.end(), r.begin(), r.end(), r );
+		for( int i = 0; i < alternatives.size(); ++ i ) {
+			alternatives[i].pattern = this;
+		}
 	}
 
 	/**

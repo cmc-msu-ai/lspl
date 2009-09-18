@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     ru_lspl_patterns_PatternBuilder
  * Method:    create
- * Signature: ()Lru/lspl/patterns/PatternBuilder;
+ * Signature: (Lru/lspl/transforms/TransformBuilder;)Lru/lspl/patterns/PatternBuilder;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_PatternBuilder_create
-  (JNIEnv *, jclass);
+  (JNIEnv *, jclass, jobject);
 
 /*
  * Class:     ru_lspl_patterns_PatternBuilder
