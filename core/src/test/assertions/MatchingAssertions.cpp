@@ -47,6 +47,7 @@ void assertMatches( const NamespaceRef & ns, const char * textSource, uint from,
 	assert( matches.size() > 0 );
 	assert( matches[0]->start.index == from );
 	assert( matches[0]->end.index == to );
+	assert( matches[0]->getVariants()[0].getTransformResult<int>() == 0 );
 
 	std::cout << "Ok, matched" << std::endl;
 }

@@ -9,6 +9,8 @@
 #include "../patterns/Pattern.h"
 #include "../patterns/Alternative.h"
 
+#include "../transforms/Transform.h"
+
 #include <iostream>
 
 using namespace lspl::text::attributes;
@@ -29,13 +31,20 @@ std::string Fragment::getPatternedText( uint opts ) const {
 }
 
 MatchVariant::MatchVariant( const patterns::Alternative & alternative ) :
-	TransitionList(), alternative( alternative ) {
-
+	TransitionList(), alternative( alternative ), transformResult( 0 ) {
 }
 
 MatchVariant::MatchVariant( const MatchVariant & variant ) :
-	TransitionList( variant ), alternative( variant.alternative ) {
+	TransitionList( variant ), alternative( variant.alternative ), transformResult( 0 ) {
+}
 
+MatchVariant::~MatchVariant() {
+	if ( transformResult )
+		delete transformResult;
+}
+
+transforms::TransformResult * MatchVariant::calculateTransformResult() const {
+	return alternative.getTransform().apply( *this );
 }
 
 Match::Match( const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, MatchVariant * variant, const AttributesMap & attributes ) :

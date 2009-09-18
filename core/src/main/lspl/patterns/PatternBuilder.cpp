@@ -93,10 +93,11 @@ public:
 		member2 alternatives;
 	};
 
-	struct AlternativeClosure : public boost::spirit::closure< AlternativeClosure, uint, boost::ptr_vector<Matcher>, boost::ptr_map<AttributeKey,Expression> > {
+	struct AlternativeClosure : public boost::spirit::closure< AlternativeClosure, uint, boost::ptr_vector<Matcher>, boost::ptr_map<AttributeKey,Expression>, std::string > {
 		member1 stub;
 		member2 matchers;
 		member3 bindings;
+		member4 transformSource;
 	};
 
 	struct BindingClosure : public boost::spirit::closure< BindingClosure, AttributeKey, Expression * > {
@@ -152,7 +153,7 @@ public:
         	function<AddWordMatcherImpl> addWordMatcher;
         	function<AddTokenMatcherImpl> addTokenMatcher;
         	function<AddLoopMatcherImpl> addLoopMatcher;
-        	function<AddAlternativeDefinitionImpl> addAlternativeDefinition;
+        	function<AddAlternativeDefinitionImpl> addAlternativeDefinition( AddAlternativeDefinitionImpl( *self.transformBuilder ) );
         	function<AddPatternDefinitionImpl> addPatternDefinition( AddPatternDefinitionImpl( *self.space, typeSymbol ) );
         	function<AddDictionaryRestrictionImpl> addDictionaryRestriction( *self.space );
 
@@ -172,8 +173,10 @@ public:
         			( ( alternative % '|' )[ pattern.name = construct_<std::string>( arg1, arg2 ) ] >> !( ch_p('=') >> expect_valid_pattern_name( nothing_p ) ) )
         		)[ addPatternDefinition( pattern.name, pattern.alternatives ) ];
 
-        	alternative = ( matcher >> *(matcher|restrictions) >> !bindingList )
-        		[ addAlternativeDefinition( pattern.alternatives, alternative.matchers, alternative.bindings, construct_<std::string>( arg1, arg2 ) ) ];
+        	alternative = ( matcher >> *(matcher|restrictions) >> !bindingList >> !alternativeTransformSource )
+        		[ addAlternativeDefinition( pattern.alternatives, alternative.matchers, alternative.bindings, construct_<std::string>( arg1, arg2 ), alternative.transformSource ) ];
+
+        	alternativeTransformSource = str_p("=>") >> lexeme_d[ *~chset_p("\n|") ][ alternative.transformSource = construct_<std::string>( arg1, arg2 ) ];
 
         	patternName = lexeme_d[ +chset_p("a-zA-Z" RUS_ALPHA "-") >> ~epsilon_p(chset_p("a-zA-Z" RUS_ALPHA "-")) ];
 
@@ -277,7 +280,7 @@ public:
     	symbols<SpeechPart> speechPart;
     	symbols<AttributeValue> attributeValue;
 
-    	rule<ScannerT> patternName, wordType, source, wordBase, wordRestriction, matcherVariable, loopRestriction, restrictions, bindingList, endLoop, endOptional, endBinding, endRestriction;
+    	rule<ScannerT> patternName, wordType, source, wordBase, wordRestriction, matcherVariable, loopRestriction, restrictions, bindingList, endLoop, endOptional, endBinding, endRestriction, alternativeTransformSource;
 
     	rule<ScannerT, AlternativeClosure::context_t> alternative;
 
@@ -302,7 +305,7 @@ public:
     	AttributeKeyParser attributeKey;
     };
 
-    ParserImpl( NamespaceRef space ) : Parser( space ) {}
+    ParserImpl( NamespaceRef space, transforms::TransformBuilderRef tb ) : Parser( space, tb ) {}
     ~ParserImpl() {}
 
     PatternBuilder::BuildInfo build( const char * str ) throw (PatternBuildingException) {
@@ -347,11 +350,15 @@ public:
     }
 };
 
-PatternBuilder::PatternBuilder() : space( new Namespace() ), parser( new ParserImpl( space ) ) {
+PatternBuilder::PatternBuilder() : space( new Namespace() ), transformBuilder( new transforms::DummyTransformBuilder() ), parser( new ParserImpl( space, transformBuilder ) ) {
 }
 
-PatternBuilder::PatternBuilder( const NamespaceRef & ns ) : space( ns ), parser( new ParserImpl( space ) ) {
+PatternBuilder::PatternBuilder( const NamespaceRef & ns ) : space( ns ), transformBuilder( new transforms::DummyTransformBuilder() ), parser( new ParserImpl( space, transformBuilder ) ) {
 }
+
+PatternBuilder::PatternBuilder( const NamespaceRef & ns, const transforms::TransformBuilderRef & tb ) : space( ns ), transformBuilder( tb ), parser( new ParserImpl( space, transformBuilder ) ) {
+}
+
 
 PatternBuilder::~PatternBuilder() {
 }

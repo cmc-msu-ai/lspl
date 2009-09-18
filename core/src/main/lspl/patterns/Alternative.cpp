@@ -7,12 +7,25 @@
 #include "matchers/PatternMatcher.h"
 #include "matchers/LoopMatcher.h"
 
+#include "../transforms/Transform.h"
+
 #include "Alternative.h"
 #include "Pattern.h"
 
 using namespace lspl::patterns::matchers;
 
 namespace lspl { namespace patterns {
+
+Alternative::Alternative( const std::string & source ) :
+	source( source ) {
+}
+
+Alternative::~Alternative() {
+}
+
+void Alternative::setTransform( std::auto_ptr<transforms::Transform> t ) {
+	transform = t;
+}
 
 bool Alternative::equals( const Alternative & alt ) const {
 	if ( alt.getMatcherCount() != getMatcherCount() ) return false; // Различное количество сопоставителей

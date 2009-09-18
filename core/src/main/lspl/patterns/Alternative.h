@@ -8,11 +8,14 @@
 #include "../text/attributes/SpeechPart.h"
 #include "../text/attributes/AttributeKey.h"
 
+#include "../transforms/Forward.h"
+
 #include "matchers/Forward.h"
 #include "matchers/MatcherContainer.h"
 
 #include "expressions/Expression.h"
 
+#include <memory>
 #include <boost/ptr_container/ptr_map.hpp>
 
 namespace lspl { namespace patterns {
@@ -51,9 +54,8 @@ public:
 	typedef boost::ptr_map<text::attributes::AttributeKey,expressions::Expression> BindingMap;
 public:
 
-	Alternative( const std::string & source ) :
-		source( source ) {
-	}
+	Alternative( const std::string & source );
+	~Alternative();
 
 	/**
 	 * Сравнить на равенство с заданной альтернативой.
@@ -62,22 +64,6 @@ public:
 	 * @return true, если альтернативы равны
 	 */
 	bool equals( const Alternative & alt ) const;
-
-	/**
-	 * Добавить связывания
-	 */
-	template <class PtrMap>
-	void addBindings( PtrMap & r ) {
-		if ( r.begin() != r.end() )
-			bindings.transfer( r.begin(), r.end(), r );
-	}
-
-	/**
-	 * Добавить связывние переменной
-	 */
-	void addBinding( text::attributes::AttributeKey bindedAttribute, expressions::Expression * exp ) {
-		bindings.insert( bindedAttribute, exp );
-	}
 
 	/**
 	 * Получить список зависимостей альтерантивы
@@ -111,9 +97,11 @@ public:
 	}
 
 	/**
-	 * Обновить список зависимостей альтернативы
+	 * Получить преобразование определяемое альтернативой
 	 */
-	void updateDependencies();
+	const transforms::Transform & getTransform() const {
+		return *transform;
+	}
 
 	void dump( std::ostream & out, const std::string & tabs = "" ) const;
 
@@ -127,10 +115,48 @@ public:
 		return !equals( alt );
 	}
 
+public:
+
+	/**
+	 * Добавить связывания аттрибутов
+	 */
+	template <class PtrMap>
+	void addBindings( PtrMap & r ) {
+		if ( r.begin() != r.end() )
+			bindings.transfer( r.begin(), r.end(), r );
+	}
+
+	/**
+	 * Добавить связывание аттрибута к альтернативе
+	 *
+	 * @param bindedAttribute связываемый аттрибут
+	 * @param exp выражение, формирующее значение аттрибута
+	 */
+	void addBinding( text::attributes::AttributeKey bindedAttribute, expressions::Expression * exp ) {
+		bindings.insert( bindedAttribute, exp );
+	}
+
+	/**
+	 * Установить преобразование, осуществляемое альтернативой
+	 *
+	 * @param t преобразование
+	 */
+	void setTransform( std::auto_ptr<transforms::Transform> t );
+
+	/**
+	 * Обновить список зависимостей альтернативы
+	 */
+	void updateDependencies();
+
 private:
 	void appendDependencies( const matchers::Matcher & matcher );
 	void appendIndexInfo( const boost::ptr_vector<matchers::Matcher> & matchers ) const;
 private:
+
+	/**
+	 * Преобразование, осуществляемое альтернативой
+	 */
+	std::auto_ptr<transforms::Transform> transform;
 
 	/**
 	 * Исходный текст альтернативы

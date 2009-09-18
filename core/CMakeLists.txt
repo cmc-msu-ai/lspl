@@ -70,6 +70,9 @@ set(LSPL_CORE_SOURCES
 	src/main/lspl/utils/Console.cpp
 	src/main/lspl/dictionaries/MemoryDictionary.cpp
 	src/main/lspl/dictionaries/Dictionary.cpp
+	
+	src/main/lspl/transforms/TransformBuilder.cpp
+	
 	src/main/lspl/text/markup/Word.cpp
 	src/main/lspl/text/markup/Token.cpp
 	src/main/lspl/text/Transition.cpp

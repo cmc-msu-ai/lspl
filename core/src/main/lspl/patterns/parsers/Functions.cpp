@@ -27,6 +27,8 @@
 #include "../restrictions/AgreementRestriction.h"
 #include "../restrictions/DictionaryRestriction.h"
 
+#include "../../transforms/TransformBuilder.h"
+
 using namespace lspl::text::attributes;
 
 using namespace lspl::patterns::restrictions;
@@ -97,12 +99,13 @@ void AddPatternMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, c
 	matchers.push_back( matcher );
 }
 
-void AddAlternativeDefinitionImpl::operator()( boost::ptr_vector<Alternative> & alts, boost::ptr_vector<Matcher> & matchers, boost::ptr_map<AttributeKey,Expression> & bindings, const std::string & source ) const {
+void AddAlternativeDefinitionImpl::operator()( boost::ptr_vector<Alternative> & alts, boost::ptr_vector<Matcher> & matchers, boost::ptr_map<AttributeKey,Expression> & bindings, const std::string & source, const std::string & transformSource ) const {
 	Alternative * alternative = new Alternative( source ); // Добавляем новую альтернативу к шаблону
 
 	alternative->addMatchers( matchers ); // Добавляем сопоставители
 	alternative->addBindings( bindings ); // Добавляем связывания
 	alternative->updateDependencies(); // Обновляем зависимости альтернативы
+	alternative->setTransform( std::auto_ptr<transforms::Transform>( transformBuilder.build( *alternative, transformSource ) ) ); // Устанавливаем преобразование
 
 	alts.push_back( alternative );
 }

@@ -7,6 +7,7 @@
 #include "../base/Exception.h"
 
 #include "../Namespace.h"
+#include "../transforms/TransformBuilder.h"
 
 #include <string>
 
@@ -47,17 +48,19 @@ public:
 	 */
 	class Parser {
 	public:
-		Parser( NamespaceRef space ) : space( space ) {}
+		Parser( NamespaceRef space, transforms::TransformBuilderRef transformBuilder ) : space( space ), transformBuilder( transformBuilder ) {}
 		virtual ~Parser() {}
 
 		virtual BuildInfo build( const char * str ) throw (PatternBuildingException) = 0;
 	public:
 		NamespaceRef space;
+		transforms::TransformBuilderRef transformBuilder;
 	};
 
 public:
 	PatternBuilder();
 	PatternBuilder( const NamespaceRef & ns );
+	PatternBuilder( const NamespaceRef & ns, const transforms::TransformBuilderRef & tb );
 	virtual ~PatternBuilder();
 
 	/**
@@ -68,6 +71,7 @@ public:
 public:
 
 	NamespaceRef space;
+	transforms::TransformBuilderRef transformBuilder;
 
 private:
 

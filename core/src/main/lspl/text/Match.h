@@ -2,11 +2,14 @@
 #define _LSPL_TRANSITIONS_PATTERNTRANSITION_H_
 
 #include "../base/Range.h"
+#include "../base/Exception.h"
 
 #include "Transition.h"
 
 #include "../patterns/matchers/Forward.h"
 #include "../patterns/Forward.h"
+
+#include "../transforms/TransformResult.h"
 
 #include <string>
 #include <map>
@@ -57,9 +60,31 @@ public:
 
 	MatchVariant( const patterns::Alternative & alternative );
 	MatchVariant( const MatchVariant & variant );
+	~MatchVariant();
+
+	/**
+	 * Получить результат преобразования, определяемого альтернативой
+	 */
+	template <typename Result>
+	Result getTransformResult() const {
+		if ( !transformResult )
+			transformResult = calculateTransformResult(); // Вычисляем значение преобразования, если его еще нет
+
+		return transformResult->getValue<Result>();
+	}
+
+private:
+
+	transforms::TransformResult * calculateTransformResult() const;
 
 public:
 	const patterns::Alternative & alternative;
+private:
+
+	/**
+	 * Преобразование, осуществляемое альтернативой
+	 */
+	mutable transforms::TransformResult * transformResult;
 };
 
 /**

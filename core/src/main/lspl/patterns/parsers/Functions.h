@@ -12,6 +12,8 @@
 
 #include "../matchers/Forward.h"
 
+#include "../../transforms/Forward.h"
+
 #include "../restrictions/Restriction.h"
 
 #include "../expressions/Expression.h"
@@ -78,15 +80,20 @@ struct AddPatternMatcherImpl : public DefinePattern {
 		DefinePattern( space, typeSymbol ) {}
 
 	void operator()( boost::ptr_vector<Matcher> & matchers, const std::string & name, uint index, boost::ptr_vector< Restriction > & restrictions ) const;
-
 };
 
 struct AddAlternativeDefinitionImpl {
 
-	template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>
+	template <typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5>
 	struct result { typedef void type; };
 
-	void operator()( boost::ptr_vector<Alternative> & alts, boost::ptr_vector<Matcher> & matchers, boost::ptr_map<AttributeKey,Expression> & bindings, const std::string & source ) const;
+	AddAlternativeDefinitionImpl( transforms::TransformBuilder & transformBuilder ) :
+		transformBuilder( transformBuilder ) {}
+
+	void operator()( boost::ptr_vector<Alternative> & alts, boost::ptr_vector<Matcher> & matchers, boost::ptr_map<AttributeKey,Expression> & bindings, const std::string & source, const std::string & transformSource ) const;
+
+private:
+	transforms::TransformBuilder & transformBuilder;
 };
 
 struct AddPatternDefinitionImpl : public DefinePattern {
