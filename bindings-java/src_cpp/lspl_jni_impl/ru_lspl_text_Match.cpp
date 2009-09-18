@@ -49,5 +49,7 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantTransition(JNIEnv * 
  * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_ru_lspl_text_Match_finalizeVariant(JNIEnv * env, jobject obj, jint vindex) {
-	JavaMatch::get(env,obj)->freeVariant( vindex );
+	JavaMatch * m = JavaMatch::get(env,obj);
+
+	if ( m ) m->freeVariant( vindex );
 }

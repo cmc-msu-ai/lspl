@@ -5,8 +5,6 @@
 #include "lspl/text/Text.h"
 #include "lspl/text/java/JavaNode.h"
 
-#include <iostream>
-
 namespace lspl { namespace text { namespace java {
 
 jclass JavaText::clazz;
@@ -17,16 +15,13 @@ std::vector<JavaText*> JavaText::texts;
 
 JavaText::JavaText( const TextRef & text, JNIEnv * env ) :
 	text( text ), object( env->NewWeakGlobalRef( env->NewObject( clazz, constructor, (jint)text->id ) ) ) {
-	(std::cout << "+").flush();
 }
 
 JavaText::JavaText( const TextRef & text, jobject object ) :
 	text( text ), object( object ) {
-	(std::cout << "+").flush();
 }
 
 JavaText::~JavaText() {
-	(std::cout << "-").flush();
 }
 
 JavaText & JavaText::get( JNIEnv * env, jobject obj ) {
