@@ -23,6 +23,8 @@ public abstract class LsplObject {
 
 		return id == ((LsplObject)o).id;
 	}
+	
+	public static native void setRml( String rml );
 
 	static {
 		System.loadLibrary("lspl");

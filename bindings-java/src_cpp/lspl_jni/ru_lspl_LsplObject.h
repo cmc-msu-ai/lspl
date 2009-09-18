@@ -15,6 +15,14 @@ extern "C" {
 JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_initStatic
   (JNIEnv *, jclass);
 
+/*
+ * Class:     ru_lspl_LsplObject
+ * Method:    setRml
+ * Signature: (Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_setRml
+  (JNIEnv *, jclass, jstring);
+
 #ifdef __cplusplus
 }
 #endif
