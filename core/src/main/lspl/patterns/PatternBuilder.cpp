@@ -233,7 +233,7 @@ public:
 
         	loopBody = expect_grp_matcher( matcher[ loopBody.matcherCount = 1 ] ) >> ( *(matcher[ loopBody.matcherCount ++ ] | restrictions) )[ add( loopMatcher.alternativesCount, loopBody.matcherCount ) ];
 
-        	loopRestriction = '<' >> !uint_p[ loopMatcher.min = arg1 ] >> !( ',' >> uint_p[ loopMatcher.max = arg1 ] ) >> endRestriction;
+        	loopRestriction = '<' >> epsilon_p(chset_p("0-9,")) >> !uint_p[ loopMatcher.min = arg1 ] >> !( ',' >> uint_p[ loopMatcher.max = arg1 ] ) >> endRestriction;
 
         	/*
         	 * Парсеры ограничений

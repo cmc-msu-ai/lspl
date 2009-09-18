@@ -88,6 +88,9 @@ void testPatterns() {
 	assertBuilds( "AAA = { N V }<1,5>" );
 	assertBuilds( "AAA = { N V <N=V> }<1>" );
 	assertBuilds( "AAA = { A N V <N=V> <A=N> }<1>" );
+	assertBuilds( "AAA = A N { V }<1> <N=V>" );
+	assertBuilds( "AAA = A N { V } <N=V>" );
+	assertBuilds( "AAA = A N { V } <A=N=V>" );
 
 	// Alternatives in loops
 	assertBuilds( "AAA = [ N | V ]" );
