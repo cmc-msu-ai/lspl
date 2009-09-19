@@ -37,9 +37,15 @@ public class Loop extends Transition {
 	};
 	
 	public final List<Transition> transitions = new TransitionList();
+	
+	/**
+	 * Количество повторений, произведенных в цикле
+	 */
+	public final int repeatCount;
 
-	private Loop(int id, Text text, Node start, Node end) {
+	private Loop(int id, Text text, Node start, Node end, int repeatCount) {
 		super(id, text, start, end);
+		this.repeatCount = repeatCount;
 	}
 
 	public List<Transition> getTransitions() {

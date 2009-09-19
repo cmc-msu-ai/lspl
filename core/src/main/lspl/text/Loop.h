@@ -10,7 +10,7 @@ namespace lspl { namespace text {
 class LSPL_EXPORT Loop : public lspl::text::Transition
 {
 public:
-	Loop( const text::Node & start, const text::Node & end, const TransitionList & transitions );
+	Loop( const text::Node & start, const text::Node & end, const TransitionList & transitions, uint repeatCount );
 	virtual ~Loop();
 
 	virtual void dump( std::ostream & out, std::string tabs = "" ) const;
@@ -21,6 +21,7 @@ public:
 
 public:
 	const TransitionList transitions;
+	const uint repeatCount;
 };
 
 } }

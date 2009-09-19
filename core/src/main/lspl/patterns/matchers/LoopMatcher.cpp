@@ -82,11 +82,13 @@ static void processLoop( const LoopMatchState & state, std::vector< std::pair<Tr
 	const Matcher & currentMatcher = state.getCurrentMatcher();
 
 	if ( state.complete() ) {
-		if ( state.loops() > 0 && state.loops() >= state.matcher.minLoops && ( state.loops() <= state.matcher.maxLoops || state.matcher.maxLoops == 0 ) ) {
-			results.push_back( std::make_pair( new Loop( state.startNode, currentNode, state.transitions ), state.context ) );
+		uint loops = state.loops(); // Количество произведенных повторений
+
+		if ( loops > 0 && loops >= state.matcher.minLoops && ( loops <= state.matcher.maxLoops || state.matcher.maxLoops == 0 ) ) {
+			results.push_back( std::make_pair( new Loop( state.startNode, currentNode, state.transitions, loops ), state.context ) );
 		}
 
-		if ( state.loops() >= state.matcher.maxLoops && state.matcher.maxLoops > 0 )
+		if ( loops >= state.matcher.maxLoops && state.matcher.maxLoops > 0 )
 			return;
 	}
 
@@ -117,7 +119,7 @@ LoopMatcher::~LoopMatcher() {
 
 void LoopMatcher::buildChains( const text::Node & node, const Context & context, ChainList & results ) const {
 	if ( minLoops == 0 )
-		results.push_back( std::make_pair( new Loop( node, node, TransitionList() ), context ) );
+		results.push_back( std::make_pair( new Loop( node, node, TransitionList(), 0 ), context ) );
 
 	for ( uint i = 0; i < alternatives.size(); ++ i )
 		processLoop( LoopMatchState( *this, node, context, alternatives[i].getMatchers() ), results );
@@ -125,7 +127,7 @@ void LoopMatcher::buildChains( const text::Node & node, const Context & context,
 
 void LoopMatcher::buildChains( const text::Transition & transition, const Context & context, ChainList & results ) const {
 	if ( minLoops == 0 )
-		results.push_back( std::make_pair( new Loop( transition.start, transition.start, TransitionList() ), context ) );
+		results.push_back( std::make_pair( new Loop( transition.start, transition.start, TransitionList(), 0 ), context ) );
 
 	for ( uint i = 0; i < alternatives.size(); ++ i ) {
 		const LoopMatchState s0( *this, transition.start, context, alternatives[i].getMatchers() );

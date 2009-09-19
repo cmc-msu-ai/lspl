@@ -10,8 +10,8 @@ using namespace lspl::text::attributes;
 
 namespace lspl { namespace text {
 
-Loop::Loop( const text::Node & start, const text::Node & end, const TransitionList & transitions ) :
-	Transition( LOOP, start, end ), transitions( transitions ) {
+Loop::Loop( const text::Node & start, const text::Node & end, const TransitionList & transitions, uint repeatCount ) :
+	Transition( LOOP, start, end ), transitions( transitions ), repeatCount( repeatCount ) {
 }
 
 Loop::~Loop() {
