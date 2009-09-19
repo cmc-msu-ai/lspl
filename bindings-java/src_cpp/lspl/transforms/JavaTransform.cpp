@@ -21,6 +21,15 @@ namespace lspl { namespace transforms {
 jclass JavaTransform::clazz;
 jmethodID JavaTransform::applyMethod;
 
+JavaTransformResult::JavaTransformResult( JNIEnv * env, jobject value ) :
+	TypedTransformResult<jobject>( env->NewGlobalRef( value ) ) {
+
+}
+
+JavaTransformResult::~JavaTransformResult() {
+	getCurrentEnv()->DeleteGlobalRef( value );
+}
+
 JavaTransform::JavaTransform( JNIEnv * env, jobject obj ) {
 	object = env->NewGlobalRef( obj );
 }
@@ -34,10 +43,10 @@ void JavaTransform::init( JNIEnv * env ) {
 	applyMethod = env->GetMethodID( clazz, "apply", "(Lru/lspl/text/MatchVariant;)Ljava/lang/Object;" );
 }
 
-TypedTransformResult<jobject> * JavaTransform::apply( const text::MatchVariant & matchVariant ) const {
+JavaTransformResult * JavaTransform::apply( const text::MatchVariant & matchVariant ) const {
 	JNIEnv * env = getCurrentEnv();
 
-	return new TypedTransformResult<jobject>( env->CallObjectMethod( const_cast<jobject>( object ), applyMethod, JavaMatch::get( env, matchVariant.match )->getVariant( env, matchVariant.index ) ) );
+	return new JavaTransformResult( env, env->CallObjectMethod( const_cast<jobject>( object ), applyMethod, JavaMatch::get( env, matchVariant.match )->getVariant( env, matchVariant.index ) ) );
 }
 
 } } // namespace lspl::transforms
