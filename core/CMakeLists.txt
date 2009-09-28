@@ -72,6 +72,7 @@ set(LSPL_CORE_SOURCES
 	src/main/lspl/dictionaries/Dictionary.cpp
 	
 	src/main/lspl/transforms/TransformBuilder.cpp
+	src/main/lspl/transforms/Normalization.cpp
 	
 	src/main/lspl/text/markup/Word.cpp
 	src/main/lspl/text/markup/Token.cpp
