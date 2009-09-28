@@ -27,7 +27,9 @@ public:
 	JavaTransform( JNIEnv * env, jobject obj );
 	virtual ~JavaTransform();
 
-	virtual JavaTransformResult * apply( const text::MatchVariant & matchVariant ) const;
+	virtual jobject apply( const text::MatchVariant & matchVariant ) const;
+
+	virtual JavaTransformResult * applyAndBox( const text::MatchVariant & matchVariant ) const;
 
 	static void init( JNIEnv * env );
 

@@ -44,7 +44,7 @@ MatchVariant::~MatchVariant() {
 }
 
 transforms::TransformResult * MatchVariant::calculateTransformResult() const {
-	return alternative.hasTransform() ? alternative.getTransform().apply( *this ) : new transforms::TypedTransformResult<int>( 0 );
+	return alternative.hasTransform() ? alternative.getTransform().applyAndBox( *this ) : new transforms::TypedTransformResult<int>( 0 );
 }
 
 Match::Match( const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, MatchVariant * variant, const AttributesMap & attributes ) :

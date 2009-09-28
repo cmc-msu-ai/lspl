@@ -27,12 +27,12 @@ public:
 	virtual ~Transform() {}
 
 	/**
-	 * Применить преобразование к варианту сопоставления.
+	 * Применить преобразование к варианту сопоставления и упаковать результат.
 	 *
 	 * @param matchVariant вариант сопоставления
-	 * @return результат применения
+	 * @return упакованный результат применения
 	 */
-	virtual TransformResult * apply( const text::MatchVariant & matchVariant ) const = 0;
+	virtual TransformResult * applyAndBox( const text::MatchVariant & matchVariant ) const = 0;
 };
 
 template< typename Result >
@@ -45,7 +45,17 @@ public:
 	 * @param matchVariant вариант сопоставления
 	 * @return результат применения
 	 */
-	virtual TypedTransformResult<Result> * apply( const text::MatchVariant & matchVariant ) const = 0;
+	virtual Result apply( const text::MatchVariant & matchVariant ) const = 0;
+
+	/**
+	 * Применить преобразование к варианту сопоставления и упаковать результат.
+	 *
+	 * @param matchVariant вариант сопоставления
+	 * @return упакованный результат применения
+	 */
+	virtual TypedTransformResult<Result> * applyAndBox( const text::MatchVariant & matchVariant ) const {
+		return new TypedTransformResult<Result>( apply( matchVariant ) );
+	}
 
 };
 

@@ -43,7 +43,13 @@ void JavaTransform::init( JNIEnv * env ) {
 	applyMethod = env->GetMethodID( clazz, "apply", "(Lru/lspl/text/MatchVariant;)Ljava/lang/Object;" );
 }
 
-JavaTransformResult * JavaTransform::apply( const text::MatchVariant & matchVariant ) const {
+jobject JavaTransform::apply( const text::MatchVariant & matchVariant ) const {
+	JNIEnv * env = getCurrentEnv();
+
+	return env->CallObjectMethod( const_cast<jobject>( object ), applyMethod, JavaMatch::get( env, matchVariant.match )->getVariant( env, matchVariant.index ) );
+}
+
+JavaTransformResult * JavaTransform::applyAndBox( const text::MatchVariant & matchVariant ) const {
 	JNIEnv * env = getCurrentEnv();
 
 	return new JavaTransformResult( env, env->CallObjectMethod( const_cast<jobject>( object ), applyMethod, JavaMatch::get( env, matchVariant.match )->getVariant( env, matchVariant.index ) ) );
