@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "lspl/Namespace.h"
+#include "lspl/patterns/Pattern.h"
 #include "lspl/text/Text.h"
 
 namespace lspl {
