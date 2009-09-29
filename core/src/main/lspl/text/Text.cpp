@@ -53,6 +53,7 @@ Text::~Text() {
 }
 
 void Text::addWordToMarkup( const markup::WordRef & word ) {
+	std::cout << "!";
 	const_cast<Node&>( word->start ).transitions.push_back( word ); // Добавляем слово в разметку
 
 	speechPartIndex.addAnnotation( SpeechPart::WORD, word.get() ); // Добавляем слово в индекс слов

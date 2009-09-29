@@ -3,113 +3,111 @@
  */
 
 #include <algorithm>
-#include <fstream>
 #include <iostream>
+#include <map>
 #include <string>
 
 #include "DictionaryRecognizer.h"
 #include "lspl/patterns/PatternBuilder.h"
 #include "lspl/text/Match.h"
-#include "lspl/text/readers/PlainTextReader.h"
-#include "lspl/utils/Conversion.h"
 #include "RangeSet.h"
-
+#include "Util.h"
 
 namespace lspl {
-	static lspl::utils::Conversion in("UTF-8", "CP1251");
-	static lspl::utils::Conversion out("CP1251", "UTF-8");
-
-	std::string DictionaryRecognizer::LoadTextFromFile(const char* filename)
-			const {
-		std::ifstream input_stream(filename);
-		input_stream.seekg(0, std::ios_base::end);
-		int size = input_stream.tellg();
-		input_stream.seekg(0, std::ios_base::beg);
-		char* buffer = new char[size];
-		input_stream.read(buffer, size);
-		std::string result = in.convert(buffer, size);
-		delete [] buffer;
-		return result;
+	NamespaceRef DictionaryRecognizer::patterns_namespace() const {
+		return _patterns_namespace;
 	}
 
-	lspl::NamespaceRef
+	text::TextRef DictionaryRecognizer::text() const {
+		return _text;
+	}
+
+	NamespaceRef
 			DictionaryRecognizer::LoadPatterns(const char* dictionary_filename)
 			const {
-		lspl::NamespaceRef patterns_namespace = new lspl::Namespace();
-		lspl::patterns::PatternBuilderRef builder =
-				new lspl::patterns::PatternBuilder(patterns_namespace);
-		uint startIndex = 0;
-		std::string text = LoadTextFromFile(dictionary_filename);
+		NamespaceRef patterns_namespace = new Namespace();
+		patterns::PatternBuilderRef builder =
+				new patterns::PatternBuilder(patterns_namespace);
+		int start_index = 0;
+		std::string text = Util::LoadTextFromFile(dictionary_filename);
 		for(uint i = 0; i < text.size(); i++)
 			if ((i == text.size() - 1) || (text[i] == '\n')) {
-				uint lineSize = i - startIndex;
-				if (lineSize > 1) {
-					std::string line(text, startIndex, lineSize);
+				uint line_size = i - start_index;
+				if (line_size > 1) {
+					std::string line(text, start_index, line_size);
 					try {
 						builder->build(line);
-					}	catch(lspl::patterns::PatternBuildingException) {
+					}	catch(patterns::PatternBuildingException) {
 					}
 				}
-				startIndex = i + 1;
+				start_index = i + 1;
 			}
 		return patterns_namespace;
-	}
-
-	lspl::text::TextRef DictionaryRecognizer::LoadText(const char* text_filename)
-			const {
-		std::string text = LoadTextFromFile(text_filename);
-		lspl::text::readers::PlainTextReader reader;
-		return reader.readFromString(text);
 	}
 
 	DictionaryRecognizer::DictionaryRecognizer(const char* dictionary_filename,
 			const char* text_filename) {
 		_patterns_namespace = LoadPatterns(dictionary_filename);
-		_text = LoadText(text_filename);
+		_text = Util::LoadText(text_filename);
 	}
 
 	DictionaryRecognizer::DictionaryRecognizer(
-			const lspl::NamespaceRef patterns_namespace,
-			const lspl::text::TextRef text) {
+			const NamespaceRef patterns_namespace,
+			const char *text_filename) {
+		_patterns_namespace = patterns_namespace;
+		_text = Util::LoadText(text_filename);
+	}
+
+	DictionaryRecognizer::DictionaryRecognizer(
+			const NamespaceRef patterns_namespace,
+			const text::TextRef text) {
 		_patterns_namespace = patterns_namespace;
 		_text = text;
 	}
 
-	std::vector<std::pair<lspl::patterns::PatternRef, int> >
-			DictionaryRecognizer::RecognizeAndSearch() const {
-		std::vector<std::pair<lspl::patterns::PatternRef, int> > result;
+	std::vector<PatternsMatch> DictionaryRecognizer::RecognizeAndSearch() const {
+		std::vector<PatternsMatch> result;
+		std::map<std::string, std::vector<text::MatchRef> > result_matches;
 
-		for(uint i = 0; i < _patterns_namespace->getPatternCount(); i++) {
-			lspl::patterns::PatternRef pattern =
-					_patterns_namespace->getPatternByIndex(i);
-			lspl::text::MatchList matches = _text->getMatches(pattern);
+		for(uint i = 0; i < patterns_namespace()->getPatternCount(); i++) {
+			patterns::PatternRef pattern =
+					patterns_namespace()->getPatternByIndex(i);
+			text::MatchList matches = text()->getMatches(pattern);
+			for(uint j = 0; j < matches.size(); ++j) {
+				std::string normalized_match =
+						matches[j]->getVariants().at(0).at(3).cast<Words>().getBase();
+						//Util::Normalize(matches[j]->getFragment(0).getText());
+				if (result_matches.find(normalized_match) == result_matches.end()) {
+					result.push_back(PatternsMatch(normalized_match, 0));
+				}
+				result_matches[normalized_match].push_back(matches[j]);
+			}
 			if (matches.size() != 0) {
-				result.push_back(
-						std::pair<lspl::patterns::PatternRef, int>(pattern, 0));
-				std::cout << "Pattern: " << out.convert( pattern->name ) << std::endl;
+				//result.push_back(PatternsMatch(pattern, 0));
+				std::cout << "Pattern: " << Util::out.convert(pattern->name) <<
+						std::endl;
 			}
 		}
 
 		std::sort(result.begin(), result.end(),
 				ComparePatternsMatches);
 
-		lspl::base::RangeSet range_set;
-		for(int i = 0; i < result.size(); ++i) {
-			lspl::patterns::PatternRef pattern = result[i].first;
-			std::cout << " Pattern: " << out.convert( pattern->name ) << std::endl;
-			lspl::text::MatchList matches = _text->getMatches(pattern);
-			for(uint j = 0; j < matches.size(); j++) {
-				lspl::text::MatchRef match = matches[j];
-				lspl::base::Range range = match->getFragment(0);
+		base::RangeSet range_set;
+		for(uint i = 0; i < result.size(); ++i) {
+			std::string normalized_match = result[i].first;
+			std::cout << "Term: " << Util::out.convert(normalized_match) << std::endl;
+			for(uint j = 0; j < result_matches[normalized_match].size(); j++) {
+				text::MatchRef match = result_matches[normalized_match][j];
+				base::Range range = match->getFragment(0);
 				if (!range_set.FindRangeExtension(range)) {
 					range_set.AddRange(range);
 					++(result[i].second);
 					std::cout << "Match '" <<
-							out.convert( match->getFragment(0).getText() ) << "'" <<
+							Util::out.convert(match->getFragment(0).getText()) << "'" <<
 							std::endl;
 				} else {
 					std::cout << "Don't include match '" <<
-							out.convert( match->getFragment(0).getText() ) << "'" <<
+							Util::out.convert(match->getFragment(0).getText()) << "'" <<
 							std::endl;
 				}
 			}
@@ -118,9 +116,8 @@ namespace lspl {
 		return result;
 	}
 
-	bool DictionaryRecognizer::ComparePatternsMatches(
-				const std::pair<lspl::patterns::PatternRef, int> &i,
-				const std::pair<lspl::patterns::PatternRef, int> &j) {
-		return i.first->name.size() >= j.first->name.size();
+	bool DictionaryRecognizer::ComparePatternsMatches(const PatternsMatch &i,
+			const PatternsMatch &j) {
+		return i.first.size() >= j.first.size();
 	}
 } // namespace lspl.
