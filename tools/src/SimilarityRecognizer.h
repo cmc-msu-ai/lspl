@@ -26,8 +26,6 @@ class SimilarityRecognizer {
 	NamespaceRef patterns_namespace() const;
 	std::vector<NamespaceRef> similar_patterns_namespaces() const;
 	void LoadSimilarPatterns(const char *file);
-	void ConvertToText(const std::vector<std::string> &terms,
-		std::vector<text::TextRef> &terms_text) const;
  public:
 	SimilarityRecognizer(const char *similarity_patterns_file);
 

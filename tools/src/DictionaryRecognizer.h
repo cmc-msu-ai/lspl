@@ -15,7 +15,7 @@
 
 namespace lspl {
 
-typedef std::pair<patterns::PatternRef, int> PatternsMatch;
+typedef std::pair<std::string, int> PatternsMatch;
 
 class DictionaryRecognizer {
  private:

@@ -56,4 +56,31 @@ namespace lspl {
 		}
 		return result;
 	}
+
+	void Util::ConvertToText(const std::vector<std::string> &terms,
+			std::vector<text::TextRef> &terms_text) {
+		for(int i = 0; i < terms.size(); ++i) {
+			terms_text.push_back(ConvertToText(terms[i]));
+		}
+	}
+
+	text::TextRef Util::ConvertToText(const std::string &term) {
+		static text::readers::PlainTextReader reader;
+		return reader.readFromString(term);
+	}
+
+	std::string Util::Normalize(const std::string &term) {
+		std::cout << out.convert(term) << std::endl;
+		text::TextRef text = ConvertToText(term);
+		std::string result;
+		for(int i = 0; i < text->getWords().size(); ++i) {
+			/*std::cout << out.convert(text->getContent()) << " " <<
+				 out.convert((text->getWords()[i]->getBase())) << std::endl;*/
+			if (i > 0) {
+				result += " ";
+			}
+			result += text->getWords()[i]->getBase();
+		}
+		return result;
+	}
 } // namespace lspl.

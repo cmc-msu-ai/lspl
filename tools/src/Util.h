@@ -24,6 +24,10 @@ class Util {
 	static text::TextRef LoadText(const char *text_filename);
 	static std::string Trim(const std::string &text);
 	static int CountWords(const std::string &text);
+	static void ConvertToText(const std::vector<std::string> &terms,
+			std::vector<text::TextRef> &terms_text);
+	static text::TextRef ConvertToText(const std::string &term);
+	static std::string Normalize(const std::string &term);
 };
 
 } // namespace lspl.
