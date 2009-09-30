@@ -117,8 +117,10 @@ static void processCompoundPattern( const PatternMatchState & state, TransitionL
 	if ( const AnnotationMatcher * curMatcher = dynamic_cast<const AnnotationMatcher *>( &state.getCurrentMatcher() ) ) {
 		TransitionList nextTransitions = curMatcher->buildTransitions( currentNode, state.context );
 
-		for ( uint i = 0; i < nextTransitions.size(); ++ i )
-			processCompoundPattern( PatternMatchState( state, nextTransitions[ i ] ), newTransitions );
+		for ( uint i = 0; i < nextTransitions.size(); ++ i ) {
+			PatternMatchState temp_state( state, nextTransitions[ i ] );
+			processCompoundPattern( temp_state, newTransitions );
+		}
 
 	} else {
 		const AnnotationChainMatcher & chainMatcher = static_cast<const AnnotationChainMatcher &>( state.getCurrentMatcher() );
@@ -126,8 +128,10 @@ static void processCompoundPattern( const PatternMatchState & state, TransitionL
 		chains.clear();
 		chainMatcher.buildChains( state.getCurrentNode(), state.context, chains );
 
-		for ( uint i = 0; i < chains.size(); ++ i )
-			processCompoundPattern( PatternMatchState( state, chains[i].first, chains[i].second ), newTransitions );
+		for ( uint i = 0; i < chains.size(); ++ i ) {
+			PatternMatchState temp_state( state, chains[i].first, chains[i].second );
+			processCompoundPattern( temp_state, newTransitions );
+		}
 	}
 }
 
@@ -157,15 +161,18 @@ TransitionList PatternMatcher::buildTransitions( const text::Node & node, const 
 			if ( matchTransition( *node.transitions[i], context ) )
 				newTransitions.push_back( node.transitions[i] );
 	} else {
-		for ( uint i = 0; i < pattern.alternatives.size(); ++ i )
-			processCompoundPattern( PatternMatchState( pattern, pattern.alternatives[i], node ), newTransitions );
+		for ( uint i = 0; i < pattern.alternatives.size(); ++ i ) {
+			PatternMatchState state( pattern, pattern.alternatives[i], node );
+			processCompoundPattern( state, newTransitions );
+		}
 	}
 
 	return newTransitions;
 }
 
 void PatternMatcher::buildTransitions( const text::Node & node, const patterns::Pattern & pattern, const patterns::Alternative & alt, const Context & context, TransitionList & results ) const {
-	processCompoundPattern( PatternMatchState( pattern, alt, node ), results );
+	PatternMatchState state( pattern, alt, node );
+	processCompoundPattern( state, results );
 }
 
 void PatternMatcher::buildTransitions( const text::Transition & transition, const patterns::Pattern & pattern, const patterns::Alternative & alt, const Context & context, TransitionList & results ) const {
@@ -175,7 +182,8 @@ void PatternMatcher::buildTransitions( const text::Transition & transition, cons
 		if ( !curMatcher->matchTransition( transition, Context() ) )
 			return;
 
-		processCompoundPattern( PatternMatchState( s0, const_cast<text::Transition*>( &transition ) ), results );
+		PatternMatchState state( s0, const_cast<text::Transition*>( &transition ) );
+		processCompoundPattern( state, results );
 	} else {
 		const AnnotationChainMatcher & chainMatcher = dynamic_cast<const AnnotationChainMatcher &>( s0.getCurrentMatcher() );
 
@@ -184,8 +192,10 @@ void PatternMatcher::buildTransitions( const text::Transition & transition, cons
 		chainMatcher.buildChains( transition, s0.context, chains ); // Заполняем список цепочек
 
 		// TODO Optimize: Необходимо отдельно рассмотреть случай пустой цепи
-		for ( uint i = 0; i < chains.size(); ++ i )
-			processCompoundPattern( PatternMatchState( s0, chains[i].first, chains[i].second ), results );
+		for ( uint i = 0; i < chains.size(); ++ i ) {
+			PatternMatchState state( s0, chains[i].first, chains[i].second );
+			processCompoundPattern( state, results );
+		}
 	}
 }
 

@@ -75,7 +75,7 @@ namespace lspl {
 			text::MatchList matches = text()->getMatches(pattern);
 			for(uint j = 0; j < matches.size(); ++j) {
 				std::string normalized_match =
-						matches[j]->getVariants().at(0).at(3).cast<Words>().getBase();
+						matches[j]->getVariants().at(0).at(3).cast<text::markup::Word>()->getBase();
 						//Util::Normalize(matches[j]->getFragment(0).getText());
 				if (result_matches.find(normalized_match) == result_matches.end()) {
 					result.push_back(PatternsMatch(normalized_match, 0));
