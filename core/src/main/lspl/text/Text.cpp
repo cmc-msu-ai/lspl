@@ -122,7 +122,7 @@ bool Text::prepareIndices( const Pattern & pattern, IndexIteratorsList & iterato
 			case IndexInfo::PATTERN: {
 				Index::Iterator * it = patternIndex.createIterator( &static_cast<const PatternIndexInfo &>( info ).pattern );
 
-				if ( !it ) {
+				if ( !it ) { // Шаблон еще не найден
 					return false;
 				}
 
