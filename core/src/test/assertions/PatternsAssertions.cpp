@@ -11,6 +11,7 @@
 #include <lspl/patterns/Pattern.h>
 #include <lspl/patterns/PatternBuilder.h>
 
+#include <cstdlib>
 #include <iostream>
 #include <stdexcept>
 
