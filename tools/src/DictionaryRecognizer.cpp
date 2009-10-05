@@ -8,12 +8,22 @@
 #include <string>
 
 #include "DictionaryRecognizer.h"
+#include "lspl/base/BaseInternal.h"
 #include "lspl/patterns/PatternBuilder.h"
+#include "lspl/text/Loop.h"
 #include "lspl/text/Match.h"
+#include "lspl/transforms/Normalization.h"
 #include "RangeSet.h"
 #include "Util.h"
 
+LSPL_REFCOUNT_CLASS( lspl::PatternMatch );
+
 namespace lspl {
+	PatternMatch::PatternMatch(const std::string &name,
+			const patterns::PatternRef base_pattern) : match_count(0),
+			normalized_name(name), pattern(base_pattern) {
+	}
+
 	NamespaceRef DictionaryRecognizer::patterns_namespace() const {
 		return _patterns_namespace;
 	}
@@ -65,27 +75,32 @@ namespace lspl {
 		_text = text;
 	}
 
-	std::vector<PatternsMatch> DictionaryRecognizer::RecognizeAndSearch() const {
-		std::vector<PatternsMatch> result;
-		std::map<std::string, std::vector<text::MatchRef> > result_matches;
+	std::vector<PatternMatchRef> DictionaryRecognizer::RecognizeAndSearch()
+			const {
+		std::vector<PatternMatchRef> result;
+		std::map<std::string, PatternMatchRef> result_matches;
+
+		transforms::Normalization normalization;
 
 		for(uint i = 0; i < patterns_namespace()->getPatternCount(); i++) {
 			patterns::PatternRef pattern =
 					patterns_namespace()->getPatternByIndex(i);
 			text::MatchList matches = text()->getMatches(pattern);
-			for(uint j = 0; j < matches.size(); ++j) {
-				std::string normalized_match =
-						matches[j]->getVariants().at(0).at(3).cast<text::markup::Word>()->getBase();
-						//Util::Normalize(matches[j]->getFragment(0).getText());
-				if (result_matches.find(normalized_match) == result_matches.end()) {
-					result.push_back(PatternsMatch(normalized_match, 0));
-				}
-				result_matches[normalized_match].push_back(matches[j]);
-			}
 			if (matches.size() != 0) {
-				//result.push_back(PatternsMatch(pattern, 0));
 				std::cout << "Pattern: " << Util::out.convert(pattern->name) <<
 						std::endl;
+			}
+			for(uint j = 0; j < matches.size(); ++j) {
+				text::MatchRef match = matches[j];
+				std::string normalized_match =
+						normalization.normalize(match->getVariants().at(0));
+				if (result_matches.find(normalized_match) == result_matches.end()) {
+					PatternMatchRef patterns_match =
+							new PatternMatch(normalized_match, pattern);
+					result.push_back(patterns_match);
+					result_matches[normalized_match] = patterns_match;
+				}
+				result_matches[normalized_match]->matches.push_back(match);
 			}
 		}
 
@@ -94,14 +109,14 @@ namespace lspl {
 
 		base::RangeSet range_set;
 		for(uint i = 0; i < result.size(); ++i) {
-			std::string normalized_match = result[i].first;
+			std::string normalized_match = result[i]->normalized_name;
 			std::cout << "Term: " << Util::out.convert(normalized_match) << std::endl;
-			for(uint j = 0; j < result_matches[normalized_match].size(); j++) {
-				text::MatchRef match = result_matches[normalized_match][j];
+			for(uint j = 0; j < result[i]->matches.size(); j++) {
+				text::MatchRef match = result[i]->matches[j];
 				base::Range range = match->getFragment(0);
 				if (!range_set.FindRangeExtension(range)) {
 					range_set.AddRange(range);
-					++(result[i].second);
+					++(result[i]->match_count);
 					std::cout << "Match '" <<
 							Util::out.convert(match->getFragment(0).getText()) << "'" <<
 							std::endl;
@@ -116,8 +131,8 @@ namespace lspl {
 		return result;
 	}
 
-	bool DictionaryRecognizer::ComparePatternsMatches(const PatternsMatch &i,
-			const PatternsMatch &j) {
-		return i.first.size() >= j.first.size();
+	bool DictionaryRecognizer::ComparePatternsMatches(const PatternMatchRef &i,
+			const PatternMatchRef &j) {
+		return i->normalized_name.size() >= j->normalized_name.size();
 	}
 } // namespace lspl.

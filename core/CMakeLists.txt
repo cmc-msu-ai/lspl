@@ -70,6 +70,10 @@ set(LSPL_CORE_SOURCES
 	src/main/lspl/utils/Console.cpp
 	src/main/lspl/dictionaries/MemoryDictionary.cpp
 	src/main/lspl/dictionaries/Dictionary.cpp
+
+	src/main/lspl/transforms/Normalization.cpp
+	src/main/lspl/transforms/TransformBuilder.cpp
+
 	src/main/lspl/text/markup/Word.cpp
 	src/main/lspl/text/markup/Token.cpp
 	src/main/lspl/text/Transition.cpp
@@ -91,8 +95,6 @@ set(LSPL_CORE_SOURCES
 	src/main/lspl/text/attributes/AttributeKey.cpp
 	src/main/lspl/text/attributes/SpeechPart.cpp
 	src/main/lspl/text/attributes/AttributeType.cpp
-	src/main/lspl/transforms/Normalization.cpp
-	src/main/lspl/transforms/TransformBuilder.cpp
 )
 
 add_library(lspl SHARED ${LSPL_CORE_SOURCES})

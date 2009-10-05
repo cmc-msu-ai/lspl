@@ -6,6 +6,7 @@
 #include <string>
 
 #include "lspl/patterns/PatternBuilder.h"
+#include "lspl/patterns/Pattern.h"
 #include "lspl/text/readers/PlainTextReader.h"
 #include "lspl/text/Text.h"
 #include "SimilarityRecognizer.h"

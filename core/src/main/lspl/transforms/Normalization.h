@@ -20,10 +20,14 @@ public:
 	virtual ~Normalization();
 
 	virtual std::string apply( const text::MatchVariant & matchVariant ) const;
+	virtual std::string normalize( const text::MatchVariant & matchVariant ) const;
 private:
 
 	void appendToString( std::string & str, const text::Transition & transition ) const;
 	void appendToString( std::string & str, const text::TransitionList & transitions ) const;
+
+	void normalizeToString( std::string & str, const text::Transition & transition ) const;
+	void normalizeToString( std::string & str, const text::TransitionList & transitions ) const;
 };
 
 } } // namespace lspl::transforms

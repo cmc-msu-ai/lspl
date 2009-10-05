@@ -22,7 +22,7 @@ int main(int argc, char** argv) {
 	}
 	lspl::DictionaryRecognizer *recognizer =
 			new lspl::DictionaryRecognizer(argv[1], argv[2]);
-	std::vector<lspl::PatternsMatch> terms = recognizer->RecognizeAndSearch();
+	std::vector<lspl::PatternMatchRef> terms = recognizer->RecognizeAndSearch();
 	delete recognizer;
 	char *similar_patterns_file = "similar_patterns.txt";
 	if (argc == 4) {

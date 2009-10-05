@@ -10,13 +10,29 @@
 #include <vector>
 #include <string>
 
+#include "lspl/base/Base.h"
+#include "lspl/base/RefCountObject.h"
+#include "lspl/base/RefCountPtr.h"
 #include "lspl/Namespace.h"
 #include "lspl/patterns/Pattern.h"
 #include "lspl/text/Text.h"
 
 namespace lspl {
 
-typedef std::pair<std::string, int> PatternsMatch;
+LSPL_REFCOUNT_FORWARD(PatternMatch);
+
+class PatternMatch : public base::RefCountObject<PatternMatch> {
+ public:
+	patterns::PatternRef pattern;
+	text::MatchList matches;
+	std::string normalized_name;
+	uint match_count;
+ public:
+	PatternMatch(const std::string &name,
+			const patterns::PatternRef base_pattern);
+};
+
+typedef base::Reference<PatternMatch> PatternMatchRef;
 
 class DictionaryRecognizer {
  private:
@@ -39,11 +55,11 @@ class DictionaryRecognizer {
 			const text::TextRef text);
 
 	// Find dicrionary terms in the text.
-	std::vector<PatternsMatch > RecognizeAndSearch() const;
+	std::vector<PatternMatchRef> RecognizeAndSearch() const;
 
 	// Compare function for the std::sort for patterns sorting.
-	static bool ComparePatternsMatches(const PatternsMatch &i,
-			const PatternsMatch &j);
+	static bool ComparePatternsMatches(const PatternMatchRef &i,
+			const PatternMatchRef &j);
 };
 
 } // namespace lspl.
