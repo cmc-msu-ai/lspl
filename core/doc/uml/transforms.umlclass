@@ -141,6 +141,10 @@
       <styles xmi:type="notation:CanonicalStyle" xmi:id="_fySnlrTBEd65mpX3BnqZkw"/>
     </children>
     <children xmi:type="notation:BasicCompartment" xmi:id="_fyTOoLTBEd65mpX3BnqZkw" type="7002">
+      <children xmi:type="notation:Node" xmi:id="_z1rA4LTCEd65mpX3BnqZkw" type="3002">
+        <element xmi:type="uml:Operation" href="core.uml#_z1fasLTCEd65mpX3BnqZkw"/>
+        <layoutConstraint xmi:type="notation:Location" xmi:id="_z1rA4bTCEd65mpX3BnqZkw"/>
+      </children>
       <styles xmi:type="notation:TitleStyle" xmi:id="_fyTOobTBEd65mpX3BnqZkw" showTitle="true"/>
       <styles xmi:type="notation:SortingStyle" xmi:id="_fyTOorTBEd65mpX3BnqZkw"/>
       <styles xmi:type="notation:FilteringStyle" xmi:id="_fyTOo7TBEd65mpX3BnqZkw"/>
@@ -154,7 +158,7 @@
     </children>
     <styles xmi:type="notation:CanonicalStyle" xmi:id="_fySAgLTBEd65mpX3BnqZkw"/>
     <element xmi:type="uml:Class" href="core.uml#_dPKjgLTBEd65mpX3BnqZkw"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_fySAgbTBEd65mpX3BnqZkw" x="96" y="480"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_fySAgbTBEd65mpX3BnqZkw" x="80" y="480"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_1pKNMLTBEd65mpX3BnqZkw" type="2001" fontName="DejaVu Sans">
     <eAnnotations xmi:type="ecore:EAnnotation" xmi:id="_1pSJALTBEd65mpX3BnqZkw" source="Shortcut">
@@ -220,7 +224,7 @@
     <styles xmi:type="notation:TextStyle" xmi:id="_Kmb4YbTCEd65mpX3BnqZkw"/>
     <styles xmi:type="notation:LineTypeStyle" xmi:id="_Kmb4YrTCEd65mpX3BnqZkw"/>
     <element xsi:nil="true"/>
-    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Kmb4Y7TCEd65mpX3BnqZkw" x="208" y="560" width="225" height="97"/>
+    <layoutConstraint xmi:type="notation:Bounds" xmi:id="_Kmb4Y7TCEd65mpX3BnqZkw" x="224" y="560" width="225" height="97"/>
   </children>
   <children xmi:type="notation:Shape" xmi:id="_Tbt3ALTCEd65mpX3BnqZkw" type="Note" fontName="DejaVu Sans" description="Построитель преобразования, отвечающий за перевод правой части из строквого во внутреннее представление" fillColor="13369343" transparency="0" lineColor="6737151" lineWidth="1">
     <children xmi:type="notation:BasicDecorationNode" xmi:id="_TbvFILTCEd65mpX3BnqZkw" type="DiagramName">
@@ -300,7 +304,7 @@
       <layoutConstraint xmi:type="notation:Location" xmi:id="_g_W3obTBEd65mpX3BnqZkw" y="-15"/>
     </children>
     <children xmi:type="notation:DecorationNode" xmi:id="_g_W3orTBEd65mpX3BnqZkw" type="6005">
-      <layoutConstraint xmi:type="notation:Location" xmi:id="_g_W3o7TBEd65mpX3BnqZkw" x="-34" y="-23"/>
+      <layoutConstraint xmi:type="notation:Location" xmi:id="_g_W3o7TBEd65mpX3BnqZkw" x="-38" y="-23"/>
     </children>
     <children xmi:type="notation:DecorationNode" xmi:id="_g_W3pLTBEd65mpX3BnqZkw" type="6006">
       <layoutConstraint xmi:type="notation:Location" xmi:id="_g_W3pbTBEd65mpX3BnqZkw" y="-30"/>
@@ -321,7 +325,7 @@
     <styles xmi:type="notation:FontStyle" xmi:id="_g_VpgrTBEd65mpX3BnqZkw" fontName="DejaVu Sans"/>
     <element xmi:type="uml:Association" href="core.uml#_g_SmMLTBEd65mpX3BnqZkw"/>
     <bendpoints xmi:type="notation:RelativeBendpoints" xmi:id="_g_Vpg7TBEd65mpX3BnqZkw" points="[11, 0, -252, 2]$[319, 28, 56, 30]"/>
-    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_g_cXMLTBEd65mpX3BnqZkw" id="(0.912,0.5333333333333333)"/>
+    <sourceAnchor xmi:type="notation:IdentityAnchor" xmi:id="_g_cXMLTBEd65mpX3BnqZkw" id="(0.9763313609467456,0.3888888888888889)"/>
   </edges>
   <edges xmi:type="notation:Edge" xmi:id="_hZvtkLTBEd65mpX3BnqZkw" type="4005" source="_fyRZcLTBEd65mpX3BnqZkw" target="_9Y1rILTAEd65mpX3BnqZkw">
     <children xmi:type="notation:DecorationNode" xmi:id="_hZwUoLTBEd65mpX3BnqZkw" type="6003">

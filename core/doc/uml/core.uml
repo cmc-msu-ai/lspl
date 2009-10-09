@@ -140,7 +140,9 @@
     <packagedElement xmi:type="uml:Class" xmi:id="_1Bo-gD4CEd6Q_YeHryFnaQ" name="List"/>
   </packagedElement>
   <packagedElement xmi:type="uml:Package" xmi:id="_54ixcLRCEd6SWe6t7QquVA" name="Text">
-    <packagedElement xmi:type="uml:Class" xmi:id="_VfHHkLTBEd65mpX3BnqZkw" name="Match"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_VfHHkLTBEd65mpX3BnqZkw" name="Match">
+      <generalization xmi:id="_LEYjMLTDEd65mpX3BnqZkw" general="_IPojoLTDEd65mpX3BnqZkw"/>
+    </packagedElement>
     <packagedElement xmi:type="uml:Class" xmi:id="_dPKjgLTBEd65mpX3BnqZkw" name="MatchVariant">
       <ownedAttribute xmi:id="_g_TNQrTBEd65mpX3BnqZkw" name="transformResult" type="_0dbsQLRFEd6SWe6t7QquVA" association="_g_SmMLTBEd65mpX3BnqZkw">
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_g_TNRLTBEd65mpX3BnqZkw" value="1"/>
@@ -150,6 +152,9 @@
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_hZtRUbTBEd65mpX3BnqZkw" value="1"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_hZtRULTBEd65mpX3BnqZkw" value="1"/>
       </ownedAttribute>
+      <ownedOperation xmi:id="_z1fasLTCEd65mpX3BnqZkw" name="getTransformResult">
+        <ownedParameter xmi:id="_2QKGULTCEd65mpX3BnqZkw" direction="return"/>
+      </ownedOperation>
     </packagedElement>
     <packagedElement xmi:type="uml:Association" xmi:id="_g_SmMLTBEd65mpX3BnqZkw" memberEnd="_g_SmMbTBEd65mpX3BnqZkw _g_TNQrTBEd65mpX3BnqZkw">
       <ownedEnd xmi:id="_g_SmMbTBEd65mpX3BnqZkw" name="src" type="_dPKjgLTBEd65mpX3BnqZkw" association="_g_SmMLTBEd65mpX3BnqZkw">
@@ -161,6 +166,48 @@
       <ownedEnd xmi:id="_hZsqQbTBEd65mpX3BnqZkw" name="src" type="_dPKjgLTBEd65mpX3BnqZkw" association="_hZsqQLTBEd65mpX3BnqZkw">
         <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_hZsqQ7TBEd65mpX3BnqZkw" value="1"/>
         <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_hZsqQrTBEd65mpX3BnqZkw" value="1"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_CvFsMLTDEd65mpX3BnqZkw" name="Text"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_EcELYLTDEd65mpX3BnqZkw" memberEnd="_EcEycLTDEd65mpX3BnqZkw _EcEyc7TDEd65mpX3BnqZkw">
+      <ownedEnd xmi:id="_EcEycLTDEd65mpX3BnqZkw" name="match" type="_VfHHkLTBEd65mpX3BnqZkw" association="_EcELYLTDEd65mpX3BnqZkw">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_EcEycrTDEd65mpX3BnqZkw" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_EcEycbTDEd65mpX3BnqZkw" value="1"/>
+      </ownedEnd>
+      <ownedEnd xmi:id="_EcEyc7TDEd65mpX3BnqZkw" name="variants" type="_dPKjgLTBEd65mpX3BnqZkw" aggregation="composite" association="_EcELYLTDEd65mpX3BnqZkw">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_EcEydbTDEd65mpX3BnqZkw" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_EcEydLTDEd65mpX3BnqZkw" value="1"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_HxMUILTDEd65mpX3BnqZkw" name="Node"/>
+    <packagedElement xmi:type="uml:Class" xmi:id="_IPojoLTDEd65mpX3BnqZkw" name="Transition"/>
+    <packagedElement xmi:type="uml:Association" xmi:id="_NTqeMLTDEd65mpX3BnqZkw" memberEnd="_NTqeMbTDEd65mpX3BnqZkw _NTrFQbTDEd65mpX3BnqZkw">
+      <ownedEnd xmi:id="_NTqeMbTDEd65mpX3BnqZkw" name="start" type="_HxMUILTDEd65mpX3BnqZkw" association="_NTqeMLTDEd65mpX3BnqZkw">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NTrFQLTDEd65mpX3BnqZkw" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NTqeMrTDEd65mpX3BnqZkw" value="1"/>
+      </ownedEnd>
+      <ownedEnd xmi:id="_NTrFQbTDEd65mpX3BnqZkw" name="transitions" type="_IPojoLTDEd65mpX3BnqZkw" association="_NTqeMLTDEd65mpX3BnqZkw">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_NTrFQ7TDEd65mpX3BnqZkw" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_NTrFQrTDEd65mpX3BnqZkw"/>
+      </ownedEnd>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_UpQywLTDEd65mpX3BnqZkw" name="Word">
+      <generalization xmi:id="_XmAQsLTDEd65mpX3BnqZkw" general="_IPojoLTDEd65mpX3BnqZkw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_VMusMLTDEd65mpX3BnqZkw" name="Token">
+      <generalization xmi:id="_X9WZsLTDEd65mpX3BnqZkw" general="_IPojoLTDEd65mpX3BnqZkw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" xmi:id="_Vzz6ULTDEd65mpX3BnqZkw" name="Loop">
+      <generalization xmi:id="_YXq-MLTDEd65mpX3BnqZkw" general="_IPojoLTDEd65mpX3BnqZkw"/>
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" xmi:id="_eFgDsLTDEd65mpX3BnqZkw" memberEnd="_eFhR0LTDEd65mpX3BnqZkw _eFh44rTDEd65mpX3BnqZkw">
+      <ownedEnd xmi:id="_eFhR0LTDEd65mpX3BnqZkw" name="text" type="_CvFsMLTDEd65mpX3BnqZkw" association="_eFgDsLTDEd65mpX3BnqZkw">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_eFh44bTDEd65mpX3BnqZkw" value="1"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_eFh44LTDEd65mpX3BnqZkw" value="1"/>
+      </ownedEnd>
+      <ownedEnd xmi:id="_eFh44rTDEd65mpX3BnqZkw" name="nodes" type="_HxMUILTDEd65mpX3BnqZkw" aggregation="composite" association="_eFgDsLTDEd65mpX3BnqZkw">
+        <upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="_eFh45LTDEd65mpX3BnqZkw" value="*"/>
+        <lowerValue xmi:type="uml:LiteralInteger" xmi:id="_eFh447TDEd65mpX3BnqZkw" value="1"/>
       </ownedEnd>
     </packagedElement>
   </packagedElement>
