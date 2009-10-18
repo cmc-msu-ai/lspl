@@ -3,12 +3,11 @@
   */
 
 #include <iostream>
-#include <string>
 
 #include "lspl/patterns/PatternBuilder.h"
 #include "lspl/patterns/Pattern.h"
 #include "lspl/text/readers/PlainTextReader.h"
-#include "lspl/text/Text.h"
+#include "lspl/transforms/Normalization.h"
 #include "SimilarityRecognizer.h"
 #include "Util.h"
 
@@ -91,57 +90,81 @@ void SimilarityRecognizer::FindSimilars(const std::vector<std::string> &terms1,
 	std::vector<text::TextRef> terms2_text;
 	Util::ConvertToText(terms1, terms1_text);
 	Util::ConvertToText(terms2, terms2_text);
+	transforms::Normalization normalization;
 	/// terms1 && main patterns
 	for(int j = 0; j < patterns_namespace()->getPatternCount(); ++j) {
 		patterns::PatternRef pattern =
 				patterns_namespace()->getPatternByIndex(j);
-		text::TextRef pattern_text = Util::ConvertToText(pattern->getSource());
+
 		for(int i = 0; i < terms1_text.size(); ++i) {
 			text::MatchList matches = terms1_text[i]->getMatches(pattern);
-			if (matches.size() == 1 &&
-					terms1_text[i]->getWords().size() == 
-							Util::CountWords(matches[0]->getFragment(0).getText())) {
+			//std::cout << "1 pattern: " << " " << pattern->getSource() << std::endl;
+
+			if (matches.size() == 1 && Util::CountWords(terms1[i]) == 
+					Util::CountWords(matches[0]->getFragment(0).getText())){
 				std::map<std::string, std::string> pattern_words;
-				for(int l = 0; l < terms1_text[i]->getWords().size(); ++l) {
-					text::markup::Word word = *(pattern_text->getWords()[l]);
-					pattern_words[word.getBase()] =
-							terms1_text[i]->getWords()[l]->getToken();
+
+				//std::cout << Util::out.convert(terms1[i]) << std::endl;
+				//std::cout << Util::out.convert(pattern->getSource()) << std::endl;
+				if (!Util::BuildWordsByPattern(
+						normalization.normalize(matches[0]->getVariants().at(0)), pattern,
+						pattern_words)) {
+					continue;
 				}
-				/// terms2 && similar_patterns
-				for(int l = 0;
-						l < similar_patterns_namespaces()[j]->getPatternCount(); ++l) {
-					patterns::PatternRef similar_pattern = 
-							similar_patterns_namespaces()[j]->getPatternByIndex(l);
-					text::TextRef similar_pattern_text =
-							Util::ConvertToText(similar_pattern->getSource());
-					for(int k = 0; k < terms2_text.size(); ++k) {
-						text::MatchList similar_matches =
-								terms2_text[k]->getMatches(similar_pattern);
-						if (similar_matches.size() == 1 &&
-								terms2_text[k]->getWords().size() ==
-										Util::CountWords(
-												similar_matches[0]->getFragment(0).getText())) {
-							bool is_similar = true;
-							for(int n = 0; n < terms2_text[k]->getWords().size(); ++n) {
-								if (pattern_words.find(similar_pattern_text->getWords()[n]->getBase()) !=
-												pattern_words.end() &&
-										pattern_words[similar_pattern_text->getWords()[n]->getBase()] !=
-												terms2_text[k]->getWords()[n]->getToken()) {
-									is_similar = false;
-									break;
-								}
-							}
-							if (is_similar) {
-								std::cout << "Similar: " << terms1[i] << " && " << terms2[k] <<
-										std::endl;
-							}
-						}
-					}
-				}
+
+				FindSimilars(terms1[i], pattern_words, terms2_text,
+						similar_patterns_namespaces()[j]);
 			}
 		}
 	}
 }
 
+void SimilarityRecognizer::FindSimilars(
+		const std::string &term1,
+		std::map<std::string, std::string> &pattern_words,
+		const std::vector<text::TextRef> &terms2_text,
+		const NamespaceRef similar_patterns_namespace) const {
+	transforms::Normalization normalization;
+	for(int l = 0; l < similar_patterns_namespace->getPatternCount(); ++l) {
+		patterns::PatternRef similar_pattern =
+				similar_patterns_namespace->getPatternByIndex(l);
+		for(int k = 0; k < terms2_text.size(); ++k) {
+			//std::cout << "2 pattern: " << " " << similar_pattern->getSource() << std::endl;
+			text::MatchList similar_matches =
+					terms2_text[k]->getMatches(similar_pattern);
+
+			if (similar_matches.size() == 1 &&
+					Util::CountWords(terms2_text[k]->getContent()) == 
+					Util::CountWords(similar_matches[0]->getFragment(0).getText())) {
+				std::map<std::string, std::string> similar_pattern_words;
+
+				if (
+						!Util::BuildWordsByPattern(
+						normalization.normalize(similar_matches[0]->getVariants().at(0)),
+						similar_pattern, similar_pattern_words)) {
+					continue;
+				}
+
+				if (IsSimilar(pattern_words, similar_pattern_words)) {
+					std::cout << "Similar: " << Util::out.convert(term1) << " && " <<
+							Util::out.convert(terms2_text[k]->getContent()) << std::endl;
+				}
+
+			}
+		}
+	}
+}
+
+bool SimilarityRecognizer::IsSimilar(std::map<std::string, std::string> &term1,
+		std::map<std::string, std::string> &term2) const {
+	for(std::map<std::string, std::string>::iterator i = term1.begin();
+			i != term1.end(); ++i) {
+		//std::cout << i->first << " " << Util::out.convert(i->second) << std::endl;
+		if (term2.find(i->first) != term2.end() && term2[i->first] != i->second) {
+			return false;
+		}
+	}
+	return true;
+}
 
 } // namespace lspl

@@ -58,8 +58,8 @@ class DictionaryRecognizer {
 	std::vector<PatternMatchRef> RecognizeAndSearch() const;
 
 	// Compare function for the std::sort for patterns sorting.
-	static bool ComparePatternsMatches(const PatternMatchRef &i,
-			const PatternMatchRef &j);
+	static bool ComparePatternsMatches(const std::string &i,
+			const std::string &j);
 };
 
 } // namespace lspl.

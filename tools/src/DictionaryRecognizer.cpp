@@ -78,6 +78,7 @@ namespace lspl {
 	std::vector<PatternMatchRef> DictionaryRecognizer::RecognizeAndSearch()
 			const {
 		std::vector<PatternMatchRef> result;
+		std::vector<std::string> patterns;
 		std::map<std::string, PatternMatchRef> result_matches;
 
 		transforms::Normalization normalization;
@@ -97,26 +98,34 @@ namespace lspl {
 				if (result_matches.find(normalized_match) == result_matches.end()) {
 					PatternMatchRef patterns_match =
 							new PatternMatch(normalized_match, pattern);
-					result.push_back(patterns_match);
+					patterns.push_back(normalized_match);
 					result_matches[normalized_match] = patterns_match;
 				}
 				result_matches[normalized_match]->matches.push_back(match);
 			}
 		}
 
-		std::sort(result.begin(), result.end(),
-				ComparePatternsMatches);
+		for(int i = 0; i < patterns.size(); ++i) {
+			int j = i;
+			while (j > 0 && patterns[j].size() > patterns[j - 1].size()) {
+				std::swap(patterns[j], patterns[j - 1]);
+				--j;
+			}
+		}
+		//std::sort(patterns.begin(), patterns.end(), ComparePatternsMatches);
 
 		base::RangeSet range_set;
-		for(uint i = 0; i < result.size(); ++i) {
-			std::string normalized_match = result[i]->normalized_name;
+		for(uint i = 0; i < patterns.size(); ++i) {
+			std::string normalized_match = patterns[i];
+			PatternMatchRef pattern = result_matches[normalized_match];
 			std::cout << "Term: " << Util::out.convert(normalized_match) << std::endl;
-			for(uint j = 0; j < result[i]->matches.size(); j++) {
-				text::MatchRef match = result[i]->matches[j];
+			result.push_back(pattern);
+			for(uint j = 0; j < pattern->matches.size(); j++) {
+				text::MatchRef match = pattern->matches[j];
 				base::Range range = match->getFragment(0);
 				if (!range_set.FindRangeExtension(range)) {
 					range_set.AddRange(range);
-					++(result[i]->match_count);
+					++(pattern->match_count);
 					std::cout << "Match '" <<
 							Util::out.convert(match->getFragment(0).getText()) << "'" <<
 							std::endl;
@@ -131,8 +140,12 @@ namespace lspl {
 		return result;
 	}
 
-	bool DictionaryRecognizer::ComparePatternsMatches(const PatternMatchRef &i,
-			const PatternMatchRef &j) {
-		return i->normalized_name.size() >= j->normalized_name.size();
+	bool DictionaryRecognizer::ComparePatternsMatches(const std::string &i,
+			const std::string &j) {
+		std::cout << Util::out.convert(i) << "!" << Util::out.convert(j) << std::endl;
+		std::cout << "?" << std::endl;
+		bool result = i.size() >= j.size();
+		std::cout << "*" << std::endl;
+		return result;
 	}
 } // namespace lspl.

@@ -11,6 +11,7 @@
 namespace lspl {
 	lspl::utils::Conversion Util::in("UTF-8", "CP1251");
 	lspl::utils::Conversion Util::out("CP1251", "UTF-8");
+	const std::string Util::delimiters = " \t\r\n,:.;\'\"!?()";
 
 	std::string Util::LoadTextFromFile(const char* filename) {
 		std::ifstream input_stream(filename);
@@ -42,19 +43,46 @@ namespace lspl {
 
 	int Util::CountWords(const std::string &text) {
 		int result = 0;
-		std::string delimiters = " \t\r\n,:.;\'\"!?()";
-		bool is_delimiter = true;
+		bool last_delimiter = true;
 		for(int i = 0; i < text.size(); ++i) {
 			if (delimiters.find_first_of(text[i]) == std::string::npos) {
-				if (is_delimiter) {
+				if (last_delimiter) {
 					++result;
 				}
-				is_delimiter = false;
+				last_delimiter = false;
 			} else {
-				is_delimiter = true;
+				last_delimiter = true;
 			}
 		}
+		if (!last_delimiter) {
+			++result;
+		}
 		return result;
+	}
+
+	void Util::ExtractWords(const std::string &text,
+			std::vector<std::string> &words) {
+		words.clear();
+		bool last_delimiter = true;
+		int word_start = 0;
+		for(int i = 0; i < text.size(); ++i) {
+			if (delimiters.find_first_of(text[i]) == std::string::npos) {
+				if (last_delimiter) {
+					word_start = i;
+				}
+				last_delimiter = false;
+			} else {
+				if (!last_delimiter) {
+					std::string word(text, word_start, i - word_start);
+					words.push_back(word);
+				}
+				last_delimiter = true;
+			}
+		}
+		if (!last_delimiter) {
+			std::string word(text, word_start, text.size() - word_start);
+			words.push_back(word);
+		}
 	}
 
 	void Util::ConvertToText(const std::vector<std::string> &terms,
@@ -82,5 +110,51 @@ namespace lspl {
 			result += text->getWords()[i]->getBase();
 		}
 		return result;
+	}
+
+	std::string Util::NormalizePattern(const std::string &pattern) {
+		std::string result = "";
+		int i = 0;
+		bool last_delimiter = true;
+		bool condition = false;
+		while (i < pattern.size()) {
+			if (delimiters.find_first_of(pattern[i]) != std::string::npos) {
+				last_delimiter = true;
+			} else if (pattern[i] == '<' && !condition) {
+				condition = true;
+			} else if (pattern[i] == '>' && condition) {
+				condition = false;
+				last_delimiter = true;
+			} else if (!condition) {
+				if (last_delimiter && result != "") {
+					result += " ";
+				}
+				result += pattern[i];
+				last_delimiter = false;
+			}
+			++i;
+		}
+		return result;
+	}
+
+	bool Util::BuildWordsByPattern(const std::string &text,
+			const patterns::PatternRef &pattern,
+			std::map<std::string, std::string> &words) {
+		words.clear();
+		std::string normalized_pattern = NormalizePattern(pattern->getSource());
+		//std::cout << Util::out.convert(normalized_pattern) << std::endl;
+		std::vector<std::string> text_words;
+		ExtractWords(text, text_words);
+		std::vector<std::string> pattern_words;
+		ExtractWords(normalized_pattern, pattern_words);
+		if (text_words.size() != pattern_words.size()) {
+			return false;
+		}
+		for(int i = 0; i < text_words.size(); ++i) {
+			//std::cout << pattern_words[i] << " " << out.convert(text_words[i]) << std::endl;
+			words[pattern_words[i]] = text_words[i];
+		}
+		//std::cout << std::endl;
+		return true;
 	}
 } // namespace lspl.

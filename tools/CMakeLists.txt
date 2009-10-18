@@ -56,9 +56,9 @@ add_executable(lspl-dictionary-recognizer ${LSPL_DICTIONARY_RECOGNIZER_SOURCES})
 
 target_link_libraries(lspl-dictionary-recognizer lspl)
 
-### lspl-Metrics
+### lspl-Similarity
 
-set(LSPL_METRICS_SOURCES
+set(LSPL_SIMILARITY_SOURCES
 	src/DictionaryRecognizer.cpp
 	src/MetricsMain.cpp
 	src/RangeSetDecartTreeElement.cpp
@@ -68,9 +68,9 @@ set(LSPL_METRICS_SOURCES
 	src/Util.cpp
 )
 
-add_executable(lspl-metrics ${LSPL_METRICS_SOURCES})
+add_executable(lspl-similarity ${LSPL_SIMILARITY_SOURCES})
 
-target_link_libraries(lspl-metrics lspl)
+target_link_libraries(lspl-similarity lspl)
 
 ### lspl-RangeSetDecartTreeTest
 
