@@ -117,8 +117,8 @@ void AddPatternDefinitionImpl::operator()( const std::string & name, boost::ptr_
 	pattern->addAlternatives( alts ); // Добавляем альтернативы к шаблону
 	pattern->updateDependencies(); // Обновляем зависимости шаблона
 
-	foreach( Alternative & alt, pattern->alternatives ) {
-		alt.setTransform( std::auto_ptr<transforms::Transform>( transformBuilder.build( alt, alt.getTransformSource() ) ) ); // Устанавливаем преобразование
+	foreach( const Alternative & alt, pattern->getAlternatives() ) {
+		const_cast<Alternative &>( alt ).setTransform( std::auto_ptr<transforms::Transform>( transformBuilder.build( alt, alt.getTransformSource() ) ) ); // Устанавливаем преобразование
 	}
 }
 

@@ -249,9 +249,9 @@ void testPatternStructure() {
 
 		p2.removeDuplicateAlternatives();
 
-		assertEquals( 2, p2.alternatives.size() );
-		assertEquals( &p2.alternatives[0], &a1 );
-		assertEquals( &p2.alternatives[1], &a3 );
+		assertEquals( 2, p2.getAlternatives().size() );
+		assertEquals( &p2.getAlternatives()[0], &a1 );
+		assertEquals( &p2.getAlternatives()[1], &a3 );
 	}
 }
 
