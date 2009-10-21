@@ -1,5 +1,5 @@
-#ifndef _LSPL_PATTERNS_RESTRICTIONS_RESTRICTIONS_H_
-#define _LSPL_PATTERNS_RESTRICTIONS_RESTRICTIONS_H_
+#ifndef _LSPL_PATTERNS_RESTRICTIONS_RESTRICTION_H_
+#define _LSPL_PATTERNS_RESTRICTIONS_RESTRICTION_H_
 
 #include "../matchers/Forward.h"
 
@@ -12,7 +12,7 @@
 namespace lspl { namespace patterns { namespace restrictions {
 
 /**
- * Ограничение на сопоставитель.
+ * Ограничение. Используется для проверки различных условий, заданных в шаблоне, например, условий вхождения в словарь или условий согласования.
  */
 class LSPL_EXPORT Restriction {
 public:
@@ -28,11 +28,16 @@ public:
 	/**
 	 * Проверить, допускает ли ограничение заданную аннотацию в заданном контексте
 	 * @param annotation аннотация
-	 * @param ctx контексте
-	 * @return true, если допускает
+	 * @param ctx контекст сопоставления
+	 * @return true, если допускает, false иначе
 	 */
 	virtual bool matches( const text::Transition & annotation, const matchers::Context & ctx ) const = 0;
 
+	/**
+	 * Вывести отладочное представление ограничения в заданный поток
+	 * @param out поток, в который выводить представление
+	 * @param tabs отступ в начале строки
+	 */
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const = 0;
 
 	/**
@@ -63,4 +68,4 @@ public:
 
 } } } // namespace lspl::patterns::matchers
 
-#endif//_LSPL_PATTERNS_RESTRICTIONS_RESTRICTIONS_H_
+#endif//_LSPL_PATTERNS_RESTRICTIONS_RESTRICTION_H_

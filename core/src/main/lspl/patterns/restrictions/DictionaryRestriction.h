@@ -17,6 +17,11 @@
 
 namespace lspl { namespace patterns { namespace restrictions {
 
+/**
+ * Проверка вхождения в словарь, например <Syn(N1,N2)>.
+ *
+ * При проверке передает значения аргументов классу, реализующему словарь.
+ */
 class LSPL_EXPORT DictionaryRestriction : public Restriction {
 public:
 	DictionaryRestriction( const dictionaries::DictionaryConstRef & dict, const std::vector<matchers::Variable> & variables, const matchers::Variable & curVar );
@@ -29,9 +34,22 @@ public:
 	virtual bool matches( const text::Transition & annotation, const matchers::Context & ctx ) const;
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
 	virtual bool equals( const Restriction & r ) const;
+
 private:
+
+	/**
+	 * Словарь, вхождение в который проверяется
+	 */
 	dictionaries::DictionaryConstRef dictionary;
+
+	/**
+	 * Переменный, вхождение которых проверяется
+	 */
 	std::vector<matchers::Variable> variables;
+
+	/**
+	 * Переменная, соответствующая текущему элементу шаблона
+	 */
 	matchers::Variable currentVariable;
 };
 
