@@ -6,6 +6,7 @@
  */
 
 #include "Tests.h"
+#include "../assertions/PatternsAssertions.h"
 
 #include <iostream>
 #include <string>
@@ -14,28 +15,28 @@
 
 namespace lspl { namespace tests {
 
-void testDictionaries() {
-	std::cout << "Testing dictionaries..." << std::endl;
-
+static void testMemoryDictionary() {
 	dictionaries::MemoryDictionary d( "aaa" );
 	d.add( "aasd", "lnm" );
 	d.add( "fds" );
 
-	std::cout << "Memory dictionary: Ok, Built" << std::endl;
+	assertTrue( d.accepts( "aasd", "lnm" ) );
+	assertTrue( d.accepts( "fds" ) );
 
-	assert( d.accepts( "aasd", "lnm" ) );
-	assert( d.accepts( "fds" ) );
+	assertFalse( d.accepts( "feds", "fds" ) );
+	assertFalse( d.accepts( "aasd" ) );
+	assertFalse( d.accepts( "aasd", "lnm", "vd" ) );
+	assertFalse( d.accepts( "aasd", "fd" ) );
+	assertFalse( d.accepts( "fds", "fds" ) );
+	assertFalse( d.accepts( std::vector<std::string>() ) );
+}
 
-	std::cout << "Memory dictionary: Ok, Accepts" << std::endl;
+cute::suite dictionariesSuite() {
+	cute::suite s;
 
-	assert( !d.accepts( "feds", "fds" ) );
-	assert( !d.accepts( "aasd" ) );
-	assert( !d.accepts( "aasd", "lnm", "vd" ) );
-	assert( !d.accepts( "aasd", "fd" ) );
-	assert( !d.accepts( "fds", "fds" ) );
-	assert( !d.accepts( std::vector<std::string>() ) );
+	s += CUTE(testMemoryDictionary);
 
-	std::cout << "Memory dictionary: Ok, Declines" << std::endl;
+	return s;
 }
 
 } }

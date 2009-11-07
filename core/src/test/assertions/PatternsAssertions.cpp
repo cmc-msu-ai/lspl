@@ -11,80 +11,40 @@
 #include <lspl/patterns/Pattern.h>
 #include <lspl/patterns/PatternBuilder.h>
 
-#include <cstdlib>
-#include <iostream>
 #include <stdexcept>
+
+#include <boost/format.hpp>
 
 namespace lspl { namespace assertions {
 
-void assertTrue( bool exp, const char * message ) {
-	if ( !exp ) {
-		std::cout << "ERROR: " << ( message ? message : "Assertion failed" ) << std::endl;
-		std::cout.flush();
-
-		exit(1);
-	}
-}
-
-void assertFalse( bool exp, const char * message ) {
-	if ( exp ) {
-		std::cout << "ERROR: " << ( message ? message : "Assertion failed" ) << std::endl;
-		std::cout.flush();
-
-		exit(1);
-	}
-}
-
-
-void assertBuilds( const NamespaceRef & ns, const std::string & patternSource ) {
+void assertBuildsImpl( const NamespaceRef & ns, const std::string & patternSource, char const *file, int line ) {
 	patterns::PatternBuilder builder( ns );
-
-	std::cout << "Checking \"" << patternSource << "\": ";
-	std::cout.flush();
-
 	patterns::PatternBuilder::BuildInfo info = builder.build( patternSource );
 
-	if ( info.parseTail.length() > 0 ) {
-		std::cout << "ERROR: Pattern was not built: \"" << info.parseTail << "\" not parsed." << std::endl;
-		std::cout.flush();
-
-		exit(1);
-	} else {
-		std::cout << "OK, Built" << std::endl;
-	}
+	if ( info.parseTail.length() > 0 )
+		throw cute::test_failure( ( boost::format( "ERROR: Pattern '%1%' was not built: '%2%' not parsed." ) % patternSource % info.parseTail ).str(), file, line);
 }
 
-void assertBuilds( const std::string & patternSource ) {
-	assertBuilds( new lspl::Namespace(), patternSource );
+void assertBuildsImpl( const std::string & patternSource, char const *f, int line ) {
+	assertBuildsImpl( new lspl::Namespace(), patternSource, f, line );
 }
 
-void assertFails( const std::string & patternSource ) {
-	assertFails( new Namespace(), patternSource );
+void assertFailsImpl( const std::string & patternSource, char const *f, int line ) {
+	assertFailsImpl( new Namespace(), patternSource, f, line );
 }
 
-void assertFails( const NamespaceRef & ns, const std::string & patternSource ) {
+void assertFailsImpl( const NamespaceRef & ns, const std::string & patternSource, char const *file, int line ) {
 	patterns::PatternBuilder builder( ns );
-
-	std::cout << "Checking \"" + patternSource + "\": ";
-	std::cout.flush();
-
 	patterns::PatternBuilder::BuildInfo info;
 
 	try {
 		info = builder.build( patternSource );
 	} catch ( std::exception & ex ) {
-		std::cout << "Ok, not built: " << ex.what() << std::endl;
 		return;
 	}
 
-	if ( info.parseTail.length() == 0 ) {
-		std::cout << "ERROR: Pattern successfully built" << std::endl;
-		std::cout.flush();
-
-		exit(1);
-	} else {
-		std::cout << "OK, Not built" << std::endl;
-	}
+	if ( info.parseTail.length() == 0 )
+		throw cute::test_failure( ( boost::format( "ERROR: Pattern '%1%' successfully built." ) % patternSource ).str(), file, line);
 }
 
 } }

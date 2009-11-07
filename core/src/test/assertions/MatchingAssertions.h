@@ -10,22 +10,26 @@
 
 #undef NDEBUG
 
-#include <lspl/Namespace.h>
+#include "../../main/lspl/Namespace.h"
 
-namespace lspl {
+#include "../../cute/cute.h"
 
-namespace assertions {
+#define assertMatches(text,from,to,pattern) lspl::assertions::assertMatchesImpl(text,from,to,pattern,__FILE__,__LINE__)
+#define assertMatchesNS(ns,text,from,to,pattern) lspl::assertions::assertMatchesImpl(ns,text,from,to,pattern,__FILE__,__LINE__)
 
-void assertMatches( const char * textSource, uint from, uint to, const char * patternSource );
+#define assertNoMatches(text,pattern) lspl::assertions::assertNoMatchesImpl(text,pattern,__FILE__,__LINE__)
+#define assertNoMatchesNS(ns,text,pattern) lspl::assertions::assertNoMatchesImpl(ns,text,pattern,__FILE__,__LINE__)
 
-void assertMatches( const NamespaceRef & ns, const char * textSource, uint from, uint to, const char * patternSource );
+namespace lspl { namespace assertions {
 
-void assertNoMatches( const char * textSource, const char * patternSource );
+void assertMatchesImpl( const char * textSource, uint from, uint to, const char * patternSource, char const *f, int line );
 
-void assertNoMatches( const NamespaceRef & ns, const char * textSource, const char * patternSource );
+void assertMatchesImpl( const NamespaceRef & ns, const char * textSource, uint from, uint to, const char * patternSource, char const *f, int line );
 
-}
+void assertNoMatchesImpl( const char * textSource, const char * patternSource, char const *f, int line );
 
-}
+void assertNoMatchesImpl( const NamespaceRef & ns, const char * textSource, const char * patternSource, char const *f, int line );
+
+} }
 
 #endif /* MATCHINGASSERTIONS_H_ */

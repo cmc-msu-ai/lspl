@@ -10,30 +10,33 @@
 
 #undef NDEBUG
 
-#include <lspl/Namespace.h>
+#include "../../main/lspl/Namespace.h"
+
+#include "../../cute/cute.h"
 
 #include <string>
 #include <iostream>
 
+#define assertTrueM(exp,msg) if (!(exp)) throw cute::test_failure((msg),__FILE__,__LINE__)
+#define assertTrue(exp) assertTrueM(exp,#exp)
+
+#define assertFalseM(exp,msg) if ((exp)) throw cute::test_failure((msg),__FILE__,__LINE__)
+#define assertFalse(exp) assertFalseM(exp,#exp)
+
+#define assertEqualsM(a,b,msg) cute::assert_equal((b),(a),msg,__FILE__,__LINE__)
+#define assertEquals(a,b) assertEqualsM(a,b,#a " == " #b)
+
+#define assertBuildsNS(pattern,ns) lspl::assertions::assertBuildsImpl(ns,pattern,__FILE__,__LINE__)
+#define assertBuilds(pattern) lspl::assertions::assertBuildsImpl(pattern,__FILE__,__LINE__)
+#define assertFailsNS(pattern,ns) lspl::assertions::assertFailsImpl(ns,pattern,__FILE__,__LINE__)
+#define assertFails(pattern) lspl::assertions::assertFailsImpl(pattern,__FILE__,__LINE__)
+
 namespace lspl { namespace assertions {
 
-void assertBuilds( const NamespaceRef & ns, const std::string & patternSource );
-void assertBuilds( const std::string & patternSource );
-void assertFails( const NamespaceRef & ns, const std::string & patternSource );
-void assertFails( const std::string & patternSource );
-
-void assertFalse( bool exp, const char * message = 0);
-void assertTrue( bool exp, const char * message = 0);
-
-template< typename A, typename B >
-void assertEquals( A a, B b ) {
-	if ( a != b ) {
-		std::cout << "ERROR: " << a << " expected, but got " << b << std::endl;
-		std::cout.flush();
-
-		exit(1);
-	}
-}
+void assertBuildsImpl( const NamespaceRef & ns, const std::string & patternSource, char const *f, int line );
+void assertBuildsImpl( const std::string & patternSource, char const *f, int line );
+void assertFailsImpl( const NamespaceRef & ns, const std::string & patternSource, char const *f, int line );
+void assertFailsImpl( const std::string & patternSource, char const *f, int line );
 
 } }
 

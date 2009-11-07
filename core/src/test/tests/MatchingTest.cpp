@@ -23,16 +23,16 @@ using namespace lspl::assertions;
 
 namespace lspl { namespace tests {
 
-void testMatching() {
-	std::cout << "Testing matching..." << std::endl;
-
+static void testRegexpTokens() {
 	// Regexp tokens
 	assertMatches( "Мама", 0, 1, "'мама'" );
 	assertMatches( "Мама", 0, 1, "'ма.*а'" );
 	assertMatches( "Маша", 0, 1, "'ма.*а'" );
 	assertMatches( "Мамаша", 0, 1, "'ма.*а'" );
 	assertNoMatches( "Мошка", "'ма.*а'" );
+}
 
+static void testSimplePatterns() {
 	// Simple
 	assertMatches( "Мама мыла раму", 0, 2, "Act = N V" );
 	assertMatches( "Мама мыла раму", 0, 2, "Act = N<мама> V" );
@@ -43,11 +43,15 @@ void testMatching() {
 	assertMatches( "Мама мыла раму", 0, 2, "Act = N<g=fem> V" );
 	assertMatches( "Мама мыла раму", 0, 2, "Act = \"мама\" V" );
 	assertNoMatches( "Мама мыла раму", "Act = N<папа> V" );
+}
 
+static void testTerm() {
 	// Term
 	assertMatches( "Процессор базы данных", 0, 3, "\"процессор\" \"базы\" \"данных\"" );
 	assertMatches( "Процессор базы данных", 0, 3, "N1<процессор> { \"базы\" \"данных\" | \"ввода-вывода\" }<1,1>" );
+}
 
+static void testLoopRestrictions() {
 	// Loop restrictions: positive
 	assertMatches( "Мама мыла раму", 0, 2, "Act = {N} V" );
 	assertMatches( "Мама мыла раму", 0, 2, "Act = {N} V<N=V>" );
@@ -57,7 +61,9 @@ void testMatching() {
 	assertMatches( "Мама мыла раму", 0, 1, "Act = [A] N" );
 	assertMatches( "Мама мыла раму", 0, 1, "Act = {A} N" );
 	assertMatches( "Мама мыла раму", 0, 1, "Act = {A} N <A=N>" );
+}
 
+static void testMultipleEquality() {
 	// Multiple equality: positive
 	assertMatches( "Белая кошка мыла раму", 0, 3, "Act = A N V<A=N=V>" );
 	assertMatches( "Белая кошка мыла раму", 0, 3, "Act = A N V<A.g=N.g=V.g>" );
@@ -67,7 +73,9 @@ void testMatching() {
 	assertNoMatches( "Белая кот мыла раму", "Act = A N V<A=N=V>" );
 	assertNoMatches( "Белая кошка мыл раму", "Act = A N V<A=N=V>" );
 	assertNoMatches( "Белый кошка мыла раму", "Act = A N V<A.g=N.g=V.g>" );
+}
 
+static void testBaseEquality() {
 	// Base equality
 	assertMatches( "Мама, мама, что я буду делать?", 0, 3, "Act = W1 \",\" W2 <W1.b=W2.b>" );
 
@@ -76,56 +84,71 @@ void testMatching() {
 	assertNoMatches( "Кот прыгнул на стол", "Act = W1 W2 <W1.b=W2.b>" );
 
 	assertMatches( "Мама мыла раму", 0, 2, "Act = N V<N=V> ( N V )" );
+}
 
-	std::cout << "Testing simple reusing..." << std::endl;
-	{
-		NamespaceRef ns = new Namespace();
+static void testReusing1() {
+	NamespaceRef ns = new Namespace();
 
-		assertMatches( ns, "Белая кошка шла по дорожке", 0, 1, "AA = A (A) | Pa (Pa)" );
-		assertMatches( ns, "Белая кошка шла по дорожке", 0, 2, "TestA = AA N" );
-		assertMatches( ns, "Белая кошка шла по дорожке", 0, 2, "TestB = AA N <AA=N>" );
-	}
-	{
-		NamespaceRef ns = new Namespace();
+	assertMatchesNS( ns, "Белая кошка шла по дорожке", 0, 1, "AA = A (A) | Pa (Pa)" );
+	assertMatchesNS( ns, "Белая кошка шла по дорожке", 0, 2, "TestA = AA N" );
+	assertMatchesNS( ns, "Белая кошка шла по дорожке", 0, 2, "TestB = AA N <AA=N>" );
+}
 
-		assertNoMatches( ns, "Мама мыла раму", "AA = A (A) | Pa (Pa)" );
-		assertMatches( ns, "Мама мыла раму", 0, 1, "TestA = {AA} N" );
-		assertMatches( ns, "Мама мыла раму", 0, 1, "TestB = {AA} N <Ap=N>" );
-	}
+static void testReusing2() {
+	NamespaceRef ns = new Namespace();
 
-	std::cout << "Testing matching in one namespace..." << std::endl;
-	{
-		NamespaceRef ns = new Namespace();
+	assertNoMatchesNS( ns, "Мама мыла раму", "AA = A (A) | Pa (Pa)" );
+	assertMatchesNS( ns, "Мама мыла раму", 0, 1, "TestA = {AA} N" );
+	assertMatchesNS( ns, "Мама мыла раму", 0, 1, "TestB = {AA} N <Ap=N>" );
+}
 
-		assertMatches( ns, "Мама мыла раму", 0, 1, "UN = N" );
-		assertMatches( ns, "Мама мыла раму", 0, 2, "AB = UN V" );
-		assertMatches( ns, "Мама мыла раму", 0, 2, "AC = UN V <UN=V>" );
-	}
+static void testCommonNamespace() {
+	NamespaceRef ns = new Namespace();
 
-	std::cout << "Testing matching with compound attributes..." << std::endl;
-	{
-		NamespaceRef ns = new Namespace();
-		patterns::PatternBuilderRef builder = new patterns::PatternBuilder( ns );
+	assertMatchesNS( ns, "Мама мыла раму", 0, 1, "UN = N" );
+	assertMatchesNS( ns, "Мама мыла раму", 0, 2, "AB = UN V" );
+	assertMatchesNS( ns, "Мама мыла раму", 0, 2, "AC = UN V <UN=V>" );
+}
 
-		builder->build( "UV = V (V AS src)" );
-		builder->build( "UUV = UV ( UV.src )" );
+static void testCompoundAttributes() {
+	NamespaceRef ns = new Namespace();
+	patterns::PatternBuilderRef builder = new patterns::PatternBuilder( ns );
 
-		assertMatches( ns, "Мама мыла раму", 0, 2, "AA = N UV (UV)" );
-		assertMatches( ns, "Мама мыла раму", 0, 2, "AB = N UUV <N=UUV> (UUV)" );
-		assertMatches( ns, "Кот мыла раму", 0, 2, "AC = N UUV <N=UUV> (UUV)" ); // TODO Вот такой вот парадокс
-	}
+	builder->build( "UV = V (V AS src)" );
+	builder->build( "UUV = UV ( UV.src )" );
 
-	std::cout << "Testing matching with dictionaries..." << std::endl;
-	{
-		base::Reference<dictionaries::MemoryDictionary> d = new dictionaries::MemoryDictionary( "DIC" );
-		d->add( "МЫТЬ", "РАМА" );
+	assertMatchesNS( ns, "Мама мыла раму", 0, 2, "AA = N UV (UV)" );
+	assertMatchesNS( ns, "Мама мыла раму", 0, 2, "AB = N UUV <N=UUV> (UUV)" );
+	assertMatchesNS( ns, "Кот мыла раму", 0, 2, "AC = N UUV <N=UUV> (UUV)" ); // TODO Вот такой вот парадокс
+}
 
-		NamespaceRef ns = new Namespace();
-		ns->addDictionary( d );
+static void testDictionaries() {
+	base::Reference<dictionaries::MemoryDictionary> d = new dictionaries::MemoryDictionary( "DIC" );
+	d->add( "МЫТЬ", "РАМА" );
 
-		assertMatches( ns, "Мама мыла раму", 1, 3, "AA = W1 W2 <DIC(W1,W2)>" );
-		assertNoMatches( ns, "Мама мыла окно", "AB = W1 W2 <DIC(W1,W2)>" );
-	}
+	NamespaceRef ns = new Namespace();
+	ns->addDictionary( d );
+
+	assertMatchesNS( ns, "Мама мыла раму", 1, 3, "AA = W1 W2 <DIC(W1,W2)>" );
+	assertNoMatchesNS( ns, "Мама мыла окно", "AB = W1 W2 <DIC(W1,W2)>" );
+}
+
+cute::suite matchingSuite() {
+	cute::suite s;
+
+	s += CUTE(testRegexpTokens);
+	s += CUTE(testSimplePatterns);
+	s += CUTE(testTerm);
+	s += CUTE(testLoopRestrictions);
+	s += CUTE(testMultipleEquality);
+	s += CUTE(testBaseEquality);
+	s += CUTE(testReusing1);
+	s += CUTE(testReusing2);
+	s += CUTE(testCommonNamespace);
+	s += CUTE(testCompoundAttributes);
+	s += CUTE(testDictionaries);
+
+	return s;
 }
 
 } }
