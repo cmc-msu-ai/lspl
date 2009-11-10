@@ -95,10 +95,10 @@ const MatchList & Text::getMatches( const Pattern & pattern ) {
 bool Text::prepareIndices( const Pattern & pattern, IndexIteratorsList & iterators ) {
 	using namespace lspl::patterns;
 
-	for ( uint i = 0; i < pattern.alternatives.size(); ++ i ) {
-		const Alternative & alternative = pattern.alternatives[i];
+	for ( uint i = 0; i < pattern.getAlternatives().size(); ++ i ) { // Перебираем все альтернативы шаблона
+		const Alternative & alternative = pattern.getAlternatives()[i]; // Получаем ссылку на альтернативу
+		const boost::ptr_vector<IndexInfo> & indexInfos = alternative.getStartIndices(); // Получаем информацию о подходящих индексах из альтернативы
 
-		const boost::ptr_vector<IndexInfo> & indexInfos = alternative.getStartIndices();
 
 		if ( indexInfos.empty() ) // Если для альтернативы не определеныин индексы, придется производить поиск без индексов
 			return false;
@@ -122,7 +122,7 @@ bool Text::prepareIndices( const Pattern & pattern, IndexIteratorsList & iterato
 			case IndexInfo::PATTERN: {
 				Index::Iterator * it = patternIndex.createIterator( &static_cast<const PatternIndexInfo &>( info ).pattern );
 
-				if ( !it ) {
+				if ( !it ) { // Шаблон еще не найден
 					return false;
 				}
 
@@ -151,7 +151,7 @@ void Text::processWithoutIndices( const Pattern & pattern ) {
 	Context context; // Контекст сопоставления
 
 	for ( uint nodeIndex = 0; nodeIndex < nodes.size(); ++ nodeIndex ) {
-		foreach ( const patterns::Alternative & alt, pattern.alternatives )
+		foreach ( const patterns::Alternative & alt, pattern.getAlternatives() ) // Перебираем все альтернативы шаблона
 			matcher.buildTransitions( *nodes[nodeIndex], pattern, alt, context, results );
 
 		for ( uint i = 0; i < results.size(); ++ i )
@@ -169,8 +169,8 @@ void Text::processWithIndices( const Pattern & pattern, IndexIteratorsList & ite
 	const Node * lastNode = 0;
 
 	while ( true ) {
-		Index::Iterator * index = 0;
-		uint alternative;
+		Index::Iterator * index = 0; // Используемый индекс
+		uint alternative; // Индекс альтернативы
 
 		for ( uint i = 0; i < iterators.size(); ++ i ) { // Находим ближайший индекс
 			std::pair<uint,Index::Iterator *> & currentPair = iterators[ i ];
@@ -191,7 +191,7 @@ void Text::processWithIndices( const Pattern & pattern, IndexIteratorsList & ite
 		if ( !index ) // Если не нашли подходящего индекса, значит поиск завершен
 			return;
 
-		matcher.buildTransitions( *index->get(), pattern, pattern.alternatives[ alternative ], context, results ); // Производим поиск начиная с текущего индекса
+		matcher.buildTransitions( *index->get(), pattern, pattern.getAlternatives()[ alternative ], context, results ); // Производим поиск начиная с текущего индекса
 
 		lastNode = &index->get()->start;
 		index->increment();

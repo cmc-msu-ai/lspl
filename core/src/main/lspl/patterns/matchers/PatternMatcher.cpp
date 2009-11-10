@@ -24,7 +24,8 @@ using lspl::text::MatchVariant;
 namespace lspl { namespace patterns { namespace matchers {
 
 struct PatternMatchState {
-	const patterns::Pattern & pattern;
+
+	const Pattern & pattern;
 
 	const Node & startNode;
 
@@ -157,9 +158,9 @@ TransitionList PatternMatcher::buildTransitions( const text::Node & node, const 
 	TransitionList newTransitions;
 
 	if ( node.text.isMatchesReady( pattern ) ) {
-		for ( uint i = 0; i < node.transitions.size(); ++ i )
-			if ( matchTransition( *node.transitions[i], context ) )
-				newTransitions.push_back( node.transitions[i] );
+		foreach ( const TransitionRef & transition, node.transitions ) // Перебираем все ребра из текущей вершины
+			if ( matchTransition( *transition, context ) )
+				newTransitions.push_back( transition );
 	} else {
 		for ( uint i = 0; i < pattern.alternatives.size(); ++ i ) {
 			PatternMatchState state( pattern, pattern.alternatives[i], node );

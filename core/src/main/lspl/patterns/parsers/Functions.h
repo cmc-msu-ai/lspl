@@ -145,9 +145,9 @@ struct AddDictionaryRestrictionImpl {
 		ns( ns ) {
 	}
 
-	void operator()( boost::ptr_vector<Matcher> & matchers, const std::string & dictionaryName, const std::vector<Variable> & variables ) const;
+	void operator()( boost::ptr_vector<Matcher> & matchers, const std::string & dictionaryName, boost::ptr_vector<Expression> & args ) const;
 
-	Matcher & findLastMatcher( boost::ptr_vector<Matcher> & matchers, const std::vector<Variable> & variables ) const;
+	Matcher & findLastMatcher( boost::ptr_vector<Matcher> & matchers, const boost::ptr_vector<Expression> & args ) const;
 
 	Namespace & ns;
 };

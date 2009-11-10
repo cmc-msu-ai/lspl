@@ -117,8 +117,8 @@ void AddPatternDefinitionImpl::operator()( const std::string & name, boost::ptr_
 	pattern->addAlternatives( alts ); // Добавляем альтернативы к шаблону
 	pattern->updateDependencies(); // Обновляем зависимости шаблона
 
-	foreach( Alternative & alt, pattern->alternatives ) {
-		alt.setTransform( std::auto_ptr<transforms::Transform>( transformBuilder.build( alt, alt.getTransformSource() ) ) ); // Устанавливаем преобразование
+	foreach( const Alternative & alt, pattern->getAlternatives() ) {
+		const_cast<Alternative &>( alt ).setTransform( std::auto_ptr<transforms::Transform>( transformBuilder.build( alt, alt.getTransformSource() ) ) ); // Устанавливаем преобразование
 	}
 }
 
@@ -164,20 +164,24 @@ void AddPatternRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matcher
 	}
 }
 
-void AddDictionaryRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matchers, const std::string & dictionaryName, const std::vector<Variable> & variables ) const {
+void AddDictionaryRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matchers, const std::string & dictionaryName, boost::ptr_vector<Expression> & args ) const {
 	dictionaries::DictionaryRef dict = ns.getDictionaryByName( dictionaryName );
 
 	if ( !dict ) // Не нашли словаря - выкидываем исключение
 		throw PatternBuildingException( "No dictionary found" );
 
-	Matcher & lastMatcher = findLastMatcher( matchers, variables ); // Получаем последний соспоставитель, участвующий в проверке
-	lastMatcher.addRestriction( new DictionaryRestriction( dict, variables, lastMatcher.variable ) );
+	Matcher & lastMatcher = findLastMatcher( matchers, args ); // Получаем последний соспоставитель, участвующий в проверке
+	DictionaryRestriction * dr = new DictionaryRestriction( dict );
+
+	dr->addArguments( args );
+
+	lastMatcher.addRestriction( dr );
 }
 
-Matcher & AddDictionaryRestrictionImpl::findLastMatcher( boost::ptr_vector<Matcher> & matchers, const std::vector<Variable> & variables ) const {
+Matcher & AddDictionaryRestrictionImpl::findLastMatcher( boost::ptr_vector<Matcher> & matchers, const boost::ptr_vector<Expression> & args ) const {
 	for ( int i = matchers.size() - 1; i >= 0; --i )
-		for ( int j = variables.size() - 1; j >= 0; --j )
-			if ( matchers[i].variable == variables[j] )
+		for ( int j = args.size() - 1; j >= 0; --j )
+			if ( args[j].containsVariable( matchers[i].variable ) )
 				return matchers[i];
 
 	throw PatternBuildingException( "No last matcher found" );

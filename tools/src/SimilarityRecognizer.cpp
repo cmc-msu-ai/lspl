@@ -90,7 +90,7 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 		const text::TextRef term1,
 		std::map<std::string, std::string> &pattern_words,
 		const NamespaceRef similar_patterns_namespace) {
-	std::vector<int> *result = new vector<int>();
+	std::vector<int> *result = new std::vector<int>();
 	for(int l = 0; l < similar_patterns_namespace->getPatternCount(); ++l) {
 		patterns::PatternRef similar_pattern =
 				similar_patterns_namespace->getPatternByIndex(l);

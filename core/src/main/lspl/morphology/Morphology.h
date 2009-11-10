@@ -37,7 +37,25 @@ public:
 	Morphology();
 	virtual ~Morphology();
 
-	virtual void appendWordForms( std::string token, boost::ptr_vector<WordForm> & forms ) = 0;
+	/**
+	 * Провести морфологический анализ и получить различные интерпретации слова.
+	 *
+	 * @param token слово для анализа
+	 * @param forms ptr_vector для интерпретаций слова
+	 */
+	virtual void appendWordForms( const std::string & token, boost::ptr_vector<WordForm> & forms ) = 0;
+
+	/**
+	 * Провести морфологический анализ и получить различные интерпретации слова.
+	 *
+	 * @param token слово для анализа
+	 * @return ptr_vector интерпретаций слова
+	 */
+	std::auto_ptr< boost::ptr_vector<WordForm> > getWordForms( const std::string & token ) {
+		boost::ptr_vector<WordForm> result;
+		appendWordForms( token, result );
+		return result.release();
+	}
 
 	virtual std::string getAttributesString( uint64 attValues ) = 0;
 

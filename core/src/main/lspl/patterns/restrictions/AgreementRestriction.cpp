@@ -23,16 +23,16 @@ AgreementRestriction::AgreementRestriction() {
 AgreementRestriction::~AgreementRestriction() {
 }
 
-bool AgreementRestriction::matches( const text::Transition & annotation, const matchers::Context & ctx ) const {
+bool AgreementRestriction::matches( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const {
 	if ( args.size() <= 1 )
 		throw std::logic_error( "Too less arguments" );
 
 	AttributeValue val1;
-	AttributeValue val2 = args[0].evaluate( &annotation, ctx );
+	AttributeValue val2 = args[0].evaluate( currentAnnotation, currentVar, ctx );
 
 	for ( uint i = 1; i < args.size(); ++i ) {
 		val1 = val2;
-		val2 = args[i].evaluate( &annotation, ctx );
+		val2 = args[i].evaluate( currentAnnotation, currentVar, ctx );
 
 		if ( !checkAgreement( val1, val2 ) )
 			return false;

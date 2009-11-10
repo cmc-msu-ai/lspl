@@ -40,12 +40,18 @@ void assertBuilds( const char * text ) {
 	std::cout << "Ok, Built" << std::endl;
 }
 
-void testTextReaders() {
-	std::cout << "Testing text readers..." << std::endl;
-
+static void testTextReaders() {
 	assertLoadsJson( "resources/test/text1.js" );
 
 	assertBuilds( "Мама мыла раму" );
+}
+
+cute::suite textReadersSuite() {
+	cute::suite s;
+
+	s += CUTE(testTextReaders);
+
+	return s;
 }
 
 } }

@@ -21,8 +21,12 @@ VariableExpression::VariableExpression( const matchers::Variable & variable ) :
 VariableExpression::~VariableExpression() {
 }
 
-AttributeValue VariableExpression::evaluate( const text::Transition * annotation, const Context & ctx ) const {
-	return ctx.getVariable( variable );
+AttributeValue VariableExpression::evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx ) const {
+	if ( currentVar == variable ) {
+		return AttributeValue( *currentAnnotation );
+	} else {
+		return ctx.getVariable( variable );
+	}
 }
 
 void VariableExpression::dump( std::ostream & out, const std::string & tabs ) const {
@@ -35,6 +39,10 @@ bool VariableExpression::equals( const Expression & e ) const {
 	} else {
 		return false;
 	}
+}
+
+bool VariableExpression::containsVariable( matchers::Variable var ) const {
+	return var == variable;
 }
 
 } } }

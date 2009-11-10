@@ -78,6 +78,13 @@ public:
 	}
 
 	/**
+	 * Получить имя шаблона
+	 */
+	const std::string & getName() const {
+		return name;
+	}
+
+	/**
 	 * Получить исходный текст объявления шаблона, полученный путем склеивания объявлений его альтернатив с переносом строки в качестве разделителя
 	 */
 	std::string getSource() const;
@@ -88,6 +95,7 @@ public:
 	const boost::ptr_vector<Alternative> & getAlternatives() const {
 		return alternatives;
 	}
+
 public:
 
 	/**
@@ -95,12 +103,12 @@ public:
 	 */
 	const std::string name;
 
+private:
+
 	/**
 	 * Список альтернатив шаблона
 	 */
 	boost::ptr_vector<Alternative> alternatives;
-
-private:
 
 	/**
 	 * Зависимости шаблона

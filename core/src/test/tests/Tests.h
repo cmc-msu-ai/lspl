@@ -8,13 +8,15 @@
 #ifndef _LSPL_TESTS_PATTERNSTEST_H_
 #define _LSPL_TESTS_PATTERNSTEST_H_
 
+#include "../cute/cute.h"
+
 namespace lspl { namespace tests {
 
-void testPatternStructure();
-void testPatterns();
-void testDictionaries();
-void testMatching();
-void testTextReaders();
+cute::suite patternStructureSuite();
+cute::suite patternBuildingSuite();
+cute::suite dictionariesSuite();
+cute::suite matchingSuite();
+cute::suite textReadersSuite();
 
 } }
 

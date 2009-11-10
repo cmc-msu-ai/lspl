@@ -22,8 +22,8 @@ AttributeExpression::AttributeExpression( const Expression * base, const Attribu
 AttributeExpression::~AttributeExpression() {
 }
 
-AttributeValue AttributeExpression::evaluate( const text::Transition * annotation, const Context & ctx ) const {
-	AttributeValue baseVal = base->evaluate( annotation, ctx );
+AttributeValue AttributeExpression::evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx ) const {
+	AttributeValue baseVal = base->evaluate( currentAnnotation, currentVar, ctx );
 
 	if ( baseVal == AttributeValue::UNDEFINED )
 		return AttributeValue::UNDEFINED;
@@ -41,6 +41,10 @@ bool AttributeExpression::equals( const Expression & e ) const {
 	} else {
 		return false;
 	}
+}
+
+bool AttributeExpression::containsVariable( matchers::Variable var ) const {
+	return base->containsVariable( var );
 }
 
 } } }

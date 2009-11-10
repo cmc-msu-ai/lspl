@@ -16,8 +16,8 @@ jfieldID JavaAlternative::patternField;
 jmethodID JavaAlternative::constructor;
 
 static uint findIndex( const Pattern * pattern, const Alternative * alternative ) {
-	for ( uint i = 0; i < pattern->alternatives.size(); ++ i )
-		if ( &pattern->alternatives[i] == alternative )
+	for ( uint i = 0; i < pattern->getAlternatives().size(); ++ i )
+		if ( &pattern->getAlternatives()[i] == alternative )
 			return i;
 
 	throw std::logic_error( "Alternative not in pattern" );

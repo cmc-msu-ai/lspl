@@ -40,7 +40,7 @@ bool Matcher::equals( const Matcher & m ) const {
 
 bool Matcher::matchRestrictions( const Transition & annotation, const Context & ctx ) const {
 	for ( uint i = 0; i < restrictions.size(); ++ i ) // Проверяем соответствие ограничениям
-		if ( !restrictions[ i ].matches( annotation, ctx ) )
+		if ( !restrictions[ i ].matches( &annotation, variable, ctx ) )
 			return false;
 
 	return true;

@@ -21,7 +21,7 @@ using namespace lspl::patterns::java;
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_ru_lspl_patterns_Pattern_getAlternativeCount(JNIEnv * env, jobject obj) {
-	return JavaPattern::get( env, obj )->alternatives.size();
+	return JavaPattern::get( env, obj )->getAlternatives().size();
 }
 
 /*
@@ -32,7 +32,7 @@ JNIEXPORT jint JNICALL Java_ru_lspl_patterns_Pattern_getAlternativeCount(JNIEnv 
 JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_Pattern_getAlternative(JNIEnv * env, jobject obj, jint index) {
 	JavaPattern pattern = JavaPattern::get( env, obj );
 
-	return JavaAlternative::get( env, pattern.pattern.get(), &pattern->alternatives[ index ] ).object;
+	return JavaAlternative::get( env, pattern.pattern.get(), &pattern->getAlternatives().at( index ) ).object;
 }
 
 /*

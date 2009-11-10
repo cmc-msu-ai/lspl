@@ -90,9 +90,11 @@ AotMorphology::AotMorphology() {
 #endif
 }
 
-void AotMorphology::appendWordForms( std::string token, boost::ptr_vector<WordForm> & forms ) {
+void AotMorphology::appendWordForms( const std::string & token, boost::ptr_vector<WordForm> & forms ) {
+	std::string tokenCopy = token;
 	std::vector<CFormInfo> aotForms;
-	lemmatizer->CreateParadigmCollection(false, token, is_russian_upper( (BYTE)token[0] ), true, aotForms);
+
+	lemmatizer->CreateParadigmCollection(false, tokenCopy, is_russian_upper( (BYTE)token[0] ), true, aotForms);
 
 	for ( uint i = 0; i < aotForms.size(); ++ i) {
 		const CFormInfo & f = aotForms[i];

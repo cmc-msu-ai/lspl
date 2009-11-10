@@ -123,45 +123,45 @@ protected:
 class IndexedAttributeValueManager : public IndexedEntryManager {
 public:
 	IndexedAttributeValueManager() {
-		add( 0, "un", "undefined", "неопределено" );
+		add( 0, "un", "undefined", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
 
-		add( 1, "nom", "nominative", "именительный" );
-		add( 2, "gen", "genitive", "родительный" );
-		add( 3, "dat", "dative", "дательный" );
-		add( 4, "acc", "accusative", "винительный" );
-		add( 5, "ins", "instrumental", "творительный" );
-		add( 6, "prep", "prepositional", "предложный" );
-		add( 7, "uninf", "uninflected", "несклоняемое" );
+		add( 1, "nom", "nominative", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 2, "gen", "genitive", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 3, "dat", "dative", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 4, "acc", "accusative", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 5, "ins", "instrumental", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 6, "prep", "prepositional", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 7, "uninf", "uninflected", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
 
-		add( 8, "sing", "singular", "единственное" );
-		add( 9, "plur", "plural", "множественное" );
+		add( 8, "sing", "singular", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 9, "plur", "plural", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
 
-		add( 10, "masc", "masculine", "мужской" );
-		add( 11, "fem", "feminine", "женский" );
-		add( 12, "neut", "neuter", "без рода" );
+		add( 10, "masc", "masculine", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 11, "fem", "feminine", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 12, "neut", "neuter", "пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ" );
 
-		add( 13, "com", "comparative", "сравнительная" );
-		add( 14, "sup", "superlative", "превосходная" );
-		add( 15, "no", "no degree of comparsion", "без степени сравнения" );
+		add( 13, "com", "comparative", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 14, "sup", "superlative", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 15, "no", "no degree of comparsion", "пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
 
-		add( 16, "pres", "present", "настоящее" );
-		add( 17, "past", "past", "прошедшее" );
-		add( 18, "fut", "future", "будущее" );
+		add( 16, "pres", "present", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 17, "past", "past", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 18, "fut", "future", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
 
-		add( 19, "anim", "animate", "одушевленное" );
-		add( 20, "inan", "inanimate", "неодушевленное" );
+		add( 19, "anim", "animate", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 20, "inan", "inanimate", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
 
-		add( 21, "full", "full", "полная" );
-		add( 22, "short", "short", "сокращенная" );
+		add( 21, "full", "full", "пїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 22, "short", "short", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
 
 		add( 23, "ind", "indicative", "indicative" );
-		add( 24, "imp", "imperative", "повелительное" );
+		add( 24, "imp", "imperative", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
 		add( 25, "conj", "conjunctive", "conjunctive" );
-		add( 26, "cond", "conditional", "условное" );
+		add( 26, "cond", "conditional", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
 
-		add( 27, "1", "first", "первое" );
-		add( 28, "2", "second", "второе" );
-		add( 29, "3", "third", "третье" );
+		add( 27, "1", "first", "пїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 28, "2", "second", "пїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 29, "3", "third", "пїЅпїЅпїЅпїЅпїЅпїЅ" );
 
 		add( 30, "yes", "reflexive", "reflexive" );
 		add( 31, "no", "not reflexive", "not reflexive" );
@@ -172,14 +172,14 @@ static StringManager stringAttributeValueManager;
 static IndexedAttributeValueManager indexedAttributeValueManager;
 
 /**
- * Получить количество индексированных значений аттрибутов
+ * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
  */
 uint AttributeValue::indexedCount() {
 	return indexedAttributeValueManager.map.size();
 }
 
 /**
- * Найти индексированное значение аттрибута по его аббревиатуре
+ * пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
  */
 AttributeValue AttributeValue::findIndexedByAbbrevation( const std::string & abbrevation ) {
 	IndexedAttributeValueManager::Iterator i = indexedAttributeValueManager.map.find( abbrevation );
@@ -191,7 +191,7 @@ AttributeValue AttributeValue::findIndexedByAbbrevation( const std::string & abb
 }
 
 /**
- * Зарегистрировать новое индексированное значение аттрибута
+ * пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
  */
 AttributeValue AttributeValue::createIndexed( const std::string & abbrevation, const std::string & name, const std::string & title ) {
 	return AttributeValue( indexedAttributeValueManager.add( indexedAttributeValueManager.map.size(), abbrevation, name, title ) );
@@ -200,19 +200,19 @@ AttributeValue AttributeValue::createIndexed( const std::string & abbrevation, c
 AttributeValue::AttributeValue(const std::string & str)
 	: type( AttributeType( AttributeType::STRING_ID ) ), value( reinterpret_cast<long>( &stringAttributeValueManager.intern( str ) ) ) {
 
-	stringAttributeValueManager.addRef( getString() ); // Увеличиваем количество ссылок нас строку
+	stringAttributeValueManager.addRef( getString() ); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 }
 
 AttributeValue::AttributeValue( const AttributeValue & att )
 	: type( att.type ), value( att.value ) {
 
 	if ( type == AttributeType::STRING )
-		stringAttributeValueManager.addRef( getString() ); // Увеличиваем количество ссылок нас строку
+		stringAttributeValueManager.addRef( getString() ); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 }
 
 AttributeValue::~AttributeValue() {
 	if ( type == AttributeType::STRING )
-		stringAttributeValueManager.release( getString() ); // Уменьшаем количество ссылокн нас строку
+		stringAttributeValueManager.release( getString() ); // пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
 }
 
 const std::string & AttributeValue::getAbbrevation() const {
@@ -243,7 +243,7 @@ const std::string * AttributeValue::getStringPtr() const {
 	case AttributeType::STRING_ID:
 		return reinterpret_cast<const std::string*>( value );
 	case AttributeType::COMPOUND_ID:
-		return getContainer().getAttribute( AttributeKey::TEXT ).getStringPtr();
+		return getContainer().getAttribute( AttributeKey::BASE ).getStringPtr();
 	default:
 		throw base::Exception( "Unknown value type" );
 	}
