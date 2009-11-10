@@ -103,12 +103,12 @@ public:
 	 */
 	const std::string name;
 
-private:
-
 	/**
 	 * Список альтернатив шаблона
 	 */
 	boost::ptr_vector<Alternative> alternatives;
+
+private:
 
 	/**
 	 * Зависимости шаблона
