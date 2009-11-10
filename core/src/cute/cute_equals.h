@@ -29,7 +29,6 @@
 #include <sstream>
 #include <boost/type_traits/is_integral.hpp>
 #include <boost/type_traits/is_floating_point.hpp>
-#include <boost/type_traits/make_unsigned.hpp>
 namespace cute {
 
 	namespace equals_impl {
@@ -133,9 +132,7 @@ namespace cute {
 		template <typename ExpectedValue, typename ActualValue>
 		bool do_equals(ExpectedValue const &expected
 					,ActualValue const &actual,const boost::true_type&){
-				typedef typename boost::make_unsigned<ExpectedValue>::type ex_u;
-				typedef typename boost::make_unsigned<ActualValue>::type ac_u;
-			return ex_u(expected)==ac_u(actual); // unsigned equality for integral types is OK, it avoids warnings
+			return expected==actual;
 		}
 	} // namespace equals_impl
 	template <typename ExpectedValue, typename ActualValue>
