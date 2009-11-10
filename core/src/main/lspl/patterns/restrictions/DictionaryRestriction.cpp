@@ -12,28 +12,12 @@
 
 using namespace lspl::text::attributes;
 
+using lspl::patterns::expressions::Expression;
+
 namespace lspl { namespace patterns { namespace restrictions {
 
-DictionaryRestriction::DictionaryRestriction( const dictionaries::DictionaryConstRef & dict, const std::vector<matchers::Variable> & variables, const matchers::Variable & curVar ) :
-	dictionary( dict ), variables( variables ), currentVariable( curVar ) {
-}
-
-DictionaryRestriction::DictionaryRestriction( const dictionaries::DictionaryConstRef & dict, const matchers::Variable & v1, const matchers::Variable & curVar ) :
-	dictionary( dict ), currentVariable( curVar ) {
-	variables.push_back( v1 );
-}
-
-DictionaryRestriction::DictionaryRestriction( const dictionaries::DictionaryConstRef & dict, const matchers::Variable & v1, const matchers::Variable & v2, const matchers::Variable & curVar ) :
-	dictionary( dict ), currentVariable( curVar ) {
-	variables.push_back( v1 );
-	variables.push_back( v2 );
-}
-
-DictionaryRestriction::DictionaryRestriction( const dictionaries::DictionaryConstRef & dict, const matchers::Variable & v1, const matchers::Variable & v2, const matchers::Variable & v3, const matchers::Variable & curVar ) :
-	dictionary( dict ), currentVariable( curVar ) {
-	variables.push_back( v1 );
-	variables.push_back( v2 );
-	variables.push_back( v3 );
+DictionaryRestriction::DictionaryRestriction( const dictionaries::DictionaryConstRef & dict ) :
+	dictionary( dict ) {
 }
 
 DictionaryRestriction::~DictionaryRestriction() {
@@ -42,30 +26,24 @@ DictionaryRestriction::~DictionaryRestriction() {
 bool DictionaryRestriction::matches( const text::Transition & annotation, const matchers::Context & ctx ) const {
 	std::vector<std::string> words;
 
-	for ( uint i = 0; i < variables.size(); ++ i ) {
-		matchers::Variable v = variables[i];
-
-		if ( v == currentVariable )
-			words.push_back( annotation.getAttribute( AttributeKey::BASE ).getString() );
-		else
-			words.push_back( ctx.getAttribute( variables[i], AttributeKey::BASE ).getString() );
+	foreach( const Expression & arg, args ) {
+		words.push_back( arg.evaluate( &annotation, ctx ).getContainer().getAttribute( AttributeKey::BASE ).getString() );
 	}
 
 	return dictionary->accepts( words );
 }
 
 void DictionaryRestriction::dump( std::ostream & out, const std::string & tabs ) const {
-	out << variables[0];
+	out << dictionary->name;
 }
 
 bool DictionaryRestriction::equals( const Restriction & r ) const {
 	if ( const DictionaryRestriction * dr = dynamic_cast<const DictionaryRestriction *>( &r ) ) {
 		if ( dr->dictionary != dictionary ) return false;
-		if ( dr->currentVariable != currentVariable ) return false;
-		if ( dr->variables.size() != variables.size() ) return false;
+		if ( dr->args.size() != args.size() ) return false;
 
-		for ( uint i = 0, l = variables.size(); i < l; ++ i )
-			if ( dr->variables[i] != variables[i] )
+		for ( uint i = 0, l = args.size(); i < l; ++ i )
+			if ( !dr->args[i].equals( args[i] ) )
 				return false;
 
 		return true;

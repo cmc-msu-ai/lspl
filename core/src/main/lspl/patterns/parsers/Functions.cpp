@@ -171,7 +171,17 @@ void AddDictionaryRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matc
 		throw PatternBuildingException( "No dictionary found" );
 
 	Matcher & lastMatcher = findLastMatcher( matchers, variables ); // Получаем последний соспоставитель, участвующий в проверке
-	lastMatcher.addRestriction( new DictionaryRestriction( dict, variables, lastMatcher.variable ) );
+	DictionaryRestriction * dr = new DictionaryRestriction( dict );
+
+	foreach( Variable v, variables ) {
+		if ( v == lastMatcher.variable ) {
+			dr->addArgument( new CurrentAnnotationExpression() );
+		} else {
+			dr->addArgument( new VariableExpression( v ) );
+		}
+	}
+
+	lastMatcher.addRestriction( dr );
 }
 
 Matcher & AddDictionaryRestrictionImpl::findLastMatcher( boost::ptr_vector<Matcher> & matchers, const std::vector<Variable> & variables ) const {

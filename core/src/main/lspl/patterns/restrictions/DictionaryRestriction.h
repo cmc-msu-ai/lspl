@@ -12,8 +12,9 @@
 #include "../../dictionaries/Dictionary.h"
 #include "Restriction.h"
 #include "../matchers/Variable.h"
+#include "../expressions/Expression.h"
 
-#include <vector>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 namespace lspl { namespace patterns { namespace restrictions {
 
@@ -24,12 +25,18 @@ namespace lspl { namespace patterns { namespace restrictions {
  */
 class LSPL_EXPORT DictionaryRestriction : public Restriction {
 public:
-	DictionaryRestriction( const dictionaries::DictionaryConstRef & dict, const std::vector<matchers::Variable> & variables, const matchers::Variable & curVar );
-	DictionaryRestriction( const dictionaries::DictionaryConstRef & dict, const matchers::Variable & v1, const matchers::Variable & curVar );
-	DictionaryRestriction( const dictionaries::DictionaryConstRef & dict, const matchers::Variable & v1, const matchers::Variable & v2, const matchers::Variable & curVar );
-	DictionaryRestriction( const dictionaries::DictionaryConstRef & dict, const matchers::Variable & v1, const matchers::Variable & v2, const matchers::Variable & v3, const matchers::Variable & curVar );
-
+	DictionaryRestriction( const dictionaries::DictionaryConstRef & dict );
 	virtual ~DictionaryRestriction();
+
+	void addArgument( expressions::Expression * arg ) {
+		args.push_back( arg );
+	}
+
+	template <class PtrContainer>
+	void addArguments( PtrContainer & r ) {
+		if ( r.begin() != r.end() )
+			args.transfer( args.end(), r.begin(), r.end(), r );
+	}
 
 	virtual bool matches( const text::Transition & annotation, const matchers::Context & ctx ) const;
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
@@ -43,14 +50,9 @@ private:
 	dictionaries::DictionaryConstRef dictionary;
 
 	/**
-	 * Переменный, вхождение которых проверяется
+	 * Аргументы
 	 */
-	std::vector<matchers::Variable> variables;
-
-	/**
-	 * Переменная, соответствующая текущему элементу шаблона
-	 */
-	matchers::Variable currentVariable;
+	boost::ptr_vector<expressions::Expression> args;
 };
 
 } } }
