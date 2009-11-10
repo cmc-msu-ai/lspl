@@ -9,6 +9,7 @@
 void ExtractTerms(const std::vector<lspl::PatternMatchRef> &matches,
 		std::vector<std::string> &terms) {
 	terms.clear();
+	std::cout << terms.size() << " " << matches.size() << std::endl;
 	for(int i = 0; i < matches.size(); ++i) {
 		terms.push_back(matches[i]->matches[0]->getFragment(0).getText());
 	}

@@ -49,6 +49,7 @@ set(LSPL_DICTIONARY_RECOGNIZER_SOURCES
 	src/RangeSetDecartTreeElement.cpp
 	src/RangeSetDecartTree.cpp
 	src/RangeSet.cpp
+	src/SynDictionary.cpp
 	src/Util.cpp
 )
 
@@ -65,6 +66,7 @@ set(LSPL_SIMILARITY_SOURCES
 	src/RangeSetDecartTree.cpp
 	src/RangeSet.cpp
 	src/SimilarityRecognizer.cpp
+	src/SynDictionary.cpp
 	src/Util.cpp
 )
 

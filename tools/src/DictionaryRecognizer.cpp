@@ -14,6 +14,7 @@
 #include "lspl/text/Match.h"
 #include "lspl/transforms/Normalization.h"
 #include "RangeSet.h"
+#include "SynDictionary.h"
 #include "Util.h"
 
 LSPL_REFCOUNT_CLASS( lspl::PatternMatch );
@@ -36,6 +37,8 @@ namespace lspl {
 			DictionaryRecognizer::LoadPatterns(const char* dictionary_filename)
 			const {
 		NamespaceRef patterns_namespace = new Namespace();
+		/*patterns_namespace->addDictionary(
+				new dictionaries::SynDictionary("Syn", ""));*/
 		patterns::PatternBuilderRef builder =
 				new patterns::PatternBuilder(patterns_namespace);
 		int start_index = 0;
@@ -87,12 +90,20 @@ namespace lspl {
 			patterns::PatternRef pattern =
 					patterns_namespace()->getPatternByIndex(i);
 			text::MatchList matches = text()->getMatches(pattern);
-			if (matches.size() != 0) {
+			if (/*pattern->name != "MSP"pattern->getSource()*/!matches.size()) {
+				//std::cout << "Pattern: " << Util::out.convert(pattern->name) <<
+				//		std::endl;
+				continue;
+			} else {
 				std::cout << "Pattern: " << Util::out.convert(pattern->name) <<
 						std::endl;
 			}
 			for(uint j = 0; j < matches.size(); ++j) {
 				text::MatchRef match = matches[j];
+				std::string match_s = match->getFragment(0).getText(); 
+				/*std::cout << "Match '" <<
+							Util::out.convert(match->getFragment(0).getText()) << "'" <<
+							std::endl;*/
 				std::string normalized_match =
 						normalization.normalize(match->getVariants().at(0));
 				if (result_matches.find(normalized_match) == result_matches.end()) {
@@ -105,20 +116,13 @@ namespace lspl {
 			}
 		}
 
-		for(int i = 0; i < patterns.size(); ++i) {
-			int j = i;
-			while (j > 0 && patterns[j].size() > patterns[j - 1].size()) {
-				std::swap(patterns[j], patterns[j - 1]);
-				--j;
-			}
-		}
-		//std::sort(patterns.begin(), patterns.end(), ComparePatternsMatches);
+		std::sort(patterns.begin(), patterns.end(), ComparePatternsMatches);
 
 		base::RangeSet range_set;
 		for(uint i = 0; i < patterns.size(); ++i) {
 			std::string normalized_match = patterns[i];
 			PatternMatchRef pattern = result_matches[normalized_match];
-			std::cout << "Term: " << Util::out.convert(normalized_match) << std::endl;
+			//std::cout << "Term: " << Util::out.convert(normalized_match) << std::endl;
 			result.push_back(pattern);
 			for(uint j = 0; j < pattern->matches.size(); j++) {
 				text::MatchRef match = pattern->matches[j];
@@ -126,13 +130,13 @@ namespace lspl {
 				if (!range_set.FindRangeExtension(range)) {
 					range_set.AddRange(range);
 					++(pattern->match_count);
-					std::cout << "Match '" <<
+					/*std::cout << "Match '" <<
 							Util::out.convert(match->getFragment(0).getText()) << "'" <<
-							std::endl;
+							std::endl;*/
 				} else {
-					std::cout << "Don't include match '" <<
+					/*std::cout << "Don't include match '" <<
 							Util::out.convert(match->getFragment(0).getText()) << "'" <<
-							std::endl;
+							std::endl;*/
 				}
 			}
 		}
@@ -142,10 +146,6 @@ namespace lspl {
 
 	bool DictionaryRecognizer::ComparePatternsMatches(const std::string &i,
 			const std::string &j) {
-		std::cout << Util::out.convert(i) << "!" << Util::out.convert(j) << std::endl;
-		std::cout << "?" << std::endl;
-		bool result = i.size() >= j.size();
-		std::cout << "*" << std::endl;
-		return result;
+		return i.size() > j.size();
 	}
 } // namespace lspl.

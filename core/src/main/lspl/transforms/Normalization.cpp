@@ -69,7 +69,11 @@ void Normalization::normalizeToString( std::string & str, const Transition & tra
 		morphology::Morphology::instance().appendWordForms(token->getToken(), forms);
 		if ( str.length() > 0 )
 			str += " ";
-		str += forms[0].getBase();
+		if (forms.size()) {
+			str += forms[0].getBase();
+		} else {
+			str += token->getToken();
+		}
 	} else if ( const Word * word = dynamic_cast<const Word*>( &transition ) ) {
 		boost::ptr_vector<morphology::WordForm> forms;
 		morphology::Morphology::instance().appendWordForms(word->getBase(), forms);
