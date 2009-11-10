@@ -55,9 +55,9 @@ public:
 		member3 curAttribute;
 	};
 
-	struct DictionaryRestrictionClosure : public boost::spirit::closure< DictionaryRestrictionClosure, std::string, std::vector<Variable> > {
+	struct DictionaryRestrictionClosure : public boost::spirit::closure< DictionaryRestrictionClosure, std::string, boost::ptr_vector<Expression> > {
 		member1 dictionaryName;
-		member2 variables;
+		member2 args;
 	};
 
 	struct MatcherClosure : public boost::spirit::closure< MatcherClosure, uint, boost::ptr_vector<Restriction> > {
@@ -252,7 +252,7 @@ public:
         			[ add( patternRestriction.elements, construct_< std::pair<Variable,AttributeKey> >( patternRestriction.curVariable, patternRestriction.curAttribute ) ) ] % '='
         		)[ addPatternRestriction( alternative.matchers, patternRestriction.elements ) ];
 
-        	dictionaryRestriction = ( ( lexeme_d[ +chset_p("a-zA-Z") ][ dictionaryRestriction.dictionaryName = construct_<std::string>( arg1, arg2 ) ] ) >> "(" >> ( variable[ add( dictionaryRestriction.variables, arg1 ) ] % "," ) >> ")" )[ addDictionaryRestriction( alternative.matchers, dictionaryRestriction.dictionaryName, dictionaryRestriction.variables ) ];
+        	dictionaryRestriction = ( ( lexeme_d[ +chset_p("a-zA-Z") ][ dictionaryRestriction.dictionaryName = construct_<std::string>( arg1, arg2 ) ] ) >> "(" >> ( expression[ add( dictionaryRestriction.args, arg1 ) ] % "," ) >> ")" )[ addDictionaryRestriction( alternative.matchers, dictionaryRestriction.dictionaryName, dictionaryRestriction.args ) ];
 
         	expression = ~eps_p( str_p( "AS" ) ) >> variable[ expression.exp = createVariableExpression( arg1 ) ] >>
 				*( '.' >> attributeKey[ expression.exp = createAttributeExpression( expression.exp, arg1 ) ] ) >>

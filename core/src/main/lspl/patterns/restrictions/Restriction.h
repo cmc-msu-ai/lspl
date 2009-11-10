@@ -27,11 +27,12 @@ public:
 
 	/**
 	 * Проверить, допускает ли ограничение заданную аннотацию в заданном контексте
-	 * @param annotation аннотация
+	 * @param currentAnnotation аннотация
+	 * @oaram currentVar переменная, соответствующая аннотации
 	 * @param ctx контекст сопоставления
 	 * @return true, если допускает, false иначе
 	 */
-	virtual bool matches( const text::Transition & annotation, const matchers::Context & ctx ) const = 0;
+	virtual bool matches( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const = 0;
 
 	/**
 	 * Вывести отладочное представление ограничения в заданный поток

@@ -19,7 +19,7 @@ ConstantExpression::ConstantExpression( const AttributeValue & value ) :
 ConstantExpression::~ConstantExpression() {
 }
 
-AttributeValue ConstantExpression::evaluate( const text::Transition * annotation, const Context & ctx ) const {
+AttributeValue ConstantExpression::evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx ) const {
 	return value;
 }
 
@@ -33,6 +33,10 @@ bool ConstantExpression::equals( const Expression & e ) const {
 	} else {
 		return false;
 	}
+}
+
+bool ConstantExpression::containsVariable( matchers::Variable var ) const {
+	return false;
 }
 
 } } } // namespace lspl::patterns::expressions

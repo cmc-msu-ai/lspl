@@ -18,14 +18,14 @@ namespace lspl { namespace patterns { namespace expressions {
 ConcatenationExpression::~ConcatenationExpression() {
 }
 
-AttributeValue ConcatenationExpression::evaluate( const text::Transition * annotation, const Context & ctx ) const {
+AttributeValue ConcatenationExpression::evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx ) const {
 	std::ostringstream out;
 
 	if ( !args.empty() ) {
-		out << args[0].evaluate( annotation, ctx ).getString();
+		out << args[0].evaluate( currentAnnotation, currentVar, ctx ).getString();
 
 		for ( uint i = 1; i < args.size(); ++ i )
-			out << " " << args[i].evaluate( annotation, ctx ).getString();
+			out << " " << args[i].evaluate( currentAnnotation, currentVar, ctx ).getString();
 	}
 
 	return AttributeValue( out.str() );
@@ -55,6 +55,14 @@ bool ConcatenationExpression::equals( const Expression & e ) const {
 	} else {
 		return false;
 	}
+}
+
+bool ConcatenationExpression::containsVariable( matchers::Variable var ) const {
+	foreach( const Expression & exp, args )
+		if ( exp.containsVariable( var ) )
+			return true;
+
+	return false;
 }
 
 } } }

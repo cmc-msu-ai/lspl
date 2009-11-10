@@ -19,10 +19,11 @@ public:
 	VariableExpression( const matchers::Variable & variable );
 	virtual ~VariableExpression();
 
-	virtual text::attributes::AttributeValue evaluate( const text::Transition * annotation, const matchers::Context & ctx ) const;
+	virtual text::attributes::AttributeValue evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const;
 
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
 	virtual bool equals( const Expression & e ) const;
+	virtual bool containsVariable( matchers::Variable var ) const;
 
 private:
 

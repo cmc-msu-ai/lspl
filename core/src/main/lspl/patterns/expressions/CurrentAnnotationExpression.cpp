@@ -20,8 +20,8 @@ CurrentAnnotationExpression::CurrentAnnotationExpression() {
 CurrentAnnotationExpression::~CurrentAnnotationExpression() {
 }
 
-AttributeValue CurrentAnnotationExpression::evaluate( const text::Transition * annotation, const Context & ctx ) const {
-	return AttributeValue( *annotation );
+AttributeValue CurrentAnnotationExpression::evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx ) const {
+	return AttributeValue( *currentAnnotation );
 }
 
 void CurrentAnnotationExpression::dump( std::ostream & out, const std::string & tabs ) const {
@@ -34,6 +34,10 @@ bool CurrentAnnotationExpression::equals( const Expression & e ) const {
 	} else {
 		return false;
 	}
+}
+
+bool CurrentAnnotationExpression::containsVariable( matchers::Variable var ) const {
+	return false;
 }
 
 } } }

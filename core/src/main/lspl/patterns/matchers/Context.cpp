@@ -37,7 +37,7 @@ AttributeValue Context::getVariable( Variable variable ) const {
 void Context::addAttributes( std::map<text::attributes::AttributeKey,text::attributes::AttributeValue> & attributes, const Alternative::BindingMap & bindings ) const {
 	for ( Alternative::BindingMap::const_iterator it = bindings.begin(), e = bindings.end(); it != e; ++ it ) {
 		AttributeKey key = it->first;
-		AttributeValue value = it->second->evaluate( 0, *this );
+		AttributeValue value = it->second->evaluate( 0, Variable(), *this );
 
 		if ( key == AttributeKey::UNDEFINED ) {
 			for ( uint attr = 0; attr < AttributeKey::count(); ++ attr ) {

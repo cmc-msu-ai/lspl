@@ -23,11 +23,11 @@ DictionaryRestriction::DictionaryRestriction( const dictionaries::DictionaryCons
 DictionaryRestriction::~DictionaryRestriction() {
 }
 
-bool DictionaryRestriction::matches( const text::Transition & annotation, const matchers::Context & ctx ) const {
+bool DictionaryRestriction::matches( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const {
 	std::vector<std::string> words;
 
 	foreach( const Expression & arg, args ) {
-		words.push_back( arg.evaluate( &annotation, ctx ).getContainer().getAttribute( AttributeKey::BASE ).getString() );
+		words.push_back( arg.evaluate( currentAnnotation, currentVar, ctx ).getContainer().getAttribute( AttributeKey::BASE ).getString() );
 	}
 
 	return dictionary->accepts( words );
