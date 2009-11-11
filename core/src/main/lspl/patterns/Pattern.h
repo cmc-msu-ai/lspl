@@ -71,6 +71,14 @@ public:
 	void removeDuplicateAlternatives();
 
 	/**
+	 * Проверить, зависит ли шаблон от заданного шаблона
+	 * @param pattern кандидат в зависмости
+	 * @param transitive рассматривать ли тразитивные зависимости
+	 * @return true, если шаблон действительно зависит от заданного
+	 */
+	bool dependsOn( const Pattern & pattern, bool transitive = true ) const;
+
+	/**
 	 * Получить список зависимостей
 	 */
 	const std::vector<const Pattern *> & getDependencies() const {

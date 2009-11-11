@@ -76,6 +76,18 @@ void Pattern::removeDuplicateAlternatives() {
 	}
 }
 
+bool Pattern::dependsOn( const Pattern & pattern, bool transitive ) const {
+	foreach( const Pattern * p, dependencies ) {
+		if ( p == &pattern ) // Если нашли шаблон в зависимостях
+			return true;
+
+		if ( transitive && p->dependsOn( pattern ) ) // Если есть транзитивная зависимость
+			return true;
+	}
+
+	return false;
+}
+
 std::string Pattern::getSource() const {
 	std::string result = "";
 

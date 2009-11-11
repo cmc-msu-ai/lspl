@@ -120,9 +120,16 @@ bool Text::prepareIndices( const Pattern & pattern, IndexIteratorsList & iterato
 				break;
 			}
 			case IndexInfo::PATTERN: {
-				Index::Iterator * it = patternIndex.createIterator( &static_cast<const PatternIndexInfo &>( info ).pattern );
+				const Pattern & dep = static_cast<const PatternIndexInfo &>( info ).pattern;
 
-				if ( !it ) { // Шаблон еще не найден
+				Index::Iterator * it = patternIndex.createIterator( &dep );
+
+				if ( !it && !dep.dependsOn( pattern, true ) ) { // Шаблон еще не найден, и нет обратной зависимости
+					getMatches( dep ); // Ищем зависимость
+					it = patternIndex.createIterator( &dep ); // Переустанавливаем итератор
+				}
+
+				if ( !it ) { // Шаблон все еще не найден
 					return false;
 				}
 

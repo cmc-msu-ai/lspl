@@ -35,7 +35,7 @@ public:
 	};
 public:
 	Transition( Type type, const text::Node & start, const text::Node & end ) :
-		type( type ), start( start ), end( end ) {}
+		type( type ), start( start ), end( end ) { ++ aliveObjectsCount; }
 
 	virtual ~Transition();
 
@@ -73,6 +73,11 @@ public:
 	 * Конец перехода в представлении текста
 	 */
 	const text::Node & end;
+
+	/**
+	 * Количество объектов в памяти
+	 */
+	static uint aliveObjectsCount;
 };
 
 } } // namespace lspl::text

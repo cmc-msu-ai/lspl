@@ -13,7 +13,10 @@ LSPL_REFCOUNT_CLASS( lspl::text::Transition );
 
 namespace lspl { namespace text {
 
+uint Transition::aliveObjectsCount = 0;
+
 Transition::~Transition() {
+	--aliveObjectsCount;
 }
 
 uint Transition::getRangeStart() const {
