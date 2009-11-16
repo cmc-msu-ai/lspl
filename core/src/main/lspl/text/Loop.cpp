@@ -23,6 +23,11 @@ LoopIterationVariant::LoopIterationVariant( const LoopIterationVariant & variant
 LoopIterationVariant::~LoopIterationVariant() {
 }
 
+void LoopIteration::dump( std::ostream & out, std::string tabs ) const {
+	out << "LoopIteration{ start = " << start.index
+			<< ", end = " << end.index << " }";
+}
+
 Loop::Loop( const text::Node & start, const text::Node & end, uint repeatCount ) :
 	Transition( LOOP, start, end ), repeatCount( repeatCount ) {
 }

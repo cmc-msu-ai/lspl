@@ -136,7 +136,7 @@ static void processLoopIteration( const LoopIterationMatchState & state, std::ve
 		}
 
 
-		results.push_back( std::make_pair( new LoopIteration( currentNode, v ), state.context ) );
+		results.push_back( std::make_pair( new LoopIteration( state.startNode, currentNode, v ), state.context ) );
 
 		return;
 	}

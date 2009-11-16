@@ -19,11 +19,11 @@ public:
 	int index;
 };
 
-class LSPL_EXPORT LoopIteration : public base::RefCountObject<LoopIteration> {
+class LSPL_EXPORT LoopIteration : public lspl::text::Transition {
 public:
 
-	LoopIteration( const text::Node & endNode ) : end( endNode ) {}
-	LoopIteration( const text::Node & endNode, LoopIterationVariant * v ) : end( endNode ) {
+	LoopIteration( const text::Node & start, const text::Node & end ) : Transition( Transition::ITERATION, start, end ) {}
+	LoopIteration( const text::Node & start, const text::Node & end, LoopIterationVariant * v ) : Transition( Transition::ITERATION, start, end ) {
 		variants.push_back( v );
 	}
 
@@ -31,11 +31,15 @@ public:
 		return variants[ index ];
 	}
 
+	uint getVariantCount() const {
+		return variants.size();
+	}
+
+	virtual void dump( std::ostream & out, std::string tabs = "" ) const;
+
 public:
 
 	boost::ptr_vector<LoopIterationVariant> variants;
-
-	const text::Node & end;
 
 };
 
@@ -49,6 +53,14 @@ public:
 
 	const LoopIterationList & getIterations() const {
 		return iterations;
+	}
+
+	const LoopIterationRef & getIteration( uint index ) const {
+		return iterations[ index ];
+	}
+
+	uint getIterationCount() const {
+		return iterations.size();
 	}
 
 public:

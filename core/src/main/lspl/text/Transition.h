@@ -31,7 +31,8 @@ public:
 		WORD,
 		MATCH,
 		LOOP,
-		TOKEN
+		TOKEN,
+		ITERATION
 	};
 public:
 	Transition( Type type, const text::Node & start, const text::Node & end ) :
