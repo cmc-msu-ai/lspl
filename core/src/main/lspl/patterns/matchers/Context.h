@@ -28,6 +28,11 @@ public:
 	text::attributes::AttributeValue getVariable( Variable variable ) const;
 
 	void addAttributes( std::map<text::attributes::AttributeKey,text::attributes::AttributeValue> & atts, const Alternative::BindingMap & bindings ) const;
+
+	bool operator == ( const Context & ctx ) const {
+		return map == ctx.map;
+	}
+
 private:
 	typedef std::map< Variable, text::TransitionConstRef > Map;
 private:

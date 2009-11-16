@@ -86,17 +86,28 @@ namespace lspl {
 
 		transforms::Normalization normalization;
 
+		std::cout << "Transitions: " << text::Transition::aliveObjectsCount << std::endl;
+
 		for(uint i = 0; i < patterns_namespace()->getPatternCount(); i++) {
-			patterns::PatternRef pattern =
-					patterns_namespace()->getPatternByIndex(i);
+			patterns::PatternRef pattern = patterns_namespace()->getPatternByIndex(i);
+
+			std::cout << "Pattern: " << Util::out.convert(pattern->name) << std::endl;
+
 			text::MatchList matches = text()->getMatches(pattern);
+
 			if (/*pattern->name != "MSP"pattern->getSource()*/!matches.size()) {
 				//std::cout << "Pattern: " << Util::out.convert(pattern->name) <<
 				//		std::endl;
+				std::cout << "No matches" << std::endl;
 				continue;
 			} else {
-				std::cout << "Pattern: " << Util::out.convert(pattern->name) <<
-						std::endl;
+				std::cout << "Matches: " << matches.size() << std::endl;
+				std::cout << "Deps:";
+				foreach( const patterns::Pattern * d, pattern->getDependencies() )
+					std::cout << " " << d->name;
+				std::cout << std::endl;
+
+				std::cout << "Transitions: " << text::Transition::aliveObjectsCount << std::endl;
 			}
 			for(uint j = 0; j < matches.size(); ++j) {
 				text::MatchRef match = matches[j];

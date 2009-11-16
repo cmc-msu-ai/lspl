@@ -77,7 +77,7 @@ void Alternative::appendDependencies( const matchers::Matcher & matcher ) {
 void Alternative::appendIndexInfo( const boost::ptr_vector<Matcher> & matchers ) const {
 	uint i = 0;
 
-	while ( matchers[i].type == Matcher::LOOP ) {
+	while ( i < matchers.size() && matchers[i].type == Matcher::LOOP ) {
 		const LoopMatcher & matcher = dynamic_cast<const LoopMatcher&>( matchers[i] );
 
 		for ( uint j = 0; j < matcher.alternatives.size(); ++ j )
@@ -88,6 +88,9 @@ void Alternative::appendIndexInfo( const boost::ptr_vector<Matcher> & matchers )
 
 		++ i;
 	}
+
+	if ( i >= matchers.size() )
+		return;
 
 	if ( matchers[i].type == Matcher::WORD ) {
 		indexInfo.push_back( new WordIndexInfo( dynamic_cast<const WordMatcher&>( matchers[i] ).speechPart ) );

@@ -10,93 +10,144 @@
 
 #include <stdexcept>
 
+#include <boost/noncopyable.hpp>
+
 using lspl::text::attributes::SpeechPart;
 
 using lspl::text::Transition;
 using lspl::text::TransitionList;
 using lspl::text::TransitionRef;
 using lspl::text::Loop;
+using lspl::text::LoopIteration;
+using lspl::text::LoopIterationRef;
+using lspl::text::LoopIterationList;
+using lspl::text::LoopIterationVariant;
 
 using lspl::text::Node;
 
 namespace lspl { namespace patterns { namespace matchers {
 
-struct LoopMatchState {
+struct LoopIterationMatchState : public boost::noncopyable {
 	const LoopMatcher & matcher;
 
 	const Node & startNode;
 
-	const boost::ptr_vector<Matcher> & alternativeMatchers;
-
 	Context context;
 
-	TransitionList transitions;
+	LoopIterationMatchState( const LoopMatcher & matcher, const Node & startNode, const Context & context, const MatcherContainer & alternative ) :
+		matcher( matcher ), startNode( startNode ), variant( new LoopIterationVariant( alternative ) ), context( context ) {}
 
-	LoopMatchState( const LoopMatcher & matcher, const Node & startNode, const Context & context, const boost::ptr_vector<Matcher> & alternativeMatchers ) :
-		matcher( matcher ), startNode( startNode ), alternativeMatchers( alternativeMatchers ), context( context ) {}
-
-	LoopMatchState( const LoopMatchState & state, const TransitionRef & transition ) :
-		matcher( state.matcher ), startNode( state.startNode ), alternativeMatchers( state.alternativeMatchers ), context( state.context ), transitions( state.transitions ) {
+	LoopIterationMatchState( const LoopIterationMatchState & state, const TransitionRef & transition ) :
+		matcher( state.matcher ), startNode( state.startNode ), variant( new LoopIterationVariant( *state.variant ) ), context( state.context ) {
 
 		if ( &transition->start != &getCurrentNode() )
 			throw std::logic_error("Illegal transition");
 
 		context.setVariable( getCurrentMatcher().variable, transition );
 
-		transitions.push_back( transition );
+		variant->push_back( transition );
 	}
 
-	LoopMatchState( const LoopMatchState & state, const TransitionRef & transition, const Context & ctx ) :
-		matcher( state.matcher ), startNode( state.startNode ), alternativeMatchers( state.alternativeMatchers ), context( ctx ), transitions( state.transitions ) {
+	LoopIterationMatchState( const LoopIterationMatchState & state, const TransitionRef & transition, const Context & ctx ) :
+		matcher( state.matcher ), startNode( state.startNode ), variant( new LoopIterationVariant( *state.variant ) ), context( ctx ) {
 
 		if ( &transition->start != &getCurrentNode() )
 			throw std::logic_error("Illegal transition");
 
 		context.setVariable( getCurrentMatcher().variable, transition );
 
-		transitions.push_back( transition );
+		variant->push_back( transition );
 	}
 
 	const Node & getCurrentNode() const {
-		if ( transitions.empty() )
+		if ( variant->empty() )
 			return startNode;
 
-		return transitions[ transitions.size() - 1 ]->end;
+		return variant->at( variant->size() - 1 )->end;
 	}
 
 	const matchers::Matcher & getCurrentMatcher() const {
-		return alternativeMatchers[ transitions.size() % alternativeMatchers.size() ];
+		return variant->alternative.getMatcher( variant->size() );
 	}
 
-	bool complete() const {
-		return transitions.size() % alternativeMatchers.size() == 0;
+	bool isComplete() const {
+		return variant->size() == variant->alternative.getMatcherCount();
+	}
+
+	/**
+	 * Освободить вариант итерации для дальнейшего использования.
+	 * После вызова этого метода состояние становится невалидным и не может быть больше использовано.
+	 * Вариант итерации освобождается из-под управления состояния и должен быть передан под управление другого контейнера.
+	 */
+	LoopIterationVariant * releaseVariant() const {
+		return variant.release();
+	}
+
+private:
+
+	mutable std::auto_ptr<LoopIterationVariant> variant; // Вариант сопоставления
+
+};
+
+struct LoopMatchState : public boost::noncopyable {
+	const LoopMatcher & matcher;
+
+	const Node & startNode;
+
+	Context context;
+
+	LoopIterationList iterations;
+
+	LoopMatchState( const LoopMatcher & matcher, const Node & startNode, const Context & context ) :
+		matcher( matcher ), startNode( startNode ), context( context ) {}
+
+	LoopMatchState( const LoopMatchState & state, const LoopIterationRef & iteration, const Context & ctx ) :
+		matcher( state.matcher ), startNode( state.startNode ), context( ctx ), iterations( state.iterations ) {
+
+		iterations.push_back( iteration );
+	}
+
+	const Node & getCurrentNode() const {
+		if ( iterations.empty() )
+			return startNode;
+
+		return iterations[ iterations.size() - 1 ]->end;
 	}
 
 	uint loops() const {
-		return (uint)( transitions.size() / alternativeMatchers.size() );
+		return (uint) iterations.size();
 	}
+
 };
 
-static void processLoop( const LoopMatchState & state, std::vector< std::pair<TransitionRef ,Context> > & results ) {
+static void processLoopIteration( const LoopIterationMatchState & state, std::vector< std::pair<LoopIterationRef,Context> > & results ) {
 	const Node & currentNode = state.getCurrentNode();
-	const Matcher & currentMatcher = state.getCurrentMatcher();
 
-	if ( state.complete() ) {
-		uint loops = state.loops(); // Количество произведенных повторений
+	if ( state.isComplete() ) {
+		LoopIterationVariant * v = state.releaseVariant();
 
-		if ( loops > 0 && loops >= state.matcher.minLoops && ( loops <= state.matcher.maxLoops || state.matcher.maxLoops == 0 ) ) {
-			results.push_back( std::make_pair( new Loop( state.startNode, currentNode, state.transitions, loops ), state.context ) );
+		for ( uint i = 0; i < results.size(); ++ i ) {
+			std::pair<LoopIterationRef,Context> & p = results[i];
+
+			if ( &p.first->end == &currentNode && p.second == state.context ) {
+				p.first->variants.push_back( v );
+				return;
+			}
 		}
 
-		if ( loops >= state.matcher.maxLoops && state.matcher.maxLoops > 0 )
-			return;
+
+		results.push_back( std::make_pair( new LoopIteration( currentNode, v ), state.context ) );
+
+		return;
 	}
+
+	const Matcher & currentMatcher = state.getCurrentMatcher();
 
 	if ( const AnnotationMatcher * curMatcher = dynamic_cast<const AnnotationMatcher *>( &state.getCurrentMatcher() ) ) {
 		TransitionList nextTransitions = curMatcher->buildTransitions( currentNode, state.context );
 
 		for ( uint i = 0; i < nextTransitions.size(); ++ i )
-			processLoop( LoopMatchState( state, nextTransitions[ i ] ), results );
+			processLoopIteration( LoopIterationMatchState( state, nextTransitions[ i ] ), results );
 	} else {
 		const AnnotationChainMatcher & curMatcher = static_cast<const AnnotationChainMatcher &>( state.getCurrentMatcher() );
 		ChainList chains;
@@ -104,8 +155,41 @@ static void processLoop( const LoopMatchState & state, std::vector< std::pair<Tr
 		curMatcher.buildChains( state.getCurrentNode(), state.context, chains );
 
 		for ( uint i = 0; i < chains.size(); ++ i )
-			processLoop( LoopMatchState( state, chains[i].first, chains[i].second ), results );
+			processLoopIteration( LoopIterationMatchState( state, chains[i].first, chains[i].second ), results );
 	}
+}
+
+static void processLoop( const LoopMatchState & state, ChainList & results );
+
+static void processLoop( const LoopMatchState & state, std::vector< std::pair<LoopIterationRef,Context> > & iterations, ChainList & results ) {
+	for ( uint i = 0; i < iterations.size(); ++ i ) {
+		std::pair<LoopIterationRef,Context> & p = iterations[ i ];
+
+		processLoop( LoopMatchState( state, p.first, p.second ), results );
+	}
+}
+
+static void processLoop( const LoopMatchState & state, ChainList & results ) {
+	uint loops = state.loops(); // Количество произведенных повторений
+
+	if ( loops > 0 && loops >= state.matcher.minLoops && ( loops <= state.matcher.maxLoops || state.matcher.maxLoops == 0 ) ) { // Если число итераций приемлимо
+		Loop * loop = new Loop( state.startNode, state.getCurrentNode(), loops );
+
+		loop->iterations = state.iterations;
+
+		results.push_back( std::make_pair( loop, state.context ) );
+	}
+
+	if ( loops >= state.matcher.maxLoops && state.matcher.maxLoops > 0 ) // Выходим, если достигли максимального числа итераций
+		return;
+
+	std::vector< std::pair<LoopIterationRef,Context> > iterations;
+
+	for ( uint i = 0; i < state.matcher.alternatives.size(); ++ i ) {
+		processLoopIteration( LoopIterationMatchState( state.matcher, state.getCurrentNode(), state.context, state.matcher.alternatives[ i ] ), iterations );
+	}
+
+	processLoop( state, iterations, results );
 }
 
 LoopMatcher::LoopMatcher() : AnnotationChainMatcher( LOOP ), minLoops( 0 ), maxLoops( 0 ) {
@@ -119,24 +203,27 @@ LoopMatcher::~LoopMatcher() {
 
 void LoopMatcher::buildChains( const text::Node & node, const Context & context, ChainList & results ) const {
 	if ( minLoops == 0 )
-		results.push_back( std::make_pair( new Loop( node, node, TransitionList(), 0 ), context ) );
+		results.push_back( std::make_pair( new Loop( node, node, 0 ), context ) );
 
-	for ( uint i = 0; i < alternatives.size(); ++ i )
-		processLoop( LoopMatchState( *this, node, context, alternatives[i].getMatchers() ), results );
+	processLoop( LoopMatchState( *this, node, context ), results );
 }
 
 void LoopMatcher::buildChains( const text::Transition & transition, const Context & context, ChainList & results ) const {
 	if ( minLoops == 0 )
-		results.push_back( std::make_pair( new Loop( transition.start, transition.start, TransitionList(), 0 ), context ) );
+		results.push_back( std::make_pair( new Loop( transition.start, transition.start, 0 ), context ) );
+
+	const LoopMatchState state( *this, transition.start, context );
+
+	std::vector< std::pair<LoopIterationRef,Context> > iterations;
 
 	for ( uint i = 0; i < alternatives.size(); ++ i ) {
-		const LoopMatchState s0( *this, transition.start, context, alternatives[i].getMatchers() );
+		LoopIterationMatchState s0( state.matcher, state.getCurrentNode(), state.context, state.matcher.alternatives[ i ] );
 
 		if ( const AnnotationMatcher * curMatcher = dynamic_cast<const AnnotationMatcher *>( &s0.getCurrentMatcher() ) ) {
 			if ( !curMatcher->matchTransition( transition, Context() ) )
 				return;
 
-			processLoop( LoopMatchState( s0, const_cast<text::Transition *>( &transition ) ), results );
+			processLoopIteration( LoopIterationMatchState( s0, const_cast<text::Transition *>( &transition ) ), iterations );
 		} else {
 			const AnnotationChainMatcher & chainMatcher = dynamic_cast<const AnnotationChainMatcher &>( s0.getCurrentMatcher() );
 
@@ -146,9 +233,11 @@ void LoopMatcher::buildChains( const text::Transition & transition, const Contex
 
 			// TODO Необходимо отдельнор рассмотреть случайп пустой цепи
 			for ( uint i = 0; i < chains.size(); ++ i )
-				processLoop( LoopMatchState( s0, chains[i].first, chains[i].second ), results );
+				processLoopIteration( LoopIterationMatchState( s0, chains[i].first, chains[i].second ), iterations );
 		}
 	}
+
+	processLoop( state, iterations, results );
 }
 
 void LoopMatcher::dump( std::ostream & out, const std::string & tabs ) const {

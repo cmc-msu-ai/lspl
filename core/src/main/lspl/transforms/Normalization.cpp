@@ -52,10 +52,15 @@ void Normalization::appendToString( std::string & str, const Transition & transi
 			str += " ";
 		str += word->getBase();
 	} else if ( const Loop * loop = dynamic_cast<const Loop*>( &transition ) ) {
-		appendToString( str, loop->getTransitions() );
+		appendToString( str, loop->getIterations() );
 	} else if ( const Match * match = dynamic_cast<const Match*>( &transition ) ) {
 		appendToString( str, match->getVariants().at( 0 ) );
 	}
+}
+
+void Normalization::appendToString( std::string & str, const text::LoopIterationList & iterations ) const {
+	for ( uint i = 0; i < iterations.size(); ++ i )
+		appendToString( str, iterations[ i ]->getVariant( 0 ) );
 }
 
 void Normalization::appendToString( std::string & str, const TransitionList & transitions ) const {
@@ -81,14 +86,20 @@ void Normalization::normalizeToString( std::string & str, const Transition & tra
 			str += " ";
 		str += forms[0].getBase();
 	} else if ( const Loop * loop = dynamic_cast<const Loop*>( &transition ) ) {
-		normalizeToString( str, loop->getTransitions() );
+		normalizeToString( str, loop->getIterations() );
 	} else if ( const Match * match = dynamic_cast<const Match*>( &transition ) ) {
 		normalizeToString( str, match->getVariants().at( 0 ) );
 	}
+}
+
+void Normalization::normalizeToString( std::string & str, const text::LoopIterationList & iterations ) const {
+	for ( uint i = 0; i < iterations.size(); ++ i )
+		normalizeToString( str, iterations[ i ]->getVariant( 0 ) );
 }
 
 void Normalization::normalizeToString( std::string & str, const TransitionList & transitions ) const {
 	for ( uint i = 0; i < transitions.size(); ++ i )
 		normalizeToString( str, *transitions[ i ] );
 }
+
 } } // namespace lspl::transforms

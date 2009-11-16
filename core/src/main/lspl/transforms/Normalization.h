@@ -25,9 +25,11 @@ private:
 
 	void appendToString( std::string & str, const text::Transition & transition ) const;
 	void appendToString( std::string & str, const text::TransitionList & transitions ) const;
+	void appendToString( std::string & str, const text::LoopIterationList & iterations ) const;
 
 	void normalizeToString( std::string & str, const text::Transition & transition ) const;
 	void normalizeToString( std::string & str, const text::TransitionList & transitions ) const;
+	void normalizeToString( std::string & str, const text::LoopIterationList & iterations ) const;
 };
 
 } } // namespace lspl::transforms

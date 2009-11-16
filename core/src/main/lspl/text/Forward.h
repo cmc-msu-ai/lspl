@@ -16,6 +16,7 @@ LSPL_REFCOUNT_FORWARD( Text );
 LSPL_REFCOUNT_FORWARD( Node );
 LSPL_REFCOUNT_FORWARD( Transition );
 LSPL_REFCOUNT_FORWARD( Match );
+LSPL_REFCOUNT_FORWARD( LoopIteration );
 
 namespace markup {
 

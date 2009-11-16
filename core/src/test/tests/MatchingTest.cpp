@@ -63,6 +63,12 @@ static void testLoopRestrictions() {
 	assertMatches( "Мама мыла раму", 0, 1, "Act = {A} N <A=N>" );
 }
 
+static void testLoopAlternatives() {
+	assertMatches( "Да да да", 0, 3, "AAA = { 'да' | 'нет' }<3>" );
+	assertMatches( "Нет нет нет", 0, 3, "AAA = { 'да' | 'нет' }<3>" );
+	assertMatches( "Да нет да", 0, 3, "AAA = { 'да' | 'нет' }<3>" );
+}
+
 static void testMultipleEquality() {
 	// Multiple equality: positive
 	assertMatches( "Белая кошка мыла раму", 0, 3, "Act = A N V<A=N=V>" );
@@ -152,6 +158,7 @@ cute::suite matchingSuite() {
 	s += CUTE(testSimplePatterns);
 	s += CUTE(testTerm);
 	s += CUTE(testLoopRestrictions);
+	s += CUTE(testLoopAlternatives);
 	s += CUTE(testMultipleEquality);
 	s += CUTE(testBaseEquality);
 	s += CUTE(testReusing1);

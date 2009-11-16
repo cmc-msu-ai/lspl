@@ -8,10 +8,23 @@
 
 using namespace lspl::text::attributes;
 
+LSPL_REFCOUNT_CLASS( lspl::text::LoopIteration );
+
 namespace lspl { namespace text {
 
-Loop::Loop( const text::Node & start, const text::Node & end, const TransitionList & transitions, uint repeatCount ) :
-	Transition( LOOP, start, end ), transitions( transitions ), repeatCount( repeatCount ) {
+LoopIterationVariant::LoopIterationVariant( const patterns::matchers::MatcherContainer & alternative ) :
+	TransitionList(), alternative( alternative ) {
+}
+
+LoopIterationVariant::LoopIterationVariant( const LoopIterationVariant & variant ) :
+	TransitionList( variant ), alternative( variant.alternative ) {
+}
+
+LoopIterationVariant::~LoopIterationVariant() {
+}
+
+Loop::Loop( const text::Node & start, const text::Node & end, uint repeatCount ) :
+	Transition( LOOP, start, end ), repeatCount( repeatCount ) {
 }
 
 Loop::~Loop() {

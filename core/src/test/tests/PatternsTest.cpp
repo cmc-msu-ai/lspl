@@ -104,6 +104,7 @@ static void testLoopAlternatives() {
 	assertBuilds( "AAA = { N | V }" );
 	assertBuilds( "AAA = { N | V }<1>" );
 	assertBuilds( "AAA = { N | V }<1,5>" );
+	assertBuilds( "AAA = { 'да' | 'нет' }" );
 }
 
 static void testParameters() {
