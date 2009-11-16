@@ -77,13 +77,38 @@ void Pattern::removeDuplicateAlternatives() {
 }
 
 bool Pattern::dependsOn( const Pattern & pattern, bool transitive ) const {
+	if ( transitive ) {
+		std::vector<const Pattern*> stack;
+
+		stack.push_back( this );
+
+		return deepDependsOn( &pattern, stack );
+	} else {
+		foreach( const Pattern * p, dependencies ) {
+			if ( p == &pattern ) // Если нашли шаблон в зависимостях
+				return true;
+		}
+
+		return false;
+	}
+}
+
+bool Pattern::deepDependsOn( const Pattern * target, std::vector<const Pattern*> & stack ) const {
+	foreach( const Pattern * p, stack )
+		if ( p == this )
+			return false;
+
+	stack.push_back( this ); // Помещаем текущий шаблон в стек
+
 	foreach( const Pattern * p, dependencies ) {
-		if ( p == &pattern ) // Если нашли шаблон в зависимостях
+		if ( p == target ) // Если нашли шаблон в зависимостях
 			return true;
 
-		if ( transitive && p->dependsOn( pattern ) ) // Если есть транзитивная зависимость
+		if ( p->deepDependsOn( target, stack ) ) // Если есть транзитивная зависимость
 			return true;
 	}
+
+	stack.pop_back(); // Удаляем текущий шаблон из стека
 
 	return false;
 }

@@ -104,6 +104,10 @@ public:
 		return alternatives;
 	}
 
+private:
+
+	bool deepDependsOn( const Pattern * target, std::vector<const Pattern*> & stack ) const;
+
 public:
 
 	/**

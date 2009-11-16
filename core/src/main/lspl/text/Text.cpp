@@ -124,10 +124,10 @@ bool Text::prepareIndices( const Pattern & pattern, IndexIteratorsList & iterato
 
 				Index::Iterator * it = patternIndex.createIterator( &dep );
 
-			//	if ( !it && !dep.dependsOn( pattern, true ) ) { // Шаблон еще не найден, и нет обратной зависимости
-			//		getMatches( dep ); // Ищем зависимость
-			//		it = patternIndex.createIterator( &dep ); // Переустанавливаем итератор
-			//	}
+				if ( !it && !dep.dependsOn( pattern, true ) ) { // Шаблон еще не найден, и нет обратной зависимости
+					getMatches( dep ); // Ищем зависимость
+					it = patternIndex.createIterator( &dep ); // Переустанавливаем итератор
+				}
 
 				if ( !it ) { // Шаблон все еще не найден
 					return false;
