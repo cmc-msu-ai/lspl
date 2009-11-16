@@ -11,6 +11,7 @@
 #include "lspl/text/java/JavaNode.h"
 #include "lspl/text/JavaTransition.h"
 #include "lspl/text/JavaLoop.h"
+#include "lspl/text/JavaLoopIteration.h"
 #include "lspl/text/JavaMatch.h"
 #include "lspl/text/JavaToken.h"
 #include "lspl/text/JavaWord.h"
@@ -46,6 +47,7 @@ JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_initStatic(JNIEnv * env, jclass c
 	JavaTransition::init( env );
 
 	JavaLoop::init( env );
+	JavaLoopIteration::init( env );
 	JavaMatch::init( env );
 	JavaToken::init( env );
 	JavaWord::init( env );

@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 
 #include "lspl_jni/ru_lspl_text_Text.h"
 
@@ -89,7 +90,15 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_getWord(JNIEnv * env, jobject o
  * Signature: (Lru/lspl/Pattern;)I
  */
 JNIEXPORT jint JNICALL Java_ru_lspl_text_Text_getMatchCount(JNIEnv * env, jobject obj_text, jobject obj_pattern ) {
-	return JavaText::get( env, obj_text ).text->getMatches( *JavaPattern::get( env, obj_pattern ).pattern ).size();
+	try {
+		return JavaText::get( env, obj_text ).text->getMatches( *JavaPattern::get( env, obj_pattern ).pattern ).size();
+	} catch ( const std::exception & e ) {
+		std::cerr << "!!!" << e.what() << std::endl;
+	} catch ( ... ) {
+		std::cerr << "!!!???" << std::endl;
+	}
+
+	return 0;
 }
 
 /*
@@ -98,7 +107,15 @@ JNIEXPORT jint JNICALL Java_ru_lspl_text_Text_getMatchCount(JNIEnv * env, jobjec
  * Signature: (Lru/lspl/Pattern;I)Lru/lspl/text/Match;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_getMatch(JNIEnv * env, jobject obj_text, jobject obj_pattern, jint index) {
-	return JavaTransition::get( env, JavaText::get( env, obj_text ).text->getMatches( *JavaPattern::get( env, obj_pattern ).pattern ).at( index ).get() )->object;
+	try {
+		return JavaTransition::get( env, JavaText::get( env, obj_text ).text->getMatches( *JavaPattern::get( env, obj_pattern ).pattern ).at( index ).get() )->object;
+	} catch ( const std::exception & e ) {
+		std::cerr << "!!!" << e.what() << std::endl;
+	} catch ( ... ) {
+		std::cerr << "!!!???" << std::endl;
+	}
+
+	return 0;
 }
 
 /*

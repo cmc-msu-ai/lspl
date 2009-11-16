@@ -130,7 +130,7 @@ static void processLoopIteration( const LoopIterationMatchState & state, std::ve
 			std::pair<LoopIterationRef,Context> & p = results[i];
 
 			if ( &p.first->end == &currentNode && p.second == state.context ) {
-				p.first->variants.push_back( v );
+				p.first->addVariant( v );
 				return;
 			}
 		}

@@ -118,9 +118,10 @@ int main(int argc, char ** argv) {
 	std::ostream * out = &std::cout;
 	std::ostream * err = &std::cerr;
 
-	lspl::NamespaceRef ns = new lspl::Namespace();
-	lspl::patterns::PatternBuilderRef builder = new lspl::patterns::PatternBuilder( ns );
-	lspl::text::readers::PlainTextReader r;
+	if ( argc <= 1 ) {
+		printHelp();
+		return 0;
+	}
 
 	char c;
 	while ((c = getopt(argc, argv, "hi:o:e:p:")) != -1) {
@@ -170,6 +171,10 @@ int main(int argc, char ** argv) {
 			return 0;
 		}
 	}
+
+	lspl::NamespaceRef ns = new lspl::Namespace();
+	lspl::patterns::PatternBuilderRef builder = new lspl::patterns::PatternBuilder( ns );
+	lspl::text::readers::PlainTextReader r;
 
 	if ( pin ) {
 		buildPatterns( builder, *pin, *err );

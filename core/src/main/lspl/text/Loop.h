@@ -35,9 +35,15 @@ public:
 		return variants.size();
 	}
 
+	void addVariant( LoopIterationVariant * variant ) {
+		variant->index = variants.size();
+
+		variants.push_back( variant );
+	}
+
 	virtual void dump( std::ostream & out, std::string tabs = "" ) const;
 
-public:
+private:
 
 	boost::ptr_vector<LoopIterationVariant> variants;
 

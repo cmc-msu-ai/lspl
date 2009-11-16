@@ -33,8 +33,6 @@ jclass JavaLoopIteration::variantClazz;
 jmethodID JavaLoopIteration::variantConstructor;
 
 JavaLoopIteration::JavaLoopIteration( Transition * t, JNIEnv * env ) {
-	LoopIteration * iter = dynamic_cast<LoopIteration*>( t );
-
 	transition = t;
 	object = env->NewWeakGlobalRef( env->NewObject(
 			clazz, constructor, (jint)transition->id,

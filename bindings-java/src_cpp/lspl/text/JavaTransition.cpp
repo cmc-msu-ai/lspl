@@ -52,7 +52,7 @@ JavaTransition * JavaTransition::create( Transition * transition, JNIEnv * env )
 	case Transition::LOOP:
 		return new JavaLoop( transition, env );
 	case Transition::ITERATION:
-			return new JavaLoopIteration( transition, env );
+		return new JavaLoopIteration( transition, env );
 	default:
 		throw lspl::base::Exception( "Unknown pattern type", __FILE__, __LINE__ );
 	}
