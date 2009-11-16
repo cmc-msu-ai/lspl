@@ -12,16 +12,16 @@ import java.util.AbstractList;
  */
 public class Loop extends Transition {
 	
-	private class TransitionList extends AbstractList<Transition> {
+	private class IterationList extends AbstractList<LoopIteration> {
 		
 		@Override
 		public int size() {
-			return getTransitionCount();
+			return getIterationCount();
 		}
 
 		@Override
-		public Transition[] toArray() {
-			Transition[] ts = new Transition[size()];
+		public LoopIteration[] toArray() {
+			LoopIteration[] ts = new LoopIteration[size()];
 
 			for (int i = 0; i < ts.length; ++i)
 				ts[i] = get(i);
@@ -30,13 +30,13 @@ public class Loop extends Transition {
 		}
 
 		@Override
-		public Transition get(int index) {
-			return getTransition( index );
+		public LoopIteration get(int index) {
+			return getIteration( index );
 		}
 		
 	};
 	
-	public final List<Transition> transitions = new TransitionList();
+	public final List<LoopIteration> iterations = new IterationList();
 	
 	/**
 	 * Количество повторений, произведенных в цикле
@@ -48,12 +48,12 @@ public class Loop extends Transition {
 		this.repeatCount = repeatCount;
 	}
 
-	public List<Transition> getTransitions() {
-		return transitions;
+	public List<LoopIteration> getIterations() {
+		return iterations;
 	}
 	
-	public native int getTransitionCount();
+	public native int getIterationCount();
 	
-	public native Transition getTransition(int index);
+	public native LoopIteration getIteration(int index);
 	
 }

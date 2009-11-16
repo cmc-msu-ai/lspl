@@ -41,6 +41,7 @@ ADD_CUSTOM_TARGET(jni-stubs
          ru.lspl.text.Node
          ru.lspl.text.Transition
          ru.lspl.text.Loop
+         ru.lspl.text.LoopIteration
          ru.lspl.text.Match
          ru.lspl.LsplObject
          ru.lspl.text.attributes.SpeechPart
@@ -66,6 +67,7 @@ set(LSPL_JAVA_SOURCES
 	src_cpp/lspl/text/java/JavaNode.cpp
 	src_cpp/lspl/text/JavaTransition.cpp
 	src_cpp/lspl/text/JavaLoop.cpp
+	src_cpp/lspl/text/JavaLoopIteration.cpp
 	src_cpp/lspl/text/JavaMatch.cpp
 	src_cpp/lspl/text/JavaToken.cpp
 	src_cpp/lspl/text/JavaWord.cpp
@@ -84,6 +86,7 @@ set(LSPL_JAVA_SOURCES
 	src_cpp/lspl_jni_impl/ru_lspl_text_attributes_SpeechPart.cpp
 	
 	src_cpp/lspl_jni_impl/ru_lspl_text_Loop.cpp
+	src_cpp/lspl_jni_impl/ru_lspl_text_LoopIteration.cpp
 	src_cpp/lspl_jni_impl/ru_lspl_text_Match.cpp
 	src_cpp/lspl_jni_impl/ru_lspl_text_Node.cpp
 	src_cpp/lspl_jni_impl/ru_lspl_text_Text.cpp

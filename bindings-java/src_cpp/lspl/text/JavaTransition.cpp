@@ -1,5 +1,6 @@
 #include "JavaTransition.h"
 #include "JavaLoop.h"
+#include "JavaLoopIteration.h"
 #include "JavaMatch.h"
 #include "JavaToken.h"
 #include "JavaWord.h"
@@ -50,6 +51,8 @@ JavaTransition * JavaTransition::create( Transition * transition, JNIEnv * env )
 		return new JavaToken( transition, env );
 	case Transition::LOOP:
 		return new JavaLoop( transition, env );
+	case Transition::ITERATION:
+			return new JavaLoopIteration( transition, env );
 	default:
 		throw lspl::base::Exception( "Unknown pattern type", __FILE__, __LINE__ );
 	}

@@ -9,18 +9,18 @@ extern "C" {
 #endif
 /*
  * Class:     ru_lspl_text_Loop
- * Method:    getTransitionCount
+ * Method:    getIterationCount
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_ru_lspl_text_Loop_getTransitionCount
+JNIEXPORT jint JNICALL Java_ru_lspl_text_Loop_getIterationCount
   (JNIEnv *, jobject);
 
 /*
  * Class:     ru_lspl_text_Loop
- * Method:    getTransition
- * Signature: (I)Lru/lspl/text/Transition;
+ * Method:    getIteration
+ * Signature: (I)Lru/lspl/text/LoopIteration;
  */
-JNIEXPORT jobject JNICALL Java_ru_lspl_text_Loop_getTransition
+JNIEXPORT jobject JNICALL Java_ru_lspl_text_Loop_getIteration
   (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus
