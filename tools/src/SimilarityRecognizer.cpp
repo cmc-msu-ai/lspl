@@ -14,8 +14,6 @@
 
 namespace lspl {
 
-transforms::Normalization SimilarityRecognizer::SimilarFinder::normalization;
-
 SimilarityRecognizer::SimilarFinder::SimilarFinder(
 		const std::vector<text::TextRef> &terms1,
 		const std::vector<text::TextRef> &terms2,
@@ -56,24 +54,16 @@ std::vector<std::vector<int> *> *
 				patterns_namespace()->getPatternByIndex(j);
 
 		for(int i = 0; i < terms1().size(); ++i) {
-			text::MatchList matches = terms1()[i]->getMatches(pattern);
-			if (!matches.size()) {
-				continue;
-			}
+			std::string normalized_match =
+					Util::GetNormalizedMatch(terms1()[i], pattern); 
 
-			int terms_words_count = Util::CountWords(terms1()[i]->getContent());
-			int match_words_count =
-					Util::CountWords(matches[0]->getFragment(0).getText()); 
-			if (matches.size() != 1  || terms_words_count != match_words_count ) {
+			if (normalized_match == "") {
 				continue;
 			}
 
 			std::map<std::string, std::string> pattern_words;
-
 			//std::cout << Util::out.convert(terms1[i]) << std::endl;
 			//std::cout << Util::out.convert(pattern->getSource()) << std::endl;
-			std::string normalized_match =
-					normalization.normalize(matches[0]->getVariants().at(0)); 
 			if (!Util::BuildWordsByPattern(normalized_match, pattern,
 					pattern_words)) {
 				continue;
@@ -95,23 +85,14 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 		patterns::PatternRef similar_pattern =
 				similar_patterns_namespace->getPatternByIndex(l);
 		for(int k = 0; k < terms2().size(); ++k) {
-			text::MatchList similar_matches =
-					terms2()[k]->getMatches(similar_pattern);
-			if (!similar_matches.size()) {
-				continue;
-			}
-
-			int terms_words_count = Util::CountWords(terms2()[k]->getContent());
-			int match_words_count =
-					Util::CountWords(similar_matches[0]->getFragment(0).getText());
-			if (similar_matches.size() != 1 ||
-					terms_words_count != match_words_count) {
-				continue;
-			}
-			std::map<std::string, std::string> similar_pattern_words;
-
 			std::string normalized_match =
-					normalization.normalize(similar_matches[0]->getVariants().at(0));
+					Util::GetNormalizedMatch(terms2()[l], similar_pattern); 
+
+			if (normalized_match == "") {
+				continue;
+			}
+
+			std::map<std::string, std::string> similar_pattern_words;
 			if (!Util::BuildWordsByPattern(normalized_match, similar_pattern,
 					similar_pattern_words)) {
 				continue;

@@ -13,7 +13,6 @@
 
 #include "lspl/Namespace.h"
 #include "lspl/text/Text.h"
-#include "lspl/transforms/Normalization.h"
 
 namespace lspl {
 
@@ -29,8 +28,6 @@ class SimilarityRecognizer {
 		const std::vector<text::TextRef> &_terms2;
 		NamespaceRef _patterns_namespace;
 		std::vector<NamespaceRef> &_similar_patterns_namespaces;
-
-		static transforms::Normalization normalization;
 
 		const std::vector<text::TextRef> &terms1() const;
 		const std::vector<text::TextRef> &terms2() const;

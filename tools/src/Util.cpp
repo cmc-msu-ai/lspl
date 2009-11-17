@@ -12,6 +12,7 @@ namespace lspl {
 	lspl::utils::Conversion Util::in("UTF-8", "CP1251");
 	lspl::utils::Conversion Util::out("CP1251", "UTF-8");
 	const std::string Util::delimiters = " \t\r\n,:.;\'\"!?()";
+	transforms::Normalization Util::normalization;
 
 	std::string Util::LoadTextFromFile(const char* filename) {
 		std::ifstream input_stream(filename);
@@ -156,5 +157,27 @@ namespace lspl {
 		}
 		//std::cout << std::endl;
 		return true;
+	}
+
+	std::string Util::GetNormalizedMatch(text::TextRef text,
+			patterns::PatternRef pattern) {
+		text::MatchList matches = text->getMatches(pattern);
+		if (!matches.size()) {
+			return "";
+		}
+
+		int text_words_count = Util::CountWords(text->getContent());
+		int match_words_count =
+				Util::CountWords(matches[0]->getFragment(0).getText()); 
+		if (matches.size() != 1  || text_words_count != match_words_count ) {
+			return "";
+		}
+		std::string normalized_match =
+				normalization.normalize(matches[0]->getVariants().at(0)); 
+		return normalized_match;
+	}
+
+	std::string Util::BuildPattern(std::string &pattern,
+			std::map<std::string, std::string> &words) {
 	}
 } // namespace lspl.
