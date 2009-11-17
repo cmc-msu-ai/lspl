@@ -146,16 +146,20 @@ static void processLoopIteration( const LoopIterationMatchState & state, std::ve
 	if ( const AnnotationMatcher * curMatcher = dynamic_cast<const AnnotationMatcher *>( &state.getCurrentMatcher() ) ) {
 		TransitionList nextTransitions = curMatcher->buildTransitions( currentNode, state.context );
 
-		for ( uint i = 0; i < nextTransitions.size(); ++ i )
-			processLoopIteration( LoopIterationMatchState( state, nextTransitions[ i ] ), results );
+		for ( uint i = 0; i < nextTransitions.size(); ++ i ) {
+			LoopIterationMatchState loopIterationMatchState( state, nextTransitions[ i ] );
+			processLoopIteration( loopIterationMatchState, results );
+		}
 	} else {
 		const AnnotationChainMatcher & curMatcher = static_cast<const AnnotationChainMatcher &>( state.getCurrentMatcher() );
 		ChainList chains;
 
 		curMatcher.buildChains( state.getCurrentNode(), state.context, chains );
 
-		for ( uint i = 0; i < chains.size(); ++ i )
-			processLoopIteration( LoopIterationMatchState( state, chains[i].first, chains[i].second ), results );
+		for ( uint i = 0; i < chains.size(); ++ i ) {
+			LoopIterationMatchState loopIterationMatchState( state, chains[i].first, chains[i].second );
+			processLoopIteration( loopIterationMatchState, results );
+		}
 	}
 }
 
@@ -164,8 +168,9 @@ static void processLoop( const LoopMatchState & state, ChainList & results );
 static void processLoop( const LoopMatchState & state, std::vector< std::pair<LoopIterationRef,Context> > & iterations, ChainList & results ) {
 	for ( uint i = 0; i < iterations.size(); ++ i ) {
 		std::pair<LoopIterationRef,Context> & p = iterations[ i ];
+		LoopMatchState loopMatchState( state, p.first, p.second );
 
-		processLoop( LoopMatchState( state, p.first, p.second ), results );
+		processLoop( loopMatchState, results );
 	}
 }
 
@@ -186,7 +191,8 @@ static void processLoop( const LoopMatchState & state, ChainList & results ) {
 	std::vector< std::pair<LoopIterationRef,Context> > iterations;
 
 	for ( uint i = 0; i < state.matcher.alternatives.size(); ++ i ) {
-		processLoopIteration( LoopIterationMatchState( state.matcher, state.getCurrentNode(), state.context, state.matcher.alternatives[ i ] ), iterations );
+		LoopIterationMatchState loopIterationMatchState( state.matcher, state.getCurrentNode(), state.context, state.matcher.alternatives[ i ] );
+		processLoopIteration( loopIterationMatchState, iterations );
 	}
 
 	processLoop( state, iterations, results );
@@ -205,7 +211,8 @@ void LoopMatcher::buildChains( const text::Node & node, const Context & context,
 	if ( minLoops == 0 )
 		results.push_back( std::make_pair( new Loop( node, node, 0 ), context ) );
 
-	processLoop( LoopMatchState( *this, node, context ), results );
+	LoopMatchState loopMatchState( *this, node, context );
+	processLoop( loopMatchState, results );
 }
 
 void LoopMatcher::buildChains( const text::Transition & transition, const Context & context, ChainList & results ) const {
@@ -223,7 +230,8 @@ void LoopMatcher::buildChains( const text::Transition & transition, const Contex
 			if ( !curMatcher->matchTransition( transition, Context() ) )
 				return;
 
-			processLoopIteration( LoopIterationMatchState( s0, const_cast<text::Transition *>( &transition ) ), iterations );
+			LoopIterationMatchState loopIterationMatchState( s0, const_cast<text::Transition *>( &transition ) );
+			processLoopIteration( loopIterationMatchState, iterations );
 		} else {
 			const AnnotationChainMatcher & chainMatcher = dynamic_cast<const AnnotationChainMatcher &>( s0.getCurrentMatcher() );
 
@@ -232,8 +240,10 @@ void LoopMatcher::buildChains( const text::Transition & transition, const Contex
 			chainMatcher.buildChains( transition, s0.context, chains ); // Заполняем список цепочек
 
 			// TODO Необходимо отдельнор рассмотреть случайп пустой цепи
-			for ( uint i = 0; i < chains.size(); ++ i )
-				processLoopIteration( LoopIterationMatchState( s0, chains[i].first, chains[i].second ), iterations );
+			for ( uint i = 0; i < chains.size(); ++ i ) {
+				LoopIterationMatchState loopIterationMatchState( s0, chains[i].first, chains[i].second );
+				processLoopIteration( loopIterationMatchState, iterations );
+			}
 		}
 	}
 
