@@ -9,6 +9,7 @@
 
 #include <string>
 
+#include "lspl/Namespace.h"
 #include <lspl/dictionaries/Dictionary.h>
 
 namespace lspl {
@@ -16,6 +17,9 @@ namespace lspl {
 
 		class SynDictionary : public Dictionary {
 		 private:
+			NamespaceRef _patterns;
+			std::vector<NamespaceRef> _synonim_patterns;
+			
 			void LoadDictionary(const std::string &filename);
 		 protected:
 			virtual bool acceptsWords(const std::vector<std::string> &words) const;

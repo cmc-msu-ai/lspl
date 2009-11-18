@@ -5,9 +5,7 @@
 #include <iostream>
 #include <boost/scoped_ptr.hpp>
 
-#include "lspl/patterns/PatternBuilder.h"
 #include "lspl/patterns/Pattern.h"
-#include "lspl/text/readers/PlainTextReader.h"
 #include "SimilarityRecognizer.h"
 #include "SynDictionary.h"
 #include "Util.h"
@@ -18,11 +16,11 @@ SimilarityRecognizer::SimilarFinder::SimilarFinder(
 		const std::vector<text::TextRef> &terms1,
 		const std::vector<text::TextRef> &terms2,
 		NamespaceRef patterns_namespace,
-		std::vector<NamespaceRef> &similar_patterns_namespaces) :
+		std::vector<std::vector<std::string> > &similar_patterns) :
 		_terms1(terms1),
 		_terms2(terms2),
 		_patterns_namespace(patterns_namespace),
-		_similar_patterns_namespaces(similar_patterns_namespaces) {
+		_similar_patterns(similar_patterns) {
 }
 
 const std::vector<text::TextRef>
@@ -39,9 +37,9 @@ NamespaceRef SimilarityRecognizer::SimilarFinder::patterns_namespace() const {
 	return _patterns_namespace;
 }
 
-std::vector<NamespaceRef>
-		&SimilarityRecognizer::SimilarFinder::similar_patterns_namespaces() const {
-	return _similar_patterns_namespaces;
+std::vector<std::vector<std::string> >
+		&SimilarityRecognizer::SimilarFinder::similar_patterns() const {
+	return _similar_patterns;
 }
 
 std::vector<std::vector<int> *> *
@@ -70,7 +68,7 @@ std::vector<std::vector<int> *> *
 			}
 
 			result->push_back(FindSimilars(terms1()[i], pattern_words,
-					similar_patterns_namespaces()[j]));
+					similar_patterns()[j]));
 		}
 	}
 	return result;
@@ -79,8 +77,23 @@ std::vector<std::vector<int> *> *
 std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 		const text::TextRef term1,
 		std::map<std::string, std::string> &pattern_words,
-		const NamespaceRef similar_patterns_namespace) {
+		const std::vector<std::string> &similar_patterns) {
+	for(std::map<std::string, std::string>::iterator i = pattern_words.begin();
+			i != pattern_words.end(); ++i) {
+		std::cout << i->first << ":\"" << Util::out.convert(i->second) <<"\"";
+	}
+	std::cout << std::endl;
 	std::vector<int> *result = new std::vector<int>();
+
+	std::vector<std::string> new_similar_patterns;
+	for(int i = 0; i < similar_patterns.size(); ++i) {
+		std::string similar_pattern =
+				Util::BuildPattern(similar_patterns[i], pattern_words);
+		new_similar_patterns.push_back(similar_pattern);
+	}
+	NamespaceRef similar_patterns_namespace =
+			Util::BuildPatterns(new_similar_patterns);
+
 	for(int l = 0; l < similar_patterns_namespace->getPatternCount(); ++l) {
 		patterns::PatternRef similar_pattern =
 				similar_patterns_namespace->getPatternByIndex(l);
@@ -124,70 +137,16 @@ NamespaceRef SimilarityRecognizer::patterns_namespace() const {
 	return _patterns_namespace;
 }
 
-std::vector<NamespaceRef> &SimilarityRecognizer::similar_patterns_namespaces() {
-	return _similar_patterns_namespaces;
+std::vector<std::vector<std::string> >
+		&SimilarityRecognizer::similar_patterns() {
+	return _similar_patterns;
 }
 
 void SimilarityRecognizer::LoadSimilarPatterns(const char *file) {
-	_patterns_namespace = new Namespace();
-	_patterns_namespace->addDictionary(
-			new dictionaries::SynDictionary("Syn", ""));
-	patterns::PatternBuilderRef builder =
-			new patterns::PatternBuilder(_patterns_namespace);
-	patterns::PatternBuilderRef similar_builder;
 	std::string text = Util::LoadTextFromFile(file);
-	uint start_index = 0;
-	LoadSimilarPatternsState state = LOADSTATE_NEW;
-
-	for(int i = 0; i < text.size(); ++i) {
-		if (i == text.size() - 1 || text[i] == '\n') {
-			uint line_size = i - start_index;
-			std::string line(text, start_index, line_size);
-			line = Util::Trim(line);
-			if (line.size() >= 1) {
-				switch (state) {
-					case LOADSTATE_NEW:
-						if (line[line.size() - 1] == '#') {
-							try {
-								std::cout << "new build pattern " << 
-										line.substr(0, line.size() - 1) << std::endl;
-								builder->build(line.substr(0, line.size() - 1));
-								_similar_patterns_namespaces.push_back(new Namespace());
-								_similar_patterns_namespaces[
-										_similar_patterns_namespaces.size() - 1]->addDictionary(
-												new dictionaries::SynDictionary("Syn", ""));
-								similar_builder = new patterns::PatternBuilder(
-										_similar_patterns_namespaces[
-												_similar_patterns_namespaces.size() - 1]);
-								state = LOADSTATE_SIMILARS;
-							} catch (patterns::PatternBuildingException) {
-								std::cout << "Failed to build pattern " << line << std::endl;
-							}
-						}
-						break;
-					case LOADSTATE_SIMILARS:
-						if (line[line.size() - 1] != ',') {
-							try {
-								similar_builder->build(line);
-								std::cout << "last build pattern " << line << std::endl;
-							} catch (patterns::PatternBuildingException) {
-								std::cout << "Failed to build pattern " << line << std::endl;
-							}
-							state = LOADSTATE_NEW;
-						} else {
-							try {
-								similar_builder->build(line.substr(0, line.size() - 1));
-								std::cout << "build pattern " << line << std::endl;
-							} catch (patterns::PatternBuildingException) {
-								std::cout << "Failed to build pattern " << line << std::endl;
-							}
-						}
-						break;
-				}
-			}
-			start_index = i + 1;
-		}
-	}
+	std::vector<std::string> patterns;
+	Util::LoadSimilarPatterns(text, patterns, _similar_patterns);
+	_patterns_namespace = Util::BuildPatterns(patterns);
 }
 
 SimilarityRecognizer::SimilarityRecognizer(
@@ -208,7 +167,7 @@ void SimilarityRecognizer::FindSimilars(
 		const std::vector<text::TextRef> &terms1,
 		const std::vector<text::TextRef> &terms2) {
 	boost::scoped_ptr<SimilarFinder> similar_finder(new SimilarFinder(terms1,
-			terms2,	patterns_namespace(), similar_patterns_namespaces()));
+			terms2,	patterns_namespace(), similar_patterns()));
 	similar_finder->FindSimilars();
 }
 

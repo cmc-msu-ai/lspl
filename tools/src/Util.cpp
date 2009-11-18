@@ -5,14 +5,17 @@
 #include <fstream>
 #include <iostream>
 
-#include "lspl/text/readers/PlainTextReader.h"
+#include "lspl/patterns/PatternBuilder.h"
+#include "SynDictionary.h"
 #include "Util.h"
 
 namespace lspl {
 	lspl::utils::Conversion Util::in("UTF-8", "CP1251");
 	lspl::utils::Conversion Util::out("CP1251", "UTF-8");
 	const std::string Util::delimiters = " \t\r\n,:.;\'\"!?()";
+	const std::string Util::spaces = " \t\r\n";
 	transforms::Normalization Util::normalization;
+	text::readers::PlainTextReader Util::reader;
 
 	std::string Util::LoadTextFromFile(const char* filename) {
 		std::ifstream input_stream(filename);
@@ -28,8 +31,7 @@ namespace lspl {
 
 	text::TextRef Util::LoadText(const char* text_filename) {
 		std::string text = Util::LoadTextFromFile(text_filename);
-		text::readers::PlainTextReader reader;
-		return reader.readFromString(text);
+		return ConvertToText(text);
 	}
 
 	std::string Util::Trim(const std::string &text) {
@@ -94,7 +96,6 @@ namespace lspl {
 	}
 
 	text::TextRef Util::ConvertToText(const std::string &term) {
-		static text::readers::PlainTextReader reader;
 		return reader.readFromString(term);
 	}
 
@@ -177,7 +178,151 @@ namespace lspl {
 		return normalized_match;
 	}
 
-	std::string Util::BuildPattern(std::string &pattern,
-			std::map<std::string, std::string> &words) {
+	std::string Util::GetNormalizedMatch(std::string text,
+			patterns::PatternRef pattern) {
+		text::TextRef textRef = ConvertToText(text);
+		return GetNormalizedMatch(textRef, pattern);
+	}
+
+	std::string Util::BuildPattern(const std::string &pattern,
+			const std::map<std::string, std::string> &words) {
+		std::string result = pattern;
+		for(std::map<std::string, std::string>::const_iterator i = words.begin();
+				i != words.end(); ++i) {
+			std::string temp = result;
+			result = "";
+			std::string pattern_word = i->first;
+			std::string word = i->second;
+			bool is_condition = false;
+			bool is_bracket = false;
+			int j;
+			for(j = 0; j < temp.size() - pattern_word.size() + 1; ++j) {
+				if (temp[j] == '<') {
+					is_condition = true;
+					result += '<';
+					continue;
+				} else if (temp[j] == '>') {
+					is_condition = false;
+					result += '>';
+					continue;
+				} else if (temp[j] == '(') {
+					is_bracket = true;
+					result += '(';
+					continue;
+				} else if (temp[j] == ')') {
+					is_bracket = false;
+					result += ')';
+					continue;
+				}
+				std::string part(temp, j, pattern_word.size());
+				if (part != pattern_word) {
+					result += temp[j];
+					continue;
+				}
+				j += pattern_word.size() - 1;
+				if (is_condition && is_bracket) {
+					result += word;
+				} else if (!is_condition && !is_bracket) { 
+					result += pattern_word;
+					if (j + 1 < temp.size() && temp[j + 1] == '<') {
+						result += "<" + word + ",";
+						++j;
+					} else {
+						result += "<" + word + ">";
+					}
+				} else {
+					result += pattern_word;
+				}
+			}
+			for(; j < temp.size(); ++j) {
+				result += temp[j];
+			}
+		}
+		return result;
+	}
+
+	void Util::LoadSimilarPatterns(
+			const std::string &text, std::vector<std::string> &patterns,
+			std::vector<std::vector<std::string> > &similar_patterns) {
+		LoadSimilarPatternsState state = LOADSTATE_NEW;
+		std::vector<std::string> temp;
+		for(int i = 0; i < text.size(); ++i) {
+			bool is_space = spaces.find_first_of(text[i]) != std::string::npos;
+			if (is_space) {
+				continue;
+			}
+			std::string pattern;
+			switch(state) {
+				case LOADSTATE_NEW:
+					while (i < text.size() && text[i] != '#' && text[i] != '\n' &&
+							text[i] != '\r') {
+						pattern += text[i];
+						++i;
+					}
+					patterns.push_back(Trim(pattern));
+					similar_patterns.push_back(temp);
+					if (i == text.size()) {
+						break;
+					}
+					if (text[i] == '#') {
+						std::cout << pattern << std::endl;
+						state = LOADSTATE_SIMILARS;
+					}
+					break;
+				case LOADSTATE_SIMILARS:
+					std::cout<<"!";
+					bool is_condition = false;
+					bool is_string = false;
+					while (i < text.size() && text[i] != '\n' &&
+							text[i] != '\r' &&
+							(text[i] != ',' || is_condition || is_string)) {
+						pattern += text[i];
+						switch (text[i]) {
+							case '\"':
+								is_string = !is_string;
+								break;
+							case '<':
+								is_condition = true;
+								break;
+							case '>':
+								is_condition = false;
+								break;
+							default:
+								break;
+						}
+						++i;
+					}
+						std::cout << pattern << std::endl;
+					similar_patterns[similar_patterns.size() - 1].push_back(
+							Trim(pattern));
+					if (i == text.size()) {
+						break;
+					}
+					if (text[i] != ',') {
+						state = LOADSTATE_NEW;
+					}
+					break;
+			}
+		}
+		assert(patterns.size() == similar_patterns.size());
+	}
+
+	NamespaceRef Util::BuildPatterns(const std::vector<std::string> &patterns) {
+		NamespaceRef result = new Namespace();
+		result->addDictionary(
+				new dictionaries::SynDictionary("Syn", "syn_dictionary.txt"));
+		patterns::PatternBuilderRef builder =
+				new patterns::PatternBuilder(result);
+		for(int i = 0; i < patterns.size(); ++i) {
+			try {
+				builder->build(patterns[i]);
+				std::cout << "Successfully build pattern \"" << out.convert(patterns[i])
+						<< "\"" << std::endl;
+			} catch (...) {
+				std::cout << "Cannot build pattern \"" << out.convert(patterns[i])
+						<< "\"" << std::endl;
+			}
+		}
+		return result;
 	}
 } // namespace lspl.

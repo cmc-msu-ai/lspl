@@ -10,19 +10,28 @@
 #include <string>
 #include <vector>
 
+#include "lspl/Namespace.h"
 #include "lspl/patterns/Pattern.h"
+#include "lspl/text/readers/PlainTextReader.h"
 #include "lspl/text/Text.h"
 #include "lspl/transforms/Normalization.h"
 #include "lspl/utils/Conversion.h"
 
 namespace lspl {
 
+enum LoadSimilarPatternsState {
+	LOADSTATE_NEW,
+	LOADSTATE_SIMILARS
+};
+
 class Util {
  public:
 	static const std::string delimiters;
+	static const std::string spaces;
 	static lspl::utils::Conversion in;
 	static lspl::utils::Conversion out;
 	static transforms::Normalization normalization;
+	static text::readers::PlainTextReader reader;
  public:
 	// Read text from the file, convert it from the UTF8 to the WIN-1251 encoding.
 	static std::string LoadTextFromFile(const char *filename);
@@ -52,9 +61,16 @@ class Util {
 	// normalized text. Else returns "".
 	static std::string GetNormalizedMatch(text::TextRef text,
 			patterns::PatternRef pattern);
+	static std::string GetNormalizedMatch(std::string text,
+			patterns::PatternRef pattern);
 	// Change pattern with set of words.
-	static std::string BuildPattern(std::string &pattern,
-			std::map<std::string, std::string> &words);
+	static std::string BuildPattern(const std::string &pattern,
+			const std::map<std::string, std::string> &words);
+	// Load patterns with alternates after #.
+	static void LoadSimilarPatterns(
+			const std::string &text, std::vector<std::string> &patterns,
+			std::vector<std::vector<std::string> > &similar_patterns);
+	static NamespaceRef BuildPatterns(const std::vector<std::string> &patterns);
 };
 
 } // namespace lspl.
