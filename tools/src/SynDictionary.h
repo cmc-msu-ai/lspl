@@ -21,9 +21,9 @@ namespace lspl {
 			std::vector<NamespaceRef> _synonim_patterns;
 			
 			void LoadDictionary(const std::string &filename);
-		 protected:
-			virtual bool acceptsWords(const std::vector<std::string> &words) const;
 		 public:
+			virtual bool acceptsWords(const std::vector<std::string> &words) const;
+
 			SynDictionary(const std::string &name, const std::string &filename);
 			virtual ~SynDictionary();
 		}; // SynDictionary

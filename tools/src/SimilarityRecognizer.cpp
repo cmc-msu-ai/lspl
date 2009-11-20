@@ -6,6 +6,7 @@
 #include <boost/scoped_ptr.hpp>
 
 #include "lspl/patterns/Pattern.h"
+#include "AbbrAnalyzer.h"
 #include "SimilarityRecognizer.h"
 #include "SynDictionary.h"
 #include "Util.h"
@@ -93,11 +94,15 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 	}
 	NamespaceRef similar_patterns_namespace =
 			Util::BuildPatterns(new_similar_patterns);
+	std::vector<bool> is_similar(terms2().size(), false);
 
 	for(int l = 0; l < similar_patterns_namespace->getPatternCount(); ++l) {
 		patterns::PatternRef similar_pattern =
 				similar_patterns_namespace->getPatternByIndex(l);
 		for(int k = 0; k < terms2().size(); ++k) {
+			if (is_similar[k]) {
+				continue;
+			}
 			std::string normalized_match =
 					Util::GetNormalizedMatch(terms2()[l], similar_pattern); 
 
@@ -112,10 +117,36 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 			}
 
 			if (IsSimilar(pattern_words, similar_pattern_words)) {
-				std::cout << "Similar: " << Util::out.convert(term1->getContent()) << " && " <<
+				std::cout << "Similar by patternds: " <<
+						Util::out.convert(term1->getContent()) << " && " <<
 						Util::out.convert(terms2()[k]->getContent()) << std::endl;
-				result->push_back(k);
+				is_similar[k] = true;
 			}
+		}
+	}
+	for(int i = 0; i < terms2().size(); ++i) {
+		if (!is_similar[i]) {
+			if (SynonimDictionary->acceptWords(term1->getContent().
+					terms2()[i]->getContent())) {
+				std::cout << "Similar as synonims: " <<
+						Util::out.convert(term1->getContent()) << " && " <<
+						Util::out.convert(terms2()[i]->getContent()) << std::endl;
+				is_similar[i] = true;
+				continue;
+			}
+			if (AbbrAnalyzer::Analyze(term1->getContent(),
+					terms2()[i]->getContent())) {
+				std::cout << "Similar as abbr: " <<
+						Util::out.convert(term1->getContent()) << " && " <<
+						Util::out.convert(terms2()[i]->getContent()) << std::endl;
+				is_similar[i] = true;
+				continue;
+			}
+		}
+	}
+	for(int i = 0; i < terms2().size(); ++i) {
+		if (is_similar[i]) {
+			result->push_back(i);
 		}
 	}
 	return result;

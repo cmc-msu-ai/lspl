@@ -325,4 +325,30 @@ namespace lspl {
 		}
 		return result;
 	}
+
+	bool Util::IsPretext(std::string word) {
+		return word.size() <= 3;
+	}
+
+	bool Util::IsDelimiter(char symbol) {
+		return delimiters.find(symbol) != std::string::npos;
+	}
+
+	void Util::ToUpper(std::string &word) {
+		std::string::iterator i = word.begin();
+		std::string::iterator end = word.end();
+		std::string russian_small("абвгдеёжзийклмнопрстуфхцчшщьыъэюя");
+		std::string russian_big("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ");
+
+		while (i != end) {
+			*i = toupper((unsigned char)*i);
+			size_t number_small = russian_small.find((unsigned char)*i);
+			size_t number_big = russian_big.find((unsigned char)*i);
+			if ((number_small != std::string::npos) &&
+					(number_big == std::string::npos)) {
+				*i = russian_big[(int)number_small];
+			}
+			++i;
+		}
+	}
 } // namespace lspl.

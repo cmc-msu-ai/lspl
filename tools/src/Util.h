@@ -71,6 +71,10 @@ class Util {
 			const std::string &text, std::vector<std::string> &patterns,
 			std::vector<std::vector<std::string> > &similar_patterns);
 	static NamespaceRef BuildPatterns(const std::vector<std::string> &patterns);
+  
+	static bool IsPretext(std::string word);
+	static bool IsDelimiter(char symbol);
+	static void ToUpper(std::string &word);
 };
 
 } // namespace lspl.

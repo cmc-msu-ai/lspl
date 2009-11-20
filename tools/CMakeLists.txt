@@ -60,14 +60,16 @@ target_link_libraries(lspl-dictionary-recognizer lspl)
 ### lspl-Similarity
 
 set(LSPL_SIMILARITY_SOURCES
+	src/AbbrAnalyzer.cpp
 	src/DictionaryRecognizer.cpp
-	src/MetricsMain.cpp
+	src/SimilarityMain.cpp
 	src/RangeSetDecartTreeElement.cpp
 	src/RangeSetDecartTree.cpp
 	src/RangeSet.cpp
 	src/SimilarityRecognizer.cpp
 	src/SynDictionary.cpp
 	src/Util.cpp
+	src/WordList.cpp
 )
 
 add_executable(lspl-similarity ${LSPL_SIMILARITY_SOURCES})
