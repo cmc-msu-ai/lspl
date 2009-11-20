@@ -151,6 +151,17 @@ static void testDictionariesWithConcat() {
 	assertNoMatchesNS( ns, "Мама мыла раму", "AB = W1 W2 <DIC(W1,W2)>" );
 }
 
+static void testDictionariesWithLiterals() {
+	base::Reference<dictionaries::MemoryDictionary> d = new dictionaries::MemoryDictionary( "DIC" );
+	d->add( "ОКНО", "РАМА" );
+
+	NamespaceRef ns = new Namespace();
+	ns->addDictionary( d );
+
+	assertMatchesNS( ns, "Мама мыла раму", 1, 3, "AA = W1 W2 <DIC('окно',W2)>" );
+	assertNoMatchesNS( ns, "Мама мыла раму", "AB = W1 W2 <DIC(W1,W2)>" );
+}
+
 cute::suite matchingSuite() {
 	cute::suite s;
 
@@ -167,6 +178,7 @@ cute::suite matchingSuite() {
 	s += CUTE(testCompoundAttributes);
 	s += CUTE(testDictionaries);
 	s += CUTE(testDictionariesWithConcat);
+	s += CUTE(testDictionariesWithLiterals);
 
 	return s;
 }

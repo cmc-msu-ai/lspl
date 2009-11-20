@@ -29,7 +29,10 @@ public:
 	std::string getAttributesString( uint64 attValues );
 
 	std::string upcase( const char * str );
+	std::string upcase( const char * start, const char * end );
+
 	std::string lowcase( const char * str );
+	std::string lowcase( const char * start, const char * end );
 private:
 	const char * findRml();
 	void setupRml();

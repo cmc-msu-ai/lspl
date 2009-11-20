@@ -169,8 +169,32 @@ std::string AotMorphology::upcase( const char * str ) {
 	return word;
 }
 
+std::string AotMorphology::upcase( const char * start, const char * end ) {
+	std::string word( start, end );
+
+	for( uint i = 0; i < word.length(); i++ )
+		if ( is_russian_lower((BYTE)word[i]) )
+			word[i] = rtoupper((BYTE)word[i]);
+		else if ( is_english_lower((BYTE)word[i]) )
+			word[i] = etoupper((BYTE)word[i]);
+
+	return word;
+}
+
 std::string AotMorphology::lowcase( const char * str ) {
 	std::string word( str );
+
+	for( uint i = 0; i < word.length(); i++ )
+		if ( is_russian_upper((BYTE)word[i]) )
+			word[i] = rtolower((BYTE)word[i]);
+		else if ( is_english_upper((BYTE)word[i]) )
+			word[i] = etolower((BYTE)word[i]);
+
+	return word;
+}
+
+std::string AotMorphology::lowcase( const char * start, const char * end ) {
+	std::string word( start, end );
 
 	for( uint i = 0; i < word.length(); i++ )
 		if ( is_russian_upper((BYTE)word[i]) )

@@ -26,6 +26,8 @@
 #include <boost/spirit/phoenix/binders.hpp>
 #include <boost/spirit/phoenix/functions.hpp>
 
+#include <boost/format.hpp>
+
 using namespace boost::spirit;
 using namespace phoenix;
 
@@ -160,6 +162,7 @@ public:
         	function<CreateVariableExpression> createVariableExpression;
         	function<CreateAttributeExpression> createAttributeExpression;
         	function<CreateConcatExpression> createConcatExpression;
+        	function<CreateStringLiteralExpression> createStringLiteralExpression;
 
         	endLoop = expect_loop_end( ch_p( '}' ) );
         	endOptional = expect_optional_end( ch_p( ']' ) );
@@ -254,9 +257,16 @@ public:
 
         	dictionaryRestriction = ( ( lexeme_d[ +chset_p("a-zA-Z") ][ dictionaryRestriction.dictionaryName = construct_<std::string>( arg1, arg2 ) ] ) >> "(" >> ( expression[ add( dictionaryRestriction.args, arg1 ) ] % "," ) >> ")" )[ addDictionaryRestriction( alternative.matchers, dictionaryRestriction.dictionaryName, dictionaryRestriction.args ) ];
 
-        	expression = ~eps_p( str_p( "AS" ) ) >> variable[ expression.exp = createVariableExpression( arg1 ) ] >>
-				*( '.' >> attributeKey[ expression.exp = createAttributeExpression( expression.exp, arg1 ) ] ) >>
+        	expression = ~eps_p( str_p( "AS" ) ) >> (literalExpression | propertyExpression) >>
         		*( expression[ expression.exp = createConcatExpression( expression.exp, arg1 ) ] );
+
+        	propertyExpression = variable[ expression.exp = createVariableExpression( arg1 ) ] >>
+    			*( '.' >> attributeKey[ expression.exp = createAttributeExpression( expression.exp, arg1 ) ] );
+
+        	literalExpression = lexeme_d[ switch_p[
+        	    case_p< '"' >( (+~ch_p('"'))[ expression.exp = createStringLiteralExpression( arg1, arg2 ) ] >> expect_closing_dbl_quote( ch_p('"') ) ),
+        	    case_p< '\'' >( (+~ch_p('\''))[ expression.exp = createStringLiteralExpression( arg1, arg2 ) ] >> expect_closing_sgl_quote( ch_p('\'') ) )
+        	] ];
 
         	/*
         	 * Таблицы символов
@@ -280,7 +290,7 @@ public:
     	symbols<SpeechPart> speechPart;
     	symbols<AttributeValue> attributeValue;
 
-    	rule<ScannerT> patternName, wordType, source, wordBase, wordRestriction, matcherVariable, loopRestriction, restrictions, bindingList, endLoop, endOptional, endBinding, endRestriction, alternativeTransformSource;
+    	rule<ScannerT> patternName, wordType, source, wordBase, wordRestriction, matcherVariable, loopRestriction, restrictions, bindingList, endLoop, endOptional, endBinding, endRestriction, alternativeTransformSource, propertyExpression, literalExpression;
 
     	rule<ScannerT, AlternativeClosure::context_t> alternative;
 
@@ -342,8 +352,10 @@ public:
     		case AttributeValueExpected:
     			throw PatternBuildingException( "Invalid or no attribute value" );
     		default:
-        		throw PatternBuildingException( "Error parsing template" );
+        		throw PatternBuildingException( (boost::format( "Error parsing template: %1%. Descriptor: %2%. Where: %3%" ) % err.what() % err.descriptor % err.where).str() );
     		}
+    	} catch ( const std::exception & e ) {
+    		throw PatternBuildingException( (boost::format( "Error parsing template: %1%" ) % e.what()).str() );
     	} catch ( ... ) {
     		throw PatternBuildingException( "Error parsing template" );
     	}

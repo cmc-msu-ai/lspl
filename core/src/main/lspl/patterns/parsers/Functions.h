@@ -180,6 +180,13 @@ struct CreateConcatExpression {
 	Expression * operator()( Expression * exp1, Expression * exp2 ) const;
 };
 
+struct CreateStringLiteralExpression {
+	template <typename Arg1, typename Arg2>
+	struct result { typedef Expression * type; };
+
+	Expression * operator()( const char * start, const char * end ) const;
+};
+
 } } }
 
 #endif /* _LSPL_PATTERNS_PARSERS_FUNCTIONS_H_ */
