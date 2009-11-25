@@ -154,6 +154,15 @@ static void testExpressionsInDictionaries() {
 	assertBuildsNS( "AAA = N V <DIC(V N.g)>", ns );
 }
 
+static void testLiteralsInDictionaries() {
+	NamespaceRef ns = new Namespace();
+	ns->addDictionary( new dictionaries::MemoryDictionary("DIC") );
+
+	assertBuildsNS( "AAA = N V <DIC('aaa')>", ns );
+	assertBuildsNS( "AAA = N V <DIC(V,'dvf')>", ns );
+	assertBuildsNS( "AAA = N V <DIC(V 'gggg')>", ns );
+}
+
 static void testMemoryLeaks() {
 	assertTrue( Matcher::aliveObjectsCount == 0 );
 	assertTrue( Restriction::aliveObjectsCount == 0 );
@@ -175,6 +184,7 @@ cute::suite patternBuildingSuite() {
 	s += CUTE(testMultipleEquals);
 	s += CUTE(testDictionaries);
 	s += CUTE(testExpressionsInDictionaries);
+	s += CUTE(testLiteralsInDictionaries);
 	s += CUTE(testMemoryLeaks);
 
 	return s;

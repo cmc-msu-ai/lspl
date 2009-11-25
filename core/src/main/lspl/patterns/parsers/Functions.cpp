@@ -31,11 +31,15 @@
 
 #include "../../transforms/TransformBuilder.h"
 
+#include "../../morphology/Morphology.h"
+
 using namespace lspl::text::attributes;
 
 using namespace lspl::patterns::restrictions;
 using namespace lspl::patterns::expressions;
 using namespace lspl::patterns::matchers;
+
+using lspl::morphology::Morphology;
 
 namespace lspl { namespace patterns { namespace parsers {
 
@@ -184,7 +188,7 @@ Matcher & AddDictionaryRestrictionImpl::findLastMatcher( boost::ptr_vector<Match
 			if ( args[j].containsVariable( matchers[i].variable ) )
 				return matchers[i];
 
-	throw PatternBuildingException( "No last matcher found" );
+	return matchers[ 0 ];
 }
 
 void AddBindingImpl::operator()( boost::ptr_map<AttributeKey,Expression> & bindings, AttributeKey att, Expression * exp ) const {
@@ -219,6 +223,10 @@ Expression * CreateConcatExpression::operator()( Expression * exp1, Expression *
 		res->addArgument( exp2 );
 		return res;
 	}
+}
+
+Expression * CreateStringLiteralExpression::operator()( const char * start, const char * end ) const {
+	return new ConstantExpression( AttributeValue( Morphology::instance().upcase( start, end ) ) );
 }
 
 } } }
