@@ -23,6 +23,8 @@ namespace lspl {
 			void LoadDictionary(const std::string &filename);
 		 public:
 			virtual bool acceptsWords(const std::vector<std::string> &words) const;
+			virtual bool acceptsWords(const std::string &word1,
+					const std::string &word2) const;
 
 			SynDictionary(const std::string &name, const std::string &filename);
 			virtual ~SynDictionary();

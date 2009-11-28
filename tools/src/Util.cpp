@@ -264,8 +264,8 @@ namespace lspl {
 					if (i == text.size()) {
 						break;
 					}
+					std::cout << out.convert(pattern) << std::endl;
 					if (text[i] == '#') {
-						std::cout << pattern << std::endl;
 						state = LOADSTATE_SIMILARS;
 					}
 					break;
@@ -292,7 +292,7 @@ namespace lspl {
 						}
 						++i;
 					}
-						std::cout << pattern << std::endl;
+					std::cout << out.convert(pattern) << std::endl;
 					similar_patterns[similar_patterns.size() - 1].push_back(
 							Trim(pattern));
 					if (i == text.size()) {
@@ -307,10 +307,13 @@ namespace lspl {
 		assert(patterns.size() == similar_patterns.size());
 	}
 
-	NamespaceRef Util::BuildPatterns(const std::vector<std::string> &patterns) {
+	NamespaceRef Util::BuildPatterns(const std::vector<std::string> &patterns,
+			bool use_dictionary) {
 		NamespaceRef result = new Namespace();
-		result->addDictionary(
-				new dictionaries::SynDictionary("Syn", "syn_dictionary.txt"));
+		if (use_dictionary) {
+			result->addDictionary(
+					new dictionaries::SynDictionary("Syn", "syn_dictionary.txt"));
+		}
 		patterns::PatternBuilderRef builder =
 				new patterns::PatternBuilder(result);
 		for(int i = 0; i < patterns.size(); ++i) {

@@ -13,6 +13,7 @@
 
 #include "lspl/Namespace.h"
 #include "lspl/text/Text.h"
+#include "SynDictionary.h"
 
 namespace lspl {
 
@@ -24,11 +25,13 @@ class SimilarityRecognizer {
 		const std::vector<text::TextRef> &_terms2;
 		NamespaceRef _patterns_namespace;
 		std::vector<std::vector<std::string> > &_similar_patterns;
+		dictionaries::SynDictionary _synonim_dictionary;
 
 		const std::vector<text::TextRef> &terms1() const;
 		const std::vector<text::TextRef> &terms2() const;
 		NamespaceRef patterns_namespace() const;
 		std::vector<std::vector<std::string> > &similar_patterns() const;
+		const dictionaries::SynDictionary &synonim_dictionary() const;
 
 		std::vector<int> *FindSimilars(const text::TextRef term1,
 				std::map<std::string, std::string> &pattern_words,

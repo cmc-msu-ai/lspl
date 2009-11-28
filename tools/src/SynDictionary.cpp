@@ -15,9 +15,10 @@ namespace lspl {
 			std::vector<std::string> patterns;
 			std::vector<std::vector<std::string> > synonim_patterns;
 			Util::LoadSimilarPatterns(text, patterns, synonim_patterns);
-			_patterns = Util::BuildPatterns(patterns);
+			_patterns = Util::BuildPatterns(patterns, false);
 			for(int i = 0; i < synonim_patterns.size(); ++i) {
-				_synonim_patterns.push_back(Util::BuildPatterns(synonim_patterns[i]));
+				_synonim_patterns.push_back(
+						Util::BuildPatterns(synonim_patterns[i], false));
 			}
 		}
 
@@ -54,8 +55,17 @@ namespace lspl {
 			return false;
 		}
 
+		bool SynDictionary::acceptsWords(const std::string &word1,
+				const std::string &word2) const {
+			std::vector<std::string> words;
+			words.push_back(word1);
+			words.push_back(word2);
+			return acceptsWords(words);
+		}
+
 		SynDictionary::SynDictionary(const std::string &name,
 				const std::string &filename) : Dictionary(name) {
+			LoadDictionary(filename);
 		}
 
 		SynDictionary::~SynDictionary() {

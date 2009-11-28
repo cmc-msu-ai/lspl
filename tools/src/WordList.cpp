@@ -9,7 +9,7 @@
 #include "WordList.h"
 
 namespace lspl {
-	WordList::WordList(std::string &text) : text(text), clear_text("") {
+	WordList::WordList(const std::string &text) : text(text), clear_text("") {
 		GenerateWords();
 		GenerateClearText();
 	}

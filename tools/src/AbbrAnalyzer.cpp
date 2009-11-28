@@ -11,13 +11,14 @@
 #include "Util.h"
 
 namespace lspl {
-	int AbbrAnalyzer::Analyze(std::string &text1, std::string &text2) {
+	int AbbrAnalyzer::Analyze(const std::string &text1,
+			const std::string &text2) {
 		WordList list1(text1);
 		WordList list2(text2);
 		return Analyze(list1, list2);
 	}
 
-	int AbbrAnalyzer::Analyze(WordList &list1, WordList &list2) {
+	int AbbrAnalyzer::Analyze(const WordList &list1, const WordList &list2) {
 		if (list1.GetClearLength() == list2.GetClearLength() ||
 				list1.GetClearText()[0] != list2.GetClearText()[0]) {
 			return -1;
@@ -35,7 +36,8 @@ namespace lspl {
 		return 1;
 	}
 
-	bool AbbrAnalyzer::DeepAnalyze(WordList &list, std::string &text, int i, int j) {
+	bool AbbrAnalyzer::DeepAnalyze(const WordList &list, const std::string &text,
+			int i, int j) {
 		if (j == text.size()) {
 			return false;
 		}
@@ -71,7 +73,8 @@ namespace lspl {
 		return false;
 	}
 
-	int AbbrAnalyzer::FindCommonPart(std::string &text1, std::string &text2) {
+	int AbbrAnalyzer::FindCommonPart(const std::string &text1,
+			const std::string &text2) {
 		int len1 = text1.size(), len2 = text2.size();
 		std::vector< std::vector <int> > len(len1, std::vector<int>(len2, 0));
 		for (int i = 0; i < len1; ++i) {

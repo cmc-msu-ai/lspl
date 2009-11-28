@@ -8,7 +8,6 @@
 #include "lspl/patterns/Pattern.h"
 #include "AbbrAnalyzer.h"
 #include "SimilarityRecognizer.h"
-#include "SynDictionary.h"
 #include "Util.h"
 
 namespace lspl {
@@ -21,7 +20,8 @@ SimilarityRecognizer::SimilarFinder::SimilarFinder(
 		_terms1(terms1),
 		_terms2(terms2),
 		_patterns_namespace(patterns_namespace),
-		_similar_patterns(similar_patterns) {
+		_similar_patterns(similar_patterns),
+		_synonim_dictionary("Synonim", "synonim_dictionary.txt") {
 }
 
 const std::vector<text::TextRef>
@@ -41,6 +41,11 @@ NamespaceRef SimilarityRecognizer::SimilarFinder::patterns_namespace() const {
 std::vector<std::vector<std::string> >
 		&SimilarityRecognizer::SimilarFinder::similar_patterns() const {
 	return _similar_patterns;
+}
+
+const dictionaries::SynDictionary &
+		SimilarityRecognizer::SimilarFinder::synonim_dictionary() const {
+	return _synonim_dictionary;
 }
 
 std::vector<std::vector<int> *> *
@@ -126,7 +131,7 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 	}
 	for(int i = 0; i < terms2().size(); ++i) {
 		if (!is_similar[i]) {
-			if (SynonimDictionary->acceptWords(term1->getContent().
+			if (synonim_dictionary().acceptsWords(term1->getContent(),
 					terms2()[i]->getContent())) {
 				std::cout << "Similar as synonims: " <<
 						Util::out.convert(term1->getContent()) << " && " <<
@@ -135,7 +140,7 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 				continue;
 			}
 			if (AbbrAnalyzer::Analyze(term1->getContent(),
-					terms2()[i]->getContent())) {
+					terms2()[i]->getContent()) == 1) {
 				std::cout << "Similar as abbr: " <<
 						Util::out.convert(term1->getContent()) << " && " <<
 						Util::out.convert(terms2()[i]->getContent()) << std::endl;

@@ -13,7 +13,7 @@
 namespace lspl {
 	class WordList {
 	 public:
-		WordList(std::string &text);
+		WordList(const std::string &text);
 		// Length of the text.
 		int GetLength() const;
 		// Length of the clear_text.
