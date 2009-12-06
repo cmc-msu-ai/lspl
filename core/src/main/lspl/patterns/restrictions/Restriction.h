@@ -7,6 +7,8 @@
 #include "../../base/Exception.h"
 #include "../../text/Forward.h"
 
+#include "../matchers/Variable.h"
+
 #include <ostream>
 
 namespace lspl { namespace patterns { namespace restrictions {

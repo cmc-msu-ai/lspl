@@ -38,12 +38,15 @@ endif(MINGW)
 set(LSPL_CORE_SOURCES
 	src/main/lspl/Namespace.cpp
 	src/main/lspl/base/Range.cpp
+	
 	src/main/lspl/graphan/Unit.cpp
 	src/main/lspl/graphan/Graphan.cpp
 	src/main/lspl/graphan/AotGraphan.cpp
+	
 	src/main/lspl/morphology/WordForm.cpp
 	src/main/lspl/morphology/Morphology.cpp
 	src/main/lspl/morphology/AotMorphology.cpp
+	
 	src/main/lspl/patterns/Alternative.cpp
 	src/main/lspl/patterns/matchers/Context.cpp
 	src/main/lspl/patterns/matchers/LoopMatcher.cpp
@@ -54,15 +57,19 @@ set(LSPL_CORE_SOURCES
 	src/main/lspl/patterns/matchers/RegexpMatcher.cpp
 	src/main/lspl/patterns/matchers/PatternMatcher.cpp
 	src/main/lspl/patterns/matchers/MatcherContainer.cpp
+	
 	src/main/lspl/patterns/expressions/ConcatenationExpression.cpp
 	src/main/lspl/patterns/expressions/Expression.cpp
 	src/main/lspl/patterns/expressions/VariableExpression.cpp
 	src/main/lspl/patterns/expressions/CurrentAnnotationExpression.cpp
 	src/main/lspl/patterns/expressions/ConstantExpression.cpp
 	src/main/lspl/patterns/expressions/AttributeExpression.cpp
+	
+	src/main/lspl/patterns/restrictions/Restriction.cpp
 	src/main/lspl/patterns/restrictions/DictionaryRestriction.cpp
 	src/main/lspl/patterns/restrictions/AgreementRestriction.cpp
-	src/main/lspl/patterns/restrictions/Restriction.cpp
+	src/main/lspl/patterns/restrictions/AndRestriction.cpp
+	
 	src/main/lspl/patterns/parsers/Functions.cpp
 	src/main/lspl/patterns/Pattern.cpp
 	src/main/lspl/patterns/PatternBuilder.cpp

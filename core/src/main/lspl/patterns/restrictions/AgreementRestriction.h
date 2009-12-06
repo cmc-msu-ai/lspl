@@ -11,7 +11,6 @@
 #include "../../base/Base.h"
 #include "Restriction.h"
 
-#include "../matchers/Variable.h"
 #include "../expressions/Expression.h"
 #include "../../text/attributes/AttributeKey.h"
 #include "../../text/attributes/AttributeValue.h"
