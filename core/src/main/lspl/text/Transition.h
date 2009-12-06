@@ -4,6 +4,7 @@
 #include "../base/Base.h"
 #include "../base/RefCountObject.h"
 #include "../base/RefCountPtr.h"
+#include "../base/Range.h"
 
 #include "Forward.h"
 
@@ -55,6 +56,10 @@ public:
 	 * Получить позицию конца (в символах) отрезка текста, соответствующего ребру
 	 */
 	uint getRangeEnd() const;
+
+	base::Range getRange() const {
+		return base::Range( getRangeStart(), getRangeEnd() );
+	}
 
 	virtual attributes::AttributeValue getAttribute( attributes::AttributeKey key ) const;
 

@@ -10,8 +10,6 @@ namespace lspl { namespace text {
 class TextConfig;
 class TextBuilder;
 
-class MatchVariant;
-
 LSPL_REFCOUNT_FORWARD( Text );
 LSPL_REFCOUNT_FORWARD( Node );
 LSPL_REFCOUNT_FORWARD( Transition );

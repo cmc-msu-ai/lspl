@@ -1,7 +1,6 @@
 #ifndef _LSPL_TRANSITIONS_PATTERNTRANSITION_H_
 #define _LSPL_TRANSITIONS_PATTERNTRANSITION_H_
 
-#include "../base/Range.h"
 #include "../base/Exception.h"
 
 #include "Transition.h"
@@ -17,40 +16,6 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 
 namespace lspl { namespace text {
-
-/**
- * Фрагмент, сопоставляемый шаблону или выделяемый им.
- */
-class LSPL_EXPORT Fragment : public base::Range {
-public:
-
-	/**
-	 * Получить текст фрагмента
-	 */
-	std::string getText() const;
-
-	/**
-	 * Получить нормализованный текст фрагмента
-	 */
-	std::string getNormalizedText() const;
-
-	/**
-	 * Получить шаблонизированный текст фрагмента
-	 */
-	std::string getPatternedText(uint opts) const;
-
-	/**
-	 * Получить объект сопоставления
-	 */
-	const Match & getMatch() const {
-		return *match;
-	}
-
-public:
-
-	const Match * match; // Сопоставление, которому принадлежит фрагмент
-
-};
 
 /**
  * Вариант сопоставления - хранит конкретный набор сопоставленных элементов
@@ -182,13 +147,6 @@ public:
 		variants.push_back( variant );
 	}
 
-	/**
-	 * Получить фрагмент сопоставления по заданному индексу
-	 */
-	const Fragment & getFragment( uint num ) const;
-	uint getFragmentCount() const { return 1; }
-private:
-	mutable Fragment * fragments; // Фрагменты сопоставления, инициализируючтся лениво, при первом запросе
 };
 
 } }

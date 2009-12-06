@@ -17,7 +17,7 @@ int main(int argc, char** argv) {
 	for(int i = 0; i < matches.size(); ++i) {
 		std::cout << "'"
 				//<< lspl::Util::out.convert(matches[i]->pattern->name)
-				<< lspl::Util::out.convert(matches[i]->matches[0]->getFragment(0).getText())
+				<< lspl::Util::out.convert(matches[i]->matches[0]->getRangeString())
 				//<< matches[i]->matches[0]->getFragment(0).get
 				<< "' " << matches[i]->match_count << " '"
 				//<< " Normalized name: '"

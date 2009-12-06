@@ -169,7 +169,7 @@ namespace lspl {
 
 		int text_words_count = Util::CountWords(text->getContent());
 		int match_words_count =
-				Util::CountWords(matches[0]->getFragment(0).getText()); 
+				Util::CountWords(matches[0]->getRangeString());
 		if (matches.size() != 1  || text_words_count != match_words_count ) {
 			return "";
 		}

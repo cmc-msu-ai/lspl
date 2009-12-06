@@ -20,18 +20,6 @@ LSPL_REFCOUNT_CLASS( lspl::text::MatchVariant );
 
 namespace lspl { namespace text {
 
-std::string Fragment::getText() const {
-	return match->start.text.getContent().substr( start, end - start );
-}
-
-std::string Fragment::getNormalizedText() const {
-	return match->start.text.getContent().substr( start, end - start );
-}
-
-std::string Fragment::getPatternedText( uint opts ) const {
-	return match->start.text.getContent().substr( start, end - start );
-}
-
 MatchVariant::MatchVariant( const patterns::Alternative & alternative ) :
 	TransitionList(), alternative( alternative ), transformResult( 0 ) {
 }
@@ -88,24 +76,11 @@ void RestrictedMatch::dump( std::ostream & out, std::string tabs ) const {
 }
 
 Match::Match( const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, MatchVariant * variant, const AttributesMap & attributes ) :
-	MatchVariantContainer( MATCH, start, end, pattern, attributes ), fragments( 0 ) {
+	MatchVariantContainer( MATCH, start, end, pattern, attributes ) {
 	addVariant( variant );
 }
 
 Match::~Match() {
-	if ( fragments )
-		delete []fragments;
-}
-
-const Fragment & Match::getFragment(uint num) const {
-	if (!fragments) {
-		fragments = new Fragment[1];
-		fragments[0].match = this;
-		fragments[0].start = start.endOffset;
-		fragments[0].end = end.startOffset;
-	}
-
-	return fragments[0];
 }
 
 void Match::dump( std::ostream & out, std::string tabs ) const {

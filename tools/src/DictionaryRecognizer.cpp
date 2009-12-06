@@ -111,9 +111,9 @@ namespace lspl {
 			}
 			for(uint j = 0; j < matches.size(); ++j) {
 				text::MatchRef match = matches[j];
-				std::string match_s = match->getFragment(0).getText(); 
+				std::string match_s = match->getRangeString();
 				/*std::cout << "Match '" <<
-							Util::out.convert(match->getFragment(0).getText()) << "'" <<
+							Util::out.convert(match->getRangeString()) << "'" <<
 							std::endl;*/
 				std::string normalized_match =
 						normalization.normalize(*match->getVariants().at(0));
@@ -137,7 +137,7 @@ namespace lspl {
 			result.push_back(pattern);
 			for(uint j = 0; j < pattern->matches.size(); j++) {
 				text::MatchRef match = pattern->matches[j];
-				base::Range range = match->getFragment(0);
+				base::Range range = match->getRange();
 				if (!range_set.FindRangeExtension(range)) {
 					range_set.AddRange(range);
 					++(pattern->match_count);
