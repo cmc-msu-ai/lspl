@@ -8,7 +8,7 @@ namespace lspl { namespace text { namespace attributes {
 class IndexedAttributeKeyManager : public IndexedEntryManager {
 public:
 	IndexedAttributeKeyManager() {
-		add( 0, "un", "unedfined", "неопределено" );
+		add( 0, "un", "undefined", "неопределено" );
 		add( 1, "c", "case", "падеж" );
 		add( 2, "n", "number", "число" );
 		add( 3, "g", "gender", "род" );

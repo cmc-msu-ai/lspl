@@ -19,7 +19,15 @@ namespace lspl { namespace assertions {
 
 void assertBuildsImpl( const NamespaceRef & ns, const std::string & patternSource, char const *file, int line ) {
 	patterns::PatternBuilder builder( ns );
-	patterns::PatternBuilder::BuildInfo info = builder.build( patternSource );
+	patterns::PatternBuilder::BuildInfo info;
+
+	try {
+		info = builder.build( patternSource );
+	} catch ( const std::exception & e ) {
+		throw cute::test_failure( ( boost::format( "ERROR: %1%" ) % e.what() ).str(), file, line);
+	} catch (...) {
+		throw cute::test_failure( "ERROR: Unknown exception", file, line);
+	}
 
 	if ( info.parseTail.length() > 0 )
 		throw cute::test_failure( ( boost::format( "ERROR: Pattern '%1%' was not built: '%2%' not parsed." ) % patternSource % info.parseTail ).str(), file, line);
@@ -41,6 +49,8 @@ void assertFailsImpl( const NamespaceRef & ns, const std::string & patternSource
 		info = builder.build( patternSource );
 	} catch ( std::exception & ex ) {
 		return;
+	} catch (...) {
+		throw cute::test_failure( "ERROR: Unknown exception", file, line);
 	}
 
 	if ( info.parseTail.length() == 0 )

@@ -45,6 +45,18 @@ static void testSimplePatterns() {
 	assertNoMatches( "Мама мыла раму", "Act = N<папа> V" );
 }
 
+static void testRestrictionsOnBase() {
+	// Pattern restrictions
+	assertMatches( "Мама мыла раму", 0, 2, "N V <V.b='МЫТЬ'>" );
+	assertNoMatches( "Мама мыла раму", "N V <V.b='БЕГАТЬ'>" );
+}
+
+static void testRestrictionsOnStem() {
+	// Pattern restrictions
+	assertMatches( "Мама мыла раму", 0, 2, "N V <V.st='М'>" );
+	assertNoMatches( "Мама мыла раму", "N V <V.st='БЕГ'>" );
+}
+
 static void testTerm() {
 	// Term
 	assertMatches( "Процессор базы данных", 0, 3, "\"процессор\" \"базы\" \"данных\"" );
@@ -170,6 +182,8 @@ cute::suite matchingSuite() {
 
 	s += CUTE(testRegexpTokens);
 	s += CUTE(testSimplePatterns);
+	s += CUTE(testRestrictionsOnBase);
+	s += CUTE(testRestrictionsOnStem);
 	s += CUTE(testTerm);
 	s += CUTE(testLoopRestrictions);
 	s += CUTE(testLoopAlternatives);

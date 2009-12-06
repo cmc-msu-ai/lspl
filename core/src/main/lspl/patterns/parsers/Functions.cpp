@@ -136,36 +136,13 @@ void AddMatcherRestrictionImpl::operator()( boost::ptr_vector<Restriction> & res
 	restrictions.push_back( restriction );
 }
 
-void AddPatternRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matchers, const std::vector<std::pair<Variable,AttributeKey> > & elems ) const {
-	std::pair<Variable,AttributeKey> dst = elems[elems.size()-1]; // TODO Aligning variables
+void AddAgreementRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matchers, boost::ptr_vector<Expression> & args ) const {
+	Matcher & lastMatcher = findLastMatcher( matchers, args );
+	AgreementRestriction * ar = new AgreementRestriction();
 
-	for ( uint i = 0; i < matchers.size(); ++ i ) {
-		Matcher & matcher = matchers[ i ];
+	ar->addArguments( args );
 
-		if ( matcher.variable == dst.first ) {
-			AgreementRestriction * restriction = new AgreementRestriction();
-
-			if ( elems[0].second == AttributeKey::UNDEFINED ) {
-				for ( uint j = 0; j < elems.size() - 1; ++ j )
-					restriction->addArgument( new VariableExpression( elems[j].first ) );
-
-				restriction->addArgument( new CurrentAnnotationExpression() );
-			} else {
-				for ( uint j = 0; j < elems.size() - 1; ++ j )
-					restriction->addArgument( new AttributeExpression( new VariableExpression( elems[j].first ), elems[j].second ) );
-
-				restriction->addArgument( new AttributeExpression( new CurrentAnnotationExpression(), dst.second == AttributeKey::UNDEFINED ? elems[0].second : dst.second ) );
-			}
-
-			matcher.addRestriction( restriction );
-		} else if ( matcher.type == matchers::Matcher::LOOP ) {
-			LoopMatcher & loopMatcher = dynamic_cast<LoopMatcher &>( matcher );
-
-			for ( uint i = 0; i < loopMatcher.alternatives.size(); ++ i ) {
-				(*this)( const_cast<boost::ptr_vector<Matcher> &>( loopMatcher.alternatives[i].getMatchers() ), elems );
-			}
-		}
-	}
+	lastMatcher.addRestriction( ar );
 }
 
 void AddDictionaryRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matchers, const std::string & dictionaryName, boost::ptr_vector<Expression> & args ) const {
@@ -182,7 +159,7 @@ void AddDictionaryRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matc
 	lastMatcher.addRestriction( dr );
 }
 
-Matcher & AddDictionaryRestrictionImpl::findLastMatcher( boost::ptr_vector<Matcher> & matchers, const boost::ptr_vector<Expression> & args ) const {
+Matcher & AddRestrictionBase::findLastMatcher( boost::ptr_vector<Matcher> & matchers, const boost::ptr_vector<Expression> & args ) const {
 	for ( int i = matchers.size() - 1; i >= 0; --i )
 		for ( int j = args.size() - 1; j >= 0; --j )
 			if ( args[j].containsVariable( matchers[i].variable ) )

@@ -51,10 +51,9 @@ public:
 		member2 value;
 	};
 
-	struct PatternRestrictionClosure : public boost::spirit::closure< PatternRestrictionClosure, std::vector<std::pair<Variable,AttributeKey> >, Variable, AttributeKey > {
-		member1 elements;
-		member2 curVariable;
-		member3 curAttribute;
+	struct AgreementRestrictionClosure : public boost::spirit::closure< AgreementRestrictionClosure, int, boost::ptr_vector<Expression> > {
+		member1 noret;
+		member2 args;
 	};
 
 	struct DictionaryRestrictionClosure : public boost::spirit::closure< DictionaryRestrictionClosure, std::string, boost::ptr_vector<Expression> > {
@@ -149,7 +148,8 @@ public:
         	function<AddBindingImpl> addBinding;
 
         	function<AddMatcherRestrictionImpl> addMatcherRestriction;
-        	function<AddPatternRestrictionImpl> addPatternRestriction;
+        	function<AddAgreementRestrictionImpl> addAgreementRestriction;
+        	function<AddDictionaryRestrictionImpl> addDictionaryRestriction( *self.space );
 
         	function<AddPatternMatcherImpl> addPatternMatcher( AddPatternMatcherImpl( *self.space, typeSymbol ) );
         	function<AddWordMatcherImpl> addWordMatcher;
@@ -157,7 +157,6 @@ public:
         	function<AddLoopMatcherImpl> addLoopMatcher;
         	function<AddAlternativeDefinitionImpl> addAlternativeDefinition( AddAlternativeDefinitionImpl( *self.transformBuilder ) );
         	function<AddPatternDefinitionImpl> addPatternDefinition( AddPatternDefinitionImpl( *self.space, typeSymbol, *self.transformBuilder ) );
-        	function<AddDictionaryRestrictionImpl> addDictionaryRestriction( *self.space );
 
         	function<CreateVariableExpression> createVariableExpression;
         	function<CreateAttributeExpression> createAttributeExpression;
@@ -245,15 +244,12 @@ public:
         	 * Парсеры ограничений
         	 */
 
-        	restrictions = '<' >> expect_restriction_body( ( patternRestriction | dictionaryRestriction ) % ',' ) >> endRestriction;
+        	restrictions = '<' >> expect_restriction_body( ( agreementRestriction | dictionaryRestriction ) % ',' ) >> endRestriction;
 
         	matcherRestriction = ( attributeKey[ matcherRestriction.attribute = arg1 ] >> '=' >> expect_attribute_value( attributeValue[ matcherRestriction.value = arg1 ] ) )
         		[ addMatcherRestriction( matcher.restrictions, matcherRestriction.attribute, matcherRestriction.value ) ];
 
-        	patternRestriction = (
-        			( variable[ patternRestriction.curVariable = arg1 ] >> !( '.' >> attributeKey[ patternRestriction.curAttribute = arg1 ] ) )
-        			[ add( patternRestriction.elements, construct_< std::pair<Variable,AttributeKey> >( patternRestriction.curVariable, patternRestriction.curAttribute ) ) ] % '='
-        		)[ addPatternRestriction( alternative.matchers, patternRestriction.elements ) ];
+        	agreementRestriction = ( expression[ add( agreementRestriction.args, arg1 ) ] % "=" )[ addAgreementRestriction( alternative.matchers, agreementRestriction.args ) ];
 
         	dictionaryRestriction = ( ( lexeme_d[ +chset_p("a-zA-Z") ][ dictionaryRestriction.dictionaryName = construct_<std::string>( arg1, arg2 ) ] ) >> "(" >> ( expression[ add( dictionaryRestriction.args, arg1 ) ] % "," ) >> ")" )[ addDictionaryRestriction( alternative.matchers, dictionaryRestriction.dictionaryName, dictionaryRestriction.args ) ];
 
@@ -295,7 +291,7 @@ public:
     	rule<ScannerT, AlternativeClosure::context_t> alternative;
 
     	rule<ScannerT, MatcherRestrictionClosure::context_t> matcherRestriction;
-    	rule<ScannerT, PatternRestrictionClosure::context_t> patternRestriction;
+    	rule<ScannerT, AgreementRestrictionClosure::context_t> agreementRestriction;
     	rule<ScannerT, DictionaryRestrictionClosure::context_t> dictionaryRestriction;
 
     	rule<ScannerT, MatcherClosure::context_t> matcher;

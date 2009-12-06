@@ -38,8 +38,11 @@ std::string Word::getAttributesString() const {
 }
 
 attributes::AttributeValue Word::getAttribute( attributes::AttributeKey key ) const {
-	if ( key == AttributeKey::BASE ) // Если запрашиваемый аттрибут - основа слова
+	if ( key == AttributeKey::BASE ) // Если запрашиваемый аттрибут - начальная форма слова
 		return AttributeValue( base ); // Возвращаем основу, как строковый аттрибут
+
+	if ( key == AttributeKey::STEM ) // Если запрашиваемый аттрибут - основа слова
+			return AttributeValue( stem ); // Возвращаем основу, как строковый аттрибут
 
 	if ( key == AttributeKey::TEXT ) // Если запрашиваемый аттрибут - текст
 		return AttributeValue( getRangeString() ); // Возвращаем текст, как строковый аттрибут

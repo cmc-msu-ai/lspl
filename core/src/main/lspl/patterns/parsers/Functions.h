@@ -123,6 +123,12 @@ struct AddImpl {
 	}
 };
 
+struct AddRestrictionBase {
+
+	Matcher & findLastMatcher( boost::ptr_vector<Matcher> & matchers, const boost::ptr_vector<Expression> & args ) const;
+
+};
+
 struct AddMatcherRestrictionImpl {
 	template <typename Arg1, typename Arg2, typename Arg3>
 	struct result { typedef void type; };
@@ -130,14 +136,14 @@ struct AddMatcherRestrictionImpl {
 	void operator()( boost::ptr_vector<Restriction> & restrictions, AttributeKey type, AttributeValue value ) const;
 };
 
-struct AddPatternRestrictionImpl {
+struct AddAgreementRestrictionImpl : public AddRestrictionBase {
 	template <typename Arg1, typename Arg2>
 	struct result { typedef void type; };
 
-	void operator()( boost::ptr_vector<Matcher> & matchers, const std::vector<std::pair<Variable,AttributeKey> > & elems ) const;
+	void operator()( boost::ptr_vector<Matcher> & matchers, boost::ptr_vector<Expression> & args ) const;
 };
 
-struct AddDictionaryRestrictionImpl {
+struct AddDictionaryRestrictionImpl : public AddRestrictionBase {
 	template <typename Arg1, typename Arg2, typename Arg3>
 	struct result { typedef void type; };
 
@@ -146,8 +152,6 @@ struct AddDictionaryRestrictionImpl {
 	}
 
 	void operator()( boost::ptr_vector<Matcher> & matchers, const std::string & dictionaryName, boost::ptr_vector<Expression> & args ) const;
-
-	Matcher & findLastMatcher( boost::ptr_vector<Matcher> & matchers, const boost::ptr_vector<Expression> & args ) const;
 
 	Namespace & ns;
 };
