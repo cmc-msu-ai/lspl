@@ -116,7 +116,7 @@ namespace lspl {
 							Util::out.convert(match->getFragment(0).getText()) << "'" <<
 							std::endl;*/
 				std::string normalized_match =
-						normalization.normalize(match->getVariants().at(0));
+						normalization.normalize(*match->getVariants().at(0));
 				if (result_matches.find(normalized_match) == result_matches.end()) {
 					PatternMatchRef patterns_match =
 							new PatternMatch(normalized_match, pattern);

@@ -54,7 +54,7 @@ void Normalization::appendToString( std::string & str, const Transition & transi
 	} else if ( const Loop * loop = dynamic_cast<const Loop*>( &transition ) ) {
 		appendToString( str, loop->getIterations() );
 	} else if ( const Match * match = dynamic_cast<const Match*>( &transition ) ) {
-		appendToString( str, match->getVariants().at( 0 ) );
+		appendToString( str, *match->getVariants().at( 0 ) );
 	}
 }
 
@@ -88,7 +88,7 @@ void Normalization::normalizeToString( std::string & str, const Transition & tra
 	} else if ( const Loop * loop = dynamic_cast<const Loop*>( &transition ) ) {
 		normalizeToString( str, loop->getIterations() );
 	} else if ( const Match * match = dynamic_cast<const Match*>( &transition ) ) {
-		normalizeToString( str, match->getVariants().at( 0 ) );
+		normalizeToString( str, *match->getVariants().at( 0 ) );
 	}
 }
 

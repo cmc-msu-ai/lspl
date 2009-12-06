@@ -174,7 +174,7 @@ namespace lspl {
 			return "";
 		}
 		std::string normalized_match =
-				normalization.normalize(matches[0]->getVariants().at(0)); 
+				normalization.normalize(*matches[0]->getVariants().at(0));
 		return normalized_match;
 	}
 

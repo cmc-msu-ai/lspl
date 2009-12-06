@@ -32,7 +32,8 @@ public:
 		MATCH,
 		LOOP,
 		TOKEN,
-		ITERATION
+		ITERATION,
+		RESTRICTED_MATCH
 	};
 public:
 	Transition( Type type, const text::Node & start, const text::Node & end ) :

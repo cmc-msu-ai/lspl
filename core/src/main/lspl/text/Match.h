@@ -55,7 +55,7 @@ public:
 /**
  * Вариант сопоставления - хранит конкретный набор сопоставленных элементов
  */
-class LSPL_EXPORT MatchVariant : public TransitionList {
+class LSPL_EXPORT MatchVariant : public base::RefCountObject<MatchVariant>, public TransitionList {
 public:
 
 	MatchVariant( const patterns::Alternative & alternative );
@@ -89,21 +89,71 @@ private:
 	mutable transforms::TransformResult * transformResult;
 };
 
-/**
- * Результат сопоставления шаблона в тексте. Состоит из нескольких вариантов сопоставления.
- */
-class LSPL_EXPORT Match : public Transition {
+class LSPL_EXPORT MatchVariantContainer : public Transition {
 public:
 	typedef std::map<attributes::AttributeKey,attributes::AttributeValue> AttributesMap;
 public:
-	/**
-	 * При создании результата также верно замечание к методу addVariant
-	 */
-	Match( const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, MatchVariant * variant, const AttributesMap & attributes );
-
-	virtual ~Match();
+	MatchVariantContainer( Type type, const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, const AttributesMap & attributes );
+	virtual ~MatchVariantContainer();
 
 	virtual attributes::AttributeValue getAttribute( attributes::AttributeKey attributeType ) const;
+
+	/**
+	 * Получить сопоставленный шаблон
+	 *
+	 * @return шаблон, использовавшийся при сопоставлении
+	 */
+	const patterns::Pattern & getPattern() const {
+		return pattern;
+	}
+
+	const MatchVariantRef & getVariant( uint index ) const {
+		return variants[ index ];
+	}
+
+	const uint getVariantCount() const {
+		return variants.size();
+	}
+
+	/**
+	 * Получить набор вариантов сопоставления
+	 *
+	 * @return список вариантов сопоставления
+	 */
+	const MatchVariantList & getVariants() const {
+		return variants;
+	}
+
+protected:
+	const patterns::Pattern & pattern;
+
+	AttributesMap attributes; // Аттрибуты сопоставления
+	MatchVariantList variants; // Различные варианты сопоставления
+};
+
+/**
+ * Результат сопоставления шаблона с дополнительными ограничениями.
+ */
+class LSPL_EXPORT RestrictedMatch : public MatchVariantContainer {
+public:
+	RestrictedMatch( const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, MatchVariant * variant, const AttributesMap & attributes );
+	virtual ~RestrictedMatch();
+
+	virtual void dump( std::ostream & out, std::string tabs = "" ) const;
+
+	void addVariant( MatchVariant * variant ) {
+		variants.push_back( variant );
+	}
+};
+
+/**
+ * Результат сопоставления шаблона в тексте. Состоит из нескольких вариантов сопоставления.
+ */
+class LSPL_EXPORT Match : public MatchVariantContainer {
+
+public:
+	Match( const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, MatchVariant * variant, const AttributesMap & attributes );
+	virtual ~Match();
 
 	virtual void dump( std::ostream & out, std::string tabs = "" ) const;
 
@@ -121,29 +171,7 @@ public:
 	bool equals( const patterns::Pattern & p, const Node & start, const Node & end, const AttributesMap & atts ) const;
 
 	/**
-	 * Получить сопоставленный шаблон
-	 *
-	 * @return шаблон, использовавшийся при сопоставлении
-	 */
-	const patterns::Pattern & getPattern() const {
-		return pattern;
-	}
-
-	/**
-	 * Получить набор вариантов сопоставления
-	 *
-	 * @return список вариантов сопоставления
-	 */
-	const boost::ptr_vector<MatchVariant> & getVariants() const {
-		return variants;
-	}
-
-	/**
 	 * Добавить вариант сопоставления.
-	 *
-	 * Вариант сопоставления является неразделяемым объектом, при добавлении его в результат контроль над его жизненным циклом переходит к результату
-	 * и он уничтожит вариант при своем уничтожении. Поэтому при добавлении варианта в результат необходимо исключить его из любых других контейнеров,
-	 * которые осуществляют контроль его жизненного цикла, таких как автоматические указатели (auto_ptr) или контейнеры указателей (ptr_containers).
 	 *
 	 * @param variant вариант сопоставления
 	 */
@@ -160,11 +188,6 @@ public:
 	const Fragment & getFragment( uint num ) const;
 	uint getFragmentCount() const { return 1; }
 private:
-	const patterns::Pattern & pattern;
-
-	boost::ptr_vector<MatchVariant> variants; // Различные варианты сопоставления
-	AttributesMap attributes; // Аттрибуты сопоставления
-
 	mutable Fragment * fragments; // Фрагменты сопоставления, инициализируючтся лениво, при первом запросе
 };
 

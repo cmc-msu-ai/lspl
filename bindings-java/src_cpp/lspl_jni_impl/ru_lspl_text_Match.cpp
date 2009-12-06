@@ -32,7 +32,7 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariant(JNIEnv * env, jobje
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantTransformResult(JNIEnv * env, jobject obj, jint index) {
 	try {
-		return JavaMatch::get(env,obj)->transition.cast<Match>()->getVariants().at( index ).getTransformResult<jobject>();
+		return JavaMatch::get(env,obj)->transition.cast<Match>()->getVariant( index )->getTransformResult<jobject>();
 	} catch ( lspl::base::Exception & e ) {
 		return 0;
 	}
@@ -44,7 +44,7 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantTransformResult(JNIE
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL Java_ru_lspl_text_Match_getVariantTransitionCount(JNIEnv * env, jobject obj, jint vindex) {
-	return JavaMatch::get(env,obj)->transition.cast<Match>()->getVariants().at( vindex ).size();
+	return JavaMatch::get(env,obj)->transition.cast<Match>()->getVariant( vindex )->size();
 }
 
 /*
@@ -53,7 +53,7 @@ JNIEXPORT jint JNICALL Java_ru_lspl_text_Match_getVariantTransitionCount(JNIEnv 
  * Signature: (II)Lru/lspl/text/Transition;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantTransition(JNIEnv * env, jobject obj, jint vindex, jint tindex) {
-	return JavaTransition::get( env, JavaMatch::get(env,obj)->transition.cast<Match>()->getVariants().at( vindex ).at( tindex ).get() )->object;
+	return JavaTransition::get( env, JavaMatch::get(env,obj)->transition.cast<Match>()->getVariant( vindex )->at( tindex ).get() )->object;
 }
 
 /*

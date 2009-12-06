@@ -16,6 +16,8 @@
 using namespace lspl::text::attributes;
 using namespace lspl::patterns;
 
+LSPL_REFCOUNT_CLASS( lspl::text::MatchVariant );
+
 namespace lspl { namespace text {
 
 std::string Fragment::getText() const {
@@ -47,8 +49,46 @@ transforms::TransformResult * MatchVariant::calculateTransformResult() const {
 	return alternative.hasTransform() ? alternative.getTransform().applyAndBox( *this ) : new transforms::TypedTransformResult<int>( 0 );
 }
 
+MatchVariantContainer::MatchVariantContainer( Type type, const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, const AttributesMap & attributes ) :
+	Transition( type, start, end ), pattern( pattern ), attributes( attributes ) {
+}
+
+MatchVariantContainer::~MatchVariantContainer() {
+}
+
+RestrictedMatch::RestrictedMatch( const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, MatchVariant * variant, const AttributesMap & attributes ) :
+	MatchVariantContainer( RESTRICTED_MATCH, start, end, pattern, attributes ) {
+	addVariant( variant );
+}
+
+RestrictedMatch::~RestrictedMatch() {
+}
+
+AttributeValue MatchVariantContainer::getAttribute( AttributeKey key ) const {
+	AttributesMap::const_iterator it = attributes.find( key ); // Находим аттрибут в карте
+
+	if ( it != attributes.end() )
+		return it->second;
+
+	return Transition::getAttribute( key );
+}
+
+void RestrictedMatch::dump( std::ostream & out, std::string tabs ) const {
+	out << "RestrictedMatch{ name = " << pattern.name << ", start = " << start.index
+			<< ", end = " << end.index << ", attributes = [";
+
+	for ( AttributesMap::const_iterator it = attributes.begin(); it != attributes.end(); ++ it ) {
+		if ( it != attributes.begin() )
+			out << ",";
+
+		out << "\n\t" << tabs << it->first.getAbbrevation() << " / " << it->second;
+	}
+
+	out << "\n" << tabs << "] }";
+}
+
 Match::Match( const text::Node & start, const text::Node & end, const patterns::Pattern & pattern, MatchVariant * variant, const AttributesMap & attributes ) :
-	Transition( MATCH, start, end ), pattern( pattern ), attributes( attributes ), fragments( 0 ) {
+	MatchVariantContainer( MATCH, start, end, pattern, attributes ), fragments( 0 ) {
 	addVariant( variant );
 }
 
@@ -66,15 +106,6 @@ const Fragment & Match::getFragment(uint num) const {
 	}
 
 	return fragments[0];
-}
-
-AttributeValue Match::getAttribute( AttributeKey key ) const {
-	AttributesMap::const_iterator it = attributes.find( key ); // Находим аттрибут в карте
-
-	if ( it != attributes.end() )
-		return it->second;
-
-	return Transition::getAttribute( key );
 }
 
 void Match::dump( std::ostream & out, std::string tabs ) const {
