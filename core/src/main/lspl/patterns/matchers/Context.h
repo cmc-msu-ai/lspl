@@ -17,15 +17,16 @@ namespace lspl { namespace patterns { namespace matchers {
 
 class LSPL_EXPORT Context {
 public:
+	typedef std::multimap< Variable, text::TransitionConstRef > Map;
+	typedef Map::const_iterator ConstIterator;
+	typedef std::pair<ConstIterator,ConstIterator> ConstRange;
+public:
 	Context();
 	~Context();
 
-	void setVariable( Variable variable, const text::TransitionConstRef & value ){
-		map.insert( std::make_pair( variable, value ) );
-	}
+	void addValue( Variable var, const text::TransitionConstRef & value );
 
-	text::attributes::AttributeValue getAttribute( Variable variable, text::attributes::AttributeKey attribute ) const;
-	text::attributes::AttributeValue getVariable( Variable variable ) const;
+	ConstRange getValues( Variable var ) const;
 
 	void addAttributes( std::map<text::attributes::AttributeKey,text::attributes::AttributeValue> & atts, const Alternative::BindingMap & bindings ) const;
 
@@ -34,7 +35,7 @@ public:
 	}
 
 private:
-	typedef std::map< Variable, text::TransitionConstRef > Map;
+
 private:
 	Map map;
 };

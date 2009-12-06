@@ -27,7 +27,9 @@ bool DictionaryRestriction::matches( const text::Transition * currentAnnotation,
 	std::vector<std::string> words;
 
 	foreach( const Expression & arg, args ) {
-		words.push_back( arg.evaluate( currentAnnotation, currentVar, ctx ).getString() );
+		Expression::ValueListPtr v = arg.evaluate( currentAnnotation, currentVar, ctx );
+
+		words.push_back( v->empty() ? AttributeValue::UNDEFINED.getString() : v->back().getString() );
 	}
 
 	return dictionary->accepts( words );

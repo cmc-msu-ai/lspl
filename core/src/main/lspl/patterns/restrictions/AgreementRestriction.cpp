@@ -15,6 +15,8 @@
 
 using namespace lspl::text::attributes;
 
+using lspl::patterns::expressions::Expression;
+
 namespace lspl { namespace patterns { namespace restrictions {
 
 AgreementRestriction::AgreementRestriction() {
@@ -27,14 +29,22 @@ bool AgreementRestriction::matches( const text::Transition * currentAnnotation, 
 	if ( args.size() <= 1 )
 		throw std::logic_error( "Too less arguments" );
 
-	AttributeValue val1;
-	AttributeValue val2 = args[0].evaluate( currentAnnotation, currentVar, ctx );
+	Expression::ValueList val1, val2;
+
+	Expression::ValueList * v1 = &val1;
+	Expression::ValueList * v2 = &val2;
+
+	args[0].evaluateTo( currentAnnotation, currentVar, ctx, *v2 );
 
 	for ( uint i = 1; i < args.size(); ++i ) {
-		val1 = val2;
-		val2 = args[i].evaluate( currentAnnotation, currentVar, ctx );
+		Expression::ValueList * v = v2;
+		v2 = v1;
+		v1 = v;
 
-		if ( !checkAgreement( val1, val2 ) )
+		v2->clear();
+		args[i].evaluateTo( currentAnnotation, currentVar, ctx, *v2 );
+
+		if ( !checkAgreement( *v1, *v2 ) )
 			return false;
 	}
 
@@ -51,6 +61,15 @@ void AgreementRestriction::dump( std::ostream & out, const std::string & tabs ) 
 		out << " ~ ";
 		args[i].dump( out );
 	}
+}
+
+bool AgreementRestriction::checkAgreement( const std::vector<AttributeValue> & val1, const std::vector<AttributeValue> & val2 ) const {
+	foreach ( AttributeValue v1, val1 )
+		foreach ( AttributeValue v2, val2 )
+			if ( !checkAgreement( v1, v2 ) )
+				return false;
+
+	return true;
 }
 
 bool AgreementRestriction::checkAgreement( AttributeValue val1, AttributeValue val2 ) const {

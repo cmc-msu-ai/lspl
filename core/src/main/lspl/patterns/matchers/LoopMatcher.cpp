@@ -43,7 +43,7 @@ struct LoopIterationMatchState : public boost::noncopyable {
 		if ( &transition->start != &getCurrentNode() )
 			throw std::logic_error("Illegal transition");
 
-		context.setVariable( getCurrentMatcher().variable, transition );
+		context.addValue( getCurrentMatcher().variable, transition );
 
 		variant->push_back( transition );
 	}
@@ -54,7 +54,7 @@ struct LoopIterationMatchState : public boost::noncopyable {
 		if ( &transition->start != &getCurrentNode() )
 			throw std::logic_error("Illegal transition");
 
-		context.setVariable( getCurrentMatcher().variable, transition );
+		context.addValue( getCurrentMatcher().variable, transition );
 
 		variant->push_back( transition );
 	}

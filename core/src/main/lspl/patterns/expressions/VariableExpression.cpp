@@ -21,12 +21,14 @@ VariableExpression::VariableExpression( const matchers::Variable & variable ) :
 VariableExpression::~VariableExpression() {
 }
 
-AttributeValue VariableExpression::evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx ) const {
-	if ( currentVar == variable ) {
-		return AttributeValue( *currentAnnotation );
-	} else {
-		return ctx.getVariable( variable );
-	}
+void VariableExpression::evaluateTo( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx, ValueList & results ) const {
+	Context::ConstRange range = ctx.getValues( variable );
+
+	for ( Context::ConstIterator it = range.first; it != range.second; ++ it )
+		results.push_back( AttributeValue( *it->second ) );
+
+	if ( currentVar == variable )
+		results.push_back( AttributeValue( *currentAnnotation ) );
 }
 
 void VariableExpression::dump( std::ostream & out, const std::string & tabs ) const {

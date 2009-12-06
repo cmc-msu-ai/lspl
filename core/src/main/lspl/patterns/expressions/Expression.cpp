@@ -15,4 +15,12 @@ Expression::Expression() {
 Expression::~Expression() {
 }
 
+Expression::ValueListPtr Expression::evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const {
+	ValueListPtr results( new ValueList() );
+
+	evaluateTo( currentAnnotation, currentVar, ctx, *results );
+
+	return results;
+}
+
 } } }

@@ -14,6 +14,8 @@
 #include "../matchers/Variable.h"
 
 #include <ostream>
+#include <vector>
+#include <memory>
 
 namespace lspl { namespace patterns { namespace matchers {
 
@@ -28,6 +30,9 @@ namespace lspl { namespace patterns { namespace expressions {
  */
 class LSPL_EXPORT Expression {
 public:
+	typedef std::vector<text::attributes::AttributeValue> ValueList;
+	typedef std::auto_ptr<ValueList> ValueListPtr;
+public:
 	Expression();
 	virtual ~Expression();
 
@@ -36,9 +41,11 @@ public:
 	 * @param currentAnnotation аннотация на которой вычисляется выражение
 	 * @param currentVar переменная, соответствующая аннотации
 	 * @param ctx контекст
-	 * @return значение выражения
+	 * @return значения выражения
 	 */
-	virtual text::attributes::AttributeValue evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const = 0;
+	virtual ValueListPtr evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const;
+
+	virtual void evaluateTo( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx, ValueList & results ) const = 0;
 
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const = 0;
 

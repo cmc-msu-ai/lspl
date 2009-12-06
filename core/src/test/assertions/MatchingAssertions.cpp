@@ -42,7 +42,7 @@ void assertMatchesImpl( const NamespaceRef & ns, const char * textSource, uint f
 		throw cute::test_failure( ( boost::format( "No matches for pattern '%1%' in text '%2%'" ) % patternSource % textSource ).str(), file, line);
 
 	if ( matches[0]->start.index != from || matches[0]->end.index != to )
-		throw cute::test_failure( ( boost::format( "Wrong for pattern '%1%' in text '%2%': [%3%,%4%], but [%5%,%6%] expected" ) % patternSource % textSource % matches[0]->start.index % matches[0]->end.index % from % to ).str(), file, line);
+		throw cute::test_failure( ( boost::format( "Wrong range for pattern '%1%' in text '%2%': [%3%,%4%], but [%5%,%6%] expected" ) % patternSource % textSource % matches[0]->start.index % matches[0]->end.index % from % to ).str(), file, line);
 }
 
 void assertNoMatchesImpl( const char * textSource, const char * patternSource, char const *f, int line ) {

@@ -55,6 +55,7 @@ private:
 	 * @return true, если значения согласованы
 	 */
 	bool checkAgreement( text::attributes::AttributeValue val1, text::attributes::AttributeValue val2 ) const;
+	bool checkAgreement( const std::vector<text::attributes::AttributeValue> & val1, const std::vector<text::attributes::AttributeValue> & val2 ) const;
 
 private:
 

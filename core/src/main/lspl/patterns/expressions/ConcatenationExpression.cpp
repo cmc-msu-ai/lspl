@@ -18,17 +18,22 @@ namespace lspl { namespace patterns { namespace expressions {
 ConcatenationExpression::~ConcatenationExpression() {
 }
 
-AttributeValue ConcatenationExpression::evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx ) const {
+void ConcatenationExpression::evaluateTo( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx, ValueList & results ) const {
 	std::ostringstream out;
 
 	if ( !args.empty() ) {
-		out << args[0].evaluate( currentAnnotation, currentVar, ctx ).getString();
+		ValueListPtr v0 = args[0].evaluate( currentAnnotation, currentVar, ctx );
 
-		for ( uint i = 1; i < args.size(); ++ i )
-			out << " " << args[i].evaluate( currentAnnotation, currentVar, ctx ).getString();
+		out << ( v0->empty() ? AttributeValue::UNDEFINED.getString() : v0->back().getString() );
+
+		for ( uint i = 1; i < args.size(); ++ i ) {
+			ValueListPtr vi = args[i].evaluate( currentAnnotation, currentVar, ctx );
+
+			out << " " << ( vi->empty() ? AttributeValue::UNDEFINED.getString() : vi->back().getString() );
+		}
 	}
 
-	return AttributeValue( out.str() );
+	results.push_back( AttributeValue( out.str() ) );
 }
 
 void ConcatenationExpression::dump( std::ostream & out, const std::string & tabs ) const {

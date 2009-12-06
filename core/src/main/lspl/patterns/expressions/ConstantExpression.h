@@ -18,7 +18,7 @@ public:
 	ConstantExpression( const text::attributes::AttributeValue & value );
 	virtual ~ConstantExpression();
 
-	virtual text::attributes::AttributeValue evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const;
+	virtual void evaluateTo( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx, ValueList & results ) const;
 
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
 	virtual bool equals( const Expression & e ) const;

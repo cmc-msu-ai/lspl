@@ -22,13 +22,15 @@ AttributeExpression::AttributeExpression( const Expression * base, const Attribu
 AttributeExpression::~AttributeExpression() {
 }
 
-AttributeValue AttributeExpression::evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx ) const {
-	AttributeValue baseVal = base->evaluate( currentAnnotation, currentVar, ctx );
+void AttributeExpression::evaluateTo( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx, ValueList & results ) const {
+	ValueListPtr baseValues = base->evaluate( currentAnnotation, currentVar, ctx );
 
-	if ( baseVal == AttributeValue::UNDEFINED )
-		return AttributeValue::UNDEFINED;
+	foreach ( AttributeValue baseVal, *baseValues ) {
+		if ( baseVal == AttributeValue::UNDEFINED )
+			results.push_back( AttributeValue::UNDEFINED );
 
-	return baseVal.getContainer().getAttribute( attribute );
+		results.push_back( baseVal.getContainer().getAttribute( attribute ) );
+	}
 }
 
 void AttributeExpression::dump( std::ostream & out, const std::string & tabs ) const {

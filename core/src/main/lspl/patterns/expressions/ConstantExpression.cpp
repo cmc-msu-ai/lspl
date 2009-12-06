@@ -19,8 +19,8 @@ ConstantExpression::ConstantExpression( const AttributeValue & value ) :
 ConstantExpression::~ConstantExpression() {
 }
 
-AttributeValue ConstantExpression::evaluate( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx ) const {
-	return value;
+void ConstantExpression::evaluateTo( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx, ValueList & results ) const {
+	results.push_back( value );
 }
 
 void ConstantExpression::dump( std::ostream & out, const std::string & tabs ) const {
