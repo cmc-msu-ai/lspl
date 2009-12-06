@@ -79,7 +79,7 @@ public:
 
 	/**
 	 * Получить вектор сопоставлений для заданного шаблона
-	 * @param pattern ссылка на шаблон
+	 * @param pattern шаблон
 	 */
 	const MatchList & getMatches( const patterns::Pattern & pattern );
 
@@ -87,8 +87,7 @@ public:
 	 * Получить вектор сопоставлений для заданного шаблона
 	 * @param pattern указатель на шаблон
 	 */
-	template <class PatternType>
-	const MatchList & getMatches( const base::Reference<PatternType> & pattern ) {
+	const MatchList & getMatches( const patterns::PatternRef & pattern ) {
 		return getMatches( *pattern );
 	}
 
