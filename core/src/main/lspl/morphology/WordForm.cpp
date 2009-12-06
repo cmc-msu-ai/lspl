@@ -24,6 +24,9 @@ AttributeValue WordForm::getAttribute( uint setIndex, AttributeKey key ) const {
 	if ( key == AttributeKey::BASE ) // Если запрашиваемый аттрибут - основа слова
 		return AttributeValue( base ); // Возвращаем основу, как строковый аттрибут
 
+	if ( key == AttributeKey::STEM ) // Если запрашиваемый аттрибут - основа слова
+		return AttributeValue( stem ); // Возвращаем основу, как строковый аттрибут
+
 	return Morphology::extractAttributeValue( attributeSets[ setIndex ], key );
 }
 

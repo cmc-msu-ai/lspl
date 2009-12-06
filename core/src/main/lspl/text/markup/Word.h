@@ -14,7 +14,7 @@ namespace lspl { namespace text { namespace markup {
 
 class LSPL_EXPORT Word : public Transition {
 public:
-	Word( const text::Node & start, const text::Node & end, const TokenRef & token, const std::string & base, attributes::SpeechPart speechPart, uint64 attributes );
+	Word( const text::Node & start, const text::Node & end, const TokenRef & token, const std::string & base, const std::string & stem, attributes::SpeechPart speechPart, uint64 attributes );
 	virtual ~Word();
 
 	virtual void dump(std::ostream & out, std::string tabs = "") const;
@@ -62,6 +62,11 @@ private:
 	 * Базовая форма слова
 	 */
 	const std::string base;
+
+	/**
+	 * Основа слова
+	 */
+	const std::string stem;
 };
 
 } } } // namespace lspl::text::markup

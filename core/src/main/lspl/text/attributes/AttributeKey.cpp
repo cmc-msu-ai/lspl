@@ -19,8 +19,9 @@ public:
 		add( 8, "m", "mode", "наклонение" );
 		add( 9, "p", "person", "лицо" );
 		add( 10, "r", "reflexive", "неопределено" );
-		add( 11, "b", "base", "основа" );
+		add( 11, "b", "base", "начальная форма" );
 		add( 12, "x", "text", "текст" );
+		add( 13, "st", "stem", "основа" );
 	};
 };
 
@@ -40,6 +41,7 @@ const AttributeKey AttributeKey::PERSON = AttributeKey( 9 );
 const AttributeKey AttributeKey::REFLEXIVE = AttributeKey( 10 );
 const AttributeKey AttributeKey::BASE = AttributeKey( 11 );
 const AttributeKey AttributeKey::TEXT = AttributeKey( 12 );
+const AttributeKey AttributeKey::STEM = AttributeKey( 13 );
 
 /**
  * Получить общее количество зарегистрированных аттрибутов

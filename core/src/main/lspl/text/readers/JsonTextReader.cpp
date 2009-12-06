@@ -132,7 +132,7 @@ public:
 		}
 
 		void operator()( uint start, uint end, const std::string & token, const std::string & base, uint speechPart, uint64 attributes ) const {
-			parser.builder.addWord( new Word( parser.builder.getNodeByIndex( start ), parser.builder.getNodeByIndex( end ), new Token(parser.builder.getNodeByIndex( start ), parser.builder.getNodeByIndex( end ), token ), base, attributes::SpeechPart( speechPart ), attributes ) );
+			parser.builder.addWord( new Word( parser.builder.getNodeByIndex( start ), parser.builder.getNodeByIndex( end ), new Token(parser.builder.getNodeByIndex( start ), parser.builder.getNodeByIndex( end ), token ), base, "", attributes::SpeechPart( speechPart ), attributes ) );
 		}
 	private:
 		Parser & parser;

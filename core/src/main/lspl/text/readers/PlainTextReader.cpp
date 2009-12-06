@@ -114,7 +114,7 @@ void PlainTextReader::addTransitions( TextBuilder & builder, Node & start, Node 
 			WordForm & form = wordForms[ formIndex ];
 
 			for ( uint i = 0, e = form.getAttributeSetCount(); i < e; ++ i )
-				builder.addWord( new Word( start, end, token, form.getBase(), form.getSpeechPart(), form.getAttributeSet( i ) ) ); // Создаем новый переход-слово и добавляем в список переходов из узла
+				builder.addWord( new Word( start, end, token, form.getBase(), form.getStem(), form.getSpeechPart(), form.getAttributeSet( i ) ) ); // Создаем новый переход-слово и добавляем в список переходов из узла
 		}
 	} else if ( unit.getType() == graphan::Unit::PUNCT && config.analyzePunctuation ) {
 		builder.addToken( new Token( start, end, unit.getString() ) );

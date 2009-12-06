@@ -22,6 +22,7 @@ public:
 	static const AttributeKey MODE;
 	static const AttributeKey PERSON;
 	static const AttributeKey REFLEXIVE;
+	static const AttributeKey STEM;
 	static const AttributeKey BASE;
 	static const AttributeKey TEXT;
 public:

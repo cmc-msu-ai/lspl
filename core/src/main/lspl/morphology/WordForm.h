@@ -24,19 +24,35 @@ namespace lspl { namespace morphology {
 
 class LSPL_EXPORT WordForm {
 public:
-	WordForm( text::attributes::SpeechPart speechPart, const std::string & base, uint64 * attributeSets, uint attributeSetCount ) :
-		speechPart( speechPart ), base( base ), attributeSets( attributeSets ), attributeSetCount( attributeSetCount ) {}
+	WordForm( text::attributes::SpeechPart speechPart, const std::string & base, const std::string & stem, uint64 * attributeSets, uint attributeSetCount ) :
+		speechPart( speechPart ), base( base ), stem( stem ), attributeSets( attributeSets ), attributeSetCount( attributeSetCount ) {}
 
 	virtual ~WordForm() {}
 
+	/**
+	 * Получить начальную форму слова
+	 */
 	const std::string & getBase() const {
 		return base;
 	}
 
+	/**
+	 * Получить основу слова
+	 */
+	const std::string & getStem() const {
+		return stem;
+	}
+
+	/**
+	 * Получить часть речи
+	 */
 	text::attributes::SpeechPart getSpeechPart() const {
 		return speechPart;
 	}
 
+	/**
+	 * Получить значение морфологического признака
+	 */
 	text::attributes::AttributeValue getAttribute( uint setIndex, text::attributes::AttributeKey key ) const;
 
 	uint64 getAttributeSet( uint index ) const {
@@ -49,6 +65,7 @@ public:
 private:
 	text::attributes::SpeechPart speechPart;
 
+	std::string stem;
 	std::string base;
 
 	boost::scoped_array<uint64> attributeSets;
