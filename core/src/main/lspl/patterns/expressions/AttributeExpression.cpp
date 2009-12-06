@@ -23,13 +23,18 @@ AttributeExpression::~AttributeExpression() {
 }
 
 void AttributeExpression::evaluateTo( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx, ValueList & results ) const {
-	ValueListPtr baseValues = base->evaluate( currentAnnotation, currentVar, ctx );
+	uint size = results.size();
 
-	foreach ( AttributeValue baseVal, *baseValues ) {
-		if ( baseVal == AttributeValue::UNDEFINED )
-			results.push_back( AttributeValue::UNDEFINED );
+	base->evaluateTo( currentAnnotation, currentVar, ctx, results );
 
-		results.push_back( baseVal.getContainer().getAttribute( attribute ) );
+	for ( ValueList::iterator it = results.begin() + size, end = results.end(); it != end; ++ it ) {
+		AttributeValue baseVal = *it;
+
+		if ( baseVal == AttributeValue::UNDEFINED ) {
+			*it = AttributeValue::UNDEFINED;
+		} else {
+			*it = baseVal.getContainer().getAttribute( attribute );
+		}
 	}
 }
 
