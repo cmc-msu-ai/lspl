@@ -65,6 +65,8 @@ public:
 	 */
 	virtual bool containsVariable( matchers::Variable var ) const = 0;
 
+	virtual bool containsCurrentAnnotation() const = 0;
+
 public:
 
 	bool operator == ( const Expression & e ) const {

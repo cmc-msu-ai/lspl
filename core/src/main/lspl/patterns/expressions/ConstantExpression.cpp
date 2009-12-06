@@ -39,4 +39,8 @@ bool ConstantExpression::containsVariable( matchers::Variable var ) const {
 	return false;
 }
 
+bool ConstantExpression::containsCurrentAnnotation() const {
+	return false;
+}
+
 } } } // namespace lspl::patterns::expressions

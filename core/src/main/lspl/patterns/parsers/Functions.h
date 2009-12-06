@@ -123,37 +123,13 @@ struct AddImpl {
 	}
 };
 
-struct AddRestrictionBase {
-
-	Matcher & findLastMatcher( boost::ptr_vector<Matcher> & matchers, const boost::ptr_vector<Expression> & args ) const;
-
-};
-
-struct AddMatcherRestrictionImpl {
-	template <typename Arg1, typename Arg2, typename Arg3>
+struct AddRestrictionImpl {
+	template <typename Arg1,typename Arg2>
 	struct result { typedef void type; };
 
-	void operator()( boost::ptr_vector<Restriction> & restrictions, AttributeKey type, AttributeValue value ) const;
-};
+	void operator()( boost::ptr_vector<Matcher> & matchers, Restriction * restriction ) const;
 
-struct AddAgreementRestrictionImpl : public AddRestrictionBase {
-	template <typename Arg1, typename Arg2>
-	struct result { typedef void type; };
-
-	void operator()( boost::ptr_vector<Matcher> & matchers, boost::ptr_vector<Expression> & args ) const;
-};
-
-struct AddDictionaryRestrictionImpl : public AddRestrictionBase {
-	template <typename Arg1, typename Arg2, typename Arg3>
-	struct result { typedef void type; };
-
-	AddDictionaryRestrictionImpl( Namespace & ns ) :
-		ns( ns ) {
-	}
-
-	void operator()( boost::ptr_vector<Matcher> & matchers, const std::string & dictionaryName, boost::ptr_vector<Expression> & args ) const;
-
-	Namespace & ns;
+	Matcher & findLastMatcher( boost::ptr_vector<Matcher> & matchers, const Restriction * restriction ) const;
 };
 
 struct AddBindingImpl {
@@ -163,32 +139,66 @@ struct AddBindingImpl {
 	void operator()( boost::ptr_map<AttributeKey,Expression> & bindings, AttributeKey att, Expression * exp ) const;
 };
 
-struct CreateAttributeExpression {
+struct CreateDictionaryRestrictionImpl {
+	template <typename Arg1, typename Arg2>
+	struct result { typedef Restriction * type; };
+
+	CreateDictionaryRestrictionImpl( Namespace & ns ) :
+		ns( ns ) {
+	}
+
+	Restriction * operator()( const std::string & dictionaryName, boost::ptr_vector<Expression> & args ) const;
+
+	Namespace & ns;
+};
+
+struct CreateAgreementRestrictionImpl {
+	template <typename Arg1>
+	struct result { typedef Restriction * type; };
+
+	Restriction * operator()( boost::ptr_vector<Expression> & args ) const;
+};
+
+struct CreateAttributeExpressionImpl {
 	template <typename Arg1, typename Arg2>
 	struct result { typedef Expression * type; };
 
 	Expression * operator()( Expression * exp, AttributeKey key ) const;
 };
 
-struct CreateVariableExpression {
+struct CreateCurrentAttributeExpressionImpl {
+	template <typename Arg1>
+	struct result { typedef Expression * type; };
+
+	Expression * operator()( AttributeKey key ) const;
+};
+
+struct CreateVariableExpressionImpl {
 	template <typename Arg1>
 	struct result { typedef Expression * type; };
 
 	Expression * operator()( Variable var ) const;
 };
 
-struct CreateConcatExpression {
+struct CreateConcatExpressionImpl {
 	template <typename Arg1, typename Arg2>
 	struct result { typedef Expression * type; };
 
 	Expression * operator()( Expression * exp1, Expression * exp2 ) const;
 };
 
-struct CreateStringLiteralExpression {
+struct CreateStringLiteralExpressionImpl {
 	template <typename Arg1, typename Arg2>
 	struct result { typedef Expression * type; };
 
 	Expression * operator()( const char * start, const char * end ) const;
+};
+
+struct CreateLiteralExpressionImpl {
+	template <typename Arg1>
+	struct result { typedef Expression * type; };
+
+	Expression * operator()( AttributeValue value ) const;
 };
 
 } } }

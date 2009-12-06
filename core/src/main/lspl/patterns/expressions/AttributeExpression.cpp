@@ -54,4 +54,8 @@ bool AttributeExpression::containsVariable( matchers::Variable var ) const {
 	return base->containsVariable( var );
 }
 
+bool AttributeExpression::containsCurrentAnnotation() const {
+	return base->containsCurrentAnnotation();
+}
+
 } } }

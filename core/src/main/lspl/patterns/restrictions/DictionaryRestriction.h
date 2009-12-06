@@ -41,6 +41,8 @@ public:
 	virtual bool matches( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const;
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
 	virtual bool equals( const Restriction & r ) const;
+	virtual bool containsVariable( matchers::Variable var ) const;
+	virtual bool containsCurrentAnnotation() const;
 
 private:
 

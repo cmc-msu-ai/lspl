@@ -126,44 +126,17 @@ void AddPatternDefinitionImpl::operator()( const std::string & name, boost::ptr_
 	}
 }
 
-
-void AddMatcherRestrictionImpl::operator()( boost::ptr_vector<Restriction> & restrictions, AttributeKey type, AttributeValue value ) const {
-	AgreementRestriction * restriction = new AgreementRestriction();
-
-	restriction->addArgument( new AttributeExpression( new CurrentAnnotationExpression(), type ) );
-	restriction->addArgument( new ConstantExpression( value ) );
-
-	restrictions.push_back( restriction );
+void AddRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matchers, Restriction * restriction ) const {
+	findLastMatcher( matchers, restriction ).addRestriction( restriction );
 }
 
-void AddAgreementRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matchers, boost::ptr_vector<Expression> & args ) const {
-	Matcher & lastMatcher = findLastMatcher( matchers, args );
-	AgreementRestriction * ar = new AgreementRestriction();
+Matcher & AddRestrictionImpl::findLastMatcher( boost::ptr_vector<Matcher> & matchers, const Restriction * restriction ) const {
+	if ( restriction->containsCurrentAnnotation() )
+		return matchers.back();
 
-	ar->addArguments( args );
-
-	lastMatcher.addRestriction( ar );
-}
-
-void AddDictionaryRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matchers, const std::string & dictionaryName, boost::ptr_vector<Expression> & args ) const {
-	dictionaries::DictionaryRef dict = ns.getDictionaryByName( dictionaryName );
-
-	if ( !dict ) // Не нашли словаря - выкидываем исключение
-		throw PatternBuildingException( "No dictionary found" );
-
-	Matcher & lastMatcher = findLastMatcher( matchers, args ); // Получаем последний соспоставитель, участвующий в проверке
-	DictionaryRestriction * dr = new DictionaryRestriction( dict );
-
-	dr->addArguments( args );
-
-	lastMatcher.addRestriction( dr );
-}
-
-Matcher & AddRestrictionBase::findLastMatcher( boost::ptr_vector<Matcher> & matchers, const boost::ptr_vector<Expression> & args ) const {
 	for ( int i = matchers.size() - 1; i >= 0; --i )
-		for ( int j = args.size() - 1; j >= 0; --j )
-			if ( args[j].containsVariable( matchers[i].variable ) )
-				return matchers[i];
+		if ( restriction->containsVariable( matchers[i].variable ) )
+			return matchers[i];
 
 	return matchers[ 0 ];
 }
@@ -178,16 +151,40 @@ void AddBindingImpl::operator()( boost::ptr_map<AttributeKey,Expression> & bindi
 	}
 }
 
-Expression * CreateAttributeExpression::operator()( Expression * exp, AttributeKey key ) const {
+Restriction * CreateDictionaryRestrictionImpl::operator()( const std::string & dictionaryName, boost::ptr_vector<Expression> & args ) const {
+	dictionaries::DictionaryRef dict = ns.getDictionaryByName( dictionaryName );
+
+	if ( !dict ) // Не нашли словаря - выкидываем исключение
+		throw PatternBuildingException( "No dictionary found" );
+
+	DictionaryRestriction * dr = new DictionaryRestriction( dict );
+
+	dr->addArguments( args );
+
+	return dr;
+}
+
+Restriction * CreateAgreementRestrictionImpl::operator()( boost::ptr_vector<Expression> & args ) const {
+	AgreementRestriction * dr = new AgreementRestriction();
+
+	dr->addArguments( args );
+
+	return dr;
+}
+
+Expression * CreateAttributeExpressionImpl::operator()( Expression * exp, AttributeKey key ) const {
 	return new AttributeExpression( exp, key );
 }
 
+Expression * CreateCurrentAttributeExpressionImpl::operator()( AttributeKey key ) const {
+	return new AttributeExpression( new CurrentAnnotationExpression(), key );
+}
 
-Expression * CreateVariableExpression::operator()( Variable var ) const {
+Expression * CreateVariableExpressionImpl::operator()( Variable var ) const {
 	return new VariableExpression( var );
 }
 
-Expression * CreateConcatExpression::operator()( Expression * exp1, Expression * exp2 ) const {
+Expression * CreateConcatExpressionImpl::operator()( Expression * exp1, Expression * exp2 ) const {
 	if ( dynamic_cast<ConcatenationExpression*>( exp2 ) ) { // Справа конкатенация - наращиваем ее слева
 		static_cast<ConcatenationExpression*>( exp2 )->args.insert( static_cast<ConcatenationExpression*>( exp2 )->args.begin(), exp1 );
 		return exp2;
@@ -202,8 +199,12 @@ Expression * CreateConcatExpression::operator()( Expression * exp1, Expression *
 	}
 }
 
-Expression * CreateStringLiteralExpression::operator()( const char * start, const char * end ) const {
+Expression * CreateStringLiteralExpressionImpl::operator()( const char * start, const char * end ) const {
 	return new ConstantExpression( AttributeValue( Morphology::instance().upcase( start, end ) ) );
+}
+
+Expression * CreateLiteralExpressionImpl::operator()( AttributeValue value ) const {
+	return new ConstantExpression( value );
 }
 
 } } }

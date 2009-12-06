@@ -49,6 +49,16 @@ public:
 	 */
 	virtual bool equals( const Restriction & r ) const = 0;
 
+	/**
+	 * Проверить, содержит ли выражение заданную переменную.
+	 *
+	 * @param var переменная
+	 * @return true, если выражение содержит переменную
+	 */
+	virtual bool containsVariable( matchers::Variable var ) const = 0;
+
+	virtual bool containsCurrentAnnotation() const = 0;
+
 public:
 
 	bool operator == ( const Restriction & r ) const {

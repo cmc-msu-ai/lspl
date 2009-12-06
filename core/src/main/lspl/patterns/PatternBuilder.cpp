@@ -45,20 +45,15 @@ namespace lspl { namespace patterns {
 class ParserImpl : public grammar<ParserImpl>, public PatternBuilder::Parser {
 public:
 
-
-	struct MatcherRestrictionClosure : public boost::spirit::closure< MatcherRestrictionClosure, AttributeKey, AttributeValue > {
-		member1 attribute;
-		member2 value;
-	};
-
-	struct AgreementRestrictionClosure : public boost::spirit::closure< AgreementRestrictionClosure, int, boost::ptr_vector<Expression> > {
-		member1 noret;
+	struct AgreementRestrictionClosure : public boost::spirit::closure< AgreementRestrictionClosure, Restriction *, boost::ptr_vector<Expression> > {
+		member1 restriction;
 		member2 args;
 	};
 
-	struct DictionaryRestrictionClosure : public boost::spirit::closure< DictionaryRestrictionClosure, std::string, boost::ptr_vector<Expression> > {
-		member1 dictionaryName;
-		member2 args;
+	struct DictionaryRestrictionClosure : public boost::spirit::closure< DictionaryRestrictionClosure, Restriction *, std::string, boost::ptr_vector<Expression> > {
+		member1 restriction;
+		member2 dictionaryName;
+		member3 args;
 	};
 
 	struct MatcherClosure : public boost::spirit::closure< MatcherClosure, uint, boost::ptr_vector<Restriction> > {
@@ -145,11 +140,8 @@ public:
 
         	function<AddImpl> add;
 
-        	function<AddBindingImpl> addBinding;
-
-        	function<AddMatcherRestrictionImpl> addMatcherRestriction;
-        	function<AddAgreementRestrictionImpl> addAgreementRestriction;
-        	function<AddDictionaryRestrictionImpl> addDictionaryRestriction( *self.space );
+			function<AddBindingImpl> addBinding;
+			function<AddRestrictionImpl> addRestriction;
 
         	function<AddPatternMatcherImpl> addPatternMatcher( AddPatternMatcherImpl( *self.space, typeSymbol ) );
         	function<AddWordMatcherImpl> addWordMatcher;
@@ -158,10 +150,15 @@ public:
         	function<AddAlternativeDefinitionImpl> addAlternativeDefinition( AddAlternativeDefinitionImpl( *self.transformBuilder ) );
         	function<AddPatternDefinitionImpl> addPatternDefinition( AddPatternDefinitionImpl( *self.space, typeSymbol, *self.transformBuilder ) );
 
-        	function<CreateVariableExpression> createVariableExpression;
-        	function<CreateAttributeExpression> createAttributeExpression;
-        	function<CreateConcatExpression> createConcatExpression;
-        	function<CreateStringLiteralExpression> createStringLiteralExpression;
+			function<CreateAgreementRestrictionImpl> createAgreementRestriction;
+			function<CreateDictionaryRestrictionImpl> createDictionaryRestriction( *self.space );
+
+			function<CreateCurrentAttributeExpressionImpl> createCurrentAttributeExpression;
+			function<CreateVariableExpressionImpl> createVariableExpression;
+			function<CreateAttributeExpressionImpl> createAttributeExpression;
+			function<CreateConcatExpressionImpl> createConcatExpression;
+			function<CreateStringLiteralExpressionImpl> createStringLiteralExpression;
+			function<CreateLiteralExpressionImpl> createLiteralExpression;
 
         	endLoop = expect_loop_end( ch_p( '}' ) );
         	endOptional = expect_optional_end( ch_p( ']' ) );
@@ -175,7 +172,7 @@ public:
         			( ( alternative % '|' )[ pattern.name = construct_<std::string>( arg1, arg2 ) ] >> !( ch_p('=') >> expect_valid_pattern_name( nothing_p ) ) )
         		)[ addPatternDefinition( pattern.name, pattern.alternatives ) ];
 
-        	alternative = ( matcher >> *(matcher|restrictions) >> !bindingList >> !alternativeTransformSource )
+        	alternative = ( matcher >> *(matcher|patternRestrictions) >> !bindingList >> !alternativeTransformSource )
         		[ addAlternativeDefinition( pattern.alternatives, alternative.matchers, alternative.bindings, construct_<std::string>( arg1, arg2 ), alternative.transformSource ) ];
 
         	alternativeTransformSource = str_p("=>") >> lexeme_d[ *~chset_p("\n|") ][ alternative.transformSource = construct_<std::string>( arg1, arg2 ) ];
@@ -206,8 +203,8 @@ public:
 
         	wordRestriction = ch_p('<')[ wordMatcher.base = "" ]
         	    >> (
-        	    		( wordBase >> !(chset_p(";,") >> (matcherRestriction % ',')) ) |
-        	    		( matcherRestriction % ',' )
+        	    		( wordBase >> !(chset_p(";,") >> ( matcherRestriction[add( matcher.restrictions, arg1 )] % ',' )) ) |
+        	    		( matcherRestriction[add( matcher.restrictions, arg1 )] % ',' )
         	    ) >> endRestriction;
 
         	wordBase = ( lexeme_d[ +chset_p("a-zA-Z0-9" RUS_ALPHA "-") ] >> epsilon_p(chset_p(";,>")) )[ wordMatcher.base = construct_<std::string>( arg1, arg2 ) ];
@@ -225,8 +222,7 @@ public:
         	 * Парсер сопоставителя шаблонов
         	 */
 
-        	patternMatcher = ( patternName[ patternMatcher.name = construct_<std::string>( arg1, arg2 ) ] >> matcherVariable >> !( '<' >> matcherRestriction % ',' >> endRestriction ) )
-        		[ addPatternMatcher( alternative.matchers, patternMatcher.name, matcher.index, matcher.restrictions ) ];
+        	patternMatcher = ( patternName[ patternMatcher.name = construct_<std::string>( arg1, arg2 ) ] >> matcherVariable >> !( '<' >> ( matcherRestriction[add( matcher.restrictions, arg1 )] % ',' ) >> '>' ) )[ addPatternMatcher( alternative.matchers, patternMatcher.name, matcher.index, matcher.restrictions ) ];
 
         	/*
         	 * Парсер сопоставителя циклов
@@ -236,7 +232,7 @@ public:
 	        		case_p< '[' >( ( loopBody % '|' ) >> endOptional[ loopMatcher.min = 0 ][ loopMatcher.max = 1 ] )
 	        	][ addLoopMatcher( alternative.matchers, loopMatcher.min, loopMatcher.max, loopMatcher.alternativesCount ) ];
 
-        	loopBody = expect_grp_matcher( matcher[ loopBody.matcherCount = 1 ] ) >> ( *(matcher[ loopBody.matcherCount ++ ] | restrictions) )[ add( loopMatcher.alternativesCount, loopBody.matcherCount ) ];
+        	loopBody = expect_grp_matcher( matcher[ loopBody.matcherCount = 1 ] ) >> ( *(matcher[ loopBody.matcherCount ++ ] | patternRestrictions) )[ add( loopMatcher.alternativesCount, loopBody.matcherCount ) ];
 
         	loopRestriction = '<' >> epsilon_p(chset_p("0-9,")) >> !uint_p[ loopMatcher.min = arg1 ] >> !( ',' >> uint_p[ loopMatcher.max = arg1 ] ) >> endRestriction;
 
@@ -244,25 +240,38 @@ public:
         	 * Парсеры ограничений
         	 */
 
-        	restrictions = '<' >> expect_restriction_body( ( agreementRestriction | dictionaryRestriction ) % ',' ) >> endRestriction;
+        	matcherRestriction = ( localExpression[ add( matcherRestriction.args, arg1 ) ] >> *( '=' >> expression[ add( matcherRestriction.args, arg1 ) ] ) )
+				[ matcherRestriction.restriction = createAgreementRestriction( matcherRestriction.args ) ];
 
-        	matcherRestriction = ( attributeKey[ matcherRestriction.attribute = arg1 ] >> '=' >> expect_attribute_value( attributeValue[ matcherRestriction.value = arg1 ] ) )
-        		[ addMatcherRestriction( matcher.restrictions, matcherRestriction.attribute, matcherRestriction.value ) ];
+        	patternRestrictions = '<' >> expect_restriction_body( (
+        			agreementRestriction[addRestriction( alternative.matchers, arg1 )] |
+        			dictionaryRestriction[addRestriction( alternative.matchers, arg1 )]
+				) % ',' ) >> endRestriction;
 
-        	agreementRestriction = ( expression[ add( agreementRestriction.args, arg1 ) ] % "=" )[ addAgreementRestriction( alternative.matchers, agreementRestriction.args ) ];
+        	agreementRestriction = ( expression[ add( agreementRestriction.args, arg1 ) ] % '=' )
+        		[ agreementRestriction.restriction = createAgreementRestriction( agreementRestriction.args ) ];
 
-        	dictionaryRestriction = ( ( lexeme_d[ +chset_p("a-zA-Z") ][ dictionaryRestriction.dictionaryName = construct_<std::string>( arg1, arg2 ) ] ) >> "(" >> ( expression[ add( dictionaryRestriction.args, arg1 ) ] % "," ) >> ")" )[ addDictionaryRestriction( alternative.matchers, dictionaryRestriction.dictionaryName, dictionaryRestriction.args ) ];
+        	dictionaryRestriction = ( ( lexeme_d[ +chset_p("a-zA-Z") ][ dictionaryRestriction.dictionaryName = construct_<std::string>( arg1, arg2 ) ] ) >> "(" >> ( expression[ add( dictionaryRestriction.args, arg1 ) ] % "," ) >> ")" )
+        		[ dictionaryRestriction.restriction = createDictionaryRestriction( dictionaryRestriction.dictionaryName, dictionaryRestriction.args ) ];
 
-        	expression = ~eps_p( str_p( "AS" ) ) >> (literalExpression | propertyExpression) >>
-        		*( expression[ expression.exp = createConcatExpression( expression.exp, arg1 ) ] );
+        	/*
+        	 * Парсеры выражений
+        	 */
+
+        	expression = ~eps_p( str_p( "AS" ) ) >> ( stringLiteralExpression | propertyExpression | literalExpression ) >>
+            	*( expression[ expression.exp = createConcatExpression( expression.exp, arg1 ) ] );
+
+        	localExpression = attributeKey[ localExpression.exp = createCurrentAttributeExpression( arg1 ) ];
 
         	propertyExpression = variable[ expression.exp = createVariableExpression( arg1 ) ] >>
     			*( '.' >> attributeKey[ expression.exp = createAttributeExpression( expression.exp, arg1 ) ] );
 
-        	literalExpression = lexeme_d[ switch_p[
+        	stringLiteralExpression = lexeme_d[ switch_p[
         	    case_p< '"' >( (+~ch_p('"'))[ expression.exp = createStringLiteralExpression( arg1, arg2 ) ] >> expect_closing_dbl_quote( ch_p('"') ) ),
         	    case_p< '\'' >( (+~ch_p('\''))[ expression.exp = createStringLiteralExpression( arg1, arg2 ) ] >> expect_closing_sgl_quote( ch_p('\'') ) )
         	] ];
+
+        	literalExpression = attributeValue[ expression.exp = createLiteralExpression( arg1 ) ];
 
         	/*
         	 * Таблицы символов
@@ -286,12 +295,11 @@ public:
     	symbols<SpeechPart> speechPart;
     	symbols<AttributeValue> attributeValue;
 
-    	rule<ScannerT> patternName, wordType, source, wordBase, wordRestriction, matcherVariable, loopRestriction, restrictions, bindingList, endLoop, endOptional, endBinding, endRestriction, alternativeTransformSource, propertyExpression, literalExpression;
+    	rule<ScannerT> patternName, wordType, source, wordBase, wordRestriction, matcherVariable, loopRestriction, patternRestrictions, bindingList, endLoop, endOptional, endBinding, endRestriction, alternativeTransformSource;
 
     	rule<ScannerT, AlternativeClosure::context_t> alternative;
 
-    	rule<ScannerT, MatcherRestrictionClosure::context_t> matcherRestriction;
-    	rule<ScannerT, AgreementRestrictionClosure::context_t> agreementRestriction;
+    	rule<ScannerT, AgreementRestrictionClosure::context_t> agreementRestriction, matcherRestriction;
     	rule<ScannerT, DictionaryRestrictionClosure::context_t> dictionaryRestriction;
 
     	rule<ScannerT, MatcherClosure::context_t> matcher;
@@ -305,7 +313,8 @@ public:
 
     	rule<ScannerT, PatternClosure::context_t> pattern;
 
-    	rule<ScannerT, ExpressionClosure::context_t> expression;
+    	rule<ScannerT, ExpressionClosure::context_t> expression, localExpression;
+    	rule<ScannerT> propertyExpression, stringLiteralExpression, literalExpression;
 
     	VariableParser variable;
     	AttributeKeyParser attributeKey;

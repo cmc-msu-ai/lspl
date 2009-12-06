@@ -54,4 +54,20 @@ bool DictionaryRestriction::equals( const Restriction & r ) const {
 	}
 }
 
+bool DictionaryRestriction::containsVariable( matchers::Variable var ) const {
+	foreach( const Expression & exp, args )
+		if ( exp.containsVariable( var ) )
+			return true;
+
+	return false;
+}
+
+bool DictionaryRestriction::containsCurrentAnnotation() const {
+	foreach( const Expression & exp, args )
+		if ( exp.containsCurrentAnnotation() )
+			return true;
+
+	return false;
+}
+
 } } }

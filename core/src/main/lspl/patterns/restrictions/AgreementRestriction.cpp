@@ -127,4 +127,20 @@ bool AgreementRestriction::equals( const Restriction & r ) const {
 	}
 }
 
+bool AgreementRestriction::containsVariable( matchers::Variable var ) const {
+	foreach( const Expression & exp, args )
+		if ( exp.containsVariable( var ) )
+			return true;
+
+	return false;
+}
+
+bool AgreementRestriction::containsCurrentAnnotation() const {
+	foreach( const Expression & exp, args )
+		if ( exp.containsCurrentAnnotation() )
+			return true;
+
+	return false;
+}
+
 } } }

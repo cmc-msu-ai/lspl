@@ -49,12 +49,20 @@ static void testRestrictionsOnBase() {
 	// Pattern restrictions
 	assertMatches( "Мама мыла раму", 0, 2, "N V <V.b='МЫТЬ'>" );
 	assertNoMatches( "Мама мыла раму", "N V <V.b='БЕГАТЬ'>" );
+
+	// Matcher restrictions
+	assertMatches( "Мама мыла раму", 0, 2, "N V<b='МЫТЬ'>" );
+	assertNoMatches( "Мама мыла раму", "N V<b='БЕГАТЬ'>" );
 }
 
 static void testRestrictionsOnStem() {
 	// Pattern restrictions
 	assertMatches( "Мама мыла раму", 0, 2, "N V <V.st='М'>" );
 	assertNoMatches( "Мама мыла раму", "N V <V.st='БЕГ'>" );
+
+	// Matcher restrictions
+	assertMatches( "Мама мыла раму", 0, 2, "N V <st='М'>" );
+	assertNoMatches( "Мама мыла раму", "N V <st='БЕГ'>" );
 }
 
 static void testTerm() {

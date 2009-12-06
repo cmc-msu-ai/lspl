@@ -47,4 +47,8 @@ bool VariableExpression::containsVariable( matchers::Variable var ) const {
 	return var == variable;
 }
 
+bool VariableExpression::containsCurrentAnnotation() const {
+	return false;
+}
+
 } } }
