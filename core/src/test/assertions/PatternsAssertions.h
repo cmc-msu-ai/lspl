@@ -27,16 +27,19 @@
 #define assertEquals(a,b) assertEqualsM(a,b,#a " == " #b)
 
 #define assertBuildsNS(pattern,ns) lspl::assertions::assertBuildsImpl(ns,pattern,__FILE__,__LINE__)
-#define assertBuilds(pattern) lspl::assertions::assertBuildsImpl(pattern,__FILE__,__LINE__)
+#define assertBuilds(pattern) lspl::assertions::assertBuildsImpl(new lspl::Namespace(),pattern,__FILE__,__LINE__)
 #define assertFailsNS(pattern,ns) lspl::assertions::assertFailsImpl(ns,pattern,__FILE__,__LINE__)
-#define assertFails(pattern) lspl::assertions::assertFailsImpl(pattern,__FILE__,__LINE__)
+#define assertFails(pattern) lspl::assertions::assertFailsImpl(new lspl::Namespace(),pattern,__FILE__,__LINE__)
+
+#define buildPatternNS(pattern,ns) lspl::assertions::buildPatternImpl(ns,pattern,__FILE__,__LINE__)
+#define buildPattern(pattern) lspl::assertions::buildPatternImpl(new lspl::Namespace(),pattern,__FILE__,__LINE__)
 
 namespace lspl { namespace assertions {
 
 void assertBuildsImpl( const NamespaceRef & ns, const std::string & patternSource, char const *f, int line );
-void assertBuildsImpl( const std::string & patternSource, char const *f, int line );
 void assertFailsImpl( const NamespaceRef & ns, const std::string & patternSource, char const *f, int line );
-void assertFailsImpl( const std::string & patternSource, char const *f, int line );
+
+patterns::PatternRef buildPatternImpl( const NamespaceRef & ns, const std::string & patternSource, char const *f, int line );
 
 } }
 

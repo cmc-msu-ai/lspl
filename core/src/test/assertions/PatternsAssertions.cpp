@@ -15,11 +15,13 @@
 
 #include <boost/format.hpp>
 
+using namespace lspl::patterns;
+
 namespace lspl { namespace assertions {
 
 void assertBuildsImpl( const NamespaceRef & ns, const std::string & patternSource, char const *file, int line ) {
-	patterns::PatternBuilder builder( ns );
-	patterns::PatternBuilder::BuildInfo info;
+	PatternBuilder builder( ns );
+	PatternBuilder::BuildInfo info;
 
 	try {
 		info = builder.build( patternSource );
@@ -33,17 +35,9 @@ void assertBuildsImpl( const NamespaceRef & ns, const std::string & patternSourc
 		throw cute::test_failure( ( boost::format( "ERROR: Pattern '%1%' was not built: '%2%' not parsed." ) % patternSource % info.parseTail ).str(), file, line);
 }
 
-void assertBuildsImpl( const std::string & patternSource, char const *f, int line ) {
-	assertBuildsImpl( new lspl::Namespace(), patternSource, f, line );
-}
-
-void assertFailsImpl( const std::string & patternSource, char const *f, int line ) {
-	assertFailsImpl( new Namespace(), patternSource, f, line );
-}
-
 void assertFailsImpl( const NamespaceRef & ns, const std::string & patternSource, char const *file, int line ) {
-	patterns::PatternBuilder builder( ns );
-	patterns::PatternBuilder::BuildInfo info;
+	PatternBuilder builder( ns );
+	PatternBuilder::BuildInfo info;
 
 	try {
 		info = builder.build( patternSource );
@@ -55,6 +49,12 @@ void assertFailsImpl( const NamespaceRef & ns, const std::string & patternSource
 
 	if ( info.parseTail.length() == 0 )
 		throw cute::test_failure( ( boost::format( "ERROR: Pattern '%1%' successfully built." ) % patternSource ).str(), file, line);
+}
+
+PatternRef buildPatternImpl( const NamespaceRef & ns, const std::string & patternSource, char const *f, int line ) {
+	assertBuildsImpl( ns, patternSource, f, line );
+
+	return ns->getPatternByIndex( ns->getPatternCount() - 1 );
 }
 
 } }
