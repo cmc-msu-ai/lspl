@@ -195,8 +195,8 @@ static void testDictionariesWithLiterals() {
 
 static void testRestrictedMatches() {
 	AgreementRestriction r;
-	r.addArgument( new AttributeExpression( new VariableExpression( Variable( SpeechPart::VERB, 1 ) ), AttributeKey::BASE ) );
-	r.addArgument( new ConstantExpression( AttributeValue( "МЫТЬ" ) ) );
+	r.addArgument( new AttributeExpression( new VariableExpression( SpeechPart::VERB, 1 ), AttributeKey::BASE ) );
+	r.addArgument( new ConstantExpression( "МЫТЬ" ) );
 
 	assertMatches( "Мама мыла раму", 0, 2, "N1 V1" );
 	assertMatches( "Черный кот шел сам по себе", 1, 3, "N1 V1" );

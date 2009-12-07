@@ -17,6 +17,9 @@ namespace lspl { namespace patterns { namespace expressions {
 class VariableExpression : public Expression {
 public:
 	VariableExpression( const matchers::Variable & variable );
+	VariableExpression( text::attributes::SpeechPart sp, uint index );
+	VariableExpression( const Pattern & pt, uint index );
+
 	virtual ~VariableExpression();
 
 	virtual void evaluateTo( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx, ValueList & results ) const;

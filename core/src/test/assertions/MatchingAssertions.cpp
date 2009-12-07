@@ -50,7 +50,7 @@ void assertRestrictedMatchesImpl( const NamespaceRef & ns, const char * textSour
 	PatternRef pattern = buildPatternImpl( ns, patternSource, file, line );
 	TextRef text = buildTextImpl( textSource, file, line );
 
-	const RestrictedMatchList & matches = text->getRestrictedMatches( pattern, r );
+	RestrictedMatchList matches = text->getRestrictedMatches( pattern, r );
 
 	if ( matches.size() == 0 )
 		throw cute::test_failure( ( boost::format( "No restricted matches for pattern '%1%' in text '%2%'" ) % patternSource % textSource ).str(), file, line);
@@ -63,7 +63,7 @@ void assertNoRestrictedMatchesImpl( const NamespaceRef & ns, const char * textSo
 	PatternRef pattern = buildPatternImpl( ns, patternSource, file, line );
 	TextRef text = buildTextImpl( textSource, file, line );
 
-	const RestrictedMatchList & matches = text->getRestrictedMatches( pattern, r );
+	RestrictedMatchList matches = text->getRestrictedMatches( pattern, r );
 
 	if ( matches.size() != 0 )
 		throw cute::test_failure( ( boost::format( "There are restricted matches for pattern '%1%' in text '%2%'" ) % patternSource % textSource ).str(), file, line);

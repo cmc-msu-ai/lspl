@@ -16,6 +16,14 @@ ConstantExpression::ConstantExpression( const AttributeValue & value ) :
 	value( value ) {
 }
 
+ConstantExpression::ConstantExpression( const text::attributes::AttributeContainer & container ) :
+	value( AttributeValue( container ) ) {
+}
+
+ConstantExpression::ConstantExpression( const std::string & str ) :
+	value( AttributeValue( str ) ) {
+}
+
 ConstantExpression::~ConstantExpression() {
 }
 
