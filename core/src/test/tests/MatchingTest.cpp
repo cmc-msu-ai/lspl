@@ -15,11 +15,19 @@
 #include <lspl/Namespace.h>
 #include <lspl/patterns/Pattern.h>
 #include <lspl/patterns/PatternBuilder.h>
+#include <lspl/patterns/restrictions/AgreementRestriction.h>
+#include <lspl/patterns/expressions/VariableExpression.h>
+#include <lspl/patterns/expressions/AttributeExpression.h>
+#include <lspl/patterns/expressions/ConstantExpression.h>
 #include <lspl/text/Text.h>
 #include <lspl/text/readers/PlainTextReader.h>
 #include <lspl/dictionaries/MemoryDictionary.h>
 
 using namespace lspl::assertions;
+using namespace lspl::patterns::expressions;
+using namespace lspl::patterns::restrictions;
+using namespace lspl::patterns::matchers;
+using namespace lspl::text::attributes;
 
 namespace lspl { namespace tests {
 
@@ -185,6 +193,18 @@ static void testDictionariesWithLiterals() {
 	assertNoMatchesNS( ns, "Мама мыла раму", "AB = W1 W2 <DIC(W1,W2)>" );
 }
 
+static void testRestrictedMatches() {
+	AgreementRestriction r;
+	r.addArgument( new AttributeExpression( new VariableExpression( Variable( SpeechPart::VERB, 1 ) ), AttributeKey::BASE ) );
+	r.addArgument( new ConstantExpression( AttributeValue( "МЫТЬ" ) ) );
+
+	assertMatches( "Мама мыла раму", 0, 2, "N1 V1" );
+	assertMatches( "Черный кот шел сам по себе", 1, 3, "N1 V1" );
+
+	assertRestrictedMatches( "Мама мыла раму", 0, 2, "N1 V1", r );
+	assertNoRestrictedMatches( "Черный кот шел сам по себе", "N1 V1", r );
+}
+
 cute::suite matchingSuite() {
 	cute::suite s;
 
@@ -204,6 +224,7 @@ cute::suite matchingSuite() {
 	s += CUTE(testDictionaries);
 	s += CUTE(testDictionariesWithConcat);
 	s += CUTE(testDictionariesWithLiterals);
+	s += CUTE(testRestrictedMatches);
 
 	return s;
 }

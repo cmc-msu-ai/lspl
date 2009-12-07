@@ -16,6 +16,9 @@
 #include "markup/Word.h"
 #include "TextConfig.h"
 
+#include "../patterns/Forward.h"
+#include "../patterns/restrictions/Restriction.h"
+
 #include "attributes/SpeechPart.h"
 
 #include "indexes/PatternIndex.h"
@@ -89,6 +92,12 @@ public:
 	 */
 	const MatchList & getMatches( const patterns::PatternRef & pattern ) {
 		return getMatches( *pattern );
+	}
+
+	RestrictedMatchList getRestrictedMatches( const patterns::Pattern & pattern, const patterns::restrictions::Restriction & r );
+
+	RestrictedMatchList getRestrictedMatches( const patterns::PatternRef & pattern, const patterns::restrictions::Restriction & r ) {
+		return getRestrictedMatches( *pattern, r );
 	}
 
 	/**

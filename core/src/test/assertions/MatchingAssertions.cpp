@@ -19,6 +19,7 @@
 using lspl::patterns::PatternRef;
 using lspl::text::TextRef;
 using lspl::text::MatchList;
+using lspl::text::RestrictedMatchList;
 
 namespace lspl { namespace assertions {
 
@@ -43,6 +44,29 @@ void assertNoMatchesImpl( const NamespaceRef & ns, const char * textSource, cons
 
 	if ( matches.size() != 0 )
 		throw cute::test_failure( ( boost::format( "There are matches for pattern '%1%' in text '%2%'" ) % patternSource % textSource ).str(), file, line);
+}
+
+void assertRestrictedMatchesImpl( const NamespaceRef & ns, const char * textSource, uint from, uint to, const char * patternSource, const patterns::restrictions::Restriction & r, char const *file, int line ) {
+	PatternRef pattern = buildPatternImpl( ns, patternSource, file, line );
+	TextRef text = buildTextImpl( textSource, file, line );
+
+	const RestrictedMatchList & matches = text->getRestrictedMatches( pattern, r );
+
+	if ( matches.size() == 0 )
+		throw cute::test_failure( ( boost::format( "No restricted matches for pattern '%1%' in text '%2%'" ) % patternSource % textSource ).str(), file, line);
+
+	if ( matches[0]->start.index != from || matches[0]->end.index != to )
+		throw cute::test_failure( ( boost::format( "Wrong range for pattern '%1%' in text '%2%': [%3%,%4%], but [%5%,%6%] expected" ) % patternSource % textSource % matches[0]->start.index % matches[0]->end.index % from % to ).str(), file, line);
+}
+
+void assertNoRestrictedMatchesImpl( const NamespaceRef & ns, const char * textSource, const char * patternSource, const patterns::restrictions::Restriction & r, char const *file, int line ) {
+	PatternRef pattern = buildPatternImpl( ns, patternSource, file, line );
+	TextRef text = buildTextImpl( textSource, file, line );
+
+	const RestrictedMatchList & matches = text->getRestrictedMatches( pattern, r );
+
+	if ( matches.size() != 0 )
+		throw cute::test_failure( ( boost::format( "There are restricted matches for pattern '%1%' in text '%2%'" ) % patternSource % textSource ).str(), file, line);
 }
 
 text::TextRef buildTextImpl( const char * textSource, char const *file, int line ) {

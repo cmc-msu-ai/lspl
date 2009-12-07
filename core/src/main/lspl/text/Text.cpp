@@ -15,12 +15,16 @@
 #include "../patterns/matchers/WordMatcher.h"
 #include "../patterns/matchers/PatternMatcher.h"
 
+#include "../patterns/restrictions/Restriction.h"
+#include "../transforms/ContextRetriever.h"
 
 using lspl::patterns::Pattern;
 using lspl::patterns::matchers::Context;
 using lspl::patterns::matchers::Matcher;
+using lspl::patterns::matchers::Variable;
 using lspl::patterns::matchers::WordMatcher;
 using lspl::patterns::matchers::PatternMatcher;
+using lspl::patterns::restrictions::Restriction;
 
 using lspl::text::attributes::SpeechPart;
 
@@ -90,6 +94,33 @@ const MatchList & Text::getMatches( const Pattern & pattern ) {
 	processedPatterns.insert( pattern.id ); // Добавляем шаблон в список обработанных
 
 	return *patternIndex.getMatches( &pattern ); // Возвращаем результаты из индекса
+}
+
+RestrictedMatchList Text::getRestrictedMatches( const Pattern & pattern, const Restriction & r ) {
+	transforms::ContextRetriever contextRetriever; // Преобразование для построения контекста по варианту наложения
+	RestrictedMatchList results;
+	MatchList matches = getMatches( pattern );
+
+	foreach( const MatchRef & match, matches ) {
+		RestrictedMatchRef rm;
+
+		for ( uint i = 0; i < match->getVariantCount(); ++ i ) {
+			MatchVariantRef v = match->getVariant( i );
+			Context ctx = contextRetriever.apply( *v ); // Вычисляем контекст для варианта
+
+			if ( !r.matches( 0, Variable(), ctx ) ) // Если вариант не проходит ограничение
+				continue; // То пропускаем его
+
+			if ( rm )
+				rm->addVariant( v.get() );
+			else
+				rm = new RestrictedMatch( match->start, match->end, pattern, v.get(), match->getAttributes() );
+		}
+
+		if ( rm ) results.push_back( rm ); // Если получен вариант, то добавляем его в список результатов
+	}
+
+	return results;
 }
 
 bool Text::prepareIndices( const Pattern & pattern, IndexIteratorsList & iterators ) {

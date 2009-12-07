@@ -89,6 +89,10 @@ public:
 		return variants;
 	}
 
+	const AttributesMap & getAttributes() {
+		return attributes;
+	}
+
 protected:
 	const patterns::Pattern & pattern;
 
