@@ -5,6 +5,8 @@
 #include <fstream>
 #include <iostream>
 
+#include "lspl/morphology/Morphology.h"
+#include "lspl/morphology/WordForm.h"
 #include "lspl/patterns/PatternBuilder.h"
 #include "SynDictionary.h"
 #include "Util.h"
@@ -88,6 +90,36 @@ namespace lspl {
 		}
 	}
 
+	void Util::ExtractWordsAndDelimiters(const std::string &text,
+			std::vector<std::string> &words) {
+		words.clear();
+		bool last_delimiter = true;
+		int word_start = 0;
+		for(int i = 0; i < text.size(); ++i) {
+			if (delimiters.find_first_of(text[i]) == std::string::npos) {
+				if (last_delimiter) {
+					if (i > 0) {
+						std::string delimiter(text, word_start, i - word_start);
+						words.push_back(delimiter);
+					}
+					word_start = i;
+				}
+				last_delimiter = false;
+			} else {
+				if (!last_delimiter) {
+					std::string word(text, word_start, i - word_start);
+					words.push_back(word);
+					word_start = i;
+				}
+				last_delimiter = true;
+			}
+		}
+		if (text.size() > 0) {
+			std::string word(text, word_start, text.size() - word_start);
+			words.push_back(word);
+		}
+	}
+
 	void Util::ConvertToText(const std::vector<std::string> &terms,
 			std::vector<text::TextRef> &terms_text) {
 		for(int i = 0; i < terms.size(); ++i) {
@@ -101,15 +133,18 @@ namespace lspl {
 
 	std::string Util::Normalize(const std::string &term) {
 		std::cout << out.convert(term) << std::endl;
-		text::TextRef text = ConvertToText(term);
+		std::vector<std::string> words;
+		ExtractWordsAndDelimiters(term, words);
 		std::string result;
-		for(int i = 0; i < text->getWords().size(); ++i) {
-			/*std::cout << out.convert(text->getContent()) << " " <<
-				 out.convert((text->getWords()[i]->getBase())) << std::endl;*/
-			if (i > 0) {
-				result += " ";
+		for(int i = 0; i < words.size(); ++i) {
+			//std::cout << "'" << words[i] << "' " << words[i].size() << std::endl; 
+			boost::ptr_vector<morphology::WordForm> forms;
+			morphology::Morphology::instance().appendWordForms(words[i], forms);
+			if (forms.size()) {
+				result += forms[0].getBase();
+			} else {
+				result += words[i];
 			}
-			result += text->getWords()[i]->getBase();
 		}
 		return result;
 	}

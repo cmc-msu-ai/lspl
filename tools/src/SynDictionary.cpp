@@ -15,10 +15,14 @@ namespace lspl {
 			std::vector<std::string> patterns;
 			std::vector<std::vector<std::string> > synonim_patterns;
 			Util::LoadSimilarPatterns(text, patterns, synonim_patterns);
-			_patterns = Util::BuildPatterns(patterns, false);
 			for(int i = 0; i < synonim_patterns.size(); ++i) {
-				_synonim_patterns.push_back(
-						Util::BuildPatterns(synonim_patterns[i], false));
+				std::set<std::string> synonims_set;
+				for(int j = 0; j < synonim_patterns[i].size(); ++j) {
+					synonims_set.insert(synonim_patterns[i][j]);
+				}
+				_synonim_patterns.insert(
+						std::pair<std::string, std::set<std::string> >(
+								patterns[i], synonims_set));
 			}
 		}
 
@@ -34,21 +38,12 @@ namespace lspl {
 				return true;
 			}
 			assert(words.size() == 2);
-			for(int i = 0; i < _patterns->getPatternCount(); ++i) {
-				patterns::PatternRef pattern = _patterns->getPatternByIndex(i);
-				std::string normalized_match =
-						Util::GetNormalizedMatch(words[0], pattern);
-				if (normalized_match == "") {
-					continue;
-				}
-				for(int j = 0; j < _synonim_patterns[j]->getPatternCount(); ++j) {
-					patterns::PatternRef synonim_pattern =
-							_synonim_patterns[j]->getPatternByIndex(j);
-					std::string normalized_match =
-							Util::GetNormalizedMatch(words[1], synonim_pattern);
-					if (normalized_match == "") {
-						continue;
-					}
+			std::string word1 = Util::Normalize(words[0]);
+			SynonimPatterns::const_iterator i = _synonim_patterns.find(word1);
+			if (i != _synonim_patterns.end()) {
+				std::string word2 = Util::Normalize(words[1]);
+				std::set<std::string>::const_iterator j = i->second.find(word2);
+				if (j != i->second.end()) {
 					return true;
 				}
 			}

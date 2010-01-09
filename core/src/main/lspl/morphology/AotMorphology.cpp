@@ -107,6 +107,11 @@ void AotMorphology::appendWordForms( const std::string & token, boost::ptr_vecto
 		for ( uint i = 0; i < attributeSetCount; ++i )
 			attributeSets[i] = getAttributes( gramCodes + 2*i );
 
+		if (lemmatizer->m_LemmaInfos.size() < f.GetParadigmId() & ((1<<23) - 1) ||
+				lemmatizer->m_Bases.size() <=
+				lemmatizer->m_LemmaInfos[f.GetParadigmId() & ((1<<23) - 1)].m_LemmaStrNo) {
+			continue;
+		}
 		forms.push_back( new WordForm( getSpeechPart( gramCodes ), f.GetWordForm(0), lemmatizer->m_Bases[lemmatizer->m_LemmaInfos[f.GetParadigmId() & ((1<<23) - 1)].m_LemmaStrNo].GetString(), attributeSets, attributeSetCount ) );
 	}
 }

@@ -41,8 +41,11 @@ class Util {
 	static std::string Trim(const std::string &text);
 	// Count words in srting.
 	static int CountWords(const std::string &text);
-	// Extract words
+	// Extract words.
 	static void ExtractWords(const std::string &text,
+			std::vector<std::string> &words);
+	// Extract words and delimiters.
+	static void ExtractWordsAndDelimiters(const std::string &text,
 			std::vector<std::string> &words);
 	// Calculate words by pattern.
 	static bool BuildWordsByPattern(const std::string &text,
@@ -53,7 +56,7 @@ class Util {
 			std::vector<text::TextRef> &terms_text);
 	// Convert to text one string.
 	static text::TextRef ConvertToText(const std::string &term);
-	// Normalize string. Doesn't work now.
+	// Normalize string.
 	static std::string Normalize(const std::string &term);
 	// Normalize pattern. Remove all conditions and useless spaces.
 	static std::string NormalizePattern(const std::string &pattern);
@@ -72,7 +75,7 @@ class Util {
 			std::vector<std::vector<std::string> > &similar_patterns);
 	static NamespaceRef BuildPatterns(const std::vector<std::string> &patterns,
 			bool use_dictionary = true);
-  
+
 	static bool IsPretext(std::string word);
 	static bool IsDelimiter(char symbol);
 	static void ToUpper(std::string &word);
