@@ -70,6 +70,14 @@ bool ConcatenationExpression::containsVariable( matchers::Variable var ) const {
 	return false;
 }
 
+bool ConcatenationExpression::containsVariables() const {
+	foreach( const Expression & exp, args )
+		if ( exp.containsVariables() )
+			return true;
+
+	return false;
+}
+
 bool ConcatenationExpression::containsCurrentAnnotation() const {
 	foreach( const Expression & exp, args )
 		if ( exp.containsCurrentAnnotation() )

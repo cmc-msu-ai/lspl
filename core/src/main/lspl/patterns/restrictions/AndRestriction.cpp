@@ -58,6 +58,14 @@ bool AndRestriction::containsVariable( matchers::Variable var ) const {
 	return false;
 }
 
+bool AndRestriction::containsVariables() const {
+	foreach( const Restriction & r, args )
+		if ( r.containsVariables() )
+			return true;
+
+	return false;
+}
+
 bool AndRestriction::containsCurrentAnnotation() const {
 	foreach( const Restriction & r, args )
 		if ( r.containsCurrentAnnotation() )

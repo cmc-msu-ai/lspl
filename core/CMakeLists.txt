@@ -38,6 +38,7 @@ endif(MINGW)
 set(LSPL_CORE_SOURCES
 	src/main/lspl/Namespace.cpp
 	src/main/lspl/base/Range.cpp
+	src/main/lspl/base/RefCountObject.cpp
 	
 	src/main/lspl/graphan/Unit.cpp
 	src/main/lspl/graphan/Graphan.cpp
@@ -124,6 +125,7 @@ endif(MINGW)
 set(LSPL_TEST_SOURCES
     src/test/assertions/MatchingAssertions.cpp
     src/test/assertions/PatternsAssertions.cpp
+    src/test/tests/RefCountObjectsTest.cpp
     src/test/tests/DictionariesTest.cpp
     src/test/tests/MatchingTest.cpp
     src/test/tests/PatternsTest.cpp

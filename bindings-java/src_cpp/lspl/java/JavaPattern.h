@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "lspl/base/Base.h"
-#include "lspl/base/RefCountPtr.h"
 #include "lspl/patterns/Forward.h"
 
 namespace lspl { namespace patterns { namespace java {

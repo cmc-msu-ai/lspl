@@ -12,7 +12,6 @@
 
 #include "lspl/base/Base.h"
 #include "lspl/base/RefCountObject.h"
-#include "lspl/base/RefCountPtr.h"
 #include "lspl/Namespace.h"
 #include "lspl/patterns/Pattern.h"
 #include "lspl/text/Text.h"
@@ -21,7 +20,7 @@ namespace lspl {
 
 LSPL_REFCOUNT_FORWARD(PatternMatch);
 
-class PatternMatch : public base::RefCountObject<PatternMatch> {
+class PatternMatch : public base::RefCountObject, public base::IdentifiedObject<PatternMatch> {
  public:
 	patterns::PatternRef pattern;
 	text::MatchList matches;

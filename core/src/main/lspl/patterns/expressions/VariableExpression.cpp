@@ -18,6 +18,14 @@ VariableExpression::VariableExpression( const matchers::Variable & variable ) :
 	variable( variable ) {
 }
 
+VariableExpression::VariableExpression( text::attributes::SpeechPart sp, uint index ) :
+	variable( Variable( sp, index ) ) {
+}
+
+VariableExpression::VariableExpression( const Pattern & pt, uint index ) :
+	variable( Variable( pt, index ) ) {
+}
+
 VariableExpression::~VariableExpression() {
 }
 
@@ -45,6 +53,10 @@ bool VariableExpression::equals( const Expression & e ) const {
 
 bool VariableExpression::containsVariable( matchers::Variable var ) const {
 	return var == variable;
+}
+
+bool VariableExpression::containsVariables() const {
+	return true;
 }
 
 bool VariableExpression::containsCurrentAnnotation() const {

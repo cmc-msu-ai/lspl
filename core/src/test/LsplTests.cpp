@@ -15,6 +15,7 @@ using namespace lspl::tests;
 
 int main() {
 	cute::ide_listener lis;
+	cute::makeRunner(lis)( refCountObjectsSuite(), "RefCount" );
 	cute::makeRunner(lis)( patternStructureSuite(), "PatternStructure" );
 	cute::makeRunner(lis)( patternBuildingSuite(), "PatternBuilding" );
 	cute::makeRunner(lis)( dictionariesSuite(), "Dictionaries" );

@@ -40,6 +40,10 @@ bool CurrentAnnotationExpression::containsVariable( matchers::Variable var ) con
 	return false;
 }
 
+bool CurrentAnnotationExpression::containsVariables() const {
+	return false;
+}
+
 bool CurrentAnnotationExpression::containsCurrentAnnotation() const {
 	return true;
 }

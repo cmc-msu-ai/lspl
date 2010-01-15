@@ -1,7 +1,7 @@
 #ifndef _LSPL_TEXT_FORWARD_H_
 #define _LSPL_TEXT_FORWARD_H_
 
-#include "../base/RefCountPtr.h"
+#include "../base/RefCountObject.h"
 
 #include <vector>
 

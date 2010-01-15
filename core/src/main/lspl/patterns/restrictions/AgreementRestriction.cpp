@@ -135,6 +135,14 @@ bool AgreementRestriction::containsVariable( matchers::Variable var ) const {
 	return false;
 }
 
+bool AgreementRestriction::containsVariables() const {
+	foreach( const Expression & exp, args )
+		if ( exp.containsVariables() )
+			return true;
+
+	return false;
+}
+
 bool AgreementRestriction::containsCurrentAnnotation() const {
 	foreach( const Expression & exp, args )
 		if ( exp.containsCurrentAnnotation() )

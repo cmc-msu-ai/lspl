@@ -12,6 +12,7 @@
 
 class CLemmatizer;
 class CAgramtab;
+class CFormInfo;
 
 namespace lspl { namespace morphology {
 
@@ -36,6 +37,8 @@ public:
 private:
 	const char * findRml();
 	void setupRml();
+
+	const char * getStem( const CFormInfo & f );
 private:
 	CLemmatizer * lemmatizer;
 	CAgramtab * agramtab;

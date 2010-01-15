@@ -9,7 +9,6 @@
 
 #include "../base/Base.h"
 #include "../base/RefCountObject.h"
-#include "../base/RefCountPtr.h"
 
 #include <string>
 #include <vector>
@@ -18,7 +17,7 @@ namespace lspl { namespace dictionaries {
 
 LSPL_REFCOUNT_FORWARD(Dictionary);
 
-class LSPL_EXPORT Dictionary : public base::RefCountObject<Dictionary> {
+class LSPL_EXPORT Dictionary : public base::RefCountObject, public base::IdentifiedObject<Dictionary> {
 public:
 	Dictionary( const std::string & name );
 	virtual ~Dictionary();

@@ -7,7 +7,6 @@
 
 #include "../base/Base.h"
 #include "../base/RefCountObject.h"
-#include "../base/RefCountPtr.h"
 #include "../base/Exception.h"
 
 #include "Forward.h"
@@ -43,7 +42,7 @@ public:
  * Текст является немодифицируемым объектом, т.е. он один раз создается с помощью
  * объекта TextBuilder и после этого не меняет своего внутреннего содержимого.
  */
-class LSPL_EXPORT Text : public base::RefCountObject<Text> {
+class LSPL_EXPORT Text : public base::RefCountObject, public base::IdentifiedObject<Text> {
 public:
 	Text();
 	virtual ~Text();

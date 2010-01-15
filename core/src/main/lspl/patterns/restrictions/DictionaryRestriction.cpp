@@ -62,6 +62,14 @@ bool DictionaryRestriction::containsVariable( matchers::Variable var ) const {
 	return false;
 }
 
+bool DictionaryRestriction::containsVariables() const {
+	foreach( const Expression & exp, args )
+		if ( exp.containsVariables() )
+			return true;
+
+	return false;
+}
+
 bool DictionaryRestriction::containsCurrentAnnotation() const {
 	foreach( const Expression & exp, args )
 		if ( exp.containsCurrentAnnotation() )

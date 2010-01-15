@@ -5,7 +5,6 @@
 #include "Variable.h"
 
 #include "../Alternative.h"
-#include "../../base/RefCountPtr.h"
 #include "../../text/Forward.h"
 #include "../../text/attributes/AttributeKey.h"
 #include "../../text/attributes/AttributeValue.h"

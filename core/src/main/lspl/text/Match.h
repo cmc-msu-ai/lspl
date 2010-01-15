@@ -20,7 +20,7 @@ namespace lspl { namespace text {
 /**
  * Вариант сопоставления - хранит конкретный набор сопоставленных элементов
  */
-class LSPL_EXPORT MatchVariant : public base::RefCountObject<MatchVariant>, public TransitionList {
+class LSPL_EXPORT MatchVariant : public base::RefCountObject, public base::IdentifiedObject<MatchVariant>, public TransitionList {
 public:
 
 	MatchVariant( const patterns::Alternative & alternative );

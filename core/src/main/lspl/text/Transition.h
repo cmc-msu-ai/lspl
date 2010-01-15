@@ -3,7 +3,6 @@
 
 #include "../base/Base.h"
 #include "../base/RefCountObject.h"
-#include "../base/RefCountPtr.h"
 #include "../base/Range.h"
 
 #include "Forward.h"
@@ -24,7 +23,7 @@ namespace lspl { namespace text {
 /**
  * Переход между узлами текста
  */
-class LSPL_EXPORT Transition : public base::RefCountObject<Transition>, public attributes::AttributeContainer {
+class LSPL_EXPORT Transition : public base::RefCountObject, public base::IdentifiedObject<Transition>, public attributes::AttributeContainer {
 public:
 	enum Type {
 		SPACE,
