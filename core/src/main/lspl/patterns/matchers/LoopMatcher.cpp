@@ -227,11 +227,10 @@ void LoopMatcher::buildChains( const text::Transition & transition, const Contex
 		LoopIterationMatchState s0( state.matcher, state.getCurrentNode(), state.context, state.matcher.alternatives[ i ] );
 
 		if ( const AnnotationMatcher * curMatcher = dynamic_cast<const AnnotationMatcher *>( &s0.getCurrentMatcher() ) ) {
-			if ( !curMatcher->matchTransition( transition, Context() ) )
-				return;
-
-			LoopIterationMatchState loopIterationMatchState( s0, const_cast<text::Transition *>( &transition ) );
-			processLoopIteration( loopIterationMatchState, iterations );
+			if ( curMatcher->matchTransition( transition, Context() ) ) {
+				LoopIterationMatchState loopIterationMatchState( s0, const_cast<text::Transition *>( &transition ) );
+				processLoopIteration( loopIterationMatchState, iterations );
+			}
 		} else {
 			const AnnotationChainMatcher & chainMatcher = dynamic_cast<const AnnotationChainMatcher &>( s0.getCurrentMatcher() );
 

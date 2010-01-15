@@ -79,6 +79,12 @@ static void testTerm() {
 	assertMatches( "Процессор базы данных", 0, 3, "N1<процессор> { \"базы\" \"данных\" | \"ввода-вывода\" }<1,1>" );
 }
 
+static void testTokensInLoop() {
+	assertMatches( "Мама мыла раму", 0, 1, "Act = { \"мама\" }<1>" );
+	assertMatches( "Мама мама раму", 0, 2, "Act = { \"мама\" }<2>" );
+	assertMatches( "Да да да", 0, 3, "AAA = { 'да' }<3>" );
+}
+
 static void testLoopRestrictions() {
 	// Loop restrictions: positive
 	assertMatches( "Мама мыла раму", 0, 2, "Act = {N} V" );
@@ -213,6 +219,7 @@ cute::suite matchingSuite() {
 	s += CUTE(testRestrictionsOnBase);
 	s += CUTE(testRestrictionsOnStem);
 	s += CUTE(testTerm);
+	s += CUTE(testTokensInLoop);
 	s += CUTE(testLoopRestrictions);
 	s += CUTE(testLoopAlternatives);
 	s += CUTE(testMultipleEquality);

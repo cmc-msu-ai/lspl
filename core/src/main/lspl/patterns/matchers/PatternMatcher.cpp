@@ -180,11 +180,10 @@ void PatternMatcher::buildTransitions( const text::Transition & transition, cons
 	const PatternMatchState s0( pattern, alt, transition.start );
 
 	if ( const AnnotationMatcher * curMatcher = dynamic_cast<const AnnotationMatcher *>( &s0.getCurrentMatcher() ) ) {
-		if ( !curMatcher->matchTransition( transition, Context() ) )
-			return;
-
-		PatternMatchState state( s0, const_cast<text::Transition*>( &transition ) );
-		processCompoundPattern( state, results );
+		if ( curMatcher->matchTransition( transition, Context() ) ) {
+			PatternMatchState state( s0, const_cast<text::Transition*>( &transition ) );
+			processCompoundPattern( state, results );
+		}
 	} else {
 		const AnnotationChainMatcher & chainMatcher = dynamic_cast<const AnnotationChainMatcher &>( s0.getCurrentMatcher() );
 
