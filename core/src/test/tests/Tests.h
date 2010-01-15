@@ -12,6 +12,7 @@
 
 namespace lspl { namespace tests {
 
+cute::suite refCountObjectsSuite();
 cute::suite patternStructureSuite();
 cute::suite patternBuildingSuite();
 cute::suite dictionariesSuite();

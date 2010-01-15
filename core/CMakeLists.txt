@@ -125,6 +125,7 @@ endif(MINGW)
 set(LSPL_TEST_SOURCES
     src/test/assertions/MatchingAssertions.cpp
     src/test/assertions/PatternsAssertions.cpp
+    src/test/tests/RefCountObjectsTest.cpp
     src/test/tests/DictionariesTest.cpp
     src/test/tests/MatchingTest.cpp
     src/test/tests/PatternsTest.cpp

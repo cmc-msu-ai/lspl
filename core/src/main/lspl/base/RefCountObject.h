@@ -38,6 +38,22 @@ public:
 		}
 	}
 
+	/**
+	 * Получить количестве ссылок на объект
+	 */
+	int getRefCount() const {
+		return refCount;
+	}
+
+	/**
+	 * Получить количестве ссылок на объект
+	 */
+	int getWeakRefCount() const;
+
+	WeakRefInfo * getWeakRefInfo() const {
+		return weakRefInfo;
+	}
+
 private:
 	/**
 	 * Счетчик ссылок объекта
@@ -87,6 +103,18 @@ public:
 		if ( weakRefCount == 0 ) {
 			delete this;
 		}
+	}
+
+	RefCountObject * getObject() {
+		return object;
+	}
+
+	int getWeakRefCount() {
+		return weakRefCount;
+	}
+
+	int getRefCount() {
+		return object ? object->getRefCount() : 0;
 	}
 
 private:
@@ -142,21 +170,24 @@ public:
 		return *ptr;
 	}
 
-	bool operator ! () const {// never throws
+	bool operator ! () const { // never throws
 		return ptr == 0;
 	}
 
 	template< typename T >
-	bool operator == ( const Reference<T> & p ) const {// never throws
+	bool operator == ( const Reference<T> & p ) const { // never throws
 		return ptr == p.ptr;
 	}
 
 	template< typename T >
-	bool operator != ( const Reference<T> & p ) const {// never throws
+	bool operator != ( const Reference<T> & p ) const { // never throws
 		return ptr != p.ptr;
 	}
 
-	operator bool () const {// never throws
+	/**
+	 * Ссылается ли ссылка на объект?
+	 */
+	operator bool () const { // never throws
 		return ptr != 0;
 	}
 
@@ -185,7 +216,114 @@ private:
  */
 template <typename Type>
 class LSPL_EXPORT WeakReference {
+public:
+	WeakReference() : info( 0 ) {
+	}
 
+	WeakReference( Type * ptr ) {
+		if ( ptr ) {
+			info = ptr->weakRefInfo;
+			if ( info ) info->addWeakRef();
+		} else {
+			info = 0;
+		}
+	}
+
+	WeakReference( const Reference<Type> & rcptr ) {
+		Type * ptr = rcptr.get();
+
+		if ( ptr ) {
+			info = ptr->getWeakRefInfo();
+			if ( info ) info->addWeakRef();
+		} else {
+			info = 0;
+		}
+	}
+
+	WeakReference( const WeakReference & rcptr ) : info( rcptr.info ) {
+		if ( info ) info->addWeakRef();
+	}
+
+	template< typename T >
+	WeakReference( const Reference<T> & rcptr ) {
+		Type * ptr = rcptr.get();
+
+		if ( ptr ) {
+			info = ptr->weakRefInfo;
+			if ( info ) info->addWeakRef();
+		} else {
+			info = 0;
+		}
+	}
+
+	template< typename T >
+	WeakReference( const WeakReference<T> & rcptr ) {
+		info = rcptr->getInfo();
+		if ( info ) info->addWeakRef();
+	}
+
+	~WeakReference() {
+		if ( info ) info->releaseWeak();
+		info = 0;
+	}
+
+	WeakRefInfo * getInfo() {
+		return info;
+	}
+
+	const WeakRefInfo * getInfo() const {
+		return info;
+	}
+
+	/**
+	 * Получить сильный указатель
+	 */
+	Reference<Type> lock() const {
+		if ( info == 0 || info->getObject() == 0 )
+			return Reference<Type>();
+		else
+			return Reference<Type>( dynamic_cast<Type*>( info->getObject() ) );
+	}
+
+	bool operator ! () const { // never throws
+		return info == 0 || info->getObject() == 0;
+	}
+
+	template< typename T >
+	bool operator == ( const WeakReference<T> & p ) const { // never throws
+		return info == p.info;
+	}
+
+	template< typename T >
+	bool operator != ( const WeakReference<T> & p ) const { // never throws
+		return info != p.info;
+	}
+
+	/**
+	 * Ссылается ли ссылка на существующий объект?
+	 */
+	operator bool () const {// never throws
+		return info != 0 && info->getObject() != 0;
+	}
+
+	void swap(WeakReference & rhs) {
+		WeakRefInfo * tmp = info;
+		info = rhs.info;
+		rhs.info = tmp;
+	}
+
+	template< typename T >
+	WeakReference<T> cast() const {
+		return WeakReference<T>( info );
+	}
+
+	WeakReference & operator = ( const WeakReference & rcptr ) {
+		WeakReference( rcptr ).swap( *this );
+		return *this;
+	}
+
+private:
+	WeakRefInfo * info;
 };
 
 }

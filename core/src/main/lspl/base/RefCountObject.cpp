@@ -18,4 +18,8 @@ RefCountObject::~RefCountObject() {
 	weakRefInfo->detach();
 }
 
+int RefCountObject::getWeakRefCount() const {
+	return weakRefInfo->getWeakRefCount();
+}
+
 } } //namespace lspl::base
