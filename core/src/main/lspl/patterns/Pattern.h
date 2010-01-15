@@ -5,7 +5,6 @@
 
 #include "../base/Base.h"
 #include "../base/RefCountObject.h"
-#include "../base/RefCountPtr.h"
 
 #include "Alternative.h"
 
@@ -18,7 +17,7 @@ namespace lspl { namespace patterns {
 /**
  * Шаблон
  */
-class LSPL_EXPORT Pattern : public base::RefCountObject<Pattern> {
+class LSPL_EXPORT Pattern : public base::RefCountObject, public base::IdentifiedObject<Pattern> {
 public:
 	explicit Pattern( const std::string & name ) : name( name ) {}
 

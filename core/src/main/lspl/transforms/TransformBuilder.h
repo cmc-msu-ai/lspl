@@ -10,7 +10,6 @@
 
 #include "../base/Base.h"
 #include "../base/RefCountObject.h"
-#include "../base/RefCountPtr.h"
 
 #include <vector>
 
@@ -20,7 +19,7 @@
 
 namespace lspl { namespace transforms {
 
-class LSPL_EXPORT TransformBuilder : public base::RefCountObject<TransformBuilder> {
+class LSPL_EXPORT TransformBuilder : public base::RefCountObject, public base::IdentifiedObject<TransformBuilder> {
 public:
 	TransformBuilder();
 	virtual ~TransformBuilder();

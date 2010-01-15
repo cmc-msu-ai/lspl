@@ -3,7 +3,6 @@
 
 #include "../base/Base.h"
 #include "../base/RefCountObject.h"
-#include "../base/RefCountPtr.h"
 #include "../base/Exception.h"
 
 #include "../Namespace.h"
@@ -24,7 +23,7 @@ public:
 	~PatternBuildingException() throw() {}
 };
 
-class LSPL_EXPORT PatternBuilder : public base::RefCountObject<PatternBuilder> {
+class LSPL_EXPORT PatternBuilder : public base::RefCountObject, public base::IdentifiedObject<PatternBuilder> {
 public:
 
 	/**

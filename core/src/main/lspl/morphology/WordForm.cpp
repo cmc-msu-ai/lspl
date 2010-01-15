@@ -12,12 +12,6 @@
 
 using namespace lspl::text::attributes;
 
-template<> lspl::uint lspl::base::IdentifiedObject<lspl::morphology::WordForm>::count = 0;
-
-#ifdef MSVC
-template lspl::base::RefCountPtr<lspl::morphology::WordForm>;
-#endif
-
 namespace lspl { namespace morphology {
 
 AttributeValue WordForm::getAttribute( uint setIndex, AttributeKey key ) const {

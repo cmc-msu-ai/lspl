@@ -3,7 +3,6 @@
 
 #include "base/Base.h"
 #include "base/RefCountObject.h"
-#include "base/RefCountPtr.h"
 
 #include "patterns/Forward.h"
 #include "dictionaries/Dictionary.h"
@@ -20,7 +19,7 @@ LSPL_REFCOUNT_FORWARD(Namespace);
  * Использование нескольких различных пространств имен позволяет ппроизводить обработку одного или
  * нескольких текстов с помощью различных наборов шаблонов, которы, возможно пересекаются по именам.
  */
-class LSPL_EXPORT Namespace : public base::RefCountObject<Namespace>
+class LSPL_EXPORT Namespace : public base::RefCountObject, public base::IdentifiedObject<Namespace>
 {
 public:
 	Namespace();

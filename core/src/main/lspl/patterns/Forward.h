@@ -1,8 +1,7 @@
 #ifndef _LSPL_PATTERNS_FORWARD_H_
 #define _LSPL_PATTERNS_FORWARD_H_
 
-#include "../base/Base.h"
-#include "../base/RefCountPtr.h"
+#include "../base/RefCountObject.h"
 
 #include <vector>
 

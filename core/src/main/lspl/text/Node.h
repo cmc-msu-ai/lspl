@@ -3,7 +3,6 @@
 
 #include "../base/Base.h"
 #include "../base/RefCountObject.h"
-#include "../base/RefCountPtr.h"
 
 #include "Forward.h"
 
@@ -15,7 +14,7 @@ namespace lspl { namespace text {
 /**
  * Узел текста
  */
-class LSPL_EXPORT Node : public base::RefCountObject<Node> {
+class LSPL_EXPORT Node : public base::RefCountObject, public base::IdentifiedObject<Node> {
 public:
 	Node( uint index, uint startOffset, uint endOffset, const Text & text );
 	~Node();

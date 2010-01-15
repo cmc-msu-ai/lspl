@@ -9,8 +9,6 @@
 #define _LSPL_MORPHOLOGY_WORDFORM_H_
 
 #include "../base/Base.h"
-#include "../base/RefCountObject.h"
-#include "../base/RefCountPtr.h"
 
 #include "../text/attributes/SpeechPart.h"
 #include "../text/attributes/AttributeContainer.h"

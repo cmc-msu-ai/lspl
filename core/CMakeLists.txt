@@ -38,6 +38,7 @@ endif(MINGW)
 set(LSPL_CORE_SOURCES
 	src/main/lspl/Namespace.cpp
 	src/main/lspl/base/Range.cpp
+	src/main/lspl/base/RefCountObject.cpp
 	
 	src/main/lspl/graphan/Unit.cpp
 	src/main/lspl/graphan/Graphan.cpp
