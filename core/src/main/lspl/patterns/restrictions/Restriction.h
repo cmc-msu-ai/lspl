@@ -52,13 +52,25 @@ public:
 	virtual bool equals( const Restriction & r ) const = 0;
 
 	/**
-	 * Проверить, содержит ли выражение заданную переменную.
+	 * Проверить, содержит ли ограничение заданную переменную.
 	 *
 	 * @param var переменная
-	 * @return true, если выражение содержит переменную
+	 * @return true, если ограничение содержит переменную
 	 */
 	virtual bool containsVariable( matchers::Variable var ) const = 0;
 
+	/**
+	 * Проверить, содержит ли ограничение хотя бы одну переменную.
+	 *
+	 * @return true, если ограничение содержит хотя бы одну переменную
+	 */
+	virtual bool containsVariables() const = 0;
+
+	/**
+	 * Проверить, содержит ли ограничение текущую аннотацию.
+	 *
+	 * @return true, если ограничение содержит текущую аннотацию
+	 */
 	virtual bool containsCurrentAnnotation() const = 0;
 
 public:

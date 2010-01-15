@@ -23,7 +23,9 @@ public:
 
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
 	virtual bool equals( const Expression & e ) const;
+
 	virtual bool containsVariable( matchers::Variable var ) const;
+	virtual bool containsVariables() const;
 	virtual bool containsCurrentAnnotation() const;
 };
 

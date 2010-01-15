@@ -61,10 +61,22 @@ public:
 	 * Проверить, содержит ли выражение заданную переменную.
 	 *
 	 * @param var переменная
-	 * @return true, если выражение содержит переменную
+	 * @return true, если выражение содержит заданную переменную
 	 */
 	virtual bool containsVariable( matchers::Variable var ) const = 0;
 
+	/**
+	 * Проверить, содержит ли выражение хотя бы одну переменную.
+	 *
+	 * @return true, если выражение содержит хотя бы одну переменную
+	 */
+	virtual bool containsVariables() const = 0;
+
+	/**
+	 * Проверить, содержит ли выражение текущую аннотацию.
+	 *
+	 * @return true, если выражение содержит текущую аннотацию
+	 */
 	virtual bool containsCurrentAnnotation() const = 0;
 
 public:
