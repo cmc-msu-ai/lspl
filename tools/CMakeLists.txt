@@ -88,6 +88,17 @@ add_executable(lspl-rangeset-decart-tree-test ${LSPL_RANGESET_DECART_TREE_TEST_S
 
 target_link_libraries(lspl-rangeset-decart-tree-test lspl)
 
+### lspl-UtilTest
+
+set(LSPL_UTIL_TEST_SOURCES
+	src/SynDictionary.cpp
+	src/Util.cpp
+	src/UtilTest.cpp
+)
+
+add_executable(lspl-util-test ${LSPL_UTIL_TEST_SOURCES})
+
+target_link_libraries(lspl-util-test lspl)
 
 # Flags for effective error parsing
 

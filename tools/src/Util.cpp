@@ -2,6 +2,7 @@
  * Author: Antonov Vadim (avadim@gmail.com)
  */
 
+#include <algorithm>
 #include <fstream>
 #include <iostream>
 
@@ -132,10 +133,11 @@ namespace lspl {
 	}
 
 	std::string Util::Normalize(const std::string &term) {
-		std::cout << out.convert(term) << std::endl;
+		//std::cout << "Normalize " << out.convert(term) << std::endl;
 		std::vector<std::string> words;
 		ExtractWordsAndDelimiters(term, words);
 		std::string result;
+		// std::cout << "Normalized: ";
 		for(int i = 0; i < words.size(); ++i) {
 			//std::cout << "'" << words[i] << "' " << words[i].size() << std::endl; 
 			boost::ptr_vector<morphology::WordForm> forms;
@@ -199,6 +201,7 @@ namespace lspl {
 			patterns::PatternRef pattern) {
 		text::MatchList matches = text->getMatches(pattern);
 		if (!matches.size()) {
+			//std::cout << "No matches" << std::endl;
 			return "";
 		}
 
@@ -256,7 +259,7 @@ namespace lspl {
 				}
 				j += pattern_word.size() - 1;
 				if (is_condition && is_bracket) {
-					result += word;
+					result += "'" + word + "'";
 				} else if (!is_condition && !is_bracket) { 
 					result += pattern_word;
 					if (j + 1 < temp.size() && temp[j + 1] == '<') {
@@ -299,13 +302,13 @@ namespace lspl {
 					if (i == text.size()) {
 						break;
 					}
-					std::cout << out.convert(pattern) << std::endl;
+					//std::cout << out.convert(pattern) << std::endl;
 					if (text[i] == '#') {
 						state = LOADSTATE_SIMILARS;
 					}
 					break;
 				case LOADSTATE_SIMILARS:
-					std::cout<<"!";
+					//std::cout<<"!";
 					bool is_condition = false;
 					bool is_string = false;
 					while (i < text.size() && text[i] != '\n' &&
@@ -327,7 +330,7 @@ namespace lspl {
 						}
 						++i;
 					}
-					std::cout << out.convert(pattern) << std::endl;
+					//std::cout << out.convert(pattern) << std::endl;
 					similar_patterns[similar_patterns.size() - 1].push_back(
 							Trim(pattern));
 					if (i == text.size()) {
@@ -354,8 +357,10 @@ namespace lspl {
 		for(int i = 0; i < patterns.size(); ++i) {
 			try {
 				builder->build(patterns[i]);
+#ifdef DEBUG
 				std::cout << "Successfully build pattern \"" << out.convert(patterns[i])
 						<< "\"" << std::endl;
+#endif
 			} catch (...) {
 				std::cout << "Cannot build pattern \"" << out.convert(patterns[i])
 						<< "\"" << std::endl;
@@ -364,7 +369,7 @@ namespace lspl {
 		return result;
 	}
 
-	bool Util::IsPretext(std::string word) {
+	bool Util::IsPretext(const std::string &word) {
 		return word.size() <= 3;
 	}
 
@@ -388,5 +393,58 @@ namespace lspl {
 			}
 			++i;
 		}
+	}
+
+	int Util::LevinshteinDistance(const std::string &word1,
+			const std::string &word2) {
+		std::vector<std::vector<int> >
+				D(2, std::vector<int>(word2.size() + 1, 0));
+		int current = 0;
+		for(int j = 0; j <= word2.size(); ++j) {
+			D[0][j] = j;
+		}
+		for(int i = 1; i <= word1.size(); ++i) {
+			int previous = current;
+			current = 1 - current;
+			D[current][0] = i;
+			for(int j = 1; j <= word2.size(); ++j) {
+				D[current][j] =
+						std::min(D[current][j - 1] + 1, D[previous][j] + 1);
+				int d = !(word1[i - 1] == word2[j - 1]);
+				//std::cout << d << " " << word1[i - 1] << word2[j - 1] << std::endl;
+				D[current][j] = std::min(D[current][j], D[previous][j - 1] + d);
+				//std::cout << D[current][j] << " ";
+			}
+			//std::cout << std::endl;
+		}
+		return D[current][word2.size()];
+	}
+
+	bool Util::IsOrphologicalVariant(const std::string &term1,
+			const std::string &term2) {
+		std::vector<std::string> words1;
+		ExtractWords(Normalize(term1), words1);
+		std::vector<std::string> words2;
+		ExtractWords(Normalize(term2), words2);
+		if (words1.size() != words2.size()) {
+			return false;
+		}
+		bool result = true;
+		//std::cout << term1 << "!" << term2 << std::endl;
+		int unsimiliarWords = 0;
+		for(int i = 0; i < words1.size(); ++i) {
+			int minlen = std::min(words1[i].size(), words2[i].size());
+			result &= (words1[i] == words2[i]) ||
+					(std::abs((int)words1[i].size() - (int)words2[i].size())
+							<= 2) &&
+					(LevinshteinDistance(words1[i], words2[i]) <=
+							std::min(2, minlen - 2));
+			unsimiliarWords += !!(words1[i] != words2[i]);
+			//std::cout << result <<std::endl;
+		}
+		if (unsimiliarWords > words1.size() / 2 + words1.size() % 2) {
+			result = false;
+		}
+		return result;
 	}
 } // namespace lspl.

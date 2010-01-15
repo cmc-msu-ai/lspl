@@ -76,9 +76,14 @@ class Util {
 	static NamespaceRef BuildPatterns(const std::vector<std::string> &patterns,
 			bool use_dictionary = true);
 
-	static bool IsPretext(std::string word);
+	static bool IsPretext(const std::string &word);
 	static bool IsDelimiter(char symbol);
 	static void ToUpper(std::string &word);
+
+	static int LevinshteinDistance(const std::string &word1,
+			const std::string &word2);
+	static bool IsOrphologicalVariant(const std::string &term1,
+			const std::string &term2);
 };
 
 } // namespace lspl.

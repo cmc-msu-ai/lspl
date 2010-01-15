@@ -8,6 +8,7 @@
 #define __LSPL_SIMILARITYRECOGNIZER
 
 #include <map>
+#include <set>
 #include <string>
 #include <vector>
 
@@ -45,7 +46,7 @@ class SimilarityRecognizer {
 				NamespaceRef patterns_namespace,
 				std::vector<std::vector<std::string> > &similar_patterns);
 
-		std::vector<std::vector<int> *> *FindSimilars();
+		std::vector<std::set<int> *> *FindSimilars();
 	};
 
 	NamespaceRef _patterns_namespace;

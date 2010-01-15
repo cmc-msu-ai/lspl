@@ -11,6 +11,7 @@ void ExtractTerms(const std::vector<lspl::PatternMatchRef> &matches,
 	terms.clear();
 	for(int i = 0; i < matches.size(); ++i) {
 		terms.push_back(matches[i]->matches[0]->getRangeString());
+		std::cout << lspl::Util::out.convert(matches[i]->matches[0]->getRangeString()) << std::endl;
 	}
 }
 
@@ -18,6 +19,10 @@ int main(int argc, char** argv) {
 	if (argc < 4) {
 		std::cout << "Usage: " << argv[0] <<
 				" patterns1 patterns2 text [similar patterns] " << std::endl;
+		std::cout << "\tpatterns1 - dictionary terms" << std::endl;
+		std::cout << "\tpatterns2 - all terms candidates patterns" << std::endl;
+		std::cout << "\tsimilar_patterns - similar patterns templates" <<
+				std::endl;
 		return 1;
 	}
 	std::cout << "Patterns from file " << argv[1] << std::endl << std::endl;
@@ -30,11 +35,13 @@ int main(int argc, char** argv) {
 	recognizer = new lspl::DictionaryRecognizer(argv[2], argv[3]);
 	std::vector<lspl::PatternMatchRef> matches2 =
 			recognizer->RecognizeAndSearch();
-	delete recognizer;
 	std::vector<std::string> terms1;
+	//terms1.push_back(lspl::Util::in.convert("правильность программ"));
 	ExtractTerms(matches1, terms1);
 	std::vector<std::string> terms2;
-	ExtractTerms(matches1, terms2);
+	//terms2.push_back(lspl::Util::in.convert("правильность"));
+	ExtractTerms(matches2, terms2);
+	delete recognizer;
 	char *similar_patterns_file = "similarity_patterns.txt";
 	if (argc == 5) {
 		similar_patterns_file = argv[4];

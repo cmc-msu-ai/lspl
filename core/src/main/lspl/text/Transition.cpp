@@ -28,6 +28,9 @@ uint Transition::getRangeEnd() const {
 }
 
 std::string Transition::getRangeString() const {
+	if (end.startOffset - start.endOffset <= 0) {
+		return "";
+	}
 	return start.text.getContent().substr( start.endOffset, end.startOffset - start.endOffset );
 }
 

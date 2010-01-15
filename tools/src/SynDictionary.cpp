@@ -28,11 +28,13 @@ namespace lspl {
 
 		bool SynDictionary::acceptsWords(const std::vector<std::string> &words)
 				const {
+#ifdef DEBUG
 			std::cout << "acceptWords";
 			for(int i = 0; i < words.size(); ++i) {
 				std::cout << Util::out.convert(words[i]) << " ";
 			}
 			std::cout << std::endl;
+#endif
 
 			if (words.size() < 2) {
 				return true;
