@@ -25,18 +25,18 @@ class SimilarityRecognizer {
 		const std::vector<text::TextRef> &_terms1;
 		const std::vector<text::TextRef> &_terms2;
 		NamespaceRef _patterns_namespace;
-		std::vector<std::vector<std::string> > &_similar_patterns;
+		std::vector<NamespaceRef> &_similar_patterns;
 		dictionaries::SynDictionary _synonim_dictionary;
 
 		const std::vector<text::TextRef> &terms1() const;
 		const std::vector<text::TextRef> &terms2() const;
 		NamespaceRef patterns_namespace() const;
-		std::vector<std::vector<std::string> > &similar_patterns() const;
+		std::vector<NamespaceRef> &similar_patterns() const;
 		const dictionaries::SynDictionary &synonim_dictionary() const;
 
 		std::vector<int> *FindSimilars(const text::TextRef term1,
 				std::map<std::string, std::string> &pattern_words,
-				const std::vector<std::string> &similar_patterns_namespace);
+				NamespaceRef similar_patterns_namespace);
 
 		bool IsSimilar(std::map<std::string, std::string> &term1,
 				std::map<std::string, std::string> &term2) const;
@@ -44,16 +44,16 @@ class SimilarityRecognizer {
 		SimilarFinder(const std::vector<text::TextRef> &terms1,
 				const std::vector<text::TextRef> &terms2,
 				NamespaceRef patterns_namespace,
-				std::vector<std::vector<std::string> > &similar_patterns);
+				std::vector<NamespaceRef> &similar_patterns);
 
 		std::vector<std::set<int> *> *FindSimilars();
 	};
 
 	NamespaceRef _patterns_namespace;
-	std::vector<std::vector<std::string> > _similar_patterns;
+	std::vector<NamespaceRef> _similar_patterns;
 
 	NamespaceRef patterns_namespace() const;
-	std::vector<std::vector<std::string> > &similar_patterns();
+	std::vector<NamespaceRef> &similar_patterns();
 	void LoadSimilarPatterns(const char *file);
  public:
 	SimilarityRecognizer(const char *similarity_patterns_file);

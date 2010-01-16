@@ -199,7 +199,21 @@ namespace lspl {
 
 	std::string Util::GetNormalizedMatch(text::TextRef text,
 			patterns::PatternRef pattern) {
-		text::MatchList matches = text->getMatches(pattern);
+		patterns::restrictions::AndRestriction restriction;
+		return GetNormalizedMatch(text, pattern, restriction);
+	}
+
+	std::string Util::GetNormalizedMatch(std::string text,
+			patterns::PatternRef pattern) {
+		text::TextRef textRef = ConvertToText(text);
+		return GetNormalizedMatch(textRef, pattern);
+	}
+
+	std::string Util::GetNormalizedMatch(text::TextRef text,
+			patterns::PatternRef pattern,
+			patterns::restrictions::AndRestriction &restriction) {
+		text::RestrictedMatchList matches =
+				text->getRestrictedMatches(pattern, restriction);
 		if (!matches.size()) {
 			//std::cout << "No matches" << std::endl;
 			return "";
@@ -217,9 +231,10 @@ namespace lspl {
 	}
 
 	std::string Util::GetNormalizedMatch(std::string text,
-			patterns::PatternRef pattern) {
+			patterns::PatternRef pattern,
+			patterns::restrictions::AndRestriction &restriction) {
 		text::TextRef textRef = ConvertToText(text);
-		return GetNormalizedMatch(textRef, pattern);
+		return GetNormalizedMatch(textRef, pattern, restriction);
 	}
 
 	std::string Util::BuildPattern(const std::string &pattern,

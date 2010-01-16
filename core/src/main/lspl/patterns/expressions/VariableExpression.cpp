@@ -4,6 +4,9 @@
  *  Created on: Sep 28, 2008
  *      Author: alno
  */
+#include <cstdio>
+#include <cstdlib>
+
 #include "../../base/BaseInternal.h"
 #include "VariableExpression.h"
 #include "../../text/Transition.h"
@@ -24,6 +27,34 @@ VariableExpression::VariableExpression( text::attributes::SpeechPart sp, uint in
 
 VariableExpression::VariableExpression( const Pattern & pt, uint index ) :
 	variable( Variable( pt, index ) ) {
+}
+
+VariableExpression::VariableExpression( const std::string &base ) {
+	int speechPart = -1;
+	int speechSize = 0;
+	for(int i = 0; i < text::attributes::SpeechPart::COUNT; ++i) {
+		size_t size = text::attributes::SpeechPart::ABBREVATIONS[i].size();
+		if (base.size() <= size) {
+			continue;
+		}
+		if (base.substr(0, size) !=
+				text::attributes::SpeechPart::ABBREVATIONS[i]) {
+			continue;
+		}
+		if (speechPart == -1 || speechSize < size) {
+			speechPart = i;
+			speechSize = size;
+		}
+	}
+	if (speechPart = -1) {
+		speechPart = 0;
+	}
+	int number =
+			atoi(base.substr(speechSize, base.size() - speechSize).c_str());
+	if (!number) {
+		number = 1;
+	}
+	variable = Variable(speechPart, number);
 }
 
 VariableExpression::~VariableExpression() {

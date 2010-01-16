@@ -6,6 +6,11 @@
 #include <boost/scoped_ptr.hpp>
 
 #include "lspl/patterns/Pattern.h"
+#include "lspl/patterns/expressions/AttributeExpression.h"
+#include "lspl/patterns/expressions/ConstantExpression.h"
+#include "lspl/patterns/expressions/VariableExpression.h"
+#include "lspl/patterns/restrictions/AgreementRestriction.h"
+#include "lspl/patterns/restrictions/AndRestriction.h"
 #include "AbbrAnalyzer.h"
 #include "SimilarityRecognizer.h"
 #include "Util.h"
@@ -16,7 +21,7 @@ SimilarityRecognizer::SimilarFinder::SimilarFinder(
 		const std::vector<text::TextRef> &terms1,
 		const std::vector<text::TextRef> &terms2,
 		NamespaceRef patterns_namespace,
-		std::vector<std::vector<std::string> > &similar_patterns) :
+		std::vector<NamespaceRef> &similar_patterns) :
 		_terms1(terms1),
 		_terms2(terms2),
 		_patterns_namespace(patterns_namespace),
@@ -38,7 +43,7 @@ NamespaceRef SimilarityRecognizer::SimilarFinder::patterns_namespace() const {
 	return _patterns_namespace;
 }
 
-std::vector<std::vector<std::string> >
+std::vector<NamespaceRef>
 		&SimilarityRecognizer::SimilarFinder::similar_patterns() const {
 	return _similar_patterns;
 }
@@ -99,25 +104,31 @@ std::vector<std::set<int> *> *
 std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 		const text::TextRef term1,
 		std::map<std::string, std::string> &pattern_words,
-		const std::vector<std::string> &similar_patterns) {
+		NamespaceRef similar_patterns_namespace) {
 //#ifdef DEBUG
 	std::cout << "\tFind Similars (second) ";
+//#endif
+	patterns::restrictions::AndRestriction andRestriction;
 	for(std::map<std::string, std::string>::iterator i = pattern_words.begin();
 			i != pattern_words.end(); ++i) {
+		patterns::restrictions::AgreementRestriction *restriction =
+				new patterns::restrictions::AgreementRestriction();
+		restriction->addArgument(
+				new patterns::expressions::AttributeExpression(
+						new patterns::expressions::VariableExpression(i->first),
+				text::attributes::AttributeKey::BASE));
+		restriction->addArgument(
+				new patterns::expressions::ConstantExpression(i->second));
+		andRestriction.addArgument(restriction);
+//#ifdef DEBUG
 		std::cout << i->first << ":\"" << Util::out.convert(i->second) <<"\"";
+//#endif
 	}
+//#ifdef DEBUG
 	std::cout << std::endl;
 //#endif
 	std::vector<int> *result = new std::vector<int>();
 
-	std::vector<std::string> new_similar_patterns;
-	for(int i = 0; i < similar_patterns.size(); ++i) {
-		std::string similar_pattern =
-				Util::BuildPattern(similar_patterns[i], pattern_words);
-		new_similar_patterns.push_back(similar_pattern);
-	}
-	NamespaceRef similar_patterns_namespace =
-			Util::BuildPatterns(new_similar_patterns);
 	std::vector<bool> is_similar(terms2().size(), false);
 
 	for(int l = 0; l < similar_patterns_namespace->getPatternCount(); ++l) {
@@ -132,8 +143,8 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 			if (is_similar[k]) {
 				continue;
 			}
-			std::string normalized_match =
-					Util::GetNormalizedMatch(terms2()[k], similar_pattern); 
+			std::string normalized_match = Util::GetNormalizedMatch(terms2()[k],
+					similar_pattern, andRestriction); 
 
 			if (normalized_match == "") {
 				continue;
@@ -210,7 +221,7 @@ NamespaceRef SimilarityRecognizer::patterns_namespace() const {
 	return _patterns_namespace;
 }
 
-std::vector<std::vector<std::string> >
+std::vector<NamespaceRef>
 		&SimilarityRecognizer::similar_patterns() {
 	return _similar_patterns;
 }
@@ -218,8 +229,14 @@ std::vector<std::vector<std::string> >
 void SimilarityRecognizer::LoadSimilarPatterns(const char *file) {
 	std::string text = Util::LoadTextFromFile(file);
 	std::vector<std::string> patterns;
-	Util::LoadSimilarPatterns(text, patterns, _similar_patterns);
+	std::vector<std::vector<std::string> > similar_patterns;
+	Util::LoadSimilarPatterns(text, patterns, similar_patterns);
 	_patterns_namespace = Util::BuildPatterns(patterns);
+	for(int i = 0; i < similar_patterns.size(); ++i) {
+		NamespaceRef similar_namespace =
+				Util::BuildPatterns(similar_patterns[i]);
+		_similar_patterns.push_back(similar_namespace);
+	}
 }
 
 SimilarityRecognizer::SimilarityRecognizer(

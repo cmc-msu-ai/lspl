@@ -12,6 +12,7 @@
 
 #include "lspl/Namespace.h"
 #include "lspl/patterns/Pattern.h"
+#include "lspl/patterns/restrictions/AndRestriction.h"
 #include "lspl/text/readers/PlainTextReader.h"
 #include "lspl/text/Text.h"
 #include "lspl/transforms/Normalization.h"
@@ -66,6 +67,12 @@ class Util {
 			patterns::PatternRef pattern);
 	static std::string GetNormalizedMatch(std::string text,
 			patterns::PatternRef pattern);
+	static std::string GetNormalizedMatch(text::TextRef text,
+			patterns::PatternRef pattern,
+			patterns::restrictions::AndRestriction &restriction);
+	static std::string GetNormalizedMatch(std::string text,
+			patterns::PatternRef pattern,
+			patterns::restrictions::AndRestriction &restriction);
 	// Change pattern with set of words.
 	static std::string BuildPattern(const std::string &pattern,
 			const std::map<std::string, std::string> &words);

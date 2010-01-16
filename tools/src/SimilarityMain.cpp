@@ -1,6 +1,7 @@
 #include <iostream>
 #include <string>
 
+#include "lspl/patterns/expressions/VariableExpression.h"
 #include "lspl/patterns/PatternBuilder.h"
 #include "DictionaryRecognizer.h"
 #include "SimilarityRecognizer.h"

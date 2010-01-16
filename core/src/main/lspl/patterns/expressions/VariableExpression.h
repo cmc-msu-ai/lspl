@@ -8,6 +8,8 @@
 #ifndef _LSPL_PATTERNS_EXPRESSIONS_VARIABLEEXPRESSION_H_
 #define _LSPL_PATTERNS_EXPRESSIONS_VARIABLEEXPRESSION_H_
 
+#include <string>
+
 #include "../../base/Base.h"
 #include "Expression.h"
 #include "../matchers/Variable.h"
@@ -19,6 +21,7 @@ public:
 	VariableExpression( const matchers::Variable & variable );
 	VariableExpression( text::attributes::SpeechPart sp, uint index );
 	VariableExpression( const Pattern & pt, uint index );
+	VariableExpression( const std::string &base );
 
 	virtual ~VariableExpression();
 
