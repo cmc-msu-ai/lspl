@@ -14,7 +14,6 @@ public:
 	RegexpMatcher( const std::string & token );
 	virtual ~RegexpMatcher() {}
 
-	virtual text::TransitionList buildTransitions( const text::Node & node, const Context & context ) const;
 	virtual bool matchTransition(const text::Transition & transition, const Context & context) const;
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
 

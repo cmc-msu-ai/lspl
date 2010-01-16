@@ -27,18 +27,6 @@ bool TokenMatcher::matchTransition( const Transition & transition, const Context
 	}
 }
 
-TransitionList TokenMatcher::buildTransitions( const text::Node & node, const Context & context ) const {
-	TransitionList tokenTransitions;
-
-	for ( uint i = 0; i < node.transitions.size(); ++ i )
-		if ( matchTransition( *node.transitions[i], context ) ) {
-			tokenTransitions.push_back( node.transitions[i] );
-			break;
-		}
-
-	return tokenTransitions;
-}
-
 void TokenMatcher::dump( std::ostream & out, const std::string & tabs ) const {
 	out << "TokenMatcher{ token = \"" << token << "\" }";
 }
