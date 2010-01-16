@@ -6,6 +6,7 @@
 #include "../../text/attributes/SpeechPart.h"
 
 #include <ostream>
+#include <string>
 
 namespace lspl { namespace patterns {
 
@@ -21,6 +22,7 @@ public:
 	explicit Variable( uint type, uint index ) : type( type ), index( index ) {}
 	explicit Variable( text::attributes::SpeechPart sp, uint index ) : type( sp.id ), index( index ) {}
 	explicit Variable( const Pattern & pt, uint index );
+	explicit Variable( const std::string &base );
 	explicit Variable() : type( 0 ), index( 0 ) {}
 
 	bool isSpeechPart() { return type < text::attributes::SpeechPart::COUNT; }
