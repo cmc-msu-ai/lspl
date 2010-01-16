@@ -395,8 +395,10 @@ namespace lspl {
 	void Util::ToUpper(std::string &word) {
 		std::string::iterator i = word.begin();
 		std::string::iterator end = word.end();
-		std::string russian_small("абвгдеёжзийклмнопрстуфхцчшщьыъэюя");
-		std::string russian_big("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ");
+		static std::string
+				russian_small(in.convert("абвгдеёжзийклмнопрстуфхцчшщьыъэюя"));
+		static std::string
+				russian_big(in.convert("АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯ"));
 
 		while (i != end) {
 			*i = toupper((unsigned char)*i);
@@ -448,6 +450,8 @@ namespace lspl {
 		//std::cout << term1 << "!" << term2 << std::endl;
 		int unsimiliarWords = 0;
 		for(int i = 0; i < words1.size(); ++i) {
+			ToUpper(words1[i]);
+			ToUpper(words2[i]);
 			int minlen = std::min(words1[i].size(), words2[i].size());
 			result &= (words1[i] == words2[i]) ||
 					(std::abs((int)words1[i].size() - (int)words2[i].size())

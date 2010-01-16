@@ -65,7 +65,7 @@ namespace lspl {
 			for (int k = j; (k < len - 1) && (k - j + 1 <= len); ++k) {
 				tmp_text += text[k];
 				if (FindCommonPart(word, tmp_text) == tmp_text.size() &&
-						 DeepAnalyze(list, text, i + 1, k + 1)) {
+						DeepAnalyze(list, text, i + 1, k + 1)) {
 					return true;
 				}
 			}
@@ -80,16 +80,16 @@ namespace lspl {
 		for (int i = 0; i < len1; ++i) {
 			for (int j = 0; j < len2; ++j) {
 				if (i > 0) {
-				 len[i][j] = len[i - 1][j];
+					len[i][j] = len[i - 1][j];
 				}
 				if (j > 0) {
-				 len[i][j] = std::max(len[i][j - 1], len[i][j]);
+					len[i][j] = std::max(len[i][j - 1], len[i][j]);
 				}
 				if (text1[i] == text2[j]) {
 					if ((i > 0) && (j > 0)) {
 						len[i][j] = std::max(len[i][j], len[i - 1][j - 1] + 1);
 					} else {
-					 len[i][j] = 1;
+						len[i][j] = 1;
 					}
 				}
 			}
