@@ -21,7 +21,6 @@ public:
 	VariableExpression( const matchers::Variable & variable );
 	VariableExpression( text::attributes::SpeechPart sp, uint index );
 	VariableExpression( const Pattern & pt, uint index );
-	VariableExpression( const std::string &base );
 
 	virtual ~VariableExpression();
 

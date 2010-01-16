@@ -29,10 +29,6 @@ VariableExpression::VariableExpression( const Pattern & pt, uint index ) :
 	variable( Variable( pt, index ) ) {
 }
 
-VariableExpression::VariableExpression( const std::string &base ) :
-	variable( Variable(base) ) {
-}
-
 VariableExpression::~VariableExpression() {
 }
 

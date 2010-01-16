@@ -115,7 +115,8 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 				new patterns::restrictions::AgreementRestriction();
 		restriction->addArgument(
 				new patterns::expressions::AttributeExpression(
-						new patterns::expressions::VariableExpression(i->first),
+						new patterns::expressions::VariableExpression(
+								patterns::matchers::Variable(i->first)),
 				text::attributes::AttributeKey::BASE));
 		restriction->addArgument(
 				new patterns::expressions::ConstantExpression(i->second));
