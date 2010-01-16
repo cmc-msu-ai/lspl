@@ -10,7 +10,6 @@
 #include "lspl/patterns/expressions/ConstantExpression.h"
 #include "lspl/patterns/expressions/VariableExpression.h"
 #include "lspl/patterns/restrictions/AgreementRestriction.h"
-#include "lspl/patterns/restrictions/AndRestriction.h"
 #include "AbbrAnalyzer.h"
 #include "SimilarityRecognizer.h"
 #include "Util.h"
@@ -21,12 +20,15 @@ SimilarityRecognizer::SimilarFinder::SimilarFinder(
 		const std::vector<text::TextRef> &terms1,
 		const std::vector<text::TextRef> &terms2,
 		NamespaceRef patterns_namespace,
-		std::vector<NamespaceRef> &similar_patterns) :
+		std::vector<NamespaceRef> &similar_patterns,
+		const std::vector<std::vector<std::pair<patterns::matchers::Variable,
+				patterns::matchers::Variable> *> > &st_conditions) : 
 		_terms1(terms1),
 		_terms2(terms2),
 		_patterns_namespace(patterns_namespace),
 		_similar_patterns(similar_patterns),
-		_synonim_dictionary("Synonim", "synonim_dictionary.txt") {
+		_synonim_dictionary("Synonim", "synonim_dictionary.txt"),
+		_st_conditions(st_conditions){
 }
 
 const std::vector<text::TextRef>
@@ -92,7 +94,7 @@ std::vector<std::set<int> *> *
 			}
 
 			std::vector<int> *term_result =	FindSimilars(terms1()[i],
-					pattern_words, similar_patterns()[j]);
+					pattern_words, similar_patterns()[j], _st_conditions[j]);
 			for(int k = 0; k < term_result->size(); ++k) {
 				(*result)[i]->insert((*term_result)[k]);
 			}
@@ -101,15 +103,12 @@ std::vector<std::set<int> *> *
 	return result;
 }
 
-std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
-		const text::TextRef term1,
-		std::map<std::string, std::string> &pattern_words,
-		NamespaceRef similar_patterns_namespace) {
-//#ifdef DEBUG
-	std::cout << "\tFind Similars (second) ";
-//#endif
-	patterns::restrictions::AndRestriction andRestriction;
-	for(std::map<std::string, std::string>::iterator i = pattern_words.begin();
+boost::shared_ptr<patterns::restrictions::AndRestriction>
+		SimilarityRecognizer::SimilarFinder::GenerateAndRestriction(
+				const std::map<std::string, std::string> &pattern_words) {
+	boost::shared_ptr<patterns::restrictions::AndRestriction> andRestriction(
+			new patterns::restrictions::AndRestriction());
+	for(std::map<std::string, std::string>::const_iterator i = pattern_words.begin();
 			i != pattern_words.end(); ++i) {
 		patterns::restrictions::AgreementRestriction *restriction =
 				new patterns::restrictions::AgreementRestriction();
@@ -120,12 +119,23 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 				text::attributes::AttributeKey::BASE));
 		restriction->addArgument(
 				new patterns::expressions::ConstantExpression(i->second));
-		andRestriction.addArgument(restriction);
-//#ifdef DEBUG
-		std::cout << i->first << ":\"" << Util::out.convert(i->second) <<"\"";
-//#endif
+		andRestriction->addArgument(restriction);
 	}
+	return andRestriction;
+}
+
+std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
+		const text::TextRef term1,
+		std::map<std::string, std::string> &pattern_words,
+		NamespaceRef similar_patterns_namespace,
+		const std::vector<std::pair<patterns::matchers::Variable,
+				patterns::matchers::Variable> *> &st_conditions) {
 //#ifdef DEBUG
+	std::cout << "\tFind Similars (second) ";
+	for(std::map<std::string, std::string>::iterator i = pattern_words.begin();
+			i != pattern_words.end(); ++i) {
+		std::cout << i->first << ":\"" << Util::out.convert(i->second) <<"\"";
+	}
 	std::cout << std::endl;
 //#endif
 	std::vector<int> *result = new std::vector<int>();
@@ -133,6 +143,8 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 	std::vector<bool> is_similar(terms2().size(), false);
 
 	for(int l = 0; l < similar_patterns_namespace->getPatternCount(); ++l) {
+		boost::shared_ptr<patterns::restrictions::AndRestriction>
+				andRestriction = GenerateAndRestriction(pattern_words);
 		patterns::PatternRef similar_pattern =
 				similar_patterns_namespace->getPatternByIndex(l);
 //#ifdef DEBUG
@@ -145,7 +157,7 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 				continue;
 			}
 			std::string normalized_match = Util::GetNormalizedMatch(terms2()[k],
-					similar_pattern, andRestriction); 
+					similar_pattern, *(andRestriction.get())); 
 
 			if (normalized_match == "") {
 				continue;
@@ -234,6 +246,29 @@ void SimilarityRecognizer::LoadSimilarPatterns(const char *file) {
 	Util::LoadSimilarPatterns(text, patterns, similar_patterns);
 	_patterns_namespace = Util::BuildPatterns(patterns);
 	for(int i = 0; i < similar_patterns.size(); ++i) {
+		std::vector<std::pair<patterns::matchers::Variable,
+				patterns::matchers::Variable> *> st_conditions;
+		_st_conditions.push_back(st_conditions);
+		for(int j = 0; j < similar_patterns[i].size(); ++j) {
+			std::cout << similar_patterns[i][j] << std::endl;
+			std::string condition =
+					Util::ExtractStCondition(similar_patterns[i][j]);
+			std::cout << condition << "!!" << similar_patterns[i][j] << std::endl;
+			if (condition == "") {
+				_st_conditions[i].push_back(NULL);
+				continue;
+			}
+			std::pair<std::string, std::string> vars =
+					Util::ConvertStCondition(condition);
+			std::cout << vars.first << "!" << vars.second << std::endl;
+			patterns::matchers::Variable var1(vars.first);
+			patterns::matchers::Variable var2(vars.second);
+			std::pair<patterns::matchers::Variable,
+					patterns::matchers::Variable> *st_condition =
+					new std::pair<patterns::matchers::Variable,
+							patterns::matchers::Variable>(var1, var2);
+			_st_conditions[i].push_back(st_condition);
+		}
 		NamespaceRef similar_namespace =
 				Util::BuildPatterns(similar_patterns[i]);
 		_similar_patterns.push_back(similar_namespace);
@@ -258,7 +293,7 @@ void SimilarityRecognizer::FindSimilars(
 		const std::vector<text::TextRef> &terms1,
 		const std::vector<text::TextRef> &terms2) {
 	boost::scoped_ptr<SimilarFinder> similar_finder(new SimilarFinder(terms1,
-			terms2,	patterns_namespace(), similar_patterns()));
+			terms2,	patterns_namespace(), similar_patterns(), _st_conditions));
 	similar_finder->FindSimilars();
 }
 

@@ -466,4 +466,59 @@ namespace lspl {
 		}
 		return result;
 	}
+
+	std::string Util::ExtractStCondition(std::string &pattern) {
+		std::string result;
+		std::string new_pattern;
+		std::string condition;
+		bool is_condition = false;
+		for(int i = 0; i < pattern.size(); ++i) {
+			if (pattern[i] == '<') {
+				condition += pattern[i];
+				is_condition = true;
+			} else if (pattern[i] == '>') {
+				condition += pattern[i];
+				is_condition = false;
+				if (condition.find(".st") != std::string::npos) {
+					result += condition;
+				} else {
+					new_pattern += condition;
+				}
+				condition = "";
+			} else if (is_condition) {
+				condition += pattern[i];
+			} else {
+				new_pattern += pattern[i];
+			}
+		}
+		pattern = new_pattern;
+		return result;
+	}
+
+	std::pair<std::string, std::string>
+		Util::ConvertStCondition(const std::string &condition) {
+		std::string v1;
+		std::string v2;
+		int i = 0;
+		while (i < condition.size() && (condition[i] == '<') ||
+				IsDelimiter(condition[i])) {
+			++i;
+		}
+		while (i < condition.size() && condition[i] != '.') {
+			v1 += condition[i];
+			++i;
+		}
+		while (i < condition.size() && (condition[i] != '=')) {
+			++i;
+		}
+		while (i < condition.size() && (condition[i] == '=') ||
+				IsDelimiter(condition[i])) {
+			++i;
+		}
+		while (i < condition.size() && condition[i] != '.') {
+			v2 += condition[i];
+			++i;
+		}
+		return std::pair<std::string, std::string>(v1, v2);
+	}
 } // namespace lspl.

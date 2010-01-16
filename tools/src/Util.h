@@ -82,6 +82,12 @@ class Util {
 			std::vector<std::vector<std::string> > &similar_patterns);
 	static NamespaceRef BuildPatterns(const std::vector<std::string> &patterns,
 			bool use_dictionary = true);
+	// Extact *.st = *.st condition and remove it from pattern
+	static std::string ExtractStCondition(std::string &pattern);
+	// Extract variables from st condition.
+	// Example: <A1.st = N2.st> will return <"A1", "N2">
+	static std::pair<std::string, std::string>
+		ConvertStCondition(const std::string &condition);
 
 	static bool IsPretext(const std::string &word);
 	static bool IsDelimiter(char symbol);

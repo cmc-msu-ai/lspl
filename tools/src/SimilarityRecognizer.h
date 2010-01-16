@@ -11,9 +11,12 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <boost/shared_ptr.hpp>
 
 #include "lspl/Namespace.h"
 #include "lspl/text/Text.h"
+#include "lspl/patterns/matchers/Variable.h"
+#include "lspl/patterns/restrictions/AndRestriction.h"
 #include "SynDictionary.h"
 
 namespace lspl {
@@ -26,6 +29,8 @@ class SimilarityRecognizer {
 		const std::vector<text::TextRef> &_terms2;
 		NamespaceRef _patterns_namespace;
 		std::vector<NamespaceRef> &_similar_patterns;
+		const std::vector<std::vector<std::pair<patterns::matchers::Variable,
+				patterns::matchers::Variable> *> > &_st_conditions;
 		dictionaries::SynDictionary _synonim_dictionary;
 
 		const std::vector<text::TextRef> &terms1() const;
@@ -36,21 +41,30 @@ class SimilarityRecognizer {
 
 		std::vector<int> *FindSimilars(const text::TextRef term1,
 				std::map<std::string, std::string> &pattern_words,
-				NamespaceRef similar_patterns_namespace);
+				NamespaceRef similar_patterns_namespace,
+				const std::vector<std::pair<patterns::matchers::Variable,
+						patterns::matchers::Variable> *> &st_conditions);
 
 		bool IsSimilar(std::map<std::string, std::string> &term1,
 				std::map<std::string, std::string> &term2) const;
+		boost::shared_ptr<patterns::restrictions::AndRestriction>
+				GenerateAndRestriction(
+						const std::map<std::string, std::string> &pattern_words);
 	 public:
 		SimilarFinder(const std::vector<text::TextRef> &terms1,
 				const std::vector<text::TextRef> &terms2,
 				NamespaceRef patterns_namespace,
-				std::vector<NamespaceRef> &similar_patterns);
+				std::vector<NamespaceRef> &similar_patterns,
+				const std::vector<std::vector<std::pair<patterns::matchers::Variable,
+						patterns::matchers::Variable> *> > &st_conditions);
 
 		std::vector<std::set<int> *> *FindSimilars();
 	};
 
 	NamespaceRef _patterns_namespace;
 	std::vector<NamespaceRef> _similar_patterns;
+	std::vector<std::vector<std::pair<patterns::matchers::Variable,
+			patterns::matchers::Variable> *> > _st_conditions;
 
 	NamespaceRef patterns_namespace() const;
 	std::vector<NamespaceRef> &similar_patterns();
