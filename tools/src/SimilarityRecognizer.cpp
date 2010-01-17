@@ -10,6 +10,7 @@
 #include "lspl/patterns/expressions/ConstantExpression.h"
 #include "lspl/patterns/expressions/VariableExpression.h"
 #include "lspl/patterns/restrictions/AgreementRestriction.h"
+#include "lspl/transforms/ContextRetriever.h"
 #include "AbbrAnalyzer.h"
 #include "SimilarityRecognizer.h"
 #include "Util.h"
@@ -93,8 +94,14 @@ std::vector<std::set<int> *> *
 				continue;
 			}
 
+			text::MatchList matches = terms1()[i]->getMatches(pattern);
+			assert(matches.size() == 1);
+			static transforms::ContextRetriever contextRetriver;
+			patterns::matchers::Context context =
+					contextRetriver.apply(*(matches[0]->getVariant(0)));
 			std::vector<int> *term_result =	FindSimilars(terms1()[i],
-					pattern_words, similar_patterns()[j], _st_conditions[j]);
+					pattern_words, similar_patterns()[j], _st_conditions[j],
+					context);
 			for(int k = 0; k < term_result->size(); ++k) {
 				(*result)[i]->insert((*term_result)[k]);
 			}
@@ -129,7 +136,8 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 		std::map<std::string, std::string> &pattern_words,
 		NamespaceRef similar_patterns_namespace,
 		const std::vector<std::pair<patterns::matchers::Variable,
-				patterns::matchers::Variable> *> &st_conditions) {
+				patterns::matchers::Variable> *> &st_conditions,
+		patterns::matchers::Context &context) {
 //#ifdef DEBUG
 	std::cout << "\tFind Similars (second) ";
 	for(std::map<std::string, std::string>::iterator i = pattern_words.begin();
@@ -145,6 +153,23 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 	for(int l = 0; l < similar_patterns_namespace->getPatternCount(); ++l) {
 		boost::shared_ptr<patterns::restrictions::AndRestriction>
 				andRestriction = GenerateAndRestriction(pattern_words);
+		if (st_conditions[l] !=  NULL) {
+			text::TransitionConstRef transition =
+					context.getValues(st_conditions[l]->second).first->second;
+			patterns::restrictions::AgreementRestriction *restriction =
+					new patterns::restrictions::AgreementRestriction();
+			restriction->addArgument(
+					new patterns::expressions::AttributeExpression(
+							new patterns::expressions::VariableExpression(
+									st_conditions[l]->first),
+					text::attributes::AttributeKey::STEM));
+			restriction->addArgument(
+					new patterns::expressions::AttributeExpression(
+							new patterns::expressions::ConstantExpression(
+									*transition),
+					text::attributes::AttributeKey::STEM));
+			andRestriction->addArgument(restriction);
+		}
 		patterns::PatternRef similar_pattern =
 				similar_patterns_namespace->getPatternByIndex(l);
 //#ifdef DEBUG
@@ -263,6 +288,11 @@ void SimilarityRecognizer::LoadSimilarPatterns(const char *file) {
 			std::cout << vars.first << "!" << vars.second << std::endl;
 			patterns::matchers::Variable var1(vars.first);
 			patterns::matchers::Variable var2(vars.second);
+			if (similar_patterns[i][j].find(vars.first) == std::string::npos) {
+				patterns::matchers::Variable var3 = var1;
+				var1 = var2;
+				var2 = var3;
+			}
 			std::pair<patterns::matchers::Variable,
 					patterns::matchers::Variable> *st_condition =
 					new std::pair<patterns::matchers::Variable,

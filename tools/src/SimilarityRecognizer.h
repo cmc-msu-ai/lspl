@@ -43,7 +43,8 @@ class SimilarityRecognizer {
 				std::map<std::string, std::string> &pattern_words,
 				NamespaceRef similar_patterns_namespace,
 				const std::vector<std::pair<patterns::matchers::Variable,
-						patterns::matchers::Variable> *> &st_conditions);
+						patterns::matchers::Variable> *> &st_conditions,
+				patterns::matchers::Context &context);
 
 		bool IsSimilar(std::map<std::string, std::string> &term1,
 				std::map<std::string, std::string> &term2) const;
