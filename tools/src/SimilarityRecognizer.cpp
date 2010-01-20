@@ -107,6 +107,17 @@ std::vector<std::set<int> *> *
 			}
 		}
 	}
+	for(int i = 0; i < terms1().size(); ++i) {
+		for(int j = 0; j < terms2().size(); ++j) {
+			if ((*result)[i]->find(j) != (*result)[i]->end()) {
+				continue;
+			}
+			if (IsSimilar(terms1()[i]->getContent(),
+					terms2()[j]->getContent())) {
+				(*result)[i]->insert(j);
+			}
+		}
+	}
 	return result;
 }
 
@@ -169,6 +180,8 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 									*transition),
 					text::attributes::AttributeKey::STEM));
 			andRestriction->addArgument(restriction);
+			restriction->dump(std::cerr);
+			std::cerr << std::endl;
 		}
 		patterns::PatternRef similar_pattern =
 				similar_patterns_namespace->getPatternByIndex(l);
@@ -208,39 +221,40 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 		}
 	}
 	for(int i = 0; i < terms2().size(); ++i) {
-		if (!is_similar[i]) {
-			if (synonim_dictionary().acceptsWords(term1->getContent(),
-					terms2()[i]->getContent())) {
-				std::cout << "Similar as synonims: " <<
-						Util::out.convert(term1->getContent()) << " && " <<
-						Util::out.convert(terms2()[i]->getContent()) << std::endl;
-				is_similar[i] = true;
-				continue;
-			}
-			if (AbbrAnalyzer::Analyze(term1->getContent(),
-					terms2()[i]->getContent()) == 1) {
-				std::cout << "Similar as abbr: " <<
-						Util::out.convert(term1->getContent()) << " && " <<
-						Util::out.convert(terms2()[i]->getContent()) << std::endl;
-				is_similar[i] = true;
-				continue;
-			}
-			if (Util::IsOrphologicalVariant(term1->getContent(),
-					terms2()[i]->getContent())) {
-				std::cout << "Similar as orphographical variants: " <<
-						Util::out.convert(term1->getContent()) << " && " <<
-						Util::out.convert(terms2()[i]->getContent()) << std::endl;
-				is_similar[i] = true;
-				continue;
-			}
-		}
-	}
-	for(int i = 0; i < terms2().size(); ++i) {
 		if (is_similar[i]) {
 			result->push_back(i);
 		}
 	}
 	return result;
+}
+
+bool SimilarityRecognizer::SimilarFinder::IsSimilar(const std::string &term1,
+		const std::string &term2) const {
+	if (Util::Normalize(term1) == Util::Normalize(term2)) {
+		std::cout << "Similar as equal words: " <<
+				Util::out.convert(term1) << " && " <<
+				Util::out.convert(term2) << std::endl;
+		return true;
+	}
+	if (synonim_dictionary().acceptsWords(term1, term2)) {
+		std::cout << "Similar as synonims: " <<
+				Util::out.convert(term1) << " && " <<
+				Util::out.convert(term2) << std::endl;
+		return true;
+	}
+	if (Util::IsOrphologicalVariant(term1, term2)) {
+		std::cout << "Similar as orphographical variants: " <<
+				Util::out.convert(term1) << " && " <<
+				Util::out.convert(term2) << std::endl;
+		return true;
+	}
+	if (AbbrAnalyzer::Analyze(term1, term2) == 1) {
+		std::cout << "Similar as abbr: " <<
+				Util::out.convert(term1) << " && " <<
+				Util::out.convert(term2) << std::endl;
+		return true;
+	}
+	return false;
 }
 
 bool SimilarityRecognizer::SimilarFinder::IsSimilar(

@@ -48,6 +48,9 @@ class SimilarityRecognizer {
 
 		bool IsSimilar(std::map<std::string, std::string> &term1,
 				std::map<std::string, std::string> &term2) const;
+		bool IsSimilar(const std::string &term1,
+				const std::string &term2) const;
+
 		boost::shared_ptr<patterns::restrictions::AndRestriction>
 				GenerateAndRestriction(
 						const std::map<std::string, std::string> &pattern_words);

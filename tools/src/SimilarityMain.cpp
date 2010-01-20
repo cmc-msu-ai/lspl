@@ -12,8 +12,10 @@ void ExtractTerms(const std::vector<lspl::PatternMatchRef> &matches,
 	terms.clear();
 	for(int i = 0; i < matches.size(); ++i) {
 		terms.push_back(matches[i]->matches[0]->getRangeString());
-		std::cout << lspl::Util::out.convert(matches[i]->matches[0]->getRangeString()) << std::endl;
+		std::cout << lspl::Util::out.convert(matches[i]->matches[0]->getRangeString())
+				<< " " << matches[i]->match_count << std::endl;
 	}
+	std::cout << "----" << std::endl;
 }
 
 int main(int argc, char** argv) {
