@@ -39,7 +39,9 @@ void AttributeExpression::evaluateTo( const text::Transition * currentAnnotation
 }
 
 void AttributeExpression::dump( std::ostream & out, const std::string & tabs ) const {
-	out << base << "." << attribute.getAbbrevation();
+	base->dump( out );
+
+	out << "." << attribute.getAbbrevation();
 }
 
 bool AttributeExpression::equals( const Expression & e ) const {

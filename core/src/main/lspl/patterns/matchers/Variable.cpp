@@ -28,12 +28,11 @@ Variable::Variable( const std::string &base ) {
 			speechSize = size;
 		}
 	}
-	if (speechPart = -1) {
+	if (speechPart == -1) {
 		speechPart = 0;
 	}
 	type = speechPart;
-	int index =
-			atoi(base.substr(speechSize, base.size() - speechSize).c_str());
+	index = atoi(base.c_str() + speechSize);
 	if (!index) {
 		index = 1;
 	}
