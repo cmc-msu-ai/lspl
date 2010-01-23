@@ -34,8 +34,8 @@ struct PatternMatchState {
 	PatternMatchState( const patterns::Pattern & pattern, const patterns::Alternative & alternative, const Node & startNode ) :
 		pattern( pattern ), variant( new MatchVariant( alternative ) ), startNode( startNode ) {}
 
-	PatternMatchState( const PatternMatchState & state, const TransitionRef & transition ) :
-		pattern( state.pattern ), startNode( state.startNode ), variant( new MatchVariant( *state.variant ) ), context( state.context ) {
+	PatternMatchState( const PatternMatchState & state, const TransitionRef & transition, bool releaseParent ) :
+		pattern( state.pattern ), startNode( state.startNode ), variant( releaseParent ? state.releaseVariant() : new MatchVariant( *state.variant ) ), context( state.context ) {
 
 		if ( &transition->start != &getCurrentNode() )
 			throw std::logic_error("Illegal transition");
@@ -45,8 +45,8 @@ struct PatternMatchState {
 		variant->push_back( transition );
 	}
 
-	PatternMatchState( const PatternMatchState & state, const TransitionRef & transition, const Context & ctx ) :
-		pattern( state.pattern ), startNode( state.startNode ), variant( new MatchVariant( *state.variant ) ), context( ctx ) {
+	PatternMatchState( const PatternMatchState & state, const TransitionRef & transition, const Context & ctx, bool releaseParent ) :
+		pattern( state.pattern ), startNode( state.startNode ), variant( releaseParent ? state.releaseVariant() : new MatchVariant( *state.variant ) ), context( ctx ) {
 
 		if ( &transition->start != &getCurrentNode() )
 			throw std::logic_error("Illegal transition");
@@ -118,20 +118,19 @@ static void processCompoundPattern( const PatternMatchState & state, TransitionL
 	if ( const AnnotationMatcher * curMatcher = dynamic_cast<const AnnotationMatcher *>( &state.getCurrentMatcher() ) ) {
 		TransitionList nextTransitions = curMatcher->buildTransitions( currentNode, state.context );
 
-		for ( uint i = 0; i < nextTransitions.size(); ++ i ) {
-			PatternMatchState temp_state( state, nextTransitions[ i ] );
+		for ( uint i = 0, sz = nextTransitions.size(); i < sz; ++ i ) {
+			PatternMatchState temp_state( state, nextTransitions[ i ], i == sz );
 			processCompoundPattern( temp_state, newTransitions );
 		}
-
 	} else {
 		const AnnotationChainMatcher & chainMatcher = static_cast<const AnnotationChainMatcher &>( state.getCurrentMatcher() );
 
 		chains.clear();
 		chainMatcher.buildChains( state.getCurrentNode(), state.context, chains );
 
-		for ( uint i = 0; i < chains.size(); ++ i ) {
-			PatternMatchState temp_state( state, chains[i].first, chains[i].second );
-			processCompoundPattern( temp_state, newTransitions );
+		for ( uint i = 0, sz = chains.size(); i < sz; ++ i ) {
+			PatternMatchState temp_state( state, chains[i].first, chains[i].second, i == sz - 1  );
+			processCompoundPattern( temp_state, newTransitions);
 		}
 	}
 }
@@ -183,7 +182,7 @@ void PatternMatcher::buildTransitions( const text::Transition & transition, cons
 			return;
 
 		PatternMatchState s0( pattern, alt, transition.start );
-		PatternMatchState state( s0, const_cast<text::Transition*>( &transition ) );
+		PatternMatchState state( s0, const_cast<text::Transition*>( &transition ), true );
 
 		processCompoundPattern( state, results );
 	} else {
@@ -195,8 +194,8 @@ void PatternMatcher::buildTransitions( const text::Transition & transition, cons
 		chainMatcher.buildChains( transition, s0.context, chains ); // Заполняем список цепочек
 
 		// TODO Optimize: Необходимо отдельно рассмотреть случай пустой цепи
-		for ( uint i = 0; i < chains.size(); ++ i ) {
-			PatternMatchState state( s0, chains[i].first, chains[i].second );
+		for ( uint i = 0, sz = chains.size(); i < sz; ++ i ) {
+			PatternMatchState state( s0, chains[i].first, chains[i].second, i == sz - 1 );
 			processCompoundPattern( state, results );
 		}
 	}
