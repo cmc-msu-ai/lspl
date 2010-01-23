@@ -20,32 +20,6 @@
 
 namespace lspl { namespace patterns {
 
-class LSPL_EXPORT IndexInfo {
-public:
-	enum Type {
-		WORD,
-		PATTERN
-	};
-public:
-	IndexInfo( Type type ) : type( type ) {}
-public:
-	Type type;
-};
-
-class LSPL_EXPORT WordIndexInfo : public IndexInfo {
-public:
-	WordIndexInfo( text::attributes::SpeechPart speechPart ) : IndexInfo( WORD ), speechPart( speechPart ) {}
-public:
-	text::attributes::SpeechPart speechPart;
-};
-
-class LSPL_EXPORT PatternIndexInfo : public IndexInfo {
-public:
-	PatternIndexInfo( const Pattern & pattern ) : IndexInfo( PATTERN ), pattern( pattern ) {}
-public:
-	const Pattern & pattern;
-};
-
 /**
  * Альтернатива шаблона
  */
@@ -75,11 +49,11 @@ public:
 	/**
 	 * Получить набор индексов для выбора альтернативы
 	 */
-	const boost::ptr_vector<IndexInfo> & getStartIndices() const {
-		if ( indexInfo.size() == 0 )
-			appendIndexInfo( getMatchers() );
+	const std::vector<const matchers::Matcher*> & getStartMatchers() const {
+		if ( startMatchers.size() == 0 )
+			appendStartMatchers( getMatchers() );
 
-		return indexInfo;
+		return startMatchers;
 	}
 
 	/**
@@ -163,7 +137,7 @@ public:
 
 private:
 	void appendDependencies( const matchers::Matcher & matcher );
-	void appendIndexInfo( const boost::ptr_vector<matchers::Matcher> & matchers ) const;
+	void appendStartMatchers( const boost::ptr_vector<matchers::Matcher> & matchers ) const;
 private:
 
 	const Pattern * pattern;
@@ -190,10 +164,7 @@ private:
 	 */
 	std::vector<const Pattern *> dependencies;
 
-	/**
-	 * Список, содержащий информацию об индексах, применимых при поиске альтернативы
-	 */
-	mutable boost::ptr_vector<IndexInfo> indexInfo;
+	mutable std::vector<const matchers::Matcher*> startMatchers;
 
 	friend class Pattern;
 };

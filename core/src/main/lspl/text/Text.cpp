@@ -128,30 +128,25 @@ bool Text::prepareIndices( const Pattern & pattern, IndexIteratorsList & iterato
 
 	for ( uint i = 0; i < pattern.getAlternatives().size(); ++ i ) { // Перебираем все альтернативы шаблона
 		const Alternative & alternative = pattern.getAlternatives()[i]; // Получаем ссылку на альтернативу
-		const boost::ptr_vector<IndexInfo> & indexInfos = alternative.getStartIndices(); // Получаем информацию о подходящих индексах из альтернативы
+		const std::vector<const Matcher*> & startMatchers = alternative.getStartMatchers(); // Получаем информацию о подходящих индексах из альтернативы
 
 
-		if ( indexInfos.empty() ) // Если для альтернативы не определеныин индексы, придется производить поиск без индексов
-			return false;
+		if ( startMatchers.empty() ) // Если для альтернативы не определеныин начальные элементы, то это какая-та ошибка
+			throw std::logic_error( "No start matchers" );
 
-		for ( uint j = 0; j < indexInfos.size(); ++j ) {
-			const IndexInfo & info = indexInfos[j];
+		foreach ( const Matcher* matcher, startMatchers ) {
+			switch ( matcher->type ) {
+			case Matcher::WORD: {
+				Index::Iterator * it = speechPartIndex.createIterator( static_cast<const WordMatcher *>( matcher )->speechPart );
 
-			switch ( info.type ) {
-			case IndexInfo::WORD: {
-				Index::Iterator * it = speechPartIndex.createIterator( static_cast<const WordIndexInfo &>( info ).speechPart );
-
-				if ( !it ) {
-					return false;
-					std::cerr << "WARN: No speech part index found for " << static_cast<const WordIndexInfo &>( info ).speechPart.getAbbrevation() << std::endl;
-				}
+				if ( !it )
+					throw std::logic_error( "No speech part index" );
 
 				iterators.push_back( std::make_pair( i, it ) );
-
 				break;
 			}
-			case IndexInfo::PATTERN: {
-				const Pattern & dep = static_cast<const PatternIndexInfo &>( info ).pattern;
+			case Matcher::PATTERN: {
+				const Pattern & dep = static_cast<const PatternMatcher *>( matcher )->pattern;
 
 				Index::Iterator * it = patternIndex.createIterator( &dep );
 
@@ -160,16 +155,14 @@ bool Text::prepareIndices( const Pattern & pattern, IndexIteratorsList & iterato
 					it = patternIndex.createIterator( &dep ); // Переустанавливаем итератор
 				}
 
-				if ( !it ) { // Шаблон все еще не найден
+				if ( !it ) // Шаблон все еще не найден
 					return false;
-				}
 
 				iterators.push_back( std::make_pair( i, it ) );
-
 				break;
 			}
 			default:
-				throw std::logic_error("Unknown index type");
+				return false;
 			}
 		}
 	}

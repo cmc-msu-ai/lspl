@@ -74,14 +74,14 @@ void Alternative::appendDependencies( const matchers::Matcher & matcher ) {
 	}
 }
 
-void Alternative::appendIndexInfo( const boost::ptr_vector<Matcher> & matchers ) const {
+void Alternative::appendStartMatchers( const boost::ptr_vector<Matcher> & matchers ) const {
 	uint i = 0;
 
 	while ( i < matchers.size() && matchers[i].type == Matcher::LOOP ) {
 		const LoopMatcher & matcher = dynamic_cast<const LoopMatcher&>( matchers[i] );
 
 		for ( uint j = 0; j < matcher.alternatives.size(); ++ j )
-			appendIndexInfo( matcher.alternatives[j].getMatchers() );
+			appendStartMatchers( matcher.alternatives[j].getMatchers() );
 
 		if ( matcher.minLoops > 0 )
 			return;
@@ -92,11 +92,7 @@ void Alternative::appendIndexInfo( const boost::ptr_vector<Matcher> & matchers )
 	if ( i >= matchers.size() )
 		return;
 
-	if ( matchers[i].type == Matcher::WORD ) {
-		indexInfo.push_back( new WordIndexInfo( dynamic_cast<const WordMatcher&>( matchers[i] ).speechPart ) );
-	} else if ( matchers[i].type == Matcher::PATTERN ) {
-		indexInfo.push_back( new PatternIndexInfo( dynamic_cast<const PatternMatcher&>( matchers[i] ).pattern ) );
-	}
+	startMatchers.push_back( &matchers[i] );
 }
 
 void Alternative::dump( std::ostream & out, const std::string & tabs ) const {
