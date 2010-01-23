@@ -25,6 +25,9 @@ enum LoadSimilarPatternsState {
 	LOADSTATE_SIMILARS
 };
 
+class TTerm;
+typedef std::vector<TTerm> TTerms;
+
 class Util {
  public:
 	static const std::string delimiters;
@@ -55,6 +58,8 @@ class Util {
 	// Convert terms to text representation.
 	static void ConvertToText(const std::vector<std::string> &terms,
 			std::vector<text::TextRef> &terms_text);
+	static void ConvertToText(const std::vector<std::string> &terms,
+			TTerms &terms_text);
 	// Convert to text one string.
 	static text::TextRef ConvertToText(const std::string &term);
 	// Normalize string.
@@ -98,6 +103,24 @@ class Util {
 	static bool IsOrphologicalVariant(const std::string &term1,
 			const std::string &term2);
 };
+
+class LSPL_EXPORT TTerm: public text::TextRef {
+public:
+	size_t count;
+public:
+	TTerm();
+	TTerm(const text::TextRef &text) : text::TextRef(text), count(0) {
+	}
+	TTerm(const std::string &text) :
+			text::TextRef(Util::ConvertToText(text)), count(0) {
+	}
+	TTerm(const text::TextRef &text, size_t count) :
+			text::TextRef(text), count(count) {
+	}
+	TTerm(const std::string &text, size_t count) :
+			text::TextRef(Util::ConvertToText(text)), count(count) {
+	}
+}; // class TTerm
 
 } // namespace lspl.
 
