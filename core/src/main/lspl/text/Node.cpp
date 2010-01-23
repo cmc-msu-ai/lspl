@@ -7,12 +7,16 @@
 #include "Transition.h"
 #include "Text.h"
 
+#include "Match.h"
+#include "markup/Word.h"
+#include "markup/Token.h"
+
 LSPL_REFCOUNT_CLASS( lspl::text::Node )
 
 namespace lspl { namespace text {
 
 Node::Node( uint index, uint startOffset, uint endOffset, const Text & text ) :
-	index( index ), startOffset( startOffset ), endOffset( endOffset ), text( text ) {
+	index( index ), startOffset( startOffset ), endOffset( endOffset ), text( text ), tokenCount( 0 ), wordCount( 0 ), matchCount( 0 ) {
 }
 
 Node::~Node() {
@@ -38,6 +42,33 @@ void Node::dump(std::ostream & out, std::string tabs) const {
 	}
 
 	out <<"\n" << tabs << "] }";
+}
+
+void Node::addTokenTransition( const markup::TokenRef & token ) {
+	if ( wordCount > 0 )
+		throw std::logic_error( "Tokens should be added before words" );
+
+	if ( matchCount > 0 )
+		throw std::logic_error( "Tokens should be added before matches" );
+
+	transitions.push_back( token );
+
+	++ tokenCount;
+}
+
+void Node::addWordTransition( const markup::WordRef & word ) {
+	if ( matchCount > 0 )
+		throw std::logic_error( "Words should be added before matches" );
+
+	transitions.push_back( word );
+
+	++ wordCount;
+}
+
+void Node::addMatchTransition( const MatchRef & match ) {
+	transitions.push_back( match );
+
+	++ matchCount;
 }
 
 } } // namespace lspl

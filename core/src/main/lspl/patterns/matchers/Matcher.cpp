@@ -62,9 +62,9 @@ void Matcher::dumpRestrictions( std::ostream & out, const std::string & tabs ) c
 TransitionList AnnotationMatcher::buildTransitions( const text::Node & node, const Context & context ) const {
 	TransitionList transitions;
 
-	for ( uint i = 0; i < node.transitions.size(); ++ i )
-		if ( matchTransition( *node.transitions[i], context ) )
-			transitions.push_back( node.transitions[i] );
+	for ( uint i = 0, sz = node.getTransitions().size(); i < sz; ++ i )
+		if ( matchTransition( *node.getTransition( i ), context ) )
+			transitions.push_back( node.getTransition( i ) );
 
 	return transitions;
 }

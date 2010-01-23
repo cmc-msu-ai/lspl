@@ -57,7 +57,7 @@ Text::~Text() {
 }
 
 void Text::addWordToMarkup( const markup::WordRef & word ) {
-	const_cast<Node&>( word->start ).transitions.push_back( word ); // Добавляем слово в разметку
+	const_cast<Node&>( word->start ).addWordTransition( word ); // Добавляем слово в разметку
 
 	speechPartIndex.addAnnotation( SpeechPart::WORD, word.get() ); // Добавляем слово в индекс слов
 
@@ -66,13 +66,13 @@ void Text::addWordToMarkup( const markup::WordRef & word ) {
 }
 
 void Text::addMatchToMarkup( const MatchRef & match ) {
-	const_cast<Node&>( match->start ).transitions.push_back( match ); // Добавляем сопоставлениев в разметку
+	const_cast<Node&>( match->start ).addMatchTransition( match ); // Добавляем сопоставлениев в разметку
 
 	patternIndex.addAnnotation( &match->getPattern(), match.get() ); // Добавляем слово в индекс слов
 }
 
 void Text::addTokenToMarkup( const TokenRef & token ) {
-	const_cast<Node&>( token->start ).transitions.push_back( token );
+	const_cast<Node&>( token->start ).addTokenTransition( token );
 }
 
 const MatchList & Text::getMatches( const Pattern & pattern ) {

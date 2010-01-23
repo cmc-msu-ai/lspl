@@ -43,6 +43,30 @@ public:
 	uint getRangeEnd() const {
 		return endOffset;
 	}
+
+	/**
+	 * Получить список ребер, выходящих из узла
+	 */
+	const TransitionList & getTransitions() const {
+		return transitions;
+	}
+
+	const TransitionRef & getTransition( uint index ) const {
+		return transitions[ index ];
+	}
+
+	uint getTransitionCount() const {
+		return transitions.size();
+	}
+
+	void addTokenTransition( const markup::TokenRef & word );
+	void addWordTransition( const markup::WordRef & word );
+	void addMatchTransition( const MatchRef & word );
+
+	uint getTokenCount() const { return tokenCount; }
+	uint getWordCount() const { return wordCount; }
+	uint getMatchesCount() const { return matchCount; }
+
 public:
 
 	/**
@@ -65,12 +89,21 @@ public:
 	 */
 	const Text & text;
 
+private:
+
 	/**
 	 * Переходы, начинающиеся в узле
 	 */
 	TransitionList transitions;
+
+	uint tokenCount;
+
+	uint wordCount;
+
+	uint matchCount;
 };
 
 } } // namespace lspl::text
 
 #endif /*_LSPL_TEXT_TEXTNODE_H_*/
+

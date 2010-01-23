@@ -37,10 +37,10 @@ void JsonTextWriter::writeToStream( const Text & text, std::ostream & os ) {
 	for ( uint i = 0; i < nodesCount; ++ i ) {
 		const Node & node = *text.getNodes().at( i );
 
-		for ( uint j = 0; j < node.transitions.size(); ++ j ) {
+		for ( uint j = 0; j < node.getTransitionCount(); ++ j ) {
 			if ( i != 0 || j != 0 )
 				os << ",\n\t\t";
-			writeAnnotation( *node.transitions.at( j ), os );
+			writeAnnotation( *node.getTransition( j ), os );
 		}
 	}
 

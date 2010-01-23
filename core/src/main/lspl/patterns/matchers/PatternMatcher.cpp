@@ -155,9 +155,12 @@ TransitionList PatternMatcher::buildTransitions( const text::Node & node, const 
 	TransitionList newTransitions;
 
 	if ( node.text.isMatchesReady( pattern ) ) {
-		foreach ( const TransitionRef & transition, node.transitions ) // Перебираем все ребра из текущей вершины
-			if ( matchTransition( *transition, context ) )
-				newTransitions.push_back( transition );
+		uint start = node.getTokenCount() + node.getWordCount();
+		uint end = node.getTransitionCount();
+
+		for ( uint i = start; i < end; ++ i ) // Перебираем все сопоставления из текущей вершины
+			if ( matchTransition( *node.getTransition( i ), context ) )
+				newTransitions.push_back( node.getTransition( i ) );
 	} else {
 		for ( uint i = 0; i < pattern.alternatives.size(); ++ i ) {
 			PatternMatchState state( pattern, pattern.alternatives[i], node );
