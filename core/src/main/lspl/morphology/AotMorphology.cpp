@@ -112,7 +112,19 @@ void AotMorphology::appendWordForms( const std::string & token, boost::ptr_vecto
 				lemmatizer->m_LemmaInfos[f.GetParadigmId() & ((1<<23) - 1)].m_LemmaStrNo) {
 			continue;
 		}
-		forms.push_back( new WordForm( getSpeechPart( gramCodes ), f.GetWordForm(0), lemmatizer->m_Bases[lemmatizer->m_LemmaInfos[f.GetParadigmId() & ((1<<23) - 1)].m_LemmaStrNo].GetString(), attributeSets, attributeSetCount ) );
+
+		forms.push_back( new WordForm( getSpeechPart( gramCodes ), f.GetWordForm( 0 ), getStem( f ), attributeSets, attributeSetCount ) );
+	}
+}
+
+const char * AotMorphology::getStem( const CFormInfo & f ) {
+	if ( f.m_bFound ) {
+		int lemmaInfoNo = f.GetParadigmId() & 0x7fffff;
+		int lemmaStrNo = lemmatizer->m_LemmaInfos[lemmaInfoNo].m_LemmaStrNo;
+
+		return lemmatizer->m_Bases[lemmaStrNo].GetString();
+	} else {
+		return "";
 	}
 }
 

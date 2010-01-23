@@ -44,6 +44,8 @@ void definePatterns( NamespaceRef ns ) {
 	builder->build( "ACC = {AAA} N <AAA=N>" );
 	builder->build( "ADD = \"à\" Act" );
 	builder->build( "AEE = N \"è\" N" );
+	builder->build( "ANom = N<c=nom> V" );
+	builder->build( "AGen = N<c=gen> V" );
 
 	std::cout << "Done in " << tm.elapsed() << " seconds." << std::endl;
 }
@@ -64,6 +66,8 @@ void findPatterns() {
 		uint count = text->getMatches( *pt ).size();
 		std::cout << "Done in " << tm.elapsed() << " seconds, " << count << " matches found"<< std::endl;
 	}
+
+	std::cout << text->getWords( text::attributes::SpeechPart::NOUN ).size() << std::endl;
 }
 
 void loadMorphology() {
