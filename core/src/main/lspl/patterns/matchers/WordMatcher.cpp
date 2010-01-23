@@ -9,6 +9,7 @@
 
 using lspl::text::Transition;
 using lspl::text::TransitionRef;
+using lspl::text::TransitionList;
 using lspl::text::markup::Word;
 
 using lspl::text::attributes::SpeechPart;
@@ -20,6 +21,16 @@ namespace lspl { namespace patterns { namespace matchers {
 WordMatcher::WordMatcher( const std::string & base, SpeechPart speechPart )  :
 	AnnotationMatcher( WORD ), base( Morphology::instance().upcase( base ) ), speechPart( speechPart ) {
 
+}
+
+TransitionList WordMatcher::buildTransitions( const text::Node & node, const Context & context ) const {
+	TransitionList transitions;
+
+	for ( uint i = node.getTokenCount(), sz = node.getTokenCount() + node.getWordCount(); i < sz; ++ i )
+		if ( matchTransition( *node.getTransition( i ), context ) )
+			transitions.push_back( node.getTransition( i ) );
+
+	return transitions;
 }
 
 bool WordMatcher::matchTransition( const Transition & transition, const Context & context ) const {

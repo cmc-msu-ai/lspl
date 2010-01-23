@@ -18,6 +18,16 @@ namespace lspl { namespace patterns { namespace matchers {
 
 TokenMatcher::TokenMatcher( const std::string & token ) : AnnotationMatcher( TOKEN ), token( Morphology::instance().upcase( token ) ) {}
 
+TransitionList TokenMatcher::buildTransitions( const text::Node & node, const Context & context ) const {
+	TransitionList transitions;
+
+	for ( uint i = 0, sz = node.getTokenCount(); i < sz; ++ i )
+		if ( matchTransition( *node.getTransition( i ), context ) )
+			transitions.push_back( node.getTransition( i ) );
+
+	return transitions;
+}
+
 bool TokenMatcher::matchTransition( const Transition & transition, const Context & context ) const {
 	switch ( transition.type ) {
 	case Transition::TOKEN: // Слово

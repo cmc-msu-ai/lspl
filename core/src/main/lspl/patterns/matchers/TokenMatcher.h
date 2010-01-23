@@ -14,7 +14,8 @@ public:
 	TokenMatcher( const std::string & token );
 	virtual ~TokenMatcher() {}
 
-	virtual bool matchTransition(const text::Transition & transition, const Context & context) const;
+	virtual text::TransitionList buildTransitions( const text::Node & node, const Context & context ) const;
+	virtual bool matchTransition( const text::Transition & transition, const Context & context ) const;
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
 
 public:
