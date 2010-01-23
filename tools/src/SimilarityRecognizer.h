@@ -18,6 +18,7 @@
 #include "lspl/patterns/matchers/Variable.h"
 #include "lspl/patterns/restrictions/AndRestriction.h"
 #include "SynDictionary.h"
+#include "Util.h"
 
 namespace lspl {
 
@@ -28,8 +29,6 @@ typedef std::pair<patterns::matchers::Variable,
 	patterns::matchers::Variable> TStCondition;
 typedef std::vector<TStCondition *> TStConditionsForSimilarPatterns;
 typedef std::vector<TStConditionsForSimilarPatterns> TStConditions;
-typedef text::TextRef TTerm;
-typedef std::vector<TTerm> TTerms;
 typedef std::map<std::string, std::string> TTermWords;
 
 class SimilarityRecognizer {
@@ -58,8 +57,7 @@ class SimilarityRecognizer {
 
 		void FindEqualWords(TResults &result) const;
 		bool IsSimilar(TTermWords &term1, TTermWords &term2) const;
-		bool IsSimilar(const std::string &term1,
-				const std::string &term2) const;
+		bool IsSimilar(const TTerm &term1, const TTerm &term2) const;
 
 		boost::shared_ptr<patterns::restrictions::AndRestriction>
 				GenerateAndRestriction(const TTermWords &pattern_words);

@@ -128,6 +128,13 @@ namespace lspl {
 		}
 	}
 
+	void Util::ConvertToText(const std::vector<std::string> &terms,
+			TTerms &terms_text) {
+		for(int i = 0; i < terms.size(); ++i) {
+			terms_text.push_back(ConvertToText(terms[i]));
+		}
+	}
+
 	text::TextRef Util::ConvertToText(const std::string &term) {
 		return reader.readFromString(term);
 	}

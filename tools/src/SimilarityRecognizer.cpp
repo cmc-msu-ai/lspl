@@ -13,7 +13,6 @@
 #include "lspl/transforms/ContextRetriever.h"
 #include "AbbrAnalyzer.h"
 #include "SimilarityRecognizer.h"
-#include "Util.h"
 
 namespace lspl {
 
@@ -57,17 +56,19 @@ void SimilarityRecognizer::SimilarFinder::FindEqualWords(
 	for(int i = 0; i < terms1().size(); ++i) {
 		std::string term1 = terms1()[i]->getContent();
 		for(int j = 0; j < terms2().size(); ++j) {
-			std::string term2 = terms2()[i]->getContent();
+			std::string term2 = terms2()[j]->getContent();
 			if (Util::Normalize(term1) == Util::Normalize(term2)) {
 				std::cout << "Similar as equal words: " <<
-						Util::out.convert(term1) << " && " <<
-						Util::out.convert(term2) << std::endl;
+						Util::out.convert(term1) << " " << terms1()[i].count <<
+						" && " << Util::out.convert(term2) << " " <<
+						terms2()[j].count << std::endl;
 				result[i]->insert(j);
 			}
 			if (synonim_dictionary().acceptsWords(term1, term2)) {
 				std::cout << "Similar as synonims: " <<
-						Util::out.convert(term1) << " && " <<
-						Util::out.convert(term2) << std::endl;
+						Util::out.convert(term1) << " " << terms1()[i].count <<
+						" && " << Util::out.convert(term2) << " " <<
+						terms2()[j].count << std::endl;
 				result[i]->insert(j);
 			}
 		}
@@ -127,8 +128,7 @@ boost::shared_ptr<TResults>
 			if ((*result)[i]->find(j) != (*result)[i]->end()) {
 				continue;
 			}
-			if (IsSimilar(terms1()[i]->getContent(),
-					terms2()[j]->getContent())) {
+			if (IsSimilar(terms1()[i], terms2()[j])) {
 				(*result)[i]->insert(j);
 			}
 		}
@@ -191,8 +191,6 @@ void SimilarityRecognizer::SimilarFinder::FindSimilars(
 									*transition),
 					text::attributes::AttributeKey::STEM));
 			andRestriction->addArgument(restriction);
-			restriction->dump(std::cerr);
-			std::cerr << std::endl;
 		}
 		patterns::PatternRef similar_pattern =
 				similar_patterns_namespace->getPatternByIndex(l);
@@ -224,27 +222,30 @@ void SimilarityRecognizer::SimilarFinder::FindSimilars(
 
 			if (IsSimilar(pattern_words, similar_pattern_words)) {
 				std::cout << "Similar by patterns: " <<
-						Util::out.convert(term1->getContent()) << " && " <<
-						Util::out.convert(terms2()[k]->getContent()) <<
-						std::endl;
+						Util::out.convert(term1->getContent()) << " " <<
+						term1.count << " && " <<
+						Util::out.convert(terms2()[k]->getContent()) << " " <<
+						terms2()[k].count << std::endl;
 				result.insert(k);
 			}
 		}
 	}
 }
 
-bool SimilarityRecognizer::SimilarFinder::IsSimilar(const std::string &term1,
-		const std::string &term2) const {
-	if (Util::IsOrphologicalVariant(term1, term2)) {
+bool SimilarityRecognizer::SimilarFinder::IsSimilar(const TTerm &term1,
+		const TTerm &term2) const {
+	if (Util::IsOrphologicalVariant(term1->getContent(), term2->getContent())) {
 		std::cout << "Similar as orphographical variants: " <<
-				Util::out.convert(term1) << " && " <<
-				Util::out.convert(term2) << std::endl;
+				Util::out.convert(term1->getContent()) << " " << term1.count <<
+				" && " << Util::out.convert(term2->getContent()) <<
+				" " << term2.count << std::endl;
 		return true;
 	}
-	if (AbbrAnalyzer::Analyze(term1, term2) == 1) {
+	if (AbbrAnalyzer::Analyze(term1->getContent(), term2->getContent()) == 1) {
 		std::cout << "Similar as abbr: " <<
-				Util::out.convert(term1) << " && " <<
-				Util::out.convert(term2) << std::endl;
+				Util::out.convert(term1->getContent()) << " " << term1.count <<
+				" && " << Util::out.convert(term2->getContent()) <<
+				" " << term2.count << std::endl;
 		return true;
 	}
 	return false;

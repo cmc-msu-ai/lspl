@@ -8,10 +8,12 @@
 #include "Util.h"
 
 void ExtractTerms(const std::vector<lspl::PatternMatchRef> &matches,
-		std::vector<std::string> &terms) {
+		lspl::TTerms &terms) {
 	terms.clear();
 	for(int i = 0; i < matches.size(); ++i) {
-		terms.push_back(matches[i]->matches[0]->getRangeString());
+		lspl::TTerm term(matches[i]->matches[0]->getRangeString(),
+				matches[i]->match_count);
+		terms.push_back(term);
 		std::cout << lspl::Util::out.convert(matches[i]->matches[0]->getRangeString())
 				<< " " << matches[i]->match_count << std::endl;
 	}
@@ -38,10 +40,10 @@ int main(int argc, char** argv) {
 	recognizer = new lspl::DictionaryRecognizer(argv[2], argv[3]);
 	std::vector<lspl::PatternMatchRef> matches2 =
 			recognizer->RecognizeAndSearch();
-	std::vector<std::string> terms1;
+	lspl::TTerms terms1;
 	//terms1.push_back(lspl::Util::in.convert("правильность программ"));
 	ExtractTerms(matches1, terms1);
-	std::vector<std::string> terms2;
+	lspl::TTerms terms2;
 	//terms2.push_back(lspl::Util::in.convert("правильность"));
 	ExtractTerms(matches2, terms2);
 	delete recognizer;
