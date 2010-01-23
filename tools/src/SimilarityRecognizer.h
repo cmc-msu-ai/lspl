@@ -21,57 +21,61 @@
 
 namespace lspl {
 
+typedef std::set<int> TResult;
+typedef std::vector<TResult *> TResults;
+typedef std::vector<NamespaceRef> TSimilarPatterns;
+typedef std::pair<patterns::matchers::Variable,
+	patterns::matchers::Variable> TStCondition;
+typedef std::vector<TStCondition *> TStConditionsForSimilarPatterns;
+typedef std::vector<TStConditionsForSimilarPatterns> TStConditions;
+typedef text::TextRef TTerm;
+typedef std::vector<TTerm> TTerms;
+typedef std::map<std::string, std::string> TTermWords;
+
 class SimilarityRecognizer {
  private:
 	class SimilarFinder {
 	 private:
-		const std::vector<text::TextRef> &_terms1;
-		const std::vector<text::TextRef> &_terms2;
+		const TTerms &_terms1;
+		const TTerms &_terms2;
 		NamespaceRef _patterns_namespace;
-		std::vector<NamespaceRef> &_similar_patterns;
-		const std::vector<std::vector<std::pair<patterns::matchers::Variable,
-				patterns::matchers::Variable> *> > &_st_conditions;
+		TSimilarPatterns &_similar_patterns;
+		const TStConditions &_st_conditions;
 		dictionaries::SynDictionary _synonim_dictionary;
 
-		const std::vector<text::TextRef> &terms1() const;
-		const std::vector<text::TextRef> &terms2() const;
+		const TTerms &terms1() const;
+		const TTerms &terms2() const;
 		NamespaceRef patterns_namespace() const;
-		std::vector<NamespaceRef> &similar_patterns() const;
+		TSimilarPatterns &similar_patterns() const;
 		const dictionaries::SynDictionary &synonim_dictionary() const;
 
-		std::vector<int> *FindSimilars(const text::TextRef term1,
-				std::map<std::string, std::string> &pattern_words,
+		std::vector<int> *FindSimilars(const TTerm &term1,
+				TTermWords &pattern_words,
 				NamespaceRef similar_patterns_namespace,
-				const std::vector<std::pair<patterns::matchers::Variable,
-						patterns::matchers::Variable> *> &st_conditions,
+				const TStConditionsForSimilarPatterns &st_conditions,
 				patterns::matchers::Context &context);
 
-		bool IsSimilar(std::map<std::string, std::string> &term1,
-				std::map<std::string, std::string> &term2) const;
+		bool IsSimilar(TTermWords &term1, TTermWords &term2) const;
 		bool IsSimilar(const std::string &term1,
 				const std::string &term2) const;
 
 		boost::shared_ptr<patterns::restrictions::AndRestriction>
-				GenerateAndRestriction(
-						const std::map<std::string, std::string> &pattern_words);
+				GenerateAndRestriction(const TTermWords &pattern_words);
 	 public:
-		SimilarFinder(const std::vector<text::TextRef> &terms1,
-				const std::vector<text::TextRef> &terms2,
+		SimilarFinder(const TTerms &terms1, const TTerms &terms2,
 				NamespaceRef patterns_namespace,
-				std::vector<NamespaceRef> &similar_patterns,
-				const std::vector<std::vector<std::pair<patterns::matchers::Variable,
-						patterns::matchers::Variable> *> > &st_conditions);
+				TSimilarPatterns &similar_patterns,
+				const TStConditions &st_conditions);
 
-		std::vector<std::set<int> *> *FindSimilars();
+		TResults *FindSimilars();
 	};
 
 	NamespaceRef _patterns_namespace;
-	std::vector<NamespaceRef> _similar_patterns;
-	std::vector<std::vector<std::pair<patterns::matchers::Variable,
-			patterns::matchers::Variable> *> > _st_conditions;
+	TSimilarPatterns _similar_patterns;
+	TStConditions _st_conditions;
 
 	NamespaceRef patterns_namespace() const;
-	std::vector<NamespaceRef> &similar_patterns();
+	TSimilarPatterns &similar_patterns();
 	void LoadSimilarPatterns(const char *file);
  public:
 	SimilarityRecognizer(const char *similarity_patterns_file);
@@ -79,8 +83,7 @@ class SimilarityRecognizer {
 	void FindSimilars(const std::vector<std::string> &terms1,
 			const std::vector<std::string> &terms2);
 
-	void FindSimilars(const std::vector<text::TextRef> &terms1,
-			const std::vector<text::TextRef> &terms2);
+	void FindSimilars(const TTerms &terms1, const TTerms &terms2);
 };
 
 } // namespace lspl.

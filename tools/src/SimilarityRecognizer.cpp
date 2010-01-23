@@ -18,12 +18,10 @@
 namespace lspl {
 
 SimilarityRecognizer::SimilarFinder::SimilarFinder(
-		const std::vector<text::TextRef> &terms1,
-		const std::vector<text::TextRef> &terms2,
+		const TTerms &terms1, const TTerms &terms2,
 		NamespaceRef patterns_namespace,
-		std::vector<NamespaceRef> &similar_patterns,
-		const std::vector<std::vector<std::pair<patterns::matchers::Variable,
-				patterns::matchers::Variable> *> > &st_conditions) : 
+		TSimilarPatterns &similar_patterns,
+		const TStConditions &st_conditions) : 
 		_terms1(terms1),
 		_terms2(terms2),
 		_patterns_namespace(patterns_namespace),
@@ -32,13 +30,11 @@ SimilarityRecognizer::SimilarFinder::SimilarFinder(
 		_st_conditions(st_conditions){
 }
 
-const std::vector<text::TextRef>
-		&SimilarityRecognizer::SimilarFinder::terms1() const {
+const TTerms &SimilarityRecognizer::SimilarFinder::terms1() const {
 	return _terms1;
 }
 
-const std::vector<text::TextRef>
-		&SimilarityRecognizer::SimilarFinder::terms2() const {
+const TTerms &SimilarityRecognizer::SimilarFinder::terms2() const {
 	return _terms2;
 }
 
@@ -46,7 +42,7 @@ NamespaceRef SimilarityRecognizer::SimilarFinder::patterns_namespace() const {
 	return _patterns_namespace;
 }
 
-std::vector<NamespaceRef>
+TSimilarPatterns
 		&SimilarityRecognizer::SimilarFinder::similar_patterns() const {
 	return _similar_patterns;
 }
@@ -56,12 +52,10 @@ const dictionaries::SynDictionary &
 	return _synonim_dictionary;
 }
 
-std::vector<std::set<int> *> *
-		SimilarityRecognizer::SimilarFinder::FindSimilars() {
-	std::vector<std::set<int> *> *result =
-			new std::vector<std::set<int> *>();
+TResults *SimilarityRecognizer::SimilarFinder::FindSimilars() {
+	TResults *result = new TResults();
 	for(int i = 0; i < terms1().size(); ++i) {
-		result->push_back(new std::set<int>());
+		result->push_back(new TResult());
 	}
 
 	/// terms1 && main patterns
@@ -82,7 +76,7 @@ std::vector<std::set<int> *> *
 				continue;
 			}
 
-			std::map<std::string, std::string> pattern_words;
+			TTermWords pattern_words;
 //#ifdef DEBUG
 			std::cout << "FindSimilars " <<
 					Util::out.convert(normalized_match) << std::endl;
@@ -123,10 +117,10 @@ std::vector<std::set<int> *> *
 
 boost::shared_ptr<patterns::restrictions::AndRestriction>
 		SimilarityRecognizer::SimilarFinder::GenerateAndRestriction(
-				const std::map<std::string, std::string> &pattern_words) {
+				const TTermWords &pattern_words) {
 	boost::shared_ptr<patterns::restrictions::AndRestriction> andRestriction(
 			new patterns::restrictions::AndRestriction());
-	for(std::map<std::string, std::string>::const_iterator i = pattern_words.begin();
+	for(TTermWords::const_iterator i = pattern_words.begin();
 			i != pattern_words.end(); ++i) {
 		patterns::restrictions::AgreementRestriction *restriction =
 				new patterns::restrictions::AgreementRestriction();
@@ -143,15 +137,14 @@ boost::shared_ptr<patterns::restrictions::AndRestriction>
 }
 
 std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
-		const text::TextRef term1,
-		std::map<std::string, std::string> &pattern_words,
+		const TTerm &term1,
+		TTermWords &pattern_words,
 		NamespaceRef similar_patterns_namespace,
-		const std::vector<std::pair<patterns::matchers::Variable,
-				patterns::matchers::Variable> *> &st_conditions,
+		const TStConditionsForSimilarPatterns &st_conditions,
 		patterns::matchers::Context &context) {
 //#ifdef DEBUG
 	std::cout << "\tFind Similars (second) ";
-	for(std::map<std::string, std::string>::iterator i = pattern_words.begin();
+	for(TTermWords::iterator i = pattern_words.begin();
 			i != pattern_words.end(); ++i) {
 		std::cout << i->first << ":\"" << Util::out.convert(i->second) <<"\"";
 	}
@@ -205,7 +198,7 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 					Util::out.convert(terms2()[k]->getContent()) << " " <<
 					Util::out.convert(normalized_match) << std::endl;
 
-			std::map<std::string, std::string> similar_pattern_words;
+			TTermWords similar_pattern_words;
 			if (!Util::BuildWordsByPattern(normalized_match, similar_pattern,
 					similar_pattern_words)) {
 				continue;
@@ -257,12 +250,11 @@ bool SimilarityRecognizer::SimilarFinder::IsSimilar(const std::string &term1,
 	return false;
 }
 
-bool SimilarityRecognizer::SimilarFinder::IsSimilar(
-		std::map<std::string, std::string> &term1,
-		std::map<std::string, std::string> &term2) const {
-	for(std::map<std::string, std::string>::iterator i = term1.begin();
-			i != term1.end(); ++i) {
-		if (term2.find(i->first) != term2.end() && term2[i->first] != i->second) {
+bool SimilarityRecognizer::SimilarFinder::IsSimilar(TTermWords &term1,
+		TTermWords &term2) const {
+	for(TTermWords::iterator i = term1.begin();	i != term1.end(); ++i) {
+		if (term2.find(i->first) != term2.end() &&
+				term2[i->first] != i->second) {
 			return false;
 		}
 	}
@@ -273,8 +265,7 @@ NamespaceRef SimilarityRecognizer::patterns_namespace() const {
 	return _patterns_namespace;
 }
 
-std::vector<NamespaceRef>
-		&SimilarityRecognizer::similar_patterns() {
+TSimilarPatterns &SimilarityRecognizer::similar_patterns() {
 	return _similar_patterns;
 }
 
@@ -285,8 +276,7 @@ void SimilarityRecognizer::LoadSimilarPatterns(const char *file) {
 	Util::LoadSimilarPatterns(text, patterns, similar_patterns);
 	_patterns_namespace = Util::BuildPatterns(patterns);
 	for(int i = 0; i < similar_patterns.size(); ++i) {
-		std::vector<std::pair<patterns::matchers::Variable,
-				patterns::matchers::Variable> *> st_conditions;
+		TStConditionsForSimilarPatterns st_conditions;
 		_st_conditions.push_back(st_conditions);
 		for(int j = 0; j < similar_patterns[i].size(); ++j) {
 			std::cout << similar_patterns[i][j] << std::endl;
@@ -307,10 +297,7 @@ void SimilarityRecognizer::LoadSimilarPatterns(const char *file) {
 				var1 = var2;
 				var2 = var3;
 			}
-			std::pair<patterns::matchers::Variable,
-					patterns::matchers::Variable> *st_condition =
-					new std::pair<patterns::matchers::Variable,
-							patterns::matchers::Variable>(var1, var2);
+			TStCondition *st_condition = new TStCondition(var1, var2);
 			_st_conditions[i].push_back(st_condition);
 		}
 		NamespaceRef similar_namespace =
@@ -326,16 +313,15 @@ SimilarityRecognizer::SimilarityRecognizer(
 
 void SimilarityRecognizer::FindSimilars(const std::vector<std::string> &terms1,
 		const std::vector<std::string> &terms2) {
-	std::vector<text::TextRef> terms1_text;
-	std::vector<text::TextRef> terms2_text;
+	TTerms terms1_text;
+	TTerms terms2_text;
 	Util::ConvertToText(terms1, terms1_text);
 	Util::ConvertToText(terms2, terms2_text);
 	FindSimilars(terms1_text, terms2_text);
 }
 
-void SimilarityRecognizer::FindSimilars(
-		const std::vector<text::TextRef> &terms1,
-		const std::vector<text::TextRef> &terms2) {
+void SimilarityRecognizer::FindSimilars(const TTerms &terms1,
+		const TTerms &terms2) {
 	boost::scoped_ptr<SimilarFinder> similar_finder(new SimilarFinder(terms1,
 			terms2,	patterns_namespace(), similar_patterns(), _st_conditions));
 	similar_finder->FindSimilars();
