@@ -1,13 +1,7 @@
 #ifndef _LSPL_PATTERNS_PATTERN_H_
 #define _LSPL_PATTERNS_PATTERN_H_
 
-#include <vector>
-
-#include "../base/Base.h"
-#include "../base/RefCountObject.h"
-
-#include "Alternative.h"
-
+#include "Forward.h"
 #include "../text/Forward.h"
 
 #include <boost/ptr_container/ptr_vector.hpp>
@@ -19,7 +13,8 @@ namespace lspl { namespace patterns {
  */
 class LSPL_EXPORT Pattern : public base::RefCountObject, public base::IdentifiedObject<Pattern> {
 public:
-	explicit Pattern( const std::string & name ) : name( name ) {}
+	explicit Pattern( const std::string & name );
+	~Pattern();
 
 	/**
 	 * Сбросить в поток отладочное представление шаблона
@@ -43,21 +38,12 @@ public:
 	/**
 	 * Добавить новую альтернативу к шаблону
 	 */
-	void addAlternative( Alternative * alt ) {
-		alt->pattern = this;
-		alternatives.push_back( alt );
-	}
+	void addAlternative( Alternative * alt );
 
 	/**
 	 * Добавить альтернативы к шаблону
 	 */
-	template <class PtrContainer>
-	void addAlternatives( PtrContainer & r ) {
-		alternatives.transfer( alternatives.end(), r.begin(), r.end(), r );
-		for( int i = 0; i < alternatives.size(); ++ i ) {
-			alternatives[i].pattern = this;
-		}
-	}
+	void addAlternatives( boost::ptr_vector<Alternative> & r );
 
 	/**
 	 * Обновить список зависимостей альтернативы

@@ -1,6 +1,7 @@
 #include "../base/BaseInternal.h"
 
 #include "Pattern.h"
+#include "Alternative.h"
 
 #include "../text/Text.h"
 
@@ -9,6 +10,9 @@
 LSPL_REFCOUNT_CLASS( lspl::patterns::Pattern );
 
 namespace lspl { namespace patterns {
+
+Pattern::Pattern( const std::string & name ) : name( name ) {}
+Pattern::~Pattern() {}
 
 void Pattern::dump( std::ostream & out, const std::string & tabs ) const {
 	out << "Pattern{ name = " << name << ", alternatives = [\n\t" << tabs;
@@ -34,6 +38,18 @@ Alternative & Pattern::newAlternative( const std::string & source )  {
 
 	return *alt;
 };
+
+void Pattern::addAlternative( Alternative * alt ) {
+	alt->pattern = this;
+	alternatives.push_back( alt );
+}
+
+void Pattern::addAlternatives( boost::ptr_vector<Alternative> & r ) {
+	alternatives.transfer( alternatives.end(), r.begin(), r.end(), r );
+	for( int i = 0; i < alternatives.size(); ++ i ) {
+		alternatives[i].pattern = this;
+	}
+}
 
 void Pattern::updateDependencies() {
 	dependencies.clear();

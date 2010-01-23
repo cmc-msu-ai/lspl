@@ -159,12 +159,14 @@ public:
 	 */
 	void updateDependencies();
 
-	const Pattern * pattern;
+	const Pattern & getPattern() const { return *pattern; }
 
 private:
 	void appendDependencies( const matchers::Matcher & matcher );
 	void appendIndexInfo( const boost::ptr_vector<matchers::Matcher> & matchers ) const;
 private:
+
+	const Pattern * pattern;
 
 	/**
 	 * Преобразование, осуществляемое альтернативой
@@ -192,6 +194,8 @@ private:
 	 * Список, содержащий информацию об индексах, применимых при поиске альтернативы
 	 */
 	mutable boost::ptr_vector<IndexInfo> indexInfo;
+
+	friend class Pattern;
 };
 
 } }

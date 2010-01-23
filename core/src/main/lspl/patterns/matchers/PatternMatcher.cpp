@@ -25,17 +25,15 @@ namespace lspl { namespace patterns { namespace matchers {
 
 struct PatternMatchState {
 
-	const Pattern & pattern;
-
 	const Node & startNode;
 
 	Context context;
 
 	PatternMatchState( const patterns::Pattern & pattern, const patterns::Alternative & alternative, const Node & startNode ) :
-		pattern( pattern ), variant( new MatchVariant( alternative ) ), startNode( startNode ) {}
+		variant( new MatchVariant( alternative ) ), startNode( startNode ) {}
 
 	PatternMatchState( const PatternMatchState & state, const TransitionRef & transition, bool releaseParent ) :
-		pattern( state.pattern ), startNode( state.startNode ), variant( releaseParent ? state.releaseVariant() : new MatchVariant( *state.variant ) ), context( state.context ) {
+		startNode( state.startNode ), variant( releaseParent ? state.releaseVariant() : new MatchVariant( *state.variant ) ), context( state.context ) {
 
 		if ( &transition->start != &getCurrentNode() )
 			throw std::logic_error("Illegal transition");
@@ -46,7 +44,7 @@ struct PatternMatchState {
 	}
 
 	PatternMatchState( const PatternMatchState & state, const TransitionRef & transition, const Context & ctx, bool releaseParent ) :
-		pattern( state.pattern ), startNode( state.startNode ), variant( releaseParent ? state.releaseVariant() : new MatchVariant( *state.variant ) ), context( ctx ) {
+		startNode( state.startNode ), variant( releaseParent ? state.releaseVariant() : new MatchVariant( *state.variant ) ), context( ctx ) {
 
 		if ( &transition->start != &getCurrentNode() )
 			throw std::logic_error("Illegal transition");
@@ -102,13 +100,13 @@ static void processCompoundPattern( const PatternMatchState & state, TransitionL
 		for ( uint i = 0; i < newTransitions.size(); ++ i ) {
 			Match & match = static_cast<Match&>( *newTransitions[i] );
 
-			if ( match.equals( state.pattern, state.startNode, currentNode, attributes ) ) {
+			if ( match.equals( state.getAlternative().getPattern(), state.startNode, currentNode, attributes ) ) {
 				match.addVariant( state.releaseVariant() );
 				return; // Если сопоставление уже было найдено
 			}
 		}
 
-		newTransitions.push_back( new Match( state.startNode, currentNode, state.pattern, state.releaseVariant(), attributes ) ); // TODO Optimize
+		newTransitions.push_back( new Match( state.startNode, currentNode, state.getAlternative().getPattern(), state.releaseVariant(), attributes ) ); // TODO Optimize
 
 		return;
 	}

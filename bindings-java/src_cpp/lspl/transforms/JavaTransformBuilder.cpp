@@ -37,7 +37,7 @@ void JavaTransformBuilder::init( JNIEnv * env ) {
 
 TypedTransform<jobject> * JavaTransformBuilder::build( const patterns::Alternative & alternative, const std::string & source ) {
 	JNIEnv * env = getCurrentEnv();
-	jobject transform = env->CallObjectMethod( const_cast<jobject>( object ), buildMethod, JavaAlternative::get( env, alternative.pattern, &alternative ).object, out( env, source ) );
+	jobject transform = env->CallObjectMethod( const_cast<jobject>( object ), buildMethod, JavaAlternative::get( env, &alternative.getPattern(), &alternative ).object, out( env, source ) );
 
 	return transform ? new JavaTransform( env, transform ) : 0;
 }

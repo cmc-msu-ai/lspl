@@ -68,6 +68,7 @@ void findPatterns() {
 	}
 
 	std::cout << text->getWords( text::attributes::SpeechPart::NOUN ).size() << std::endl;
+	char c;std::cin >> c;
 }
 
 void loadMorphology() {

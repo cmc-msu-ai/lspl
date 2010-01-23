@@ -127,18 +127,11 @@ public:
 	 */
 	virtual void buildChains( const text::Node & node, const Context & context, ChainList & results ) const = 0;
 
-	ChainList buildChains( const text::Node & node, const Context & context ) const {
-		ChainList l; buildChains( node, context, l ); return l;
-	}
-
 	/**
 	 * Построить группыс сопоставлений, начиная с заданного перехода
 	 */
 	virtual void buildChains( const text::Transition & transition, const Context & context, ChainList & results ) const = 0;
 
-	ChainList buildChains( const text::Transition & transition, const Context & context ) const {
-		ChainList l; buildChains( transition, context, l ); return l;
-	}
 };
 
 } } } // namespace lspl::patterns::matchers

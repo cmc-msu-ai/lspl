@@ -10,6 +10,7 @@
 #include "lspl/java/Utils.h"
 
 #include "lspl/patterns/Pattern.h"
+#include "lspl/patterns/Alternative.h"
 
 using namespace lspl::java;
 using namespace lspl::patterns;
