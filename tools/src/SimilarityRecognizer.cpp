@@ -52,12 +52,37 @@ const dictionaries::SynDictionary &
 	return _synonim_dictionary;
 }
 
-TResults *SimilarityRecognizer::SimilarFinder::FindSimilars() {
-	TResults *result = new TResults();
+void SimilarityRecognizer::SimilarFinder::FindEqualWords(
+		TResults &result) const {
 	for(int i = 0; i < terms1().size(); ++i) {
-		result->push_back(new TResult());
+		std::string term1 = terms1()[i]->getContent();
+		for(int j = 0; j < terms2().size(); ++j) {
+			std::string term2 = terms2()[i]->getContent();
+			if (Util::Normalize(term1) == Util::Normalize(term2)) {
+				std::cout << "Similar as equal words: " <<
+						Util::out.convert(term1) << " && " <<
+						Util::out.convert(term2) << std::endl;
+				result[i]->insert(j);
+			}
+			if (synonim_dictionary().acceptsWords(term1, term2)) {
+				std::cout << "Similar as synonims: " <<
+						Util::out.convert(term1) << " && " <<
+						Util::out.convert(term2) << std::endl;
+				result[i]->insert(j);
+			}
+		}
+	}
+}
+
+boost::shared_ptr<TResults>
+		SimilarityRecognizer::SimilarFinder::FindSimilars() {
+	boost::shared_ptr<TResults> result(new TResults());
+	for(int i = 0; i < terms1().size(); ++i) {
+		boost::shared_ptr<TResult> term_result(new TResult());
+		result->push_back(term_result);
 	}
 
+	FindEqualWords(*result);
 	/// terms1 && main patterns
 	for(int j = 0; j < patterns_namespace()->getPatternCount(); ++j) {
 		patterns::PatternRef pattern =
@@ -93,12 +118,8 @@ TResults *SimilarityRecognizer::SimilarFinder::FindSimilars() {
 			static transforms::ContextRetriever contextRetriver;
 			patterns::matchers::Context context =
 					contextRetriver.apply(*(matches[0]->getVariant(0)));
-			std::vector<int> *term_result =	FindSimilars(terms1()[i],
-					pattern_words, similar_patterns()[j], _st_conditions[j],
-					context);
-			for(int k = 0; k < term_result->size(); ++k) {
-				(*result)[i]->insert((*term_result)[k]);
-			}
+			FindSimilars(terms1()[i], pattern_words, similar_patterns()[j],
+					_st_conditions[j], context, *(*result)[i]);
 		}
 	}
 	for(int i = 0; i < terms1().size(); ++i) {
@@ -136,12 +157,13 @@ boost::shared_ptr<patterns::restrictions::AndRestriction>
 	return andRestriction;
 }
 
-std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
+void SimilarityRecognizer::SimilarFinder::FindSimilars(
 		const TTerm &term1,
 		TTermWords &pattern_words,
 		NamespaceRef similar_patterns_namespace,
 		const TStConditionsForSimilarPatterns &st_conditions,
-		patterns::matchers::Context &context) {
+		patterns::matchers::Context &context,
+		TResult &result) {
 //#ifdef DEBUG
 	std::cout << "\tFind Similars (second) ";
 	for(TTermWords::iterator i = pattern_words.begin();
@@ -150,10 +172,6 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 	}
 	std::cout << std::endl;
 //#endif
-	std::vector<int> *result = new std::vector<int>();
-
-	std::vector<bool> is_similar(terms2().size(), false);
-
 	for(int l = 0; l < similar_patterns_namespace->getPatternCount(); ++l) {
 		boost::shared_ptr<patterns::restrictions::AndRestriction>
 				andRestriction = GenerateAndRestriction(pattern_words);
@@ -184,7 +202,7 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 				std::endl;
 //#endif
 		for(int k = 0; k < terms2().size(); ++k) {
-			if (is_similar[k]) {
+			if (result.find(k) != result.end()) {
 				continue;
 			}
 			std::string normalized_match = Util::GetNormalizedMatch(terms2()[k],
@@ -209,32 +227,14 @@ std::vector<int> *SimilarityRecognizer::SimilarFinder::FindSimilars(
 						Util::out.convert(term1->getContent()) << " && " <<
 						Util::out.convert(terms2()[k]->getContent()) <<
 						std::endl;
-				is_similar[k] = true;
+				result.insert(k);
 			}
 		}
 	}
-	for(int i = 0; i < terms2().size(); ++i) {
-		if (is_similar[i]) {
-			result->push_back(i);
-		}
-	}
-	return result;
 }
 
 bool SimilarityRecognizer::SimilarFinder::IsSimilar(const std::string &term1,
 		const std::string &term2) const {
-	if (Util::Normalize(term1) == Util::Normalize(term2)) {
-		std::cout << "Similar as equal words: " <<
-				Util::out.convert(term1) << " && " <<
-				Util::out.convert(term2) << std::endl;
-		return true;
-	}
-	if (synonim_dictionary().acceptsWords(term1, term2)) {
-		std::cout << "Similar as synonims: " <<
-				Util::out.convert(term1) << " && " <<
-				Util::out.convert(term2) << std::endl;
-		return true;
-	}
 	if (Util::IsOrphologicalVariant(term1, term2)) {
 		std::cout << "Similar as orphographical variants: " <<
 				Util::out.convert(term1) << " && " <<

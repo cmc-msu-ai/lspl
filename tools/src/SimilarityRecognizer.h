@@ -22,7 +22,7 @@
 namespace lspl {
 
 typedef std::set<int> TResult;
-typedef std::vector<TResult *> TResults;
+typedef std::vector<boost::shared_ptr<TResult> > TResults;
 typedef std::vector<NamespaceRef> TSimilarPatterns;
 typedef std::pair<patterns::matchers::Variable,
 	patterns::matchers::Variable> TStCondition;
@@ -49,12 +49,14 @@ class SimilarityRecognizer {
 		TSimilarPatterns &similar_patterns() const;
 		const dictionaries::SynDictionary &synonim_dictionary() const;
 
-		std::vector<int> *FindSimilars(const TTerm &term1,
+		void FindSimilars(const TTerm &term1,
 				TTermWords &pattern_words,
 				NamespaceRef similar_patterns_namespace,
 				const TStConditionsForSimilarPatterns &st_conditions,
-				patterns::matchers::Context &context);
+				patterns::matchers::Context &context,
+				TResult &result);
 
+		void FindEqualWords(TResults &result) const;
 		bool IsSimilar(TTermWords &term1, TTermWords &term2) const;
 		bool IsSimilar(const std::string &term1,
 				const std::string &term2) const;
@@ -67,7 +69,7 @@ class SimilarityRecognizer {
 				TSimilarPatterns &similar_patterns,
 				const TStConditions &st_conditions);
 
-		TResults *FindSimilars();
+		boost::shared_ptr<TResults> FindSimilars();
 	};
 
 	NamespaceRef _patterns_namespace;
