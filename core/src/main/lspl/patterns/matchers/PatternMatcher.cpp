@@ -173,19 +173,22 @@ TransitionList PatternMatcher::buildTransitions( const text::Node & node, const 
 
 void PatternMatcher::buildTransitions( const text::Node & node, const patterns::Pattern & pattern, const patterns::Alternative & alt, const Context & context, TransitionList & results ) const {
 	PatternMatchState state( pattern, alt, node );
+
 	processCompoundPattern( state, results );
 }
 
 void PatternMatcher::buildTransitions( const text::Transition & transition, const patterns::Pattern & pattern, const patterns::Alternative & alt, const Context & context, TransitionList & results ) const {
-	const PatternMatchState s0( pattern, alt, transition.start );
+	if ( const AnnotationMatcher * curMatcher = dynamic_cast<const AnnotationMatcher *>( &alt.getMatcher( 0 ) ) ) {
+		if ( !curMatcher->matchTransition( transition, Context() ) )
+			return;
 
-	if ( const AnnotationMatcher * curMatcher = dynamic_cast<const AnnotationMatcher *>( &s0.getCurrentMatcher() ) ) {
-		if ( curMatcher->matchTransition( transition, Context() ) ) {
-			PatternMatchState state( s0, const_cast<text::Transition*>( &transition ) );
-			processCompoundPattern( state, results );
-		}
+		PatternMatchState s0( pattern, alt, transition.start );
+		PatternMatchState state( s0, const_cast<text::Transition*>( &transition ) );
+
+		processCompoundPattern( state, results );
 	} else {
-		const AnnotationChainMatcher & chainMatcher = dynamic_cast<const AnnotationChainMatcher &>( s0.getCurrentMatcher() );
+		PatternMatchState s0( pattern, alt, transition.start );
+		const AnnotationChainMatcher & chainMatcher = dynamic_cast<const AnnotationChainMatcher &>( alt.getMatcher( 0 ) );
 
 		ChainList chains; // Список цепочек
 
