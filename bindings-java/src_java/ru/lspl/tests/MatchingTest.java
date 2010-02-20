@@ -53,7 +53,7 @@ public class MatchingTest {
 				for ( MatchVariant v : ((Match)t).getVariants() )
 					printTransitions( v.getTransitions() );
 			} else if ( t instanceof Loop ) {
-				printTransitions( ((Loop)t).getTransitions() );
+				printTransitions( ((Loop)t).getIterations().get(0).getVariant(0).getTransitions() );
 			}
 		}
 	}
