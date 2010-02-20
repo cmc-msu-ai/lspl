@@ -163,6 +163,19 @@ static void testLiteralsInDictionaries() {
 	assertBuildsNS( "AAA = N V <DIC(V 'gggg')>", ns );
 }
 
+static void testParentNamespace() {
+	NamespaceRef ns1 = new Namespace();
+
+	assertBuildsNS( "NG = A N", ns1 );
+
+	NamespaceRef ns2 = new Namespace( ns1 );
+
+	assertBuildsNS( "AAA = NG V", ns2 );
+
+	assertEquals( ns1->getPatternCount(), 1 );
+	assertEquals( ns2->getPatternCount(), 1 );
+}
+
 static void testMemoryLeaks() {
 	assertTrue( Matcher::aliveObjectsCount == 0 );
 	assertTrue( Restriction::aliveObjectsCount == 0 );
@@ -185,6 +198,7 @@ cute::suite patternBuildingSuite() {
 	s += CUTE(testDictionaries);
 	s += CUTE(testExpressionsInDictionaries);
 	s += CUTE(testLiteralsInDictionaries);
+	s += CUTE(testParentNamespace);
 	s += CUTE(testMemoryLeaks);
 
 	return s;

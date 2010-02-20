@@ -13,7 +13,9 @@
 #include <string>
 
 using lspl::patterns::Pattern;
+using lspl::patterns::PatternRef;
 using lspl::dictionaries::Dictionary;
+using lspl::dictionaries::DictionaryRef;
 
 LSPL_REFCOUNT_CLASS( lspl::Namespace );
 
@@ -55,6 +57,15 @@ Namespace::Namespace() :
 	patternMap( new PatternMap() ), dictionaryMap( new DictionaryMap() ) {
 }
 
+Namespace::Namespace(const NamespaceRef & parentNamespace) :
+	patternMap( new PatternMap() ), dictionaryMap( new DictionaryMap() ) {
+	parents.push_back( parentNamespace );
+}
+
+Namespace::Namespace(const NamespaceList & parentNamespaces) :
+	patternMap( new PatternMap() ), dictionaryMap( new DictionaryMap() ), parents( parentNamespaces ) {
+}
+
 Namespace::~Namespace() {
 }
 
@@ -62,20 +73,24 @@ uint Namespace::getPatternCount() const {
 	return patternMap->map.size();
 }
 
-base::Reference< Pattern > Namespace::getPatternByIndex( uint index ) const {
+PatternRef Namespace::getPatternByIndex( uint index ) const {
 	return patternMap->map.get<1>().at( index );
 }
 
-base::Reference< Pattern > Namespace::getPatternByName( const std::string & name ) const {
+PatternRef Namespace::getPatternByName( const std::string & name ) const {
 	PatternMap::Map::iterator i = patternMap->map.find( name );
 
-	if ( i == patternMap->map.end() )
-		return base::Reference< Pattern >();
+	if ( i != patternMap->map.end() )
+		return *i;
 
-	return *i;
+	foreach ( const NamespaceRef parent, parents )
+		if ( PatternRef ref = parent->getPatternByName( name ) )
+			return ref;
+
+	return PatternRef();
 }
 
-base::Reference< Pattern > Namespace::addPattern( const base::Reference< Pattern > & pattern ) {
+PatternRef Namespace::addPattern( const PatternRef & pattern ) {
 	patternMap->map.insert( pattern );
 
 	return pattern;
@@ -85,20 +100,24 @@ uint Namespace::getDictionaryCount() const {
 	return dictionaryMap->map.size();
 }
 
-base::Reference< Dictionary > Namespace::getDictionaryByIndex( uint index ) const {
+DictionaryRef Namespace::getDictionaryByIndex( uint index ) const {
 	return dictionaryMap->map.get<1>().at( index );
 }
 
-base::Reference< Dictionary > Namespace::getDictionaryByName( const std::string & name ) const {
+DictionaryRef Namespace::getDictionaryByName( const std::string & name ) const {
 	DictionaryMap::Map::iterator i = dictionaryMap->map.find( name );
 
-	if ( i == dictionaryMap->map.end() )
-		return base::Reference< Dictionary >();
+	if ( i != dictionaryMap->map.end() )
+		return *i;
 
-	return *i;
+	foreach ( const NamespaceRef parent, parents )
+		if ( DictionaryRef ref = parent->getDictionaryByName( name ) )
+			return ref;
+
+	return DictionaryRef();
 }
 
-base::Reference< Dictionary > Namespace::addDictionary( const base::Reference< Dictionary > & dict ) {
+DictionaryRef Namespace::addDictionary( const DictionaryRef & dict ) {
 	dictionaryMap->map.insert( dict );
 
 	return dict;

@@ -23,6 +23,8 @@ class LSPL_EXPORT Namespace : public base::RefCountObject, public base::Identifi
 {
 public:
 	Namespace();
+	Namespace(const NamespaceRef & parentNamespace);
+	Namespace(const NamespaceList & parentNamespaces);
 	virtual ~Namespace();
 
 	/**
@@ -85,12 +87,17 @@ public:
 	 */
 	dictionaries::DictionaryRef addDictionary( const dictionaries::DictionaryRef & dictionary );
 
+	const NamespaceList & getParents() const {
+		return parents;
+	}
+
 private:
 	class PatternMap;
 	class DictionaryMap;
 private:
 	boost::scoped_ptr<PatternMap> patternMap;
 	boost::scoped_ptr<DictionaryMap> dictionaryMap;
+	NamespaceList parents;
 };
 
 }
