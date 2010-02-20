@@ -1,16 +1,15 @@
-package ru.lspl.patterns;
+package ru.lspl;
 
 import java.util.AbstractList;
 import java.util.List;
 
 import ru.lspl.LsplObject;
-import ru.lspl.Namespace;
-import ru.lspl.transforms.TransformBuilder;
+import ru.lspl.patterns.Pattern;
 
 /**
  * @author  alno
  */
-public class PatternBuilder extends LsplObject {
+public class Namespace extends LsplObject {
 
 	private class DefinedPatternList extends AbstractList<Pattern> {
 
@@ -28,23 +27,16 @@ public class PatternBuilder extends LsplObject {
 		}
 	}
 	
-	/**
-	 * @uml.property  name="definedPatterns"
-	 */
 	public final List<Pattern> definedPatterns = new DefinedPatternList();
 	
-	public static native PatternBuilder create( Namespace ns, TransformBuilder tb );
+	public static native Namespace create( Namespace[] parents );
 	
-	public static PatternBuilder create(Namespace ns) {
-		return create( ns, null );
+	public static Namespace create() {
+		return create( new Namespace[0] );
 	}
 	
-	public static PatternBuilder create(TransformBuilder tb) {
-		return create( Namespace.create(), tb );
-	}
-	
-	public static PatternBuilder create() {
-		return create( Namespace.create(), null );
+	public static Namespace create( Namespace parent ) {
+		return create( new Namespace[] { parent } );
 	}
 				
 	public native int getDefinedPatternCount();
@@ -53,12 +45,6 @@ public class PatternBuilder extends LsplObject {
 	
 	public native Pattern getDefinedPattern( String name );
 	
-	public native Namespace getNamespace();
-	
-	/**
-	 * @return
-	 * @uml.property  name="definedPatterns"
-	 */
 	public List<Pattern> getDefinedPatterns() {
 		return definedPatterns;
 	}
@@ -71,12 +57,10 @@ public class PatternBuilder extends LsplObject {
 		
 		return patterns;
 	}
-		
-	public native void build( String s ) throws PatternBuildingException;
-
+	
 	protected native void finalize();	
 
-	private PatternBuilder( int id ) {
+	private Namespace( int id ) {
 		super( id );
 	}
 }

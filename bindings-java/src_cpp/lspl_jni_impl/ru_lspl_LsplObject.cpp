@@ -1,6 +1,7 @@
 #include "lspl_jni/ru_lspl_LsplObject.h"
 
 #include "lspl/java/Utils.h"
+#include "lspl/java/JavaNamespace.h"
 #include "lspl/java/TextDataBuilderConfig.h"
 #include "lspl/java/JavaPattern.h"
 #include "lspl/java/JavaPatternBuilder.h"
@@ -41,6 +42,8 @@ using namespace lspl::transforms;
  */
 JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_initStatic(JNIEnv * env, jclass cls) {
 	setupVM( env );
+
+	JavaNamespace::init( env );
 
 	JavaText::init( env );
 	JavaNode::init( env );

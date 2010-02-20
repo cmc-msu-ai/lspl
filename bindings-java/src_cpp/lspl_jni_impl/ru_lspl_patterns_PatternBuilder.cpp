@@ -8,6 +8,7 @@
 
 #include "lspl/java/JavaPatternBuilder.h"
 #include "lspl/java/JavaPattern.h"
+#include "lspl/java/JavaNamespace.h"
 #include "lspl/java/Utils.h"
 
 #include "lspl/patterns/PatternBuilder.h"
@@ -20,19 +21,31 @@ using namespace lspl::patterns;
 using namespace lspl::patterns::java;
 
 using lspl::Namespace;
+using lspl::NamespaceRef;
 using lspl::transforms::TransformBuilder;
 using lspl::transforms::DummyTransformBuilder;
 using lspl::transforms::JavaTransformBuilder;
 
+
 /*
  * Class:     ru_lspl_patterns_PatternBuilder
  * Method:    create
- * Signature: (Lru/lspl/transforms/TransformBuilder;)Lru/lspl/patterns/PatternBuilder;
+ * Signature: (Lru/lspl/Namespace;Lru/lspl/transforms/TransformBuilder;)Lru/lspl/patterns/PatternBuilder;
  */
-JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_PatternBuilder_create(JNIEnv * env, jclass, jobject tb) {
-	TransformBuilder * tBuilder = tb ? static_cast<TransformBuilder *>( new JavaTransformBuilder( env, tb ) ) : static_cast<TransformBuilder *>( new DummyTransformBuilder() );
+JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_PatternBuilder_create(JNIEnv * env, jclass, jobject nsObj, jobject tbObj) {
+	TransformBuilder * tBuilder = tbObj ? static_cast<TransformBuilder *>( new JavaTransformBuilder( env, tbObj ) ) : static_cast<TransformBuilder *>( new DummyTransformBuilder() );
+	NamespaceRef ns = JavaNamespace::get( env, nsObj ).ns;
 
-	return JavaPatternBuilder::get( env, new PatternBuilder( new Namespace(), tBuilder ) ).object;
+	return JavaPatternBuilder::get( env, new PatternBuilder( ns, tBuilder ) ).object;
+}
+
+/*
+ * Class:     ru_lspl_patterns_PatternBuilder
+ * Method:    getNamespace
+ * Signature: ()Lru/lspl/Namespace;
+ */
+JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_PatternBuilder_getNamespace(JNIEnv * env, jobject obj) {
+	return JavaNamespace::get( env, JavaPatternBuilder::get( env, obj ).builder->space.get() ).object;
 }
 
 /*

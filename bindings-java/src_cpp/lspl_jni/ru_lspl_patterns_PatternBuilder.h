@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     ru_lspl_patterns_PatternBuilder
  * Method:    create
- * Signature: (Lru/lspl/transforms/TransformBuilder;)Lru/lspl/patterns/PatternBuilder;
+ * Signature: (Lru/lspl/Namespace;Lru/lspl/transforms/TransformBuilder;)Lru/lspl/patterns/PatternBuilder;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_PatternBuilder_create
-  (JNIEnv *, jclass, jobject);
+  (JNIEnv *, jclass, jobject, jobject);
 
 /*
  * Class:     ru_lspl_patterns_PatternBuilder
@@ -38,6 +38,14 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_PatternBuilder_getDefinedPattern
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_PatternBuilder_getDefinedPattern__Ljava_lang_String_2
   (JNIEnv *, jobject, jstring);
+
+/*
+ * Class:     ru_lspl_patterns_PatternBuilder
+ * Method:    getNamespace
+ * Signature: ()Lru/lspl/Namespace;
+ */
+JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_PatternBuilder_getNamespace
+  (JNIEnv *, jobject);
 
 /*
  * Class:     ru_lspl_patterns_PatternBuilder

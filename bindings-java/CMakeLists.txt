@@ -44,6 +44,7 @@ ADD_CUSTOM_TARGET(jni-stubs
          ru.lspl.text.LoopIteration
          ru.lspl.text.Match
          ru.lspl.LsplObject
+         ru.lspl.Namespace
          ru.lspl.text.attributes.SpeechPart
          ru.lspl.text.attributes.IndexedAttribute
          ru.lspl.text.attributes.AttributeKey
@@ -57,6 +58,7 @@ add_dependencies(jni-stubs lspl.jar)
 ### lspl-java library
 
 set(LSPL_JAVA_SOURCES
+    src_cpp/lspl/java/JavaNamespace.cpp
 	src_cpp/lspl/java/JavaMatcher.cpp
 	src_cpp/lspl/java/JavaPatternBuilder.cpp
 	src_cpp/lspl/java/JavaPattern.cpp
@@ -76,6 +78,7 @@ set(LSPL_JAVA_SOURCES
 	src_cpp/lspl/transforms/JavaTransformBuilder.cpp
 
 	src_cpp/lspl_jni_impl/ru_lspl_LsplObject.cpp
+	src_cpp/lspl_jni_impl/ru_lspl_Namespace.cpp
 	
 	src_cpp/lspl_jni_impl/ru_lspl_patterns_Alternative.cpp
 	src_cpp/lspl_jni_impl/ru_lspl_patterns_Pattern.cpp
