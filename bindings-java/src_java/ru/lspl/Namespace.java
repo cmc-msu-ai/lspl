@@ -5,6 +5,8 @@ import java.util.List;
 
 import ru.lspl.LsplObject;
 import ru.lspl.patterns.Pattern;
+import ru.lspl.patterns.PatternBuilder;
+import ru.lspl.transforms.TransformBuilder;
 
 /**
  * @author  alno
@@ -29,20 +31,29 @@ public class Namespace extends LsplObject {
 	
 	public final List<Pattern> definedPatterns = new DefinedPatternList();
 	
-	public static native Namespace create( Namespace[] parents );
-	
-	public static Namespace create() {
-		return create( new Namespace[0] );
+	public static native Namespace create( Namespace... parents );
+		
+	public PatternBuilder createPatternBuilder() {
+		return PatternBuilder.create( this );
 	}
 	
-	public static Namespace create( Namespace parent ) {
-		return create( new Namespace[] { parent } );
+	public PatternBuilder createPatternBuilder( TransformBuilder tb ) {
+		return PatternBuilder.create( this, tb );
 	}
-				
+	
+	/**
+	 * Получить кол-во определенных в этом пространстве имен шаблонов
+	 */
 	public native int getDefinedPatternCount();
 	
+	/**
+	 * Получить определенный шаблон по индексу
+	 */
 	public native Pattern getDefinedPattern( int i );
 	
+	/**
+	 * Получить определенный шаблон по имени. При этом поиску осуществляется и по родительским пространствам имен.
+	 */
 	public native Pattern getDefinedPattern( String name );
 	
 	public List<Pattern> getDefinedPatterns() {

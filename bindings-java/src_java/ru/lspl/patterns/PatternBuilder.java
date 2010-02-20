@@ -35,16 +35,16 @@ public class PatternBuilder extends LsplObject {
 	
 	public static native PatternBuilder create( Namespace ns, TransformBuilder tb );
 	
-	public static PatternBuilder create(Namespace ns) {
+	public static PatternBuilder create( Namespace ns ) {
 		return create( ns, null );
 	}
 	
-	public static PatternBuilder create(TransformBuilder tb) {
-		return create( Namespace.create(), tb );
+	public static PatternBuilder create( TransformBuilder tb ) {
+		return create( Namespace.create( new Namespace[0] ), tb );
 	}
 	
 	public static PatternBuilder create() {
-		return create( Namespace.create(), null );
+		return create( Namespace.create( new Namespace[0] ), null );
 	}
 				
 	public native int getDefinedPatternCount();
