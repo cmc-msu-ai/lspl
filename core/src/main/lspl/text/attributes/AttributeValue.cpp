@@ -123,45 +123,45 @@ protected:
 class IndexedAttributeValueManager : public IndexedEntryManager {
 public:
 	IndexedAttributeValueManager() {
-		add( 0, "un", "undefined", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 0, "un", "undefined", "неопределено" );
 
-		add( 1, "nom", "nominative", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 2, "gen", "genitive", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 3, "dat", "dative", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 4, "acc", "accusative", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 5, "ins", "instrumental", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 6, "prep", "prepositional", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 7, "uninf", "uninflected", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 1, "nom", "nominative", "именительный" );
+		add( 2, "gen", "genitive", "родительный" );
+		add( 3, "dat", "dative", "дательный" );
+		add( 4, "acc", "accusative", "винительный" );
+		add( 5, "ins", "instrumental", "творительный" );
+		add( 6, "prep", "prepositional", "предложный" );
+		add( 7, "uninf", "uninflected", "несклоняемое" );
 
-		add( 8, "sing", "singular", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 9, "plur", "plural", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 8, "sing", "singular", "единственное" );
+		add( 9, "plur", "plural", "множественное" );
 
-		add( 10, "masc", "masculine", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 11, "fem", "feminine", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 12, "neut", "neuter", "пїЅпїЅпїЅ пїЅпїЅпїЅпїЅ" );
+		add( 10, "masc", "masculine", "мужской" );
+		add( 11, "fem", "feminine", "женский" );
+		add( 12, "neut", "neuter", "средний" );
 
-		add( 13, "com", "comparative", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 14, "sup", "superlative", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 15, "no", "no degree of comparsion", "пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 13, "com", "comparative", "сравнительная" );
+		add( 14, "sup", "superlative", "превосходная" );
+		add( 15, "no", "no degree of comparsion", "без степени сравнения" );
 
-		add( 16, "pres", "present", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 17, "past", "past", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 18, "fut", "future", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 16, "pres", "present", "настоящее" );
+		add( 17, "past", "past", "прошедшее" );
+		add( 18, "fut", "future", "будущее" );
 
-		add( 19, "anim", "animate", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 20, "inan", "inanimate", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 19, "anim", "animate", "одушевленный" );
+		add( 20, "inan", "inanimate", "неодушелвенный" );
 
-		add( 21, "full", "full", "пїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 22, "short", "short", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 21, "full", "full", "полная" );
+		add( 22, "short", "short", "сокращенная" );
 
 		add( 23, "ind", "indicative", "indicative" );
-		add( 24, "imp", "imperative", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 24, "imp", "imperative", "императивное" );
 		add( 25, "conj", "conjunctive", "conjunctive" );
-		add( 26, "cond", "conditional", "пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 26, "cond", "conditional", "условное" );
 
-		add( 27, "1", "first", "пїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 28, "2", "second", "пїЅпїЅпїЅпїЅпїЅпїЅ" );
-		add( 29, "3", "third", "пїЅпїЅпїЅпїЅпїЅпїЅ" );
+		add( 27, "1", "first", "первое" );
+		add( 28, "2", "second", "второе" );
+		add( 29, "3", "third", "третье" );
 
 		add( 30, "yes", "reflexive", "reflexive" );
 		add( 31, "no", "not reflexive", "not reflexive" );
