@@ -102,7 +102,6 @@
 				<include name="Dicts/Morph/**/*" />
 				<include name="Dicts/Obor/**/*" />
 				<include name="Bin/rml.ini" />
-				<exclude name="**/.svn/*" />
 			</fileset>
 		</copy>
 		
@@ -142,7 +141,7 @@
 			</fileset>			
 		</zip>
 		
-		<zip destfile="lspl-gui-${version}-linux.zip">
+		<zip destfile="lspl-gui-${version}-linux32.zip">
 			<zipfileset dir="${dir.data}" prefix="data" />	
 			<zipfileset dir="${dir.bin}" prefix="bin">
 				<include name="*.jar" />
@@ -153,11 +152,30 @@
 			<zipfileset dir="${dir.lib}" prefix="lib">
 				<include name="*.jar" />
 				<exclude name="*.win32.*" />
+				<exclude name="*.x86_64.*" />
 			</zipfileset>		
 			<fileset dir="${basedir}">
 				<include name="*.sh" />
 			</fileset>
 		</zip>
+		
+                <zip destfile="lspl-gui-${version}-linux64.zip">
+                        <zipfileset dir="${dir.data}" prefix="data" />  
+                        <zipfileset dir="${dir.bin}" prefix="bin">
+                                <include name="*.jar" />
+                                <include name="*.so" />
+                                <include name="lspl-*" />
+                                <exclude name="lspl-*.exe" />
+                        </zipfileset>
+                        <zipfileset dir="${dir.lib}" prefix="lib">
+                                <include name="*.jar" />
+                                <exclude name="*.win32.*" />
+                                <exclude name="*.x86_32.*" />
+                        </zipfileset>           
+                        <fileset dir="${basedir}">
+                                <include name="*.sh" />
+                        </fileset>
+                </zip>
 	</target>
 	
 </project>
