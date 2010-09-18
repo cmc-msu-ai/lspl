@@ -31,6 +31,8 @@ public class Document {
 	
 	public boolean autoAnalyze = false;
 	
+	private boolean analysisNeeded = false;
+	
 	/**
 	 * Конфиг парсера текста
 	 * @uml.property  name="textConfig"
@@ -99,11 +101,8 @@ public class Document {
 	public void setSourceText( String srcText ) {
 		sourceText = srcText;
 		
-		for ( DocumentListener listener : listeners )
-			listener.documentUpdated( this ); // Извещаем подписчиков об обновлении документа
-		
-		if ( autoAnalyze ) // Если стоит флаг автоанализа, анализируем текст
-			analyze();
+		fireDocumentUpdated();		
+		autoAnalyzeIfEnabled();
 	}
 	
 	/**
@@ -121,8 +120,12 @@ public class Document {
 	public void setTextConfig( TextConfig textConfig ) {
 		this.textConfig = textConfig;
 		
-		if ( autoAnalyze ) // Если стоит флаг автоанализа, анализируем текст
-			analyze();
+		fireDocumentUpdated();		
+		autoAnalyzeIfEnabled();
+	}
+	
+	public boolean isAnalysisNeeded() {
+		return analysisNeeded;
 	}
 
 	public void analyze() {
@@ -131,8 +134,9 @@ public class Document {
 		for ( Pattern pattern : getPatternsArray() )
 			analyzedText.getMatches( pattern ); // Обработать текст шаблоном
 		
-		for ( DocumentListener listener : listeners )
-			listener.documentAnalyzed( this ); // Извещаем подписчиков об анализе документа
+		fireDocumentAnalyzed();
+		
+		analysisNeeded = false;
 	}
 	
 	public Pattern[] getPatternsArray() {
@@ -150,16 +154,16 @@ public class Document {
 		patternBuilder.build( source );
 		patterns = null;
 		
-		if ( autoAnalyze ) // Если стоит флаг автоанализа, анализируем текст
-			analyze();
+		fireDocumentUpdated();		
+		autoAnalyzeIfEnabled();
 	}
 
 	public void clearPatterns() {
 		patternBuilder = PatternBuilder.create();
 		patterns = null;
 		
-		if ( autoAnalyze ) // Если стоит флаг автоанализа, анализируем текст
-			analyze();
+		fireDocumentUpdated();		
+		autoAnalyzeIfEnabled();
 	}
 	
 	public void load(String fileName) throws IOException {
@@ -172,20 +176,6 @@ public class Document {
 		setSourceText( text );
 
 		savedFileName = extractor.isLossless() ? fileName : null;
-	}
-
-	private TextExtractor selectTextExtractor( String fileName ) {
-		String fileNameLower = fileName.toLowerCase();
-		
-		if ( fileNameLower.endsWith( ".doc" ) ) {
-			return new DocExtractor();
-		} else if ( fileNameLower.endsWith( ".xls" ) ) {
-			return new XlsExtractor();
-		} else if ( fileNameLower.endsWith( ".docx" ) ) {
-			return new OoxmlExtractor();
-		} else {
-			return new PlainTextExtractor();
-		}
 	}
 	
 	public boolean hasSavedFileName() {
@@ -225,6 +215,37 @@ public class Document {
 
 	public void clear() {
 		setSourceText( "" );		
+	}
+
+	protected TextExtractor selectTextExtractor( String fileName ) {
+		String fileNameLower = fileName.toLowerCase();
+		
+		if ( fileNameLower.endsWith( ".doc" ) ) {
+			return new DocExtractor();
+		} else if ( fileNameLower.endsWith( ".xls" ) ) {
+			return new XlsExtractor();
+		} else if ( fileNameLower.endsWith( ".docx" ) ) {
+			return new OoxmlExtractor();
+		} else {
+			return new PlainTextExtractor();
+		}
+	}
+
+	protected void fireDocumentUpdated() {
+		for ( DocumentListener listener : listeners )
+			listener.documentUpdated( this ); // Извещаем подписчиков об обновлении документа
+	}
+
+	protected void fireDocumentAnalyzed() {
+		for ( DocumentListener listener : listeners )
+			listener.documentAnalyzed( this ); // Извещаем подписчиков об анализе документа
+	}
+
+	protected void autoAnalyzeIfEnabled() {
+		if ( autoAnalyze ) // Если стоит флаг автоанализа, анализируем текст
+			analyze();
+		else
+			analysisNeeded = true;
 	}
 	
 }

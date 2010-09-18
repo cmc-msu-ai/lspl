@@ -15,10 +15,6 @@ import ru.lspl.gui.model.Document;
  */
 public class TextConfigEditor extends Composite {
 	
-	/**
-	 * @uml.property  name="document"
-	 * @uml.associationEnd  
-	 */
 	public Document document = null;
 
 	private Button analyzePunctuationCheckBox = null;
@@ -41,11 +37,10 @@ public class TextConfigEditor extends Composite {
 		analyzePunctuationCheckBox.setSelection( true );
 		analyzePunctuationCheckBox.addSelectionListener( new org.eclipse.swt.events.SelectionAdapter() {
 			
+			@Override
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 				document.getTextConfig().analyzePunctuation = analyzePunctuationCheckBox.getSelection();
-				
-				if ( document.autoAnalyze )
-					document.analyze();
+				document.setTextConfig( document.getTextConfig() );
 			}
 			
 		});
@@ -55,8 +50,12 @@ public class TextConfigEditor extends Composite {
 		autoReanalyzeCheckBox.setLayoutData(gridData);
 		autoReanalyzeCheckBox.addSelectionListener( new org.eclipse.swt.events.SelectionAdapter() {
 			
+			@Override
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 				document.autoAnalyze = autoReanalyzeCheckBox.getSelection();
+				
+				if ( document.autoAnalyze && document.isAnalysisNeeded() )
+					document.analyze();
 			}
 			
 		});
@@ -65,18 +64,10 @@ public class TextConfigEditor extends Composite {
 		setLayout( new GridLayout() );
 	}
 
-	/**
-	 * @return
-	 * @uml.property  name="document"
-	 */
 	public Document getDocument() {
 		return document;
 	}
 
-	/**
-	 * @param doc
-	 * @uml.property  name="document"
-	 */
 	public void setDocument( Document doc ) {
 		document = doc;
 		

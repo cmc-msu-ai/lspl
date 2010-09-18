@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
-import ru.lspl.patterns.Pattern;
 import ru.lspl.gui.model.Document;
 import ru.lspl.gui.model.DocumentHolder;
 import ru.lspl.gui.model.DocumentListener;
@@ -44,6 +43,7 @@ import ru.lspl.gui.patterns.viewers.DefinedPatternsProvider;
 import ru.lspl.gui.patterns.viewers.IPatternListener;
 import ru.lspl.gui.patterns.viewers.PatternLabelProvider;
 import ru.lspl.patterns.Alternative;
+import ru.lspl.patterns.Pattern;
 
 /**
  * @author  alno
@@ -178,6 +178,8 @@ public class PatternEditor extends Composite {
 		button = new Button(this, SWT.NONE);
 		button.setText("Добавить");
 		button.addSelectionListener(new org.eclipse.swt.events.SelectionAdapter() {
+			
+			@Override
 			public void widgetSelected(org.eclipse.swt.events.SelectionEvent e) {
 				if ( document == null ) 
 					return;
@@ -196,6 +198,7 @@ public class PatternEditor extends Composite {
 		});
 	}
 	
+	@Override
 	public void update() {
 		patternsViewer.setInput( document );
 	}
