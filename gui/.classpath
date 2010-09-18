@@ -9,15 +9,21 @@
 			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="LsplGui/bin"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="lib/org.eclipse.core.commands.jar"/>
-	<classpathentry kind="lib" path="/home/alno/Projects/Lspl/gui/lib/org.eclipse.swt.gtk.linux.x86_64.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.jface.jar"/>
-	<classpathentry kind="lib" path="lib/org.eclipse.equinox.common.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.poi.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.poi-ooxml.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.poi-scratchpad.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.ooxml-schemas.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.xmlbeans.jar"/>
 	<classpathentry kind="lib" path="lib/org.apache.log4j.jar"/>
+	<classpathentry kind="lib" path="lib/com.onpositive.richtexteditor_1.5.0.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.commands_3.5.0.I20090525-2000.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.equinox.common_3.5.0.v20090520-1800.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.jface_3.5.0.I20090525-2000.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.jface.text_3.5.0.v20090602.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.swt_3.5.0.v3550b.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.swt.gtk.linux.x86_64_3.5.0.v3550b.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.text_3.5.0.v20090513-2000.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.core.runtime_3.5.0.v20090525.jar"/>
+	<classpathentry kind="lib" path="lib/org.eclipse.osgi_3.5.0.v20090520.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

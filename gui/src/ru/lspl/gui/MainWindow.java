@@ -70,6 +70,8 @@ public class MainWindow extends ApplicationWindow {
 			transitions = NO_TRANSITIONS;
 			lastSelection = NO_TRANSITIONS;
 			updateTitle();
+			
+			
 		}
 	};
 
