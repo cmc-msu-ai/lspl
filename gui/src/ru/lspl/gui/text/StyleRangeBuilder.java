@@ -68,25 +68,14 @@ public class StyleRangeBuilder {
 			ranges[i++] = rng;
 		}
 		
-		return buildRanges( ranges );
+		return packRanges( ranges );
 	}
 	
 	public StyleRange[] buildRanges( Transition[] transitions ) {
-		StyleRange[] ranges = new StyleRange[ transitions.length ];
-		
-		for ( int i = 0; i < transitions.length; ++ i ) {
-			Transition transition = transitions[i];
-			StyleRange rng = new StyleRange();
-			rng.start = transition.start.endOffset;
-			rng.length = transition.end.startOffset - rng.start;
-			rng.background = singleMatchColor;
-			ranges[i] = rng;
-		}
-		
-		return buildRanges( ranges );
+		return buildRanges( Arrays.asList( transitions ) );
 	}
 	
-	public StyleRange[] buildRanges( StyleRange[] rangesArr ) {
+	public StyleRange[] packRanges( StyleRange[] rangesArr ) {
 		Arrays.sort(rangesArr, RangeStartComparator.INSTANCE);
 		
 		ArrayList<StyleRange> ranges = new ArrayList<StyleRange>();

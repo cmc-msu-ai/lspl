@@ -5,3 +5,4 @@ build
 .settings
 .euml2
 .umlproject
+*.log

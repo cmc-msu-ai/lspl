@@ -17,7 +17,7 @@ public class StyleRangeBuilderTest {
 		//initialRanges[1] = newRange( rangeBuilder, 1, 3 );		
 		initialRanges[1] = newRange( rangeBuilder, 5, 7 );
 		
-		StyleRange[] ranges = rangeBuilder.buildRanges( initialRanges );
+		StyleRange[] ranges = rangeBuilder.packRanges( initialRanges );
 		
 		for ( StyleRange range : ranges )
 			System.out.println( range.start + " - " + ( range.start + range.length ) + " : " + ( range.background == rangeBuilder.multiMatchColor ) );
