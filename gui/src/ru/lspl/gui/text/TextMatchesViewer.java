@@ -16,12 +16,12 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
-import ru.lspl.patterns.Pattern;
 import ru.lspl.gui.model.Document;
 import ru.lspl.gui.model.DocumentListenerAdapter;
 import ru.lspl.gui.text.listeners.IMatchSelectionListener;
 import ru.lspl.gui.text.viewers.TextMatchesContentProvider;
 import ru.lspl.gui.text.viewers.TextMatchesLabelProvider;
+import ru.lspl.patterns.Pattern;
 import ru.lspl.text.Match;
 import ru.lspl.text.Text;
 
@@ -30,15 +30,8 @@ import ru.lspl.text.Text;
  */
 public class TextMatchesViewer extends Composite {
 
-	/**
-	 * @uml.property  name="document"
-	 * @uml.associationEnd  
-	 */
 	private Document document = null;
-	/**
-	 * @uml.property  name="pattern"
-	 * @uml.associationEnd  
-	 */
+
 	private Pattern pattern = null;
 
 	private Tree matchesTree = null;
@@ -186,10 +179,6 @@ public class TextMatchesViewer extends Composite {
 		 */
 	}
 
-	/**
-	 * @param doc
-	 * @uml.property  name="document"
-	 */
 	public void setDocument( Document doc ) {
 		if ( document != null )
 			document.removeListener( documentListener );
@@ -200,18 +189,10 @@ public class TextMatchesViewer extends Composite {
 		updateStats();
 	}
 
-	/**
-	 * @return
-	 * @uml.property  name="pattern"
-	 */
 	public Pattern getPattern() {
 		return pattern;
 	}
 
-	/**
-	 * @param selectedPattern
-	 * @uml.property  name="pattern"
-	 */
 	public void setPattern( Pattern selectedPattern ) {
 		this.pattern = selectedPattern;
 

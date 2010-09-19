@@ -12,12 +12,8 @@ import ru.lspl.patterns.Pattern;
  * @author  alno
  */
 public class PatternInfo extends Composite {
-	
-	/**
-	 * @uml.property  name="pattern"
-	 * @uml.associationEnd  
-	 */
-	private Pattern pattern = null;  //  @jve:decl-index=0:
+
+	private Pattern pattern = null;
 	private Text infoArea = null;
 
 	public PatternInfo(Composite parent, int style) {
@@ -32,18 +28,10 @@ public class PatternInfo extends Composite {
 		setLayout(new FillLayout());
 	}
 
-	/**
-	 * @return
-	 * @uml.property  name="pattern"
-	 */
 	public Pattern getPattern() {
 		return pattern;
 	}
 
-	/**
-	 * @param pattern
-	 * @uml.property  name="pattern"
-	 */
 	public void setPattern(Pattern pattern) {
 		this.pattern = pattern;
 		

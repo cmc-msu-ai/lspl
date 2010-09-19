@@ -95,11 +95,7 @@ public class PatternEditor extends Composite {
 
 	private Tree patternsTree = null;	
 	private CheckboxTreeViewer patternsViewer = null;
-	
-	/**
-	 * @uml.property  name="document"
-	 * @uml.associationEnd  
-	 */
+
 	private Document document = null;
 	
 	private final Collection<IPatternListener> patternListeners = new LinkedList<IPatternListener>();
@@ -107,22 +103,11 @@ public class PatternEditor extends Composite {
 	private Text text = null;
 
 	private Button button = null;
-		
-	/**
-	 * @uml.property  name="selectedPattern"
-	 * @uml.associationEnd  
-	 */
+
 	private Pattern selectedPattern = null;
-	
-	/**
-	 * @uml.property  name="checkedPatterns"
-	 */
+
 	private final Set<Pattern> checkedPatterns = new HashSet<Pattern>();
-	
-	/**
-	 * @uml.property  name="documentListener"
-	 * @uml.associationEnd  
-	 */
+
 	private DocumentListener documentListener = new DocumentListener() {
 
 		@Override
@@ -367,18 +352,10 @@ public class PatternEditor extends Composite {
 		patternsViewer.refresh();
 	}
 
-	/**
-	 * @return
-	 * @uml.property  name="selectedPattern"
-	 */
 	public Pattern getSelectedPattern() {
 		return selectedPattern;
 	}
 
-	/**
-	 * @param doc
-	 * @uml.property  name="document"
-	 */
 	public void setDocument( Document doc ) {
 		if ( document != null )
 			document.removeListener( documentListener );
@@ -390,11 +367,7 @@ public class PatternEditor extends Composite {
 		
 		patternsViewer.refresh();
 	}
-	
-	/**
-	 * @return
-	 * @uml.property  name="checkedPatterns"
-	 */
+
 	public Set<Pattern> getCheckedPatterns() {
 		return checkedPatterns;
 	}
