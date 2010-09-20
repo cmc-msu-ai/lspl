@@ -17,7 +17,8 @@ public abstract class LsplObject {
 	public boolean equals( Object o ) {
 		if ( o == this )
 			return true;
-
+		if ( o == null )
+		    return false;
 		if ( !o.getClass().equals( getClass() ) )
 			return false;
 
