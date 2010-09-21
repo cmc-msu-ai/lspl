@@ -8,15 +8,15 @@ import ru.lspl.LsplObject;
 
 /**
  * Узел текста. Обозначает некоторую позицию в тексте.
- * @author  alno
+ * 
+ * @author alno
  */
-public class Node extends LsplObject {
+public class Node extends LsplObject implements TextRange {
 
 	/**
 	 * Список переходов, начинающихся в узле.
-	 *
+	 * 
 	 * @author alno
-	 *
 	 */
 	private class TransitionList extends AbstractList<Transition> {
 
@@ -31,21 +31,18 @@ public class Node extends LsplObject {
 		}
 
 		@Override
-		public Transition get(int index) {
+		public Transition get( int index ) {
 			return getTransition( index );
 		}
 	}
 
 	/**
 	 * Набор переходов текста, начинающихся в этом узле
-	 * @uml.property  name="transitions"
 	 */
 	public final List<Transition> transitions = new TransitionList();
 
 	/**
 	 * Текст, в котором находится узел
-	 * @uml.property  name="text"
-	 * @uml.associationEnd
 	 */
 	public final Text text;
 
@@ -59,8 +56,8 @@ public class Node extends LsplObject {
 	 */
 	public final int endOffset;
 
-	private Node(int id, Text text, int startOffset,int endOffset) {
-		super(id);
+	private Node( int id, Text text, int startOffset, int endOffset ) {
+		super( id );
 		this.text = text;
 		this.startOffset = startOffset;
 		this.endOffset = endOffset;
@@ -68,8 +65,8 @@ public class Node extends LsplObject {
 
 	/**
 	 * Получить коллекцию переходов, начинающихся в узле.
-	 * @return  коллекция переходов, начинающих в узле.
-	 * @uml.property  name="transitions"
+	 * 
+	 * @return коллекция переходов, начинающих в узле.
 	 */
 	public List<Transition> getTransitions() {
 		return transitions;
@@ -82,32 +79,53 @@ public class Node extends LsplObject {
 			if ( t instanceof Word )
 				words.add( t );
 
-		return words.toArray( new Transition[ words.size() ] );
+		return words.toArray( new Transition[words.size()] );
 	}
 
 	/**
 	 * Получить переход, начинающийся в узле по его индексу
-	 *
+	 * 
 	 * @param index
 	 *            индекс перехода, начинающегося в узле
 	 * @return переход
 	 */
-	public native Transition getTransition(int index);
+	public native Transition getTransition( int index );
 
 	/**
 	 * Получить количество переходов, начинающихся в узле.
-	 *
+	 * 
 	 * @return кол-во переходов
 	 */
 	public native int getTransitionCount();
 
 	/**
 	 * Сбросить отладочное предстваление узла в строку
-	 *
+	 * 
 	 * @return строка, содержащая отладочное представление узла
 	 */
 	public native String dump();
 
+	@Override
 	protected native void finalize();
+
+	@Override
+	public Text getText() {
+		return text;
+	}
+
+	@Override
+	public int getStartOffset() {
+		return startOffset;
+	}
+
+	@Override
+	public int getEndOffset() {
+		return endOffset;
+	}
+
+	@Override
+	public String getContent() {
+		return text.getContent().substring( startOffset, endOffset );
+	}
 
 }

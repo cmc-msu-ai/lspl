@@ -5,14 +5,10 @@ import java.util.Arrays;
 import ru.lspl.LsplObject;
 
 /**
- * @author  alno
+ * @author alno
  */
 public class AttributeKey extends LsplObject {
 
-	/**
-	 * @uml.property  name="list"
-	 * @uml.associationEnd  multiplicity="(0 -1)"
-	 */
 	private static AttributeKey[] list = new AttributeKey[10];
 
 	public static AttributeKey valueOf( int id ) {
@@ -28,45 +24,25 @@ public class AttributeKey extends LsplObject {
 
 	private static native String getTitle( int index );
 
-	/**
-	 * @uml.property  name="abbrevation"
-	 */
 	public final String abbrevation;
 
-	/**
-	 * @uml.property  name="name"
-	 */
 	public final String name;
 
-	/**
-	 * @uml.property  name="title"
-	 */
 	public final String title;
 
-	/**
-	 * @return
-	 * @uml.property  name="abbrevation"
-	 */
 	public String getAbbrevation() {
 		return abbrevation;
 	}
 
-	/**
-	 * @return
-	 * @uml.property  name="name"
-	 */
 	public String getName() {
 		return name;
 	}
 
-	/**
-	 * @return
-	 * @uml.property  name="title"
-	 */
 	public String getTitle() {
 		return title;
 	}
 
+	@Override
 	public String toString() {
 		return title;
 	}

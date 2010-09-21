@@ -18,18 +18,18 @@ public abstract class LsplObject {
 		if ( o == this )
 			return true;
 		if ( o == null )
-		    return false;
+			return false;
 		if ( !o.getClass().equals( getClass() ) )
 			return false;
 
-		return id == ((LsplObject)o).id;
+		return id == ((LsplObject) o).id;
 	}
-	
+
 	public static native void setRml( String rml );
 
 	static {
-		System.loadLibrary("lspl");
-		System.loadLibrary("lspl-java");
+		System.loadLibrary( "lspl" );
+		System.loadLibrary( "lspl-java" );
 
 		initStatic();
 	}

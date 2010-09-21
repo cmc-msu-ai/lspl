@@ -1,9 +1,7 @@
 package ru.lspl.text;
 
-import ru.lspl.patterns.Pattern;
-
-import java.util.List;
 import java.util.AbstractList;
+import java.util.List;
 
 /**
  * Цикл в тексте
@@ -11,9 +9,9 @@ import java.util.AbstractList;
  * @author alno
  */
 public class Loop extends Transition {
-	
+
 	private class IterationList extends AbstractList<LoopIteration> {
-		
+
 		@Override
 		public int size() {
 			return getIterationCount();
@@ -23,31 +21,31 @@ public class Loop extends Transition {
 		public LoopIteration[] toArray() {
 			LoopIteration[] ts = new LoopIteration[size()];
 
-			for (int i = 0; i < ts.length; ++i)
-				ts[i] = get(i);
+			for ( int i = 0; i < ts.length; ++i )
+				ts[i] = get( i );
 
 			return ts;
 		}
 
 		@Override
-		public LoopIteration get(int index) {
+		public LoopIteration get( int index ) {
 			return getIteration( index );
 		}
-		
+
 	};
-	
+
 	public final List<LoopIteration> iterations = new IterationList();
-	
-	private Loop(int id, Text text, Node start, Node end) {
-		super(id, text, start, end);
+
+	private Loop( int id, Text text, Node start, Node end ) {
+		super( id, text, start, end );
 	}
 
 	public List<LoopIteration> getIterations() {
 		return iterations;
 	}
-	
+
 	public native int getIterationCount();
-	
-	public native LoopIteration getIteration(int index);
-	
+
+	public native LoopIteration getIteration( int index );
+
 }

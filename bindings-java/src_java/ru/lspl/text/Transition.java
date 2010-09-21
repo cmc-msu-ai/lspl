@@ -9,30 +9,18 @@ import ru.lspl.text.attributes.AttributeContainer;
 
 /**
  * Переход в тексте.
- * @author  alno
+ * 
+ * @author alno
  */
-public class Transition extends LsplObject implements AttributeContainer {
+public class Transition extends LsplObject implements AttributeContainer, TextRange {
 
-	/**
-	 * Текст, содержащий переход
-	 * @uml.property  name="text"
-	 * @uml.associationEnd  
-	 */
 	public final Text text;
 
-	/**
-	 * Узел, в котором начинается переход
-	 * @uml.property  name="start"
-	 * @uml.associationEnd  
-	 */
 	public final Node start;
 
-	/**
-	 * Узел, в котором заканчивается переход
-	 * @uml.property  name="end"
-	 * @uml.associationEnd  
-	 */
 	public final Node end;
+
+	private Map<Integer, Object> attributes = null;
 
 	/**
 	 * Выбрать из массива аннотаций те, которые включают позицию
@@ -43,17 +31,17 @@ public class Transition extends LsplObject implements AttributeContainer {
 	 *            позиция
 	 * @return массив выбранных аннотаций
 	 */
-	public static Transition[] selectIncludesPosition(Transition[] transitions, int position) {
+	public static Transition[] selectIncludesPosition( Transition[] transitions, int position ) {
 		ArrayList<Transition> selectedTransitions = new ArrayList<Transition>();
 
-		for (Transition t : transitions)
-			if (t.includesPosition( position ))
+		for ( Transition t : transitions )
+			if ( t.includesPosition( position ) )
 				selectedTransitions.add( t );
 
 		return selectedTransitions.toArray( new Transition[selectedTransitions.size()] );
 	}
 
-	protected Transition(int id, Text text, Node start, Node end) {
+	protected Transition( int id, Text text, Node start, Node end ) {
 		super( id );
 		this.text = text;
 		this.start = start;
@@ -67,7 +55,7 @@ public class Transition extends LsplObject implements AttributeContainer {
 	 *            позиция в тексте
 	 * @return true, если содержит
 	 */
-	public boolean includesPosition(int position) {
+	public boolean includesPosition( int position ) {
 		return start.endOffset < position && end.startOffset > position;
 	}
 
@@ -76,6 +64,7 @@ public class Transition extends LsplObject implements AttributeContainer {
 	 * 
 	 * @return фрагмент текста
 	 */
+	@Deprecated
 	public native String getFragment();
 
 	/**
@@ -85,33 +74,54 @@ public class Transition extends LsplObject implements AttributeContainer {
 	 */
 	public native String dump();
 
+	@Override
 	protected native void finalize();
 
 	@Override
 	public native Object getAttribute( int key );
-	
-	/**
-	 * @uml.property  name="attributes"
-	 */
-	private Map<Integer, Object> attributes;
 
-	/**
-	 * @return
-	 * @uml.property  name="attributes"
-	 */
 	@Override
 	public Map<Integer, Object> getAttributes() {
 		if ( attributes == null ) {
 			attributes = new HashMap<Integer, Object>();
-			
-			for ( int i = 1; i < 20; ++ i ) {
+
+			for ( int i = 1; i < 20; ++i ) {
 				Object value = getAttribute( i );
-				
+
 				if ( value != null )
 					attributes.put( i, value );
 			}
 		}
-		
+
 		return attributes;
 	}
+
+	public boolean isCoincidesWith( Transition t ) {
+		return t != null && t.text == text && t.start == start && t.end == end;
+	}
+
+	public boolean isIntersectsWith( Transition t ) {
+		return t != null && t.text == text && t.start.endOffset < end.startOffset && t.end.startOffset > start.endOffset;
+	}
+
+	@Override
+	public Text getText() {
+		return text;
+	}
+
+	@Override
+	public int getStartOffset() {
+		return start.endOffset;
+	}
+
+	@Override
+	public int getEndOffset() {
+		return end.startOffset;
+	}
+
+	@Override
+	public String getContent() {
+		return getFragment();
+	}
+
 }

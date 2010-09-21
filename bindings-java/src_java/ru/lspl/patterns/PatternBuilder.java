@@ -8,73 +8,72 @@ import ru.lspl.Namespace;
 import ru.lspl.transforms.TransformBuilder;
 
 /**
- * @author  alno
+ * @author alno
  */
 public class PatternBuilder extends LsplObject {
 
 	private class DefinedPatternList extends AbstractList<Pattern> {
 
+		@Override
 		public int size() {
 			return getDefinedPatternCount();
 		}
 
+		@Override
 		public Pattern[] toArray() {
 			return getDefinedPatternsArray();
 		}
 
 		@Override
-		public Pattern get(int index) {
+		public Pattern get( int index ) {
 			return getDefinedPattern( index );
 		}
 	}
-	
+
 	/**
-	 * @uml.property  name="definedPatterns"
+	 * @uml.property name="definedPatterns"
 	 */
 	public final List<Pattern> definedPatterns = new DefinedPatternList();
-	
+
 	public static native PatternBuilder create( Namespace ns, TransformBuilder tb );
-	
+
 	public static PatternBuilder create( Namespace ns ) {
 		return create( ns, null );
 	}
-	
+
 	public static PatternBuilder create( TransformBuilder tb ) {
 		return create( Namespace.create( new Namespace[0] ), tb );
 	}
-	
+
 	public static PatternBuilder create() {
 		return create( Namespace.create( new Namespace[0] ), null );
 	}
-				
+
 	public native int getDefinedPatternCount();
-	
+
 	public native Pattern getDefinedPattern( int i );
-	
+
 	public native Pattern getDefinedPattern( String name );
-	
+
 	public native Namespace getNamespace();
-	
-	/**
-	 * @return
-	 * @uml.property  name="definedPatterns"
-	 */
+
 	public List<Pattern> getDefinedPatterns() {
 		return definedPatterns;
 	}
-	
+
 	public Pattern[] getDefinedPatternsArray() {
-		Pattern[] patterns = new Pattern[ getDefinedPatternCount() ];
-		
-		for ( int i = 0; i < patterns.length; ++ i )
-			patterns[ i ] = getDefinedPattern( i );
-		
+		Pattern[] patterns = new Pattern[getDefinedPatternCount()];
+
+		for ( int i = 0; i < patterns.length; ++i )
+			patterns[i] = getDefinedPattern( i );
+
 		return patterns;
 	}
-		
+
 	public native void build( String s ) throws PatternBuildingException;
 
-	protected native void finalize();	
+	@Override
+	protected native void finalize();
 
 	private PatternBuilder( int id ) {
 		super( id );

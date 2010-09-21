@@ -6,7 +6,7 @@ import java.util.List;
 import ru.lspl.LsplObject;
 
 /**
- * @author  alno
+ * @author alno
  */
 public class Alternative extends LsplObject {
 
@@ -21,26 +21,26 @@ public class Alternative extends LsplObject {
 		public Pattern[] toArray() {
 			Pattern[] res = new Pattern[getDependencyCount()];
 
-			for (int i = 0; i < res.length; ++i)
-				res[i] = getDependency(i);
+			for ( int i = 0; i < res.length; ++i )
+				res[i] = getDependency( i );
 
 			return res;
 		}
 
 		@Override
-		public Pattern get(int index) {
+		public Pattern get( int index ) {
 			return getDependency( index );
 		}
 	}
-	
+
 	public final List<Pattern> dependencies = new DependencyList();
 
-	public final Pattern pattern;		
-	
+	public final Pattern pattern;
+
 	public native int getMatcherCount();
-	
+
 	public native String getSource();
-	
+
 	public native String dump();
 
 	public native int getDependencyCount();
@@ -50,7 +50,8 @@ public class Alternative extends LsplObject {
 	public List<Pattern> getDependencies() {
 		return dependencies;
 	}
-	
+
+	@Override
 	protected native void finalize();
 
 	private Alternative( int id, Pattern pattern ) {
