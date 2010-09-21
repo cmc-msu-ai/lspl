@@ -60,14 +60,6 @@ public class Transition extends LsplObject implements AttributeContainer, TextRa
 	}
 
 	/**
-	 * Получить фрагмент текста, соответствующий переходу
-	 * 
-	 * @return фрагмент текста
-	 */
-	@Deprecated
-	public native String getFragment();
-
-	/**
 	 * Сбросить отладочное представление перехода в строку.
 	 * 
 	 * @return строка, содержащее отладочное представление перехода
@@ -121,7 +113,7 @@ public class Transition extends LsplObject implements AttributeContainer, TextRa
 
 	@Override
 	public String getContent() {
-		return getFragment();
+		return text.getContent().substring( start.endOffset, end.startOffset );
 	}
 
 }

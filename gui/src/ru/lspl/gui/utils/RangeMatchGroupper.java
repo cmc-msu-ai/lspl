@@ -37,7 +37,7 @@ public class RangeMatchGroupper {
 	private RangeMatchGroup createGroup( List<Match> matches, int startIndex, int endIndex ) {
 		Match refMatch = matches.get( startIndex );
 
-		return new RangeMatchGroup( matches.subList( startIndex, endIndex ), refMatch.start, refMatch.end, refMatch.getFragment() );
+		return new RangeMatchGroup( matches.subList( startIndex, endIndex ), refMatch.start, refMatch.end, refMatch.getContent() );
 	}
 
 	private boolean isCompatible( Transition first, Transition second ) {

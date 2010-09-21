@@ -25,14 +25,6 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_create__Ljava_lang_String_2Lru_
 
 /*
  * Class:     ru_lspl_text_Text
- * Method:    getContent
- * Signature: ()Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_ru_lspl_text_Text_getContent
-  (JNIEnv *, jobject);
-
-/*
- * Class:     ru_lspl_text_Text
  * Method:    getNodeCount
  * Signature: ()I
  */

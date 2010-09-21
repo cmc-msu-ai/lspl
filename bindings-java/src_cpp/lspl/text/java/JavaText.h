@@ -13,7 +13,7 @@ class JavaNode;
 
 class JavaText {
 public:
-	JavaText( const TextRef & text, JNIEnv * env );
+	JavaText( const TextRef & text, JNIEnv * env, jstring content);
 	JavaText( const TextRef & text, jobject object );
 	~JavaText();
 
@@ -22,6 +22,8 @@ public:
 	static void remove( JNIEnv * env, jobject obj );
 	static JavaText & get( JNIEnv * env, jobject obj );
 	static JavaText & get( JNIEnv * env, const TextRef & text );
+	static JavaText & create( JNIEnv * env, jstring content );
+	static JavaText & create( JNIEnv * env, jstring content, const TextConfig & config );
 
 public:
 	TextRef text;

@@ -11,7 +11,7 @@ public class TextMatchesLabelProvider extends BaseTransitionsLabelProvider imple
 	@Override
 	protected String getMainColumnText( Object obj ) {
 		if ( obj instanceof Match )
-			return "[" + ((Match) obj).start.endOffset + "-" + ((Match) obj).end.startOffset + "] " + ((Match) obj).getFragment();
+			return "[" + ((Match) obj).start.endOffset + "-" + ((Match) obj).end.startOffset + "] " + ((Match) obj).getContent();
 
 		if ( obj instanceof RangeMatchGroup )
 			return "[" + ((RangeMatchGroup) obj).start.endOffset + "-" + ((RangeMatchGroup) obj).end.startOffset + "] " + ((RangeMatchGroup) obj).getFragment();

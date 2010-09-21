@@ -16,7 +16,7 @@ import ru.lspl.utils.MatchUtils;
  * 
  * @author alno
  */
-public class Text extends LsplObject {
+public class Text extends LsplObject implements TextRange {
 
 	/**
 	 * Коллекция узлов текста. Предоставляет методы для получения их количества,
@@ -121,17 +121,15 @@ public class Text extends LsplObject {
 		}
 	}
 
+	public final String content;
+
 	/**
 	 * Коллекция узлов текста
-	 * 
-	 * @uml.property name="nodes"
 	 */
 	public final List<Node> nodes = new NodeList();
 
 	/**
 	 * Массив коллекций слов текста
-	 * 
-	 * @uml.property name="words"
 	 */
 	@SuppressWarnings( "unchecked" )
 	public final List<Word>[] words = new List[13];
@@ -149,8 +147,10 @@ public class Text extends LsplObject {
 
 	public static native Text create( String source, TextConfig config );
 
-	private Text( int id ) {
+	private Text( int id, String content ) {
 		super( id );
+
+		this.content = content;
 
 		for ( int i = 0; i < words.length; ++i ) {
 			words[i] = new WordList( i );
@@ -162,7 +162,25 @@ public class Text extends LsplObject {
 	 * 
 	 * @return содержимое текста
 	 */
-	public native String getContent();
+	@Override
+	public String getContent() {
+		return content;
+	}
+
+	@Override
+	public Text getText() {
+		return this;
+	}
+
+	@Override
+	public int getStartOffset() {
+		return 0;
+	}
+
+	@Override
+	public int getEndOffset() {
+		return content.length();
+	}
 
 	/**
 	 * Получить количество узлов в тексте

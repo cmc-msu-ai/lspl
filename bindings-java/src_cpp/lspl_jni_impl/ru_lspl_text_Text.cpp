@@ -17,15 +17,11 @@
 
 #include "lspl/text/Text.h"
 #include "lspl/text/Node.h"
-#include "lspl/text/readers/PlainTextReader.h"
 
 using namespace lspl::java;
 using namespace lspl::text;
 using namespace lspl::text::java;
 using namespace lspl::patterns::java;
-
-using lspl::text::Text;
-using lspl::text::readers::PlainTextReader;
 
 /*
  * Class:     ru_lspl_text_Text
@@ -33,8 +29,7 @@ using lspl::text::readers::PlainTextReader;
  * Signature: (Ljava/lang/String;)Lru/lspl/text/Text;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_create__Ljava_lang_String_2(JNIEnv * env, jclass cls, jstring content) {
-	PlainTextReader reader;
-	return JavaText::get( env, reader.readFromString( in( env, content ) ) ).object;
+	return JavaText::create( env, content ).object;
 }
 
 /*
@@ -43,9 +38,7 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_create__Ljava_lang_String_2(JNI
  * Signature: (Ljava/lang/String;Lru/lspl/text/TextConfig;)Lru/lspl/text/Text;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_create__Ljava_lang_String_2Lru_lspl_text_TextConfig_2(JNIEnv * env, jclass cls, jstring content, jobject config) {
-	PlainTextReader reader;
-	reader.config = TextDataBuilderConfig::fromJava( env, config );
-	return JavaText::get( env, reader.readFromString( in( env, content ) ) ).object;
+	return JavaText::create( env, content, TextDataBuilderConfig::fromJava( env, config ) ).object;
 }
 
 /*
@@ -127,15 +120,6 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_text_Text_dump(JNIEnv * env, jobject obj)
 	std::ostringstream dump;
 	JavaText::get( env, obj ).text->dump( dump );
 	return out( env, dump.str() );
-}
-
-/*
- * Class:     ru_lspl_text_Text
- * Method:    getContent
- * Signature: ()Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_ru_lspl_text_Text_getContent(JNIEnv * env, jobject obj) {
-	return out( env, JavaText::get( env, obj ).text->getContent() );
 }
 
 /*

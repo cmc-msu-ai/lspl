@@ -9,14 +9,6 @@ extern "C" {
 #endif
 /*
  * Class:     ru_lspl_text_Transition
- * Method:    getFragment
- * Signature: ()Ljava/lang/String;
- */
-JNIEXPORT jstring JNICALL Java_ru_lspl_text_Transition_getFragment
-  (JNIEnv *, jobject);
-
-/*
- * Class:     ru_lspl_text_Transition
  * Method:    dump
  * Signature: ()Ljava/lang/String;
  */
