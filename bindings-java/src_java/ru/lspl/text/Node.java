@@ -128,4 +128,19 @@ public class Node extends LsplObject implements TextRange {
 		return text.getContent().substring( startOffset, endOffset );
 	}
 
+	@Override
+	public boolean containsPosition( int index ) {
+		return index >= startOffset && index <= endOffset;
+	}
+
+	@Override
+	public boolean coincidesWith( TextRange r ) {
+		return r != null && r.getText() == text && r.getStartOffset() == startOffset && r.getEndOffset() == endOffset;
+	}
+
+	@Override
+	public boolean intersectsWith( TextRange r ) {
+		return r != null && r.getText() == text && r.getStartOffset() < endOffset && r.getEndOffset() > startOffset;
+	}
+
 }

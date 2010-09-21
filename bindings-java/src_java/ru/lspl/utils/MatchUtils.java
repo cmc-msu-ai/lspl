@@ -21,7 +21,7 @@ public class MatchUtils {
 		for ( int curIndex = 1; curIndex < matches.size(); ++curIndex ) {
 			Match curMatch = matches.get( curIndex );
 
-			if ( !startMatch.isCoincidesWith( curMatch ) ) {
+			if ( !startMatch.coincidesWith( curMatch ) ) {
 				groups.add( new MatchGroup( matches.subList( startIndex, curIndex ) ) );
 
 				startIndex = curIndex;

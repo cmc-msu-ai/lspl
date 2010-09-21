@@ -10,4 +10,10 @@ public interface TextRange {
 
 	String getContent();
 
+	boolean containsPosition( int index );
+
+	boolean coincidesWith( TextRange r );
+
+	boolean intersectsWith( TextRange r );
+
 }

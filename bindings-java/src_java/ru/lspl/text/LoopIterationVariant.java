@@ -85,4 +85,23 @@ public class LoopIterationVariant implements TextRange {
 		return iteration.getContent();
 	}
 
+	@Override
+	public boolean containsPosition( int index ) {
+		return index >= iteration.start.endOffset && index <= iteration.end.startOffset;
+	}
+
+	@Override
+	public boolean coincidesWith( TextRange r ) {
+		return r != null && r.getText() == iteration.text && r.getStartOffset() == iteration.start.endOffset && r.getEndOffset() == iteration.end.startOffset;
+	}
+
+	public boolean coincidesWith( Transition t ) {
+		return t != null && t.text == iteration.text && t.start == iteration.start && t.end == iteration.end;
+	}
+
+	@Override
+	public boolean intersectsWith( TextRange r ) {
+		return r != null && r.getText() == iteration.text && r.getStartOffset() < iteration.end.startOffset && r.getEndOffset() > iteration.start.endOffset;
+	}
+
 }

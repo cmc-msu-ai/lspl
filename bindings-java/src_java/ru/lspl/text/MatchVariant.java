@@ -86,4 +86,23 @@ public class MatchVariant implements TextRange {
 		return match.getContent();
 	}
 
+	@Override
+	public boolean containsPosition( int index ) {
+		return index >= match.start.endOffset && index <= match.end.startOffset;
+	}
+
+	@Override
+	public boolean coincidesWith( TextRange r ) {
+		return r != null && r.getText() == match.text && r.getStartOffset() == match.start.endOffset && r.getEndOffset() == match.end.startOffset;
+	}
+
+	public boolean coincidesWith( Transition t ) {
+		return t != null && t.text == match.text && t.start == match.start && t.end == match.end;
+	}
+
+	@Override
+	public boolean intersectsWith( TextRange r ) {
+		return r != null && r.getText() == match.text && r.getStartOffset() < match.end.startOffset && r.getEndOffset() > match.start.endOffset;
+	}
+
 }

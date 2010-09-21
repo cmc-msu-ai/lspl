@@ -2,6 +2,7 @@ package ru.lspl.text;
 
 import java.util.AbstractList;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import ru.lspl.LsplObject;
@@ -180,6 +181,21 @@ public class Text extends LsplObject implements TextRange {
 	@Override
 	public int getEndOffset() {
 		return content.length();
+	}
+
+	@Override
+	public boolean containsPosition( int index ) {
+		return index >= 0 && index <= content.length();
+	}
+
+	@Override
+	public boolean coincidesWith( TextRange r ) {
+		return r != null && r.getText() == this && r.getStartOffset() == 0 && r.getEndOffset() == content.length();
+	}
+
+	@Override
+	public boolean intersectsWith( TextRange r ) {
+		return r != null && r.getText() == this && r.getStartOffset() < content.length() && r.getEndOffset() > 0;
 	}
 
 	/**
@@ -446,6 +462,65 @@ public class Text extends LsplObject implements TextRange {
 				return false;
 
 		return true;
+	}
+
+	public List<Word> findWordsContainingPosition( int offset ) {
+		List<Node> nodes = findNodesBeforePosition( offset );
+
+		if ( nodes.isEmpty() )
+			return Collections.emptyList();
+
+		List<Word> transitions = new ArrayList<Word>();
+
+		for ( Node n : nodes )
+			for ( Transition t : n.transitions )
+				if ( t.end.startOffset >= offset && t instanceof Word )
+					transitions.add( (Word) t );
+
+		return transitions;
+	}
+
+	public List<Match> findMatchesContainingPosition( int offset ) {
+		List<Node> nodes = findNodesBeforePosition( offset );
+
+		if ( nodes.isEmpty() )
+			return Collections.emptyList();
+
+		List<Match> transitions = new ArrayList<Match>();
+
+		for ( Node n : nodes )
+			for ( Transition t : n.transitions )
+				if ( t.end.startOffset >= offset && t instanceof Match )
+					transitions.add( (Match) t );
+
+		return transitions;
+	}
+
+	public List<Transition> findTransitionsContainingPosition( int offset ) {
+		List<Node> nodes = findNodesBeforePosition( offset );
+
+		if ( nodes.isEmpty() )
+			return Collections.emptyList();
+
+		List<Transition> transitions = new ArrayList<Transition>();
+
+		for ( Node n : nodes )
+			for ( Transition t : n.transitions )
+				if ( t.end.startOffset >= offset )
+					transitions.add( t );
+
+		return transitions;
+	}
+
+	public List<Node> findNodesBeforePosition( int offset ) {
+		for ( int i = getNodeCount() - 1; i >= 0; --i ) {
+			Node n = getNode( i );
+
+			if ( n.endOffset <= offset )
+				return nodes.subList( 0, i + 1 );
+		}
+
+		return Collections.emptyList();
 	}
 
 	/**

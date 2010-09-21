@@ -60,4 +60,23 @@ public class MatchGroup implements TextRange {
 		return text.getContent().substring( start.endOffset, end.startOffset );
 	}
 
+	@Override
+	public boolean containsPosition( int index ) {
+		return index >= start.endOffset && index <= end.startOffset;
+	}
+
+	@Override
+	public boolean coincidesWith( TextRange r ) {
+		return r != null && r.getText() == text && r.getStartOffset() == start.endOffset && r.getEndOffset() == end.startOffset;
+	}
+
+	public boolean coincidesWith( Transition t ) {
+		return t != null && t.text == text && t.start == start && t.end == end;
+	}
+
+	@Override
+	public boolean intersectsWith( TextRange r ) {
+		return r != null && r.getText() == text && r.getStartOffset() < end.startOffset && r.getEndOffset() > start.endOffset;
+	}
+
 }

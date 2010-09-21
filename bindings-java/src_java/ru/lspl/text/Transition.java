@@ -88,11 +88,26 @@ public class Transition extends LsplObject implements AttributeContainer, TextRa
 		return attributes;
 	}
 
-	public boolean isCoincidesWith( Transition t ) {
+	@Override
+	public boolean containsPosition( int index ) {
+		return index >= start.endOffset && index <= end.startOffset;
+	}
+
+	@Override
+	public boolean coincidesWith( TextRange r ) {
+		return r != null && r.getText() == text && r.getStartOffset() == start.endOffset && r.getEndOffset() == end.startOffset;
+	}
+
+	public boolean coincidesWith( Transition t ) {
 		return t != null && t.text == text && t.start == start && t.end == end;
 	}
 
-	public boolean isIntersectsWith( Transition t ) {
+	@Override
+	public boolean intersectsWith( TextRange r ) {
+		return r != null && r.getText() == text && r.getStartOffset() < end.startOffset && r.getEndOffset() > start.endOffset;
+	}
+
+	public boolean intersectsWith( Transition t ) {
 		return t != null && t.text == text && t.start.endOffset < end.startOffset && t.end.startOffset > start.endOffset;
 	}
 
