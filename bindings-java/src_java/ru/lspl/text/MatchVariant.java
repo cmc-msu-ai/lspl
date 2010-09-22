@@ -1,5 +1,7 @@
 package ru.lspl.text;
 
+import ru.lspl.patterns.Alternative;
+
 import java.util.AbstractList;
 import java.util.List;
 
@@ -48,6 +50,10 @@ public class MatchVariant implements TextRange {
 	public Object getTransformResult() {
 		return match.getVariantTransformResult( index );
 	}
+
+	public Alternative getAlternative() {
+        return match.getVariantAlternative( index );
+    }
 
 	public List<Transition> getTransitions() {
 		return transitions;

@@ -1,6 +1,7 @@
 package ru.lspl.text;
 
 import ru.lspl.patterns.Pattern;
+import ru.lspl.patterns.Alternative;
 
 import java.util.List;
 import java.util.AbstractList;
@@ -65,6 +66,8 @@ public class Match extends Transition {
 	public native Object getVariantTransformResult( int variantIndex );
 
 	public native int getVariantTransitionCount( int variantIndex );
+
+	public native Alternative getVariantAlternative( int variantIndex );
 
 	public native Transition getVariantTransition( int variantIndex, int transitionIndex );
 

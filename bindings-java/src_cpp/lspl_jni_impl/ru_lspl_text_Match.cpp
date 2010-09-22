@@ -2,9 +2,11 @@
 
 #include "lspl/text/Match.h"
 #include "lspl/text/JavaMatch.h"
+#include "lspl/java/JavaAlternative.h"
 #include "lspl/java/Utils.h"
 
 using namespace lspl::java;
+using namespace lspl::patterns::java;
 using namespace lspl::text;
 
 /*
@@ -45,6 +47,17 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantTransformResult(JNIE
  */
 JNIEXPORT jint JNICALL Java_ru_lspl_text_Match_getVariantTransitionCount(JNIEnv * env, jobject obj, jint vindex) {
 	return JavaMatch::get(env,obj)->transition.cast<Match>()->getVariant( vindex )->size();
+}
+
+/*
+ * Class:     ru_lspl_text_Match
+ * Method:    getVariantAlternative
+ * Signature: (I)Lru/lspl/patterns/Alternative;
+ */
+JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantAlternative(JNIEnv * env, jobject obj, jint vindex) {
+    MatchRef match = JavaMatch::get(env,obj)->transition.cast<Match>();
+
+    return JavaAlternative::get( env, &match->getPattern(), &match->getVariant( vindex )->alternative ).object;
 }
 
 /*

@@ -41,6 +41,14 @@ JNIEXPORT jint JNICALL Java_ru_lspl_text_Match_getVariantTransitionCount
 
 /*
  * Class:     ru_lspl_text_Match
+ * Method:    getVariantAlternative
+ * Signature: (I)Lru/lspl/patterns/Alternative;
+ */
+JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantAlternative
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     ru_lspl_text_Match
  * Method:    getVariantTransition
  * Signature: (II)Lru/lspl/text/Transition;
  */
