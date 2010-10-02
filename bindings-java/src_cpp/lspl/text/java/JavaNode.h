@@ -22,11 +22,13 @@ public:
 public:
 	NodeRef node;
 	jobject object;
-private:
+	
+public:
 	static jclass 	clazz;
 	static jfieldID idField;
 	static jmethodID constructor;
 
+private:
 	static std::vector<JavaNode *> nodes;
 };
 

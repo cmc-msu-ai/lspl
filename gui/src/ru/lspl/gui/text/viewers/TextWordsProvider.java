@@ -71,7 +71,7 @@ public class TextWordsProvider implements ITreeContentProvider {
 		
 		ArrayList<Object> elems = new ArrayList<Object>();
 		
-		for ( Node n : ((Document)input).getAnalyzedText().nodes )
+		for ( Node n : ((Document)input).getAnalyzedText().getNodes() )
 			if ( hasChildren( n ) )
 				elems.add(n);
 		

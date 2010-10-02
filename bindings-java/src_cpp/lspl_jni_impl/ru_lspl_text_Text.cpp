@@ -42,24 +42,6 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_create__Ljava_lang_String_2Lru_
 }
 
 /*
- * Class:     ru_lspl_Text
- * Method:    getNodeCount
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_ru_lspl_text_Text_getNodeCount(JNIEnv * env, jobject obj_text) {
-	return JavaText::get( env, obj_text ).text->getNodes().size();
-}
-
-/*
- * Class:     ru_lspl_Text
- * Method:    getNode
- * Signature: (I)Lru/lspl/text/Node;
- */
-JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_getNode(JNIEnv * env, jobject obj_text, jint index) {
-	return JavaNode::get( env, JavaText::get( env, obj_text ).text->getNodes().at( index ).get() );
-}
-
-/*
  * Class:     ru_lspl_text_Text
  * Method:    getWordCount
  * Signature: (I)I

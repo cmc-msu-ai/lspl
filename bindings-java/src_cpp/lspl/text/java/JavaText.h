@@ -17,13 +17,16 @@ public:
 	JavaText( const TextRef & text, jobject object );
 	~JavaText();
 
-
 	static void init( JNIEnv * env );
 	static void remove( JNIEnv * env, jobject obj );
 	static JavaText & get( JNIEnv * env, jobject obj );
 	static JavaText & get( JNIEnv * env, const TextRef & text );
 	static JavaText & create( JNIEnv * env, jstring content );
 	static JavaText & create( JNIEnv * env, jstring content, const TextConfig & config );
+	
+private:
+
+	jobjectArray createNodeArray( JNIEnv * env );
 
 public:
 	TextRef text;
@@ -31,7 +34,7 @@ public:
 private:
 	static jclass 	clazz;
 	static jfieldID idField;
-	static jmethodID constructor;
+	static jmethodID constructor, initializer;
 
 	static std::vector<JavaText *> texts;
 };

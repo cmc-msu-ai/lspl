@@ -8,6 +8,7 @@ import java.util.List;
 import ru.lspl.LsplObject;
 import ru.lspl.patterns.Pattern;
 import ru.lspl.text.attributes.SpeechPart;
+import ru.lspl.utils.ImmutableArrayList;
 import ru.lspl.utils.MatchUtils;
 
 /**
@@ -18,41 +19,6 @@ import ru.lspl.utils.MatchUtils;
  * @author alno
  */
 public class Text extends LsplObject implements TextRange {
-
-	/**
-	 * Коллекция узлов текста. Предоставляет методы для получения их количества,
-	 * перебора и получения массива узлов.
-	 * 
-	 * @author alno
-	 * 
-	 */
-	private class NodeList extends AbstractList<Node> {
-
-		private int count = -1;
-
-		@Override
-		public int size() {
-			if ( count < 0 )
-				count = getNodeCount();
-
-			return count;
-		}
-
-		@Override
-		public Node[] toArray() {
-			Node[] nodes = new Node[getNodeCount()];
-
-			for ( int i = 0; i < nodes.length; ++i )
-				nodes[i] = getNode( i );
-
-			return nodes;
-		}
-
-		@Override
-		public Node get( int index ) {
-			return getNode( index );
-		}
-	}
 
 	private class WordList extends AbstractList<Word> {
 
@@ -125,15 +91,20 @@ public class Text extends LsplObject implements TextRange {
 	public final String content;
 
 	/**
-	 * Коллекция узлов текста
-	 */
-	public final List<Node> nodes = new NodeList();
-
-	/**
 	 * Массив коллекций слов текста
 	 */
 	@SuppressWarnings( "unchecked" )
 	public final List<Word>[] words = new List[13];
+
+	/**
+	 * Immutable list of text nodes
+	 */
+	private List<Node> nodes;
+
+	/**
+	 * Array of text nodes
+	 */
+	private Node[] nodeArray;
 
 	/**
 	 * Метод, используемый для создания нового экземпляра текста на основе
@@ -153,9 +124,13 @@ public class Text extends LsplObject implements TextRange {
 
 		this.content = content;
 
-		for ( int i = 0; i < words.length; ++i ) {
+		for ( int i = 0; i < words.length; ++i )
 			words[i] = new WordList( i );
-		}
+	}
+
+	private void initialize( Node[] nodeArray ) {
+		this.nodeArray = nodeArray;
+		this.nodes = new ImmutableArrayList<Node>( nodeArray );
 	}
 
 	/**
@@ -199,26 +174,9 @@ public class Text extends LsplObject implements TextRange {
 	}
 
 	/**
-	 * Получить количество узлов в тексте
-	 * 
-	 * @return кол-во узлов в тексте
-	 */
-	public native int getNodeCount();
-
-	/**
-	 * Получить узел текста по его индексу
-	 * 
-	 * @param index
-	 *            индекс узла
-	 * @return узел текста
-	 */
-	public native Node getNode( int index );
-
-	/**
 	 * Получить коллекцию узлов текста
 	 * 
 	 * @return коллекция узлов текста
-	 * @uml.property name="nodes"
 	 */
 	public List<Node> getNodes() {
 		return nodes;
@@ -248,7 +206,6 @@ public class Text extends LsplObject implements TextRange {
 	 * Получить коллекцию слов текста
 	 * 
 	 * @return коллекция слов текста
-	 * @uml.property name="words"
 	 */
 	public List<Word> getWords() {
 		return words[0];
@@ -513,8 +470,8 @@ public class Text extends LsplObject implements TextRange {
 	}
 
 	public List<Node> findNodesBeforePosition( int offset ) {
-		for ( int i = getNodeCount() - 1; i >= 0; --i ) {
-			Node n = getNode( i );
+		for ( int i = nodeArray.length - 1; i >= 0; --i ) {
+			Node n = nodeArray[i];
 
 			if ( n.endOffset <= offset )
 				return nodes.subList( 0, i + 1 );
