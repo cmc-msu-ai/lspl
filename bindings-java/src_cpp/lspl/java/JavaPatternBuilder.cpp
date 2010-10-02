@@ -18,7 +18,7 @@ std::vector<JavaPatternBuilder*> JavaPatternBuilder::builders;
 
 JavaPatternBuilder::JavaPatternBuilder( PatternBuilder * builder, JNIEnv * env ) :
 	builder( builder ),
-	object( env->NewGlobalRef( env->NewObject( clazz, constructor, (jint)builder->id ) ) ) {
+	object( env->NewWeakGlobalRef( env->NewObject( clazz, constructor, (jint)builder->id ) ) ) {
 }
 
 JavaPatternBuilder::~JavaPatternBuilder() {

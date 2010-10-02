@@ -24,6 +24,8 @@
 #include "lspl/patterns/Pattern.h"
 #include "lspl/patterns/matchers/Matcher.h"
 #include "lspl/patterns/restrictions/Restriction.h"
+#include "lspl/text/Text.h"
+#include "lspl/text/Node.h"
 #include "lspl/text/Transition.h"
 
 #include <stdlib.h>
@@ -104,6 +106,8 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_LsplObject_dumpMemoryStats(JNIEnv * env, 
 	output << "Matchers: " << Matcher::aliveObjectsCount << std::endl;
 	output << "Restrictions: " << Restriction::aliveObjectsCount << std::endl;
 	
+	output << "Texts: " << Text::aliveObjectsCount << std::endl;
+	output << "Nodes: " << Node::aliveObjectsCount << std::endl;
 	output << "Transitions: " << Transition::aliveObjectsCount << std::endl;
 	
 	return out( env, output.str() );

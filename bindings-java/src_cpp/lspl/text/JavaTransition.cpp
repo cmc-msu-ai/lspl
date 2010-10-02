@@ -88,9 +88,8 @@ void JavaTransition::init( JNIEnv * env ) {
 void JavaTransition::remove( JNIEnv * env, jobject obj ) {
 	uint id = env->GetIntField( obj, transitionIdField );
 
-	transitions[ id ] = 0;
-
 	delete transitions.at( id );
+	transitions[ id ] = 0;
 }
 
 } }

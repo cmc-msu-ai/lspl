@@ -17,7 +17,7 @@ JavaPattern::JavaPattern( PatternRef pattern, jobject object ) : pattern( patter
 }
 
 JavaPattern::JavaPattern( PatternRef pattern, JNIEnv * env ) : pattern( pattern ),
-	object( env->NewGlobalRef( env->NewObject( clazz, constructor, (jint)pattern->id, out( env, pattern->name ) ) ) ) {
+	object( env->NewWeakGlobalRef( env->NewObject( clazz, constructor, (jint)pattern->id, out( env, pattern->name ) ) ) ) {
 }
 
 JavaPattern::~JavaPattern() {

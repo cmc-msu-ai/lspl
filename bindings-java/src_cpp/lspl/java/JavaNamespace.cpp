@@ -12,7 +12,7 @@ std::vector<JavaNamespace*> JavaNamespace::namespaces;
 
 JavaNamespace::JavaNamespace( Namespace * ns, JNIEnv * env ) :
 	ns( ns ),
-	object( env->NewGlobalRef( env->NewObject( clazz, constructor, (jint)ns->id ) ) ) {
+	object( env->NewWeakGlobalRef( env->NewObject( clazz, constructor, (jint)ns->id ) ) ) {
 }
 
 JavaNamespace::~JavaNamespace() {

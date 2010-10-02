@@ -4,8 +4,6 @@
 #include "lspl/text/Node.h"
 #include "lspl/text/Text.h"
 
-#include <iostream>
-
 namespace lspl { namespace text { namespace java {
 
 jclass JavaNode::clazz;
@@ -49,9 +47,8 @@ void JavaNode::init( JNIEnv * env ) {
 void JavaNode::remove( JNIEnv * env, jobject obj ) {
 	uint id = env->GetIntField( obj, idField );
 
-	nodes[ id ] = 0;
-
 	delete nodes.at( id );
+	nodes[ id ] = 0;
 }
 
 } } }
