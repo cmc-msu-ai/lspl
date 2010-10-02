@@ -33,8 +33,7 @@ JavaToken::JavaToken( Transition * t, JNIEnv * env ) {
 			clazz, constructor, (jint)transition->id,
 			JavaText::get( env, const_cast<Text*>( &transition->start.text ) ).object, // Текст
 			JavaNode::get( env, const_cast<Node*>( &transition->start ) ), // Начальный узел
-			JavaNode::get( env, const_cast<Node*>( &transition->end ) ), // Конечный узел
-			out( env, token->getToken() ) ) ); // Текст лексемы
+			JavaNode::get( env, const_cast<Node*>( &transition->end ) ) ) ); // Текст лексемы
 }
 
 JavaToken::~JavaToken() {
@@ -42,7 +41,7 @@ JavaToken::~JavaToken() {
 
 void JavaToken::init( JNIEnv * env ) {
 	clazz = (jclass) env->NewGlobalRef( (jobject)env->FindClass( "ru/lspl/text/Token" ) );
-	constructor = env->GetMethodID( clazz, "<init>", "(ILru/lspl/text/Text;Lru/lspl/text/Node;Lru/lspl/text/Node;Ljava/lang/String;)V" );
+	constructor = env->GetMethodID( clazz, "<init>", "(ILru/lspl/text/Text;Lru/lspl/text/Node;Lru/lspl/text/Node;)V" );
 }
 
 } }

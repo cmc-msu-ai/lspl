@@ -4,9 +4,9 @@ public class Token extends Transition {
 
 	public final String token;
 
-	private Token( int id, Text text, Node start, Node end, String token ) {
+	private Token( int id, Text text, Node start, Node end ) {
 		super( id, text, start, end );
-		this.token = token;
+		this.token = getContent();
 	}
 
 }
