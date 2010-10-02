@@ -15,11 +15,15 @@ LSPL_REFCOUNT_CLASS( lspl::text::Node )
 
 namespace lspl { namespace text {
 
+uint Node::aliveObjectsCount = 0;
+
 Node::Node( uint index, uint startOffset, uint endOffset, const Text & text ) :
 	index( index ), startOffset( startOffset ), endOffset( endOffset ), text( text ), tokenCount( 0 ), wordCount( 0 ), matchCount( 0 ) {
+    ++ aliveObjectsCount;
 }
 
 Node::~Node() {
+    -- aliveObjectsCount;
 }
 
 std::string Node::getRangeString() const {

@@ -68,6 +68,11 @@ public:
 	uint getMatchesCount() const { return matchCount; }
 
 public:
+    
+    /**
+     * Количество объектов в памяти
+     */
+    static uint aliveObjectsCount;
 
 	/**
 	 * Индекс узла в тексте
