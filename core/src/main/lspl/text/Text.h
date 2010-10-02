@@ -153,6 +153,12 @@ private:
 	void freeIndices( IndexIteratorsList & iterators );
 	void processWithoutIndices( const patterns::Pattern & pattern );
 	void processWithIndices( const patterns::Pattern & pattern, IndexIteratorsList & iterators );
+public:
+
+    /**
+     * Количество объектов в памяти
+     */
+    static uint aliveObjectsCount;
 
 private:
 

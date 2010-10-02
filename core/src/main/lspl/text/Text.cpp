@@ -39,6 +39,8 @@ LSPL_REFCOUNT_CLASS( lspl::text::Text )
 
 namespace lspl { namespace text {
 
+uint Text::aliveObjectsCount = 0;
+
 template <class T>
 inline void addTo( MatchList * matches, std::vector< base::Reference<T> > transitions ) {
 	if ( !matches ) // Если передан пустой указатель, ничего не копируем
@@ -51,9 +53,11 @@ inline void addTo( MatchList * matches, std::vector< base::Reference<T> > transi
 }
 
 Text::Text() {
+    ++ aliveObjectsCount;
 }
 
 Text::~Text() {
+    -- aliveObjectsCount;
 }
 
 void Text::addWordToMarkup( const markup::WordRef & word ) {
