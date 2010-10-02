@@ -12,7 +12,7 @@ public:
 
 	static void init( JNIEnv * env );
 
-private:
+public:
 	static jclass	 clazz;
 	static jmethodID constructor;
 };

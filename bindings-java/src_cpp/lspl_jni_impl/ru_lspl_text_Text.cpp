@@ -14,6 +14,7 @@
 #include "lspl/text/java/JavaText.h"
 #include "lspl/text/java/JavaNode.h"
 #include "lspl/text/JavaTransition.h"
+#include "lspl/text/JavaWord.h"
 
 #include "lspl/text/Text.h"
 #include "lspl/text/Node.h"
@@ -22,6 +23,8 @@ using namespace lspl::java;
 using namespace lspl::text;
 using namespace lspl::text::java;
 using namespace lspl::patterns::java;
+
+using lspl::text::markup::WordList;
 
 /*
  * Class:     ru_lspl_text_Text
@@ -43,11 +46,22 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_create__Ljava_lang_String_2Lru_
 
 /*
  * Class:     ru_lspl_text_Text
- * Method:    getWordCount
- * Signature: (I)I
+ * Method:    internalGetWords
+ * Signature: (I)[Lru/lspl/text/Word;
  */
-JNIEXPORT jint JNICALL Java_ru_lspl_text_Text_getWordCount(JNIEnv * env, jobject obj_text, jint sp) {
-	return JavaText::get( env, obj_text ).text->getWords( lspl::text::attributes::SpeechPart( sp ) ).size();
+JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_Text_internalGetWords(JNIEnv * env, jobject obj_text, jint sp) {
+	const WordList & words = JavaText::get( env, obj_text ).text->getWords( lspl::text::attributes::SpeechPart( sp ) );
+	
+	jobjectArray result = env->NewObjectArray( words.size(), JavaWord::clazz, 0 );
+	
+	if ( result == 0 )
+		return 0;
+		
+	for ( uint i = 0, sz = words.size(); i < sz; ++ i ) {
+		env->SetObjectArrayElement( result, i, JavaTransition::get( env, words[i].get() )->object );
+	}
+	
+	return result;
 }
 
 /*

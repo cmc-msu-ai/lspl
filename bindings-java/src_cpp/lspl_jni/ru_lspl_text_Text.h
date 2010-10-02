@@ -25,22 +25,6 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_create__Ljava_lang_String_2Lru_
 
 /*
  * Class:     ru_lspl_text_Text
- * Method:    getWordCount
- * Signature: (I)I
- */
-JNIEXPORT jint JNICALL Java_ru_lspl_text_Text_getWordCount
-  (JNIEnv *, jobject, jint);
-
-/*
- * Class:     ru_lspl_text_Text
- * Method:    getWord
- * Signature: (II)Lru/lspl/text/Word;
- */
-JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_getWord
-  (JNIEnv *, jobject, jint, jint);
-
-/*
- * Class:     ru_lspl_text_Text
  * Method:    getMatchCount
  * Signature: (Lru/lspl/patterns/Pattern;)I
  */
@@ -70,6 +54,14 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_text_Text_dump
  */
 JNIEXPORT void JNICALL Java_ru_lspl_text_Text_finalize
   (JNIEnv *, jobject);
+
+/*
+ * Class:     ru_lspl_text_Text
+ * Method:    internalGetWords
+ * Signature: (I)[Lru/lspl/text/Word;
+ */
+JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_Text_internalGetWords
+  (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus
 }

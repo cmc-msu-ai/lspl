@@ -20,39 +20,6 @@ import ru.lspl.utils.MatchUtils;
  */
 public class Text extends LsplObject implements TextRange {
 
-	private class WordList extends AbstractList<Word> {
-
-		private final int sp;
-		private int count = -1;
-
-		public WordList( int sp ) {
-			this.sp = sp;
-		}
-
-		@Override
-		public int size() {
-			if ( count < 0 )
-				count = getWordCount( sp );
-
-			return count;
-		}
-
-		@Override
-		public Word[] toArray() {
-			Word[] words = new Word[getWordCount( sp )];
-
-			for ( int i = 0; i < words.length; ++i )
-				words[i] = getWord( sp, i );
-
-			return words;
-		}
-
-		@Override
-		public Word get( int index ) {
-			return getWord( sp, index );
-		}
-	}
-
 	/**
 	 * @author alno
 	 */
@@ -91,10 +58,10 @@ public class Text extends LsplObject implements TextRange {
 	public final String content;
 
 	/**
-	 * Массив коллекций слов текста
+	 * Immutable lists of words for different speech parts
 	 */
 	@SuppressWarnings( "unchecked" )
-	public final List<Word>[] words = new List[13];
+	private final List<Word>[] words = new List[13];
 
 	/**
 	 * Immutable list of text nodes
@@ -118,20 +85,6 @@ public class Text extends LsplObject implements TextRange {
 	public static native Text create( String source );
 
 	public static native Text create( String source, TextConfig config );
-
-	private Text( int id, String content ) {
-		super( id );
-
-		this.content = content;
-
-		for ( int i = 0; i < words.length; ++i )
-			words[i] = new WordList( i );
-	}
-
-	private void initialize( Node[] nodeArray ) {
-		this.nodeArray = nodeArray;
-		this.nodes = new ImmutableArrayList<Node>( nodeArray );
-	}
 
 	/**
 	 * Получить содержимое текста
@@ -183,87 +136,12 @@ public class Text extends LsplObject implements TextRange {
 	}
 
 	/**
-	 * Получить количество слов в тексте
-	 * 
-	 * @return коллекция слов в тексте
-	 */
-	public int getWordCount() {
-		return getWordCount( 0 );
-	}
-
-	/**
-	 * Получить слово в тексте по его индексу
-	 * 
-	 * @param index
-	 *            индекс слова
-	 * @return слово текста
-	 */
-	public Word getWord( int index ) {
-		return getWord( 0, index );
-	}
-
-	/**
 	 * Получить коллекцию слов текста
 	 * 
 	 * @return коллекция слов текста
 	 */
 	public List<Word> getWords() {
 		return words[0];
-	}
-
-	/**
-	 * Получить количество слов текста заданной части речи
-	 * 
-	 * @param speechPart
-	 *            индекс части речи
-	 * @return количество слов
-	 */
-	public native int getWordCount( int speechPart );
-
-	/**
-	 * Получить слово текста заданной части речи по индексу
-	 * 
-	 * @param speechPart
-	 *            индекс части речи
-	 * @param index
-	 *            индекс слова
-	 * @return слово
-	 */
-	public native Word getWord( int speechPart, int index );
-
-	/**
-	 * Получить коллекцию слов текста заданной части речи
-	 * 
-	 * @param speechPart
-	 *            индекс части речи
-	 * @return коллекция слов
-	 */
-	public List<Word> getWords( int speechPart ) {
-		return words[speechPart];
-	}
-
-	/**
-	 * Получить количество слов текста заданной части речи
-	 * 
-	 * @param speechPart
-	 *            часть речи
-	 * @return количество слов
-	 */
-	public int getWordCount( SpeechPart speechPart ) {
-		return getWordCount( speechPart.ordinal() );
-	}
-
-	/**
-	 * Получить слово текста заданной части речи по индексу
-	 * 
-	 * @param speechPart
-	 *            часть речи
-	 * @param index
-	 *            индекс слова
-	 * @return слово
-	 */
-	public Word getWord( SpeechPart speechPart, int index ) {
-		return getWord( speechPart.ordinal() );
 	}
 
 	/**
@@ -274,7 +152,12 @@ public class Text extends LsplObject implements TextRange {
 	 * @return коллекция слов
 	 */
 	public List<Word> getWords( SpeechPart speechPart ) {
-		return words[speechPart.ordinal()];
+		int index = speechPart.ordinal();
+
+		if ( words[index] == null )
+			words[index] = new ImmutableArrayList<Word>( internalGetWords( index ) );
+
+		return words[index];
 	}
 
 	public List<Transition> getTransitions() {
@@ -489,4 +372,18 @@ public class Text extends LsplObject implements TextRange {
 
 	@Override
 	protected native void finalize();
+
+	private Text( int id, String content ) {
+		super( id );
+
+		this.content = content;
+	}
+
+	private void initialize( Node[] nodeArray ) {
+		this.nodeArray = nodeArray;
+		this.nodes = new ImmutableArrayList<Node>( nodeArray );
+	}
+
+	private native Word[] internalGetWords( int speechPart );
+
 }
