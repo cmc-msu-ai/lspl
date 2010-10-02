@@ -15,6 +15,7 @@
 #include "lspl/text/java/JavaNode.h"
 #include "lspl/text/JavaTransition.h"
 #include "lspl/text/JavaWord.h"
+#include "lspl/text/JavaMatch.h"
 
 #include "lspl/text/Text.h"
 #include "lspl/text/Node.h"
@@ -75,19 +76,28 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_getWord(JNIEnv * env, jobject o
 
 /*
  * Class:     ru_lspl_text_Text
- * Method:    getMatchCount
- * Signature: (Lru/lspl/Pattern;)I
+ * Method:    internalGetMatches
+ * Signature: (Lru/lspl/patterns/Pattern;)[Lru/lspl/text/Match;
  */
-JNIEXPORT jint JNICALL Java_ru_lspl_text_Text_getMatchCount(JNIEnv * env, jobject obj_text, jobject obj_pattern ) {
+JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_Text_internalGetMatches(JNIEnv * env, jobject obj_text, jobject obj_pattern ) {
 	try {
-		return JavaText::get( env, obj_text ).text->getMatches( *JavaPattern::get( env, obj_pattern ).pattern ).size();
+		const MatchList & matches = JavaText::get( env, obj_text ).text->getMatches( *JavaPattern::get( env, obj_pattern ).pattern );
+		
+		jobjectArray result = env->NewObjectArray( matches.size(), JavaMatch::clazz, 0 );
+	
+		if ( result == 0 )
+			return 0;
+			
+		for ( uint i = 0, sz = matches.size(); i < sz; ++ i ) {
+			env->SetObjectArrayElement( result, i, JavaTransition::get( env, matches[i].get() )->object );
+		}
+		
+		return result;
 	} catch ( const std::exception & e ) {
 		std::cerr << "!!!" << e.what() << std::endl;
 	} catch ( ... ) {
 		std::cerr << "!!!???" << std::endl;
 	}
-
-	return 0;
 }
 
 /*

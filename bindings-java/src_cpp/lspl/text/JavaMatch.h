@@ -21,7 +21,7 @@ private:
 
 	std::vector<jobject> variants;
 
-private:
+public:
 	static jclass	 clazz, variantClazz;
 	static jmethodID constructor, variantConstructor;
 };

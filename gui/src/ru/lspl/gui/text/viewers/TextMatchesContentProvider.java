@@ -53,7 +53,7 @@ public class TextMatchesContentProvider implements ITreeContentProvider, Documen
 			return ((RangeMatchGroup) obj).matches.size() > 1;
 
 		if ( obj instanceof Pattern )
-			return document.getAnalyzedText().getMatchCount( (Pattern) obj ) > 0;
+			return document.getAnalyzedText().getMatches( (Pattern) obj ).size() > 0;
 
 		return false;
 	}

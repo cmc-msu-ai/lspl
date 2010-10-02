@@ -1,9 +1,10 @@
 package ru.lspl.text;
 
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 import ru.lspl.LsplObject;
 import ru.lspl.patterns.Pattern;
@@ -20,41 +21,6 @@ import ru.lspl.utils.MatchUtils;
  */
 public class Text extends LsplObject implements TextRange {
 
-	/**
-	 * @author alno
-	 */
-	private class MatchList extends AbstractList<Match> {
-
-		private final Pattern pattern;
-
-		private final int count;
-
-		public MatchList( Pattern pattern ) {
-			this.pattern = pattern;
-			this.count = getMatchCount( pattern );
-		}
-
-		@Override
-		public int size() {
-			return count;
-		}
-
-		@Override
-		public Match[] toArray() {
-			Match[] matches = new Match[getMatchCount( pattern )];
-
-			for ( int i = 0; i < matches.length; ++i )
-				matches[i] = getMatch( pattern, i );
-
-			return matches;
-		}
-
-		@Override
-		public Match get( int index ) {
-			return getMatch( pattern, index );
-		}
-	}
-
 	public final String content;
 
 	/**
@@ -62,6 +28,11 @@ public class Text extends LsplObject implements TextRange {
 	 */
 	@SuppressWarnings( "unchecked" )
 	private final List<Word>[] words = new List[13];
+
+	/**
+	 * Immutable lists of matches for different patterns
+	 */
+	private final Map<Pattern, List<Match>> matchesByPattern = new WeakHashMap<Pattern, List<Match>>();
 
 	/**
 	 * Immutable list of text nodes
@@ -187,23 +158,20 @@ public class Text extends LsplObject implements TextRange {
 		return transitions;
 	}
 
-	public native int getMatchCount( Pattern pattern );
-
-	public native Match getMatch( Pattern pattern, int index );
-
 	public List<Match> getMatches( Pattern pattern ) {
-		return new MatchList( pattern );
+		List<Match> matches = matchesByPattern.get( pattern );
+
+		if ( matches == null )
+			matchesByPattern.put( pattern, matches = new ImmutableArrayList<Match>( internalGetMatches( pattern ) ) );
+
+		return matches;
 	}
 
 	public List<Match> getMatches( Iterable<Pattern> patterns ) {
 		ArrayList<Match> matches = new ArrayList<Match>();
 
-		for ( Pattern pattern : patterns ) {
-			int count = getMatchCount( pattern );
-
-			for ( int i = 0; i < count; ++i )
-				matches.add( getMatch( pattern, i ) );
-		}
+		for ( Pattern pattern : patterns )
+			matches.addAll( getMatches( pattern ) );
 
 		return matches;
 	}
@@ -211,12 +179,8 @@ public class Text extends LsplObject implements TextRange {
 	public List<Match> getMatches( Pattern... patterns ) {
 		ArrayList<Match> matches = new ArrayList<Match>();
 
-		for ( Pattern pattern : patterns ) {
-			int count = getMatchCount( pattern );
-
-			for ( int i = 0; i < count; ++i )
-				matches.add( getMatch( pattern, i ) );
-		}
+		for ( Pattern pattern : patterns )
+			matches.addAll( getMatches( pattern ) );
 
 		return matches;
 	}
@@ -237,7 +201,7 @@ public class Text extends LsplObject implements TextRange {
 		ArrayList<Pattern> matched = new ArrayList<Pattern>();
 
 		for ( Pattern pattern : patterns )
-			if ( getMatchCount( pattern ) > 0 )
+			if ( getMatches( pattern ).size() > 0 )
 				matched.add( pattern );
 
 		return matched.toArray( new Pattern[matched.size()] );
@@ -252,7 +216,7 @@ public class Text extends LsplObject implements TextRange {
 	 */
 	public boolean hasAnyMatches( Pattern... patterns ) {
 		for ( Pattern pattern : patterns )
-			if ( getMatchCount( pattern ) > 0 )
+			if ( getMatches( pattern ).size() > 0 )
 				return true;
 
 		return false;
@@ -268,7 +232,7 @@ public class Text extends LsplObject implements TextRange {
 	 */
 	public boolean hasAnyMatches( Iterable<? extends Pattern> patterns ) {
 		for ( Pattern pattern : patterns )
-			if ( getMatchCount( pattern ) > 0 )
+			if ( getMatches( pattern ).size() > 0 )
 				return true;
 
 		return false;
@@ -283,7 +247,7 @@ public class Text extends LsplObject implements TextRange {
 	 */
 	public boolean hasAllMatches( Pattern... patterns ) {
 		for ( Pattern pattern : patterns )
-			if ( getMatchCount( pattern ) <= 0 )
+			if ( getMatches( pattern ).size() <= 0 )
 				return false;
 
 		return true;
@@ -298,7 +262,7 @@ public class Text extends LsplObject implements TextRange {
 	 */
 	public boolean hasAllMatches( Iterable<? extends Pattern> patterns ) {
 		for ( Pattern pattern : patterns )
-			if ( getMatchCount( pattern ) <= 0 )
+			if ( getMatches( pattern ).size() <= 0 )
 				return false;
 
 		return true;
@@ -385,5 +349,7 @@ public class Text extends LsplObject implements TextRange {
 	}
 
 	private native Word[] internalGetWords( int speechPart );
+
+	private native Match[] internalGetMatches( Pattern pattern );
 
 }

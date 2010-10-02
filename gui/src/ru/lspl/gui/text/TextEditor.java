@@ -42,18 +42,14 @@ public class TextEditor extends Composite implements DocumentHolder {
 	 */
 	private Document document = null;
 	
-	/**
-	 * @uml.property  name="documentListener"
-	 * @uml.associationEnd  
-	 */
 	private DocumentListenerAdapter documentListener = new DocumentListenerAdapter() {
 		
 	};
 	
 	/**
 	 * @param doc
-	 * @uml.property  name="document"
 	 */
+	@Override
 	public void setDocument( Document doc ) {
 		if ( document != null )
 			document.removeListener( documentListener );
@@ -64,8 +60,8 @@ public class TextEditor extends Composite implements DocumentHolder {
 	
 	/**
 	 * @return
-	 * @uml.property  name="document"
 	 */
+	@Override
 	public Document getDocument() {
 		return document;
 	}
