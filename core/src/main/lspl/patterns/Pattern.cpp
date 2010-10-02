@@ -11,8 +11,10 @@ LSPL_REFCOUNT_CLASS( lspl::patterns::Pattern );
 
 namespace lspl { namespace patterns {
 
-Pattern::Pattern( const std::string & name ) : name( name ) {}
-Pattern::~Pattern() {}
+uint Pattern::aliveObjectsCount = 0;
+
+Pattern::Pattern( const std::string & name ) : name( name ) { ++aliveObjectsCount; }
+Pattern::~Pattern() { --aliveObjectsCount; }
 
 void Pattern::dump( std::ostream & out, const std::string & tabs ) const {
 	out << "Pattern{ name = " << name << ", alternatives = [\n\t" << tabs;

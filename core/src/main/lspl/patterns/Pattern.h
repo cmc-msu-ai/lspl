@@ -105,6 +105,11 @@ public:
 	 */
 	boost::ptr_vector<Alternative> alternatives;
 
+    /**
+     * Количество объектов в памяти
+     */
+    static uint aliveObjectsCount;
+
 private:
 
 	/**
