@@ -9,10 +9,10 @@ extern "C" {
 #endif
 /*
  * Class:     ru_lspl_LsplObject
- * Method:    initStatic
- * Signature: ()V
+ * Method:    dumpMemoryStats
+ * Signature: ()Ljava/lang/String;
  */
-JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_initStatic
+JNIEXPORT jstring JNICALL Java_ru_lspl_LsplObject_dumpMemoryStats
   (JNIEnv *, jclass);
 
 /*
@@ -22,6 +22,14 @@ JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_initStatic
  */
 JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_setRml
   (JNIEnv *, jclass, jstring);
+
+/*
+ * Class:     ru_lspl_LsplObject
+ * Method:    initStatic
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_initStatic
+  (JNIEnv *, jclass);
 
 #ifdef __cplusplus
 }

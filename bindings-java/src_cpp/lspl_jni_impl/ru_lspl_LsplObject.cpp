@@ -21,7 +21,14 @@
 #include "lspl/transforms/JavaTransform.h"
 #include "lspl/transforms/JavaTransformBuilder.h"
 
+#include "lspl/patterns/Pattern.h"
+#include "lspl/patterns/matchers/Matcher.h"
+#include "lspl/patterns/restrictions/Restriction.h"
+#include "lspl/text/Transition.h"
+
 #include <stdlib.h>
+
+#include <sstream>
 
 #ifdef WIN32
 	#include <windows.h>
@@ -29,7 +36,10 @@
 #endif
 
 using namespace lspl::java;
+using namespace lspl::patterns;
 using namespace lspl::patterns::java;
+using namespace lspl::patterns::matchers;
+using namespace lspl::patterns::restrictions;
 using namespace lspl::text;
 using namespace lspl::text::java;
 using namespace lspl::text::attributes::java;
@@ -80,4 +90,21 @@ JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_setRml(JNIEnv * env, jclass cls, 
 	#else
 			setenv( "RML", s.c_str(), 1 );
 	#endif
+}
+
+/*
+ * Class:     ru_lspl_LsplObject
+ * Method:    dumpMemoryStats
+ * Signature: ()Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_ru_lspl_LsplObject_dumpMemoryStats(JNIEnv * env, jclass cls) {
+	std::ostringstream output;
+	
+	output << "Patterns: " << Pattern::aliveObjectsCount << std::endl;
+	output << "Matchers: " << Matcher::aliveObjectsCount << std::endl;
+	output << "Restrictions: " << Restriction::aliveObjectsCount << std::endl;
+	
+	output << "Transitions: " << Transition::aliveObjectsCount << std::endl;
+	
+	return out( env, output.str() );
 }

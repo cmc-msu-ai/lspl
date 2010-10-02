@@ -4,7 +4,18 @@ public abstract class LsplObject {
 
 	public final int id;
 
+	public static native String dumpMemoryStats();
+
+	public static native void setRml( String rml );
+
 	private static native void initStatic();
+
+	static {
+		System.loadLibrary( "lspl" );
+		System.loadLibrary( "lspl-java" );
+
+		initStatic();
+	}
 
 	protected LsplObject( int id ) {
 		this.id = id;
@@ -23,14 +34,5 @@ public abstract class LsplObject {
 			return false;
 
 		return id == ((LsplObject) o).id;
-	}
-
-	public static native void setRml( String rml );
-
-	static {
-		System.loadLibrary( "lspl" );
-		System.loadLibrary( "lspl-java" );
-
-		initStatic();
 	}
 }
