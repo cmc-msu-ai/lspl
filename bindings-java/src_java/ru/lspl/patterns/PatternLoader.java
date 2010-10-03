@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.nio.charset.Charset;
 
 import ru.lspl.Namespace;
@@ -28,8 +29,24 @@ public class PatternLoader {
 		return builder;
 	}
 
+	public void loadFromString( String content ) {
+		loadFromReader( new StringReader( content ) );
+	}
+
+	public void loadFromResource( String resource, Charset charset ) {
+		loadFromStream( ClassLoader.getSystemResourceAsStream( resource ), charset );
+	}
+
+	public void loadFromResource( String resource ) {
+		loadFromStream( ClassLoader.getSystemResourceAsStream( resource ) );
+	}
+
 	public void loadFromStream( InputStream is, Charset charset ) {
 		loadFromReader( new InputStreamReader( is, charset ) );
+	}
+
+	public void loadFromStream( InputStream is ) {
+		loadFromReader( new InputStreamReader( is ) );
 	}
 
 	public void loadFromReader( Reader reader ) {
