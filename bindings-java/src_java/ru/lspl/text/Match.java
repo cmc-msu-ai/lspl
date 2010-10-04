@@ -1,10 +1,10 @@
 package ru.lspl.text;
 
-import ru.lspl.patterns.Pattern;
-import ru.lspl.patterns.Alternative;
-
-import java.util.List;
 import java.util.AbstractList;
+import java.util.List;
+
+import ru.lspl.patterns.Alternative;
+import ru.lspl.patterns.Pattern;
 
 /**
  * Сопоставление в тексте.
@@ -44,7 +44,7 @@ public class Match extends Transition {
 
 	public final List<MatchVariant> variants = new VariantList();
 
-	private Match( int id, Text text, Node start, Node end, Pattern pattern ) {
+	private Match( int id, Text text, int start, int end, Pattern pattern ) {
 		super( id, text, start, end );
 		this.pattern = pattern;
 	}

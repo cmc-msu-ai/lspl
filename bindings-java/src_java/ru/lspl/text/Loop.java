@@ -36,7 +36,7 @@ public class Loop extends Transition {
 
 	public final List<LoopIteration> iterations = new IterationList();
 
-	private Loop( int id, Text text, Node start, Node end ) {
+	private Loop( int id, Text text, int start, int end ) {
 		super( id, text, start, end );
 	}
 

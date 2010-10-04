@@ -47,14 +47,10 @@ jobjectArray JavaText::createNodeArray( JNIEnv * env ) {
 	
 	if ( result == 0 )
 		return 0;
-
-	nodes.resize( text->getNodes().size() );
 		
 	for ( uint i = 0, sz = text->getNodes().size(); i < sz; ++ i ) {
 		const Node & node = *text->getNodes().at( i );
 		jobject nodeObj = env->NewObject( nodeClazz, nodeConstructor, (jint)node.index, object, (jint)node.startOffset, (jint)node.endOffset );
-
-		nodes[ i ] = env->NewWeakGlobalRef( nodeObj );
 
 		env->SetObjectArrayElement( result, i, nodeObj );
 	}
@@ -102,10 +98,6 @@ void JavaText::remove( JNIEnv * env, jobject obj ) {
 
 	delete texts.at( id );
 	texts[ id ] = 0;
-}
-
-jobject JavaText::getNode( JNIEnv * env, const Node & node ) {
-	return get( env, node.text ).nodes[node.index];
 }
 
 Node & JavaText::getNode( JNIEnv * env, jobject obj ) {

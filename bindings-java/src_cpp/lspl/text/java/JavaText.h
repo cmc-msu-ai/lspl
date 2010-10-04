@@ -24,7 +24,6 @@ public:
 	static JavaText & create( JNIEnv * env, jstring content );
 	static JavaText & create( JNIEnv * env, jstring content, const TextConfig & config );
 	
-	static jobject getNode( JNIEnv * env, const Node & node );
 	static Node & getNode( JNIEnv * env, jobject obj );
 
 private:
@@ -35,8 +34,6 @@ public:
 	TextRef text;
 	jobject object;
 private:
-	std::vector<jobject> nodes;
-
 	static jclass 	clazz;
 	static jfieldID idField;
 	static jmethodID constructor, initializer;

@@ -81,7 +81,7 @@ JavaTransition * JavaTransition::get( JNIEnv * env, const Transition * transitio
 void JavaTransition::init( JNIEnv * env ) {
 	transitionClazz = (jclass) env->NewGlobalRef( (jobject)env->FindClass( "ru/lspl/text/Transition" ) );
 	transitionIdField = env->GetFieldID( transitionClazz, "id", "I" );
-	transitionConstructor = env->GetMethodID( transitionClazz, "<init>", "(ILru/lspl/text/Text;Lru/lspl/text/Node;Lru/lspl/text/Node;)V" );
+	transitionConstructor = env->GetMethodID( transitionClazz, "<init>", "(ILru/lspl/text/Text;II)V" );
 }
 
 void JavaTransition::remove( JNIEnv * env, jobject obj ) {

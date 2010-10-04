@@ -31,8 +31,8 @@ JavaWord::JavaWord( Transition * t, JNIEnv * env ) {
 	object = env->NewWeakGlobalRef( env->NewObject(
 			clazz, constructor, (jint)transition->id,
 			JavaText::get( env, transition->start.text ).object, // Текст
-			JavaText::getNode( env, transition->start ), // Начальный узел
-			JavaText::getNode( env, transition->end ), // Конечный узел
+			(jint)transition->start.index, // Start node index
+			(jint)transition->end.index, // End node index
 			out( env, word->getBase() ), // Начальная форма слова
 			JavaTransition::get( env, word->getTokenRef().get() )->object, // Ссылка на лексему
 			word->getSpeechPart().id ) ); // Часть речи
@@ -43,7 +43,7 @@ JavaWord::~JavaWord() {
 
 void JavaWord::init( JNIEnv * env ) {
 	clazz = (jclass) env->NewGlobalRef( (jobject)env->FindClass( "ru/lspl/text/Word" ) );
-	constructor = env->GetMethodID( clazz, "<init>", "(ILru/lspl/text/Text;Lru/lspl/text/Node;Lru/lspl/text/Node;Ljava/lang/String;Lru/lspl/text/Token;I)V" );
+	constructor = env->GetMethodID( clazz, "<init>", "(ILru/lspl/text/Text;IILjava/lang/String;Lru/lspl/text/Token;I)V" );
 }
 
 } }

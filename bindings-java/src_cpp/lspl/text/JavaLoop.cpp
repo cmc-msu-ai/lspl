@@ -23,8 +23,8 @@ JavaLoop::JavaLoop( Transition * t, JNIEnv * env ) {
 	object = env->NewWeakGlobalRef( env->NewObject(
 			clazz, constructor, (jint)transition->id,
 			JavaText::get( env, transition->start.text ).object, // Текст
-			JavaText::getNode( env, transition->start ), // Начальный узел
-			JavaText::getNode( env, transition->end ) ) ); // Конечный узел
+			(jint)transition->start.index, // Start node index
+			(jint)transition->end.index ) ); // End node index
 }
 
 JavaLoop::~JavaLoop() {
@@ -32,7 +32,7 @@ JavaLoop::~JavaLoop() {
 
 void JavaLoop::init( JNIEnv * env ) {
 	clazz = (jclass) env->NewGlobalRef( (jobject)env->FindClass( "ru/lspl/text/Loop" ) );
-	constructor = env->GetMethodID( clazz, "<init>", "(ILru/lspl/text/Text;Lru/lspl/text/Node;Lru/lspl/text/Node;)V" );
+	constructor = env->GetMethodID( clazz, "<init>", "(ILru/lspl/text/Text;II)V" );
 }
 
 } }

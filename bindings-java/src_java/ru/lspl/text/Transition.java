@@ -38,11 +38,11 @@ public class Transition extends TextElement implements AttributeContainer, TextR
 		return selectedTransitions.toArray( new Transition[selectedTransitions.size()] );
 	}
 
-	protected Transition( int id, Text text, Node start, Node end ) {
+	protected Transition( int id, Text text, int startIndex, int endIndex ) {
 		super( id, text );
 
-		this.start = start;
-		this.end = end;
+		this.start = text.getNodes().get( startIndex );
+		this.end = text.getNodes().get( endIndex );
 	}
 
 	/**

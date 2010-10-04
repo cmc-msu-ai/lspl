@@ -31,8 +31,8 @@ JavaToken::JavaToken( Transition * t, JNIEnv * env ) {
 	object = env->NewWeakGlobalRef( env->NewObject(
 			clazz, constructor, (jint)transition->id,
 			JavaText::get( env, transition->start.text ).object, // Текст
-			JavaText::getNode( env, transition->start ), // Начальный узел
-			JavaText::getNode( env, transition->end ) ) ); // Текст лексемы
+			(jint)transition->start.index, // Start node index
+			(jint)transition->end.index ) ); // End node index
 }
 
 JavaToken::~JavaToken() {
@@ -40,7 +40,7 @@ JavaToken::~JavaToken() {
 
 void JavaToken::init( JNIEnv * env ) {
 	clazz = (jclass) env->NewGlobalRef( (jobject)env->FindClass( "ru/lspl/text/Token" ) );
-	constructor = env->GetMethodID( clazz, "<init>", "(ILru/lspl/text/Text;Lru/lspl/text/Node;Lru/lspl/text/Node;)V" );
+	constructor = env->GetMethodID( clazz, "<init>", "(ILru/lspl/text/Text;II)V" );
 }
 
 } }

@@ -38,8 +38,8 @@ JavaMatch::JavaMatch( Transition * t, JNIEnv * env ) {
 	object = env->NewWeakGlobalRef( env->NewObject(
 			clazz, constructor, (jint)transition->id,
 			JavaText::get( env, transition->start.text ).object,
-			JavaText::getNode( env, transition->start ),
-			JavaText::getNode( env, transition->end ), // Текст и узлы
+			(jint)transition->start.index, // Start node index
+			(jint)transition->end.index, // End node index
 			JavaPattern::get( env, const_cast<Pattern*>( &match->getPattern() ) ).object ) ); // Шаблон
 }
 
@@ -48,7 +48,7 @@ JavaMatch::~JavaMatch() {
 
 void JavaMatch::init( JNIEnv * env ) {
 	clazz = (jclass) env->NewGlobalRef( (jobject)env->FindClass( "ru/lspl/text/Match" ) );
-	constructor = env->GetMethodID( clazz, "<init>", "(ILru/lspl/text/Text;Lru/lspl/text/Node;Lru/lspl/text/Node;Lru/lspl/patterns/Pattern;)V" );
+	constructor = env->GetMethodID( clazz, "<init>", "(ILru/lspl/text/Text;IILru/lspl/patterns/Pattern;)V" );
 
 	variantClazz = (jclass) env->NewGlobalRef( (jobject)env->FindClass( "ru/lspl/text/MatchVariant" ) );
 	variantConstructor = env->GetMethodID( variantClazz, "<init>", "(Lru/lspl/text/Match;I)V" );

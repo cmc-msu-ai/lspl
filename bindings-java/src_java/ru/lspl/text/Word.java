@@ -24,7 +24,7 @@ public class Word extends Transition {
 	 */
 	public SpeechPart speechPart;
 
-	private Word( int id, Text text, Node start, Node end, String base, Token token, int sp ) {
+	private Word( int id, Text text, int start, int end, String base, Token token, int sp ) {
 		super( id, text, start, end );
 		this.base = base;
 		this.form = token.token;
