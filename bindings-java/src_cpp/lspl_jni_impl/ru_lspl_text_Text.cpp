@@ -12,7 +12,6 @@
 #include "lspl/java/Utils.h"
 
 #include "lspl/text/java/JavaText.h"
-#include "lspl/text/java/JavaNode.h"
 #include "lspl/text/JavaTransition.h"
 #include "lspl/text/JavaWord.h"
 #include "lspl/text/JavaMatch.h"

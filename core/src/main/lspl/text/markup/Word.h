@@ -44,6 +44,8 @@ public:
 
 	uint64 getAttributes() const { return attributes; }
 
+	const TokenRef & getTokenRef() const { return token; }
+
 private:
 
 	/**

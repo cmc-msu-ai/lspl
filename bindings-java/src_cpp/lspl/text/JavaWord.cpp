@@ -1,6 +1,5 @@
 #include "JavaWord.h"
 
-#include "java/JavaNode.h"
 #include "java/JavaText.h"
 
 #include "lspl/java/Utils.h"
@@ -31,9 +30,9 @@ JavaWord::JavaWord( Transition * t, JNIEnv * env ) {
 	transition = t;
 	object = env->NewWeakGlobalRef( env->NewObject(
 			clazz, constructor, (jint)transition->id,
-			JavaText::get( env, const_cast<Text*>( &transition->start.text ) ).object, // Текст
-			JavaNode::get( env, const_cast<Node*>( &transition->start ) ), // Начальный узел
-			JavaNode::get( env, const_cast<Node*>( &transition->end ) ), // Конечный узел
+			JavaText::get( env, transition->start.text ).object, // Текст
+			JavaText::getNode( env, transition->start ), // Начальный узел
+			JavaText::getNode( env, transition->end ), // Конечный узел
 			out( env, word->getBase() ), // Начальная форма слова
 			JavaTransition::get( env, word->getTokenRef().get() )->object, // Ссылка на лексему
 			word->getSpeechPart().id ) ); // Часть речи

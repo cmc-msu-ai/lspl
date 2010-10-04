@@ -25,7 +25,7 @@ private:
 public:
 	TransitionRef transition;
 	jobject object;
-protected:
+//protected:
 	static jclass 	 transitionClazz;
 	static jmethodID transitionConstructor;
 	static jfieldID  transitionIdField;

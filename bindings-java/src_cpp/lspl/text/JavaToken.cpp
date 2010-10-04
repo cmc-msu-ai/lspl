@@ -1,6 +1,5 @@
 #include "JavaToken.h"
 
-#include "java/JavaNode.h"
 #include "java/JavaText.h"
 
 #include "lspl/java/Utils.h"
@@ -31,9 +30,9 @@ JavaToken::JavaToken( Transition * t, JNIEnv * env ) {
 	transition = t;
 	object = env->NewWeakGlobalRef( env->NewObject(
 			clazz, constructor, (jint)transition->id,
-			JavaText::get( env, const_cast<Text*>( &transition->start.text ) ).object, // Текст
-			JavaNode::get( env, const_cast<Node*>( &transition->start ) ), // Начальный узел
-			JavaNode::get( env, const_cast<Node*>( &transition->end ) ) ) ); // Текст лексемы
+			JavaText::get( env, transition->start.text ).object, // Текст
+			JavaText::getNode( env, transition->start ), // Начальный узел
+			JavaText::getNode( env, transition->end ) ) ); // Текст лексемы
 }
 
 JavaToken::~JavaToken() {

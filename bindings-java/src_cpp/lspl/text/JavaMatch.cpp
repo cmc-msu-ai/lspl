@@ -1,6 +1,5 @@
 #include "JavaMatch.h"
 
-#include "java/JavaNode.h"
 #include "java/JavaText.h"
 
 #include "lspl/java/Utils.h"
@@ -38,9 +37,9 @@ JavaMatch::JavaMatch( Transition * t, JNIEnv * env ) {
 	transition = t;
 	object = env->NewWeakGlobalRef( env->NewObject(
 			clazz, constructor, (jint)transition->id,
-			JavaText::get( env, const_cast<Text*>( &transition->start.text ) ).object,
-			JavaNode::get( env, const_cast<Node*>( &transition->start ) ),
-			JavaNode::get( env, const_cast<Node*>( &transition->end ) ), // Текст и узлы
+			JavaText::get( env, transition->start.text ).object,
+			JavaText::getNode( env, transition->start ),
+			JavaText::getNode( env, transition->end ), // Текст и узлы
 			JavaPattern::get( env, const_cast<Pattern*>( &match->getPattern() ) ).object ) ); // Шаблон
 }
 

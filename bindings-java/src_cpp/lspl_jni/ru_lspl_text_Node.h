@@ -31,14 +31,6 @@ JNIEXPORT jint JNICALL Java_ru_lspl_text_Node_getTransitionCount
 JNIEXPORT jstring JNICALL Java_ru_lspl_text_Node_dump
   (JNIEnv *, jobject);
 
-/*
- * Class:     ru_lspl_text_Node
- * Method:    finalize
- * Signature: ()V
- */
-JNIEXPORT void JNICALL Java_ru_lspl_text_Node_finalize
-  (JNIEnv *, jobject);
-
 #ifdef __cplusplus
 }
 #endif

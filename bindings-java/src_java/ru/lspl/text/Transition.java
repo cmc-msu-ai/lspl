@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import ru.lspl.LsplObject;
 import ru.lspl.text.attributes.AttributeContainer;
 
 /**
@@ -12,9 +11,7 @@ import ru.lspl.text.attributes.AttributeContainer;
  * 
  * @author alno
  */
-public class Transition extends LsplObject implements AttributeContainer, TextRange {
-
-	public final Text text;
+public class Transition extends TextElement implements AttributeContainer, TextRange {
 
 	public final Node start;
 
@@ -42,8 +39,8 @@ public class Transition extends LsplObject implements AttributeContainer, TextRa
 	}
 
 	protected Transition( int id, Text text, Node start, Node end ) {
-		super( id );
-		this.text = text;
+		super( id, text );
+
 		this.start = start;
 		this.end = end;
 	}
@@ -109,11 +106,6 @@ public class Transition extends LsplObject implements AttributeContainer, TextRa
 
 	public boolean intersectsWith( Transition t ) {
 		return t != null && t.text == text && t.start.endOffset < end.startOffset && t.end.startOffset > start.endOffset;
-	}
-
-	@Override
-	public Text getText() {
-		return text;
 	}
 
 	@Override

@@ -4,14 +4,12 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
-import ru.lspl.LsplObject;
-
 /**
  * Узел текста. Обозначает некоторую позицию в тексте.
  * 
  * @author alno
  */
-public class Node extends LsplObject implements TextRange {
+public class Node extends TextElement implements TextRange {
 
 	/**
 	 * Список переходов, начинающихся в узле.
@@ -42,11 +40,6 @@ public class Node extends LsplObject implements TextRange {
 	public final List<Transition> transitions = new TransitionList();
 
 	/**
-	 * Текст, в котором находится узел
-	 */
-	public final Text text;
-
-	/**
 	 * Смещение начала узла в тексте (в символах)
 	 */
 	public final int startOffset;
@@ -57,8 +50,8 @@ public class Node extends LsplObject implements TextRange {
 	public final int endOffset;
 
 	private Node( int id, Text text, int startOffset, int endOffset ) {
-		super( id );
-		this.text = text;
+		super( id, text );
+
 		this.startOffset = startOffset;
 		this.endOffset = endOffset;
 	}
@@ -104,14 +97,6 @@ public class Node extends LsplObject implements TextRange {
 	 * @return строка, содержащая отладочное представление узла
 	 */
 	public native String dump();
-
-	@Override
-	protected native void finalize();
-
-	@Override
-	public Text getText() {
-		return text;
-	}
 
 	@Override
 	public int getStartOffset() {

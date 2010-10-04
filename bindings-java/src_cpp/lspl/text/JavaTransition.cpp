@@ -5,7 +5,6 @@
 #include "JavaToken.h"
 #include "JavaWord.h"
 
-#include "java/JavaNode.h"
 #include "java/JavaText.h"
 
 #include "lspl/java/Utils.h"

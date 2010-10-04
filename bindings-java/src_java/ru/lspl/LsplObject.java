@@ -22,9 +22,6 @@ public abstract class LsplObject {
 	}
 
 	@Override
-	protected abstract void finalize();
-
-	@Override
 	public boolean equals( Object o ) {
 		if ( o == this )
 			return true;
@@ -35,4 +32,5 @@ public abstract class LsplObject {
 
 		return id == ((LsplObject) o).id;
 	}
+
 }

@@ -66,7 +66,6 @@ set(LSPL_JAVA_SOURCES
 	src_cpp/lspl/java/JavaAlternative.cpp
 	src_cpp/lspl/java/Utils.cpp
 	src_cpp/lspl/text/java/JavaText.cpp
-	src_cpp/lspl/text/java/JavaNode.cpp
 	src_cpp/lspl/text/JavaTransition.cpp
 	src_cpp/lspl/text/JavaLoop.cpp
 	src_cpp/lspl/text/JavaLoopIteration.cpp

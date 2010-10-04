@@ -9,7 +9,6 @@
 #include "lspl/java/JavaAlternative.h"
 
 #include "lspl/text/java/JavaText.h"
-#include "lspl/text/java/JavaNode.h"
 #include "lspl/text/JavaTransition.h"
 #include "lspl/text/JavaLoop.h"
 #include "lspl/text/JavaLoopIteration.h"
@@ -58,7 +57,6 @@ JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_initStatic(JNIEnv * env, jclass c
 	JavaNamespace::init( env );
 
 	JavaText::init( env );
-	JavaNode::init( env );
 	JavaTransition::init( env );
 
 	JavaLoop::init( env );
@@ -109,6 +107,8 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_LsplObject_dumpMemoryStats(JNIEnv * env, 
 	output << "Texts: " << Text::aliveObjectsCount << std::endl;
 	output << "Nodes: " << Node::aliveObjectsCount << std::endl;
 	output << "Transitions: " << Transition::aliveObjectsCount << std::endl;
+	
+	output << "JavaTransition Vector: " << JavaTransition::transitions.size() << std::endl;
 	
 	return out( env, output.str() );
 }
