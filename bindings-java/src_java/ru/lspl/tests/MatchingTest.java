@@ -1,14 +1,14 @@
 package ru.lspl.tests;
 
+import java.util.List;
+
 import ru.lspl.patterns.Pattern;
 import ru.lspl.patterns.PatternBuilder;
-import ru.lspl.text.Match;
 import ru.lspl.text.Loop;
+import ru.lspl.text.Match;
 import ru.lspl.text.MatchVariant;
-import ru.lspl.text.Transition;
 import ru.lspl.text.Text;
-
-import java.util.List;
+import ru.lspl.text.Transition;
 
 public class MatchingTest {
 
@@ -54,7 +54,7 @@ public class MatchingTest {
 				for ( MatchVariant v : ((Match) t).getVariants() )
 					printTransitions( v.getTransitions() );
 			} else if ( t instanceof Loop ) {
-				printTransitions( ((Loop) t).getIterations().get( 0 ).getVariant( 0 ).getTransitions() );
+				printTransitions( ((Loop) t).getIterations().get( 0 ).getVariants().get( 0 ).getTransitions() );
 			}
 		}
 	}

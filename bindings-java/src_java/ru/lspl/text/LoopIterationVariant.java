@@ -61,11 +61,6 @@ public class LoopIterationVariant implements TextRange {
 	}
 
 	@Override
-	protected void finalize() {
-		iteration.finalizeVariant( index );
-	}
-
-	@Override
 	public Text getText() {
 		return iteration.text;
 	}

@@ -14,14 +14,7 @@ public:
 	static JavaLoopIteration * get( JNIEnv * env, const Transition * match ) { return static_cast<JavaLoopIteration*>( JavaTransition::get(env,match) ); }
 	static void init( JNIEnv * env );
 
-	jobject getVariant( JNIEnv * env, int index );
-	void freeVariant( int index );
-
-private:
-
-	std::vector<jobject> variants;
-
-private:
+public:
 	static jclass	 clazz, variantClazz;
 	static jmethodID constructor, variantConstructor;
 };

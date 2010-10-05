@@ -27,7 +27,7 @@ public class Text extends LsplObject implements TextRange {
 	 * Immutable lists of words for different speech parts
 	 */
 	@SuppressWarnings( "unchecked" )
-	private final List<Word>[] words = new List[13];
+	private final List<Word>[] words = new List[SpeechPart.values().length];
 
 	/**
 	 * Immutable lists of matches for different patterns
@@ -112,7 +112,7 @@ public class Text extends LsplObject implements TextRange {
 	 * @return коллекция слов текста
 	 */
 	public List<Word> getWords() {
-		return words[0];
+		return getWords( SpeechPart.ANY );
 	}
 
 	/**

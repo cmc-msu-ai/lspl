@@ -9,20 +9,26 @@ using namespace lspl::text;
 
 /*
  * Class:     ru_lspl_text_LoopIteration
- * Method:    getVariantCount
- * Signature: ()I
+ * Method:    internalGetVariants
+ * Signature: ()[Lru/lspl/text/LoopIterationVariant;
  */
-JNIEXPORT jint JNICALL Java_ru_lspl_text_LoopIteration_getVariantCount(JNIEnv * env, jobject obj) {
-	return JavaTransition::get(env,obj)->transition.cast<LoopIteration>()->getVariantCount();
-}
+JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_LoopIteration_internalGetVariants(JNIEnv * env, jobject obj) {
+	const LoopIteration & iteration = *JavaTransition::get( env, obj )->transition.cast<LoopIteration>();
 
-/*
- * Class:     ru_lspl_text_LoopIteration
- * Method:    getVariant
- * Signature: (I)Lru/lspl/text/LoopIterationVariant;
- */
-JNIEXPORT jobject JNICALL Java_ru_lspl_text_LoopIteration_getVariant(JNIEnv * env, jobject obj, jint vindex) {
-	return JavaLoopIteration::get(env,obj)->getVariant( env, vindex );
+	jobjectArray result = env->NewObjectArray( iteration.getVariantCount(), JavaLoopIteration::variantClazz, 0 );
+
+	if ( result == 0 )
+		return 0;
+
+	for ( uint i = 0, sz = iteration.getVariantCount(); i < sz; ++ i ) {
+		const LoopIterationVariant & variant = iteration.getVariant( i );
+
+		jobject varObj = env->NewObject( JavaLoopIteration::variantClazz, JavaLoopIteration::variantConstructor, obj, i );
+
+		env->SetObjectArrayElement( result, i, varObj );
+	}
+
+	return result;
 }
 
 /*
@@ -41,15 +47,4 @@ JNIEXPORT jint JNICALL Java_ru_lspl_text_LoopIteration_getVariantTransitionCount
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_LoopIteration_getVariantTransition(JNIEnv * env, jobject obj, jint vindex, jint tindex) {
 	return JavaTransition::get( env, JavaTransition::get(env,obj)->transition.cast<LoopIteration>()->getVariant( vindex ).at( tindex ).get() )->object;
-}
-
-/*
- * Class:     ru_lspl_text_LoopIteration
- * Method:    finalizeVariant
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_ru_lspl_text_LoopIteration_finalizeVariant(JNIEnv * env, jobject obj, jint vindex) {
-	JavaLoopIteration * m = JavaLoopIteration::get(env,obj);
-
-	if ( m ) m->freeVariant( vindex );
 }

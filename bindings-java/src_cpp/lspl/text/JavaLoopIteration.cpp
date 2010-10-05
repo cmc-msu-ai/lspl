@@ -51,30 +51,4 @@ void JavaLoopIteration::init( JNIEnv * env ) {
 	variantConstructor = env->GetMethodID( variantClazz, "<init>", "(Lru/lspl/text/LoopIteration;I)V" );
 }
 
-jobject JavaLoopIteration::getVariant( JNIEnv * env, int index ) {
-	if ( index >= variants.size() )
-		variants.resize( index + 1, 0 );
-
-	jobject obj = variants[ index ];
-
-	if ( obj )
-		return obj;
-
-	obj = env->NewWeakGlobalRef( env->NewObject(
-			variantClazz, variantConstructor,
-			object,
-			index ) );
-
-	variants[index] = obj;
-
-	return obj;
-}
-
-void JavaLoopIteration::freeVariant( int index ) {
-	if ( index >= variants.size() || variants[index] == 0 )
-		return;
-
-	variants[index] = 0;
-}
-
 } }

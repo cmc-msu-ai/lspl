@@ -9,19 +9,11 @@ extern "C" {
 #endif
 /*
  * Class:     ru_lspl_text_LoopIteration
- * Method:    getVariantCount
- * Signature: ()I
+ * Method:    internalGetVariants
+ * Signature: ()[Lru/lspl/text/LoopIterationVariant;
  */
-JNIEXPORT jint JNICALL Java_ru_lspl_text_LoopIteration_getVariantCount
+JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_LoopIteration_internalGetVariants
   (JNIEnv *, jobject);
-
-/*
- * Class:     ru_lspl_text_LoopIteration
- * Method:    getVariant
- * Signature: (I)Lru/lspl/text/LoopIterationVariant;
- */
-JNIEXPORT jobject JNICALL Java_ru_lspl_text_LoopIteration_getVariant
-  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     ru_lspl_text_LoopIteration
@@ -38,14 +30,6 @@ JNIEXPORT jint JNICALL Java_ru_lspl_text_LoopIteration_getVariantTransitionCount
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_LoopIteration_getVariantTransition
   (JNIEnv *, jobject, jint, jint);
-
-/*
- * Class:     ru_lspl_text_LoopIteration
- * Method:    finalizeVariant
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_ru_lspl_text_LoopIteration_finalizeVariant
-  (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus
 }

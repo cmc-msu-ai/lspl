@@ -12,7 +12,7 @@ public class WordsTest {
 
 		for ( int i = 0; i < 12; ++i ) {
 			System.out.println( "== " + SpeechPart.values()[i] + " ==" );
-			for ( Word w : t1.getWords(SpeechPart.values()[i] ) ) {
+			for ( Word w : t1.getWords( SpeechPart.values()[i] ) ) {
 				System.out.println( w.form + "/" + w.base + "/" + w.speechPart + ": " + w.dump() );
 			}
 		}

@@ -9,8 +9,6 @@
 
 namespace lspl { namespace text { namespace java {
 
-class JavaNode;
-
 class JavaText {
 public:
 	JavaText( const TextRef & text, JNIEnv * env, jstring content);
@@ -25,7 +23,9 @@ public:
 	static JavaText & create( JNIEnv * env, jstring content, const TextConfig & config );
 	
 	static Node & getNode( JNIEnv * env, jobject obj );
+	static Transition & getTransition( JNIEnv * env, jobject obj );
 
+	static jobjectArray createTextNodeArray( JNIEnv * env, jobject obj );
 private:
 
 	jobjectArray createNodeArray( JNIEnv * env );
@@ -39,8 +39,12 @@ private:
 	static jmethodID constructor, initializer;
 
 	static jclass 	nodeClazz;
-	static jfieldID nodeIdField, nodeTextField;
+	static jfieldID nodeIndexField, nodeTextField;
 	static jmethodID nodeConstructor;
+
+	static jclass 	transitionClazz;
+	static jfieldID transitionIndexField, transitionNodeIndexField, transitionTextField;
+	static jmethodID transitionConstructor;
 
 	static std::vector<JavaText *> texts;
 };

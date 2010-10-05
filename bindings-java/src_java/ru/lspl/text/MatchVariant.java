@@ -52,8 +52,8 @@ public class MatchVariant implements TextRange {
 	}
 
 	public Alternative getAlternative() {
-        return match.getVariantAlternative( index );
-    }
+		return match.getVariantAlternative( index );
+	}
 
 	public List<Transition> getTransitions() {
 		return transitions;

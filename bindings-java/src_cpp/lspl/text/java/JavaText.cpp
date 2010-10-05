@@ -18,9 +18,16 @@ jmethodID JavaText::constructor;
 jmethodID JavaText::initializer;
 
 jclass JavaText::nodeClazz;
-jfieldID JavaText::nodeIdField;
+jfieldID JavaText::nodeIndexField;
 jfieldID JavaText::nodeTextField;
 jmethodID JavaText::nodeConstructor;
+
+jclass JavaText::transitionClazz;
+jfieldID JavaText::transitionNodeIndexField;
+jfieldID JavaText::transitionIndexField;
+jfieldID JavaText::transitionTextField;
+
+jmethodID JavaText::transitionConstructor;
 
 std::vector<JavaText*> JavaText::texts;
 
@@ -32,7 +39,7 @@ JavaText::JavaText( const TextRef & text, JNIEnv * env, jstring content ) :
 		
 	texts[ text->id ] = this;
 
-	env->CallVoidMethod( object, initializer, createNodeArray( env ) );
+	env->CallVoidMethod( object, initializer, createTextNodeArray( env, object ) );
 }
 
 JavaText::JavaText( const TextRef & text, jobject object ) :
@@ -42,19 +49,21 @@ JavaText::JavaText( const TextRef & text, jobject object ) :
 JavaText::~JavaText() {
 }
 
-jobjectArray JavaText::createNodeArray( JNIEnv * env ) {
+jobjectArray JavaText::createTextNodeArray( JNIEnv * env, jobject obj ) {
+	const TextRef & text = get( env, obj ).text;
+
 	jobjectArray result = env->NewObjectArray( text->getNodes().size(), nodeClazz, 0 );
-	
+
 	if ( result == 0 )
 		return 0;
-		
+
 	for ( uint i = 0, sz = text->getNodes().size(); i < sz; ++ i ) {
 		const Node & node = *text->getNodes().at( i );
-		jobject nodeObj = env->NewObject( nodeClazz, nodeConstructor, (jint)node.index, object, (jint)node.startOffset, (jint)node.endOffset );
+		jobject nodeObj = env->NewObject( nodeClazz, nodeConstructor, (jint)node.index, obj, (jint)node.startOffset, (jint)node.endOffset );
 
 		env->SetObjectArrayElement( result, i, nodeObj );
 	}
-	
+
 	return result;
 }
 
@@ -88,9 +97,15 @@ void JavaText::init( JNIEnv * env ) {
 	initializer = env->GetMethodID( clazz, "initialize", "([Lru/lspl/text/Node;)V");
 
 	nodeClazz = (jclass) env->NewGlobalRef( (jobject)env->FindClass( "ru/lspl/text/Node" ) );
-	nodeIdField = env->GetFieldID( nodeClazz, "id", "I" );
+	nodeIndexField = env->GetFieldID( nodeClazz, "id", "I" );
 	nodeTextField = env->GetFieldID( nodeClazz, "text", "Lru/lspl/text/Text;" );
 	nodeConstructor = env->GetMethodID( nodeClazz, "<init>", "(ILru/lspl/text/Text;II)V" );
+
+	transitionClazz = (jclass) env->NewGlobalRef( (jobject)env->FindClass( "ru/lspl/text/Transition" ) );
+	transitionIndexField = env->GetFieldID( transitionClazz, "id", "I" );
+	transitionNodeIndexField = env->GetFieldID( transitionClazz, "nodeIndex", "I" );
+	transitionIndexField = env->GetFieldID( transitionClazz, "id", "I" );
+	transitionConstructor = env->GetMethodID( transitionClazz, "<init>", "(ILru/lspl/text/Text;II)V" );
 }
 
 void JavaText::remove( JNIEnv * env, jobject obj ) {
@@ -101,7 +116,11 @@ void JavaText::remove( JNIEnv * env, jobject obj ) {
 }
 
 Node & JavaText::getNode( JNIEnv * env, jobject obj ) {
-	return *get( env, env->GetObjectField( obj, nodeTextField ) ).text->getNodes().at( env->GetIntField( obj, nodeIdField ) );
+	return *get( env, env->GetObjectField( obj, nodeTextField ) ).text->getNodes().at( env->GetIntField( obj, nodeIndexField ) );
+}
+
+Transition & JavaText::getTransition( JNIEnv * env, jobject obj ) {
+	return *get( env, env->GetObjectField( obj, transitionTextField ) ).text->getNodes().at( env->GetIntField( obj, transitionNodeIndexField ) )->getTransitions().at( env->GetIntField( obj, transitionIndexField ) );
 }
 
 } } }

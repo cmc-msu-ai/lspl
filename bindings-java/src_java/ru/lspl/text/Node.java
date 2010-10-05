@@ -4,12 +4,16 @@ import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.lspl.LsplObject;
+import ru.lspl.text.attributes.SpeechPart;
+import ru.lspl.utils.ImmutableArrayList;
+
 /**
  * Узел текста. Обозначает некоторую позицию в тексте.
  * 
  * @author alno
  */
-public class Node extends TextElement implements TextRange {
+public class Node extends LsplObject implements TextRange {
 
 	/**
 	 * Список переходов, начинающихся в узле.
@@ -39,6 +43,8 @@ public class Node extends TextElement implements TextRange {
 	 */
 	public final List<Transition> transitions = new TransitionList();
 
+	public final Text text;
+
 	/**
 	 * Смещение начала узла в тексте (в символах)
 	 */
@@ -49,9 +55,13 @@ public class Node extends TextElement implements TextRange {
 	 */
 	public final int endOffset;
 
-	private Node( int id, Text text, int startOffset, int endOffset ) {
-		super( id, text );
+	@SuppressWarnings( "unchecked" )
+	private final List<Word>[] words = new List[SpeechPart.values().length];
 
+	private Node( int id, Text text, int startOffset, int endOffset ) {
+		super( id );
+
+		this.text = text;
 		this.startOffset = startOffset;
 		this.endOffset = endOffset;
 	}
@@ -65,14 +75,51 @@ public class Node extends TextElement implements TextRange {
 		return transitions;
 	}
 
-	public Transition[] getWordsArray() {
-		ArrayList<Transition> words = new ArrayList<Transition>();
+	/**
+	 * Получить коллекцию слов текста
+	 * 
+	 * @return коллекция слов текста
+	 */
+	public List<Word> getWords() {
+		return getWords( SpeechPart.ANY );
+	}
 
-		for ( Transition t : transitions )
-			if ( t instanceof Word )
-				words.add( t );
+	/**
+	 * Получить коллекцию слов текста заданной части речи
+	 * 
+	 * @param speechPart
+	 *            часть речи
+	 * @return коллекция слов
+	 */
+	public List<Word> getWords( SpeechPart speechPart ) {
+		int index = speechPart.ordinal();
 
-		return words.toArray( new Transition[words.size()] );
+		if ( words[index] == null )
+			words[index] = new ImmutableArrayList<Word>( internalGetWords( speechPart ) );
+
+		return words[index];
+	}
+
+	private List<Word> internalGetWords( SpeechPart speechPart ) {
+		List<Word> words = new ArrayList<Word>();
+
+		if ( speechPart == SpeechPart.ANY ) {
+			for ( Transition t : transitions ) {
+				if ( t instanceof Word )
+					words.add( (Word) t );
+				else if ( t instanceof Match )
+					break;
+			}
+		} else {
+			for ( Transition t : transitions ) {
+				if ( t instanceof Word && ((Word) t).speechPart == speechPart )
+					words.add( (Word) t );
+				else if ( t instanceof Match )
+					break;
+			}
+		}
+
+		return words;
 	}
 
 	/**
@@ -97,6 +144,11 @@ public class Node extends TextElement implements TextRange {
 	 * @return строка, содержащая отладочное представление узла
 	 */
 	public native String dump();
+
+	@Override
+	public Text getText() {
+		return text;
+	}
 
 	@Override
 	public int getStartOffset() {
