@@ -11,20 +11,26 @@ using namespace lspl::text;
 
 /*
  * Class:     ru_lspl_text_Match
- * Method:    getVariantCount
- * Signature: ()I
+ * Method:    internalGetVariants
+ * Signature: ()[Lru/lspl/text/MatchVariant;
  */
-JNIEXPORT jint JNICALL Java_ru_lspl_text_Match_getVariantCount(JNIEnv * env, jobject obj) {
-	return JavaTransition::get(env,obj)->transition.cast<Match>()->getVariants().size();
-}
+JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_Match_internalGetVariants(JNIEnv * env, jobject obj) {
+	const Match & match = *JavaTransition::get(env,obj)->transition.cast<Match>();
 
-/*
- * Class:     ru_lspl_text_Match
- * Method:    getVariant
- * Signature: (I)Lru/lspl/text/MatchVariant;
- */
-JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariant(JNIEnv * env, jobject obj, jint index) {
-	return JavaMatch::get(env,obj)->getVariant( env, index );
+	jobjectArray result = env->NewObjectArray( match.getVariantCount(), JavaMatch::variantClazz, 0 );
+
+	if ( result == 0 )
+		return 0;
+
+	for ( uint i = 0, sz = match.getVariantCount(); i < sz; ++ i ) {
+		const MatchVariant & variant = *match.getVariant( i );
+
+		jobject varObj = env->NewObject( JavaMatch::variantClazz, JavaMatch::variantConstructor, obj, i );
+
+		env->SetObjectArrayElement( result, i, varObj );
+	}
+
+	return result;
 }
 
 /*
@@ -69,13 +75,3 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantTransition(JNIEnv * 
 	return JavaTransition::get( env, JavaMatch::get(env,obj)->transition.cast<Match>()->getVariant( vindex )->at( tindex ).get() )->object;
 }
 
-/*
- * Class:     ru_lspl_text_Match
- * Method:    finalizeVariant
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_ru_lspl_text_Match_finalizeVariant(JNIEnv * env, jobject obj, jint vindex) {
-	JavaMatch * m = JavaMatch::get(env,obj);
-
-	if ( m ) m->freeVariant( vindex );
-}

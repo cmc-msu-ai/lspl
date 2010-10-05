@@ -12,7 +12,7 @@ import ru.lspl.utils.ImmutableArrayList;
 public class LoopIteration extends Transition {
 
 	private List<LoopIterationVariant> variants;
-	private LoopIterationVariant[] variantsArray;
+	private LoopIterationVariant[] variantArray;
 
 	private LoopIteration( int id, Text text, int start, int end ) {
 		super( id, text, start, end );
@@ -20,8 +20,8 @@ public class LoopIteration extends Transition {
 
 	public List<LoopIterationVariant> getVariants() {
 		if ( variants == null ) {
-			variantsArray = internalGetVariants();
-			variants = new ImmutableArrayList<LoopIterationVariant>( variantsArray );
+			variantArray = internalGetVariants();
+			variants = new ImmutableArrayList<LoopIterationVariant>( variantArray );
 		}
 		return variants;
 	}

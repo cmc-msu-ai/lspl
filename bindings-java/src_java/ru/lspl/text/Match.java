@@ -1,48 +1,25 @@
 package ru.lspl.text;
 
-import java.util.AbstractList;
 import java.util.List;
 
 import ru.lspl.patterns.Alternative;
 import ru.lspl.patterns.Pattern;
+import ru.lspl.utils.ImmutableArrayList;
 
 /**
- * Сопоставление в тексте.
+ * Match of pattern in the text
  * 
  * @author alno
  */
 public class Match extends Transition {
 
-	private class VariantList extends AbstractList<MatchVariant> {
-
-		@Override
-		public int size() {
-			return getVariantCount();
-		}
-
-		@Override
-		public MatchVariant[] toArray() {
-			MatchVariant[] ts = new MatchVariant[size()];
-
-			for ( int i = 0; i < ts.length; ++i )
-				ts[i] = getVariant( i );
-
-			return ts;
-		}
-
-		@Override
-		public MatchVariant get( int index ) {
-			return getVariant( index );
-		}
-
-	};
-
 	/**
-	 * Шаблон, который был сопоставлен
+	 * Pattern which was matched
 	 */
 	public final Pattern pattern;
 
-	public final List<MatchVariant> variants = new VariantList();
+	private List<MatchVariant> variants;
+	private MatchVariant[] variantArray;
 
 	private Match( int id, Text text, int start, int end, Pattern pattern ) {
 		super( id, text, start, end );
@@ -50,18 +27,18 @@ public class Match extends Transition {
 	}
 
 	public List<MatchVariant> getVariants() {
+		if ( variants == null ) {
+			variantArray = internalGetVariants();
+			variants = new ImmutableArrayList<MatchVariant>( variantArray );
+		}
 		return variants;
 	}
 
-	/**
-	 * Получить количество вариантов сопоставления
-	 */
-	public native int getVariantCount();
+	private MatchVariant getVariant( int index ) {
+		return getVariants().get( index );
+	}
 
-	/**
-	 * Получить вариант сопоставления по его индексу
-	 */
-	public native MatchVariant getVariant( int variantIndex );
+	private native MatchVariant[] internalGetVariants();
 
 	public native Object getVariantTransformResult( int variantIndex );
 
@@ -71,5 +48,4 @@ public class Match extends Transition {
 
 	public native Transition getVariantTransition( int variantIndex, int transitionIndex );
 
-	native void finalizeVariant( int variantIndex );
 }

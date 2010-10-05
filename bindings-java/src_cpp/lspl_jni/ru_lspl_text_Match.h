@@ -9,19 +9,11 @@ extern "C" {
 #endif
 /*
  * Class:     ru_lspl_text_Match
- * Method:    getVariantCount
- * Signature: ()I
+ * Method:    internalGetVariants
+ * Signature: ()[Lru/lspl/text/MatchVariant;
  */
-JNIEXPORT jint JNICALL Java_ru_lspl_text_Match_getVariantCount
+JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_Match_internalGetVariants
   (JNIEnv *, jobject);
-
-/*
- * Class:     ru_lspl_text_Match
- * Method:    getVariant
- * Signature: (I)Lru/lspl/text/MatchVariant;
- */
-JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariant
-  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     ru_lspl_text_Match
@@ -54,14 +46,6 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantAlternative
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Match_getVariantTransition
   (JNIEnv *, jobject, jint, jint);
-
-/*
- * Class:     ru_lspl_text_Match
- * Method:    finalizeVariant
- * Signature: (I)V
- */
-JNIEXPORT void JNICALL Java_ru_lspl_text_Match_finalizeVariant
-  (JNIEnv *, jobject, jint);
 
 #ifdef __cplusplus
 }

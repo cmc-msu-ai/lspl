@@ -46,13 +46,19 @@ void JavaTransform::init( JNIEnv * env ) {
 jobject JavaTransform::apply( const text::MatchVariant & matchVariant ) const {
 	JNIEnv * env = getCurrentEnv();
 
-	return env->CallObjectMethod( const_cast<jobject>( object ), applyMethod, JavaMatch::get( env, matchVariant.match )->getVariant( env, matchVariant.index ) );
+	jobject matchObj = JavaMatch::get( env, matchVariant.match )->object;
+	jobject matchVariantObj = env->CallObjectMethod( matchObj, JavaMatch::getVariantMethod, (jint)matchVariant.index );
+
+	return env->CallObjectMethod( const_cast<jobject>( object ), applyMethod, matchVariantObj );
 }
 
 JavaTransformResult * JavaTransform::applyAndBox( const text::MatchVariant & matchVariant ) const {
 	JNIEnv * env = getCurrentEnv();
 
-	return new JavaTransformResult( env, env->CallObjectMethod( const_cast<jobject>( object ), applyMethod, JavaMatch::get( env, matchVariant.match )->getVariant( env, matchVariant.index ) ) );
+	jobject matchObj = JavaMatch::get( env, matchVariant.match )->object;
+	jobject matchVariantObj = env->CallObjectMethod( matchObj, JavaMatch::getVariantMethod, (jint)matchVariant.index );
+
+	return new JavaTransformResult( env, env->CallObjectMethod( const_cast<jobject>( object ), applyMethod, matchVariantObj ) );
 }
 
 } } // namespace lspl::transforms

@@ -48,12 +48,12 @@ public class MatchingTest {
 
 	public static void printTransitions( List<? extends Transition> trans ) {
 		for ( Transition t : trans ) {
-			System.out.println( t.dump() );
+			System.err.println( t.dump() );
 
 			if ( t instanceof Match ) {
 				for ( MatchVariant v : ((Match) t).getVariants() )
 					printTransitions( v.getTransitions() );
-			} else if ( t instanceof Loop ) {
+			} else if ( t instanceof Loop && ((Loop) t).getIterations().size() > 0 ) {
 				printTransitions( ((Loop) t).getIterations().get( 0 ).getVariants().get( 0 ).getTransitions() );
 			}
 		}

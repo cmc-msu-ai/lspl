@@ -27,6 +27,7 @@ namespace lspl { namespace text {
 
 jclass JavaMatch::clazz;
 jmethodID JavaMatch::constructor;
+jmethodID JavaMatch::getVariantMethod;
 
 jclass JavaMatch::variantClazz;
 jmethodID JavaMatch::variantConstructor;
@@ -49,35 +50,10 @@ JavaMatch::~JavaMatch() {
 void JavaMatch::init( JNIEnv * env ) {
 	clazz = (jclass) env->NewGlobalRef( (jobject)env->FindClass( "ru/lspl/text/Match" ) );
 	constructor = env->GetMethodID( clazz, "<init>", "(ILru/lspl/text/Text;IILru/lspl/patterns/Pattern;)V" );
+	getVariantMethod = env->GetMethodID( clazz, "getVariant", "(I)Lru/lspl/text/MatchVariant;" );
 
 	variantClazz = (jclass) env->NewGlobalRef( (jobject)env->FindClass( "ru/lspl/text/MatchVariant" ) );
 	variantConstructor = env->GetMethodID( variantClazz, "<init>", "(Lru/lspl/text/Match;I)V" );
-}
-
-jobject JavaMatch::getVariant( JNIEnv * env, int index ) {
-	if ( index >= variants.size() )
-		variants.resize( index + 1, 0 );
-
-	jobject obj = variants[ index ];
-
-	if ( obj )
-		return obj;
-
-	obj = env->NewWeakGlobalRef( env->NewObject(
-			variantClazz, variantConstructor,
-			object,
-			index ) );
-
-	variants[index] = obj;
-
-	return obj;
-}
-
-void JavaMatch::freeVariant( int index ) {
-	if ( index >= variants.size() || variants[index] == 0 )
-		return;
-
-	variants[index] = 0;
 }
 
 } }

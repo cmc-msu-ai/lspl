@@ -1,9 +1,9 @@
 package ru.lspl.text;
 
-import ru.lspl.patterns.Alternative;
-
 import java.util.AbstractList;
 import java.util.List;
+
+import ru.lspl.patterns.Alternative;
 
 /**
  * Вариант сопоставления
@@ -65,11 +65,6 @@ public class MatchVariant implements TextRange {
 
 	public Transition getTransition( int transitionIndex ) {
 		return match.getVariantTransition( index, transitionIndex );
-	}
-
-	@Override
-	protected void finalize() {
-		match.finalizeVariant( index );
 	}
 
 	@Override
