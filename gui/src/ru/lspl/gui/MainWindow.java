@@ -220,7 +220,7 @@ public class MainWindow extends ApplicationWindow {
 
 		@Override
 		public void nodeSelect( Node node ) {
-			Transition[] transitions = node.getWordsArray();
+			Transition[] transitions = node.getWords().toArray( new Transition[ node.getWords().size() ] );
 
 			infoPanel.transitionInfo.setTransitions( transitions );
 			textEditor.mark( transitions );
