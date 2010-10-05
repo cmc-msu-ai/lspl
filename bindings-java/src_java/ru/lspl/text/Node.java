@@ -34,7 +34,18 @@ public class Node extends LsplObject implements TextRange {
 
 		@Override
 		public Transition get( int index ) {
-			return getTransition( index );
+			if ( index >= cachedTransitions.size() ) {
+				int count = getTransitionCount();
+
+				if ( index < count ) {
+					cachedTransitions.ensureCapacity( count );
+
+					for ( int i = cachedTransitions.size(); i < count; ++i )
+						cachedTransitions.add( getTransition( i ) );
+				}
+			}
+
+			return cachedTransitions.get( index );
 		}
 	}
 
@@ -57,6 +68,8 @@ public class Node extends LsplObject implements TextRange {
 
 	@SuppressWarnings( "unchecked" )
 	private final List<Word>[] words = new List[SpeechPart.values().length];
+
+	private final ArrayList<Transition> cachedTransitions = new ArrayList<Transition>();
 
 	private Node( int id, Text text, int startOffset, int endOffset ) {
 		super( id );
@@ -129,7 +142,7 @@ public class Node extends LsplObject implements TextRange {
 	 *            индекс перехода, начинающегося в узле
 	 * @return переход
 	 */
-	public native Transition getTransition( int index );
+	protected native Transition getTransition( int index );
 
 	/**
 	 * Получить количество переходов, начинающихся в узле.

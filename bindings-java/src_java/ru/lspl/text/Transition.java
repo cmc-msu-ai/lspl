@@ -1,11 +1,11 @@
 package ru.lspl.text;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 import ru.lspl.LsplObject;
 import ru.lspl.text.attributes.AttributeContainer;
+import ru.lspl.utils.ArrayMap;
 
 /**
  * Переход в тексте.
@@ -80,7 +80,7 @@ public class Transition extends LsplObject implements AttributeContainer, TextRa
 	@Override
 	public Map<Integer, Object> getAttributes() {
 		if ( attributes == null ) {
-			attributes = new HashMap<Integer, Object>();
+			attributes = new ArrayMap<Object>( 20 );
 
 			for ( int i = 1; i < 20; ++i ) {
 				Object value = getAttribute( i );

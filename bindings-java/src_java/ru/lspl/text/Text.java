@@ -2,9 +2,9 @@ package ru.lspl.text;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 
 import ru.lspl.LsplObject;
 import ru.lspl.patterns.Pattern;
@@ -32,7 +32,7 @@ public class Text extends LsplObject implements TextRange {
 	/**
 	 * Immutable lists of matches for different patterns
 	 */
-	private final Map<Pattern, List<Match>> matchesByPattern = new WeakHashMap<Pattern, List<Match>>();
+	private final Map<Pattern, List<Match>> matchesByPattern = new HashMap<Pattern, List<Match>>();
 
 	/**
 	 * Immutable list of text nodes
@@ -132,7 +132,7 @@ public class Text extends LsplObject implements TextRange {
 	}
 
 	public List<Transition> getTransitions() {
-		ArrayList<Transition> transitions = new ArrayList<Transition>();
+		ArrayList<Transition> transitions = new ArrayList<Transition>( getTransitionCount() );
 
 		for ( Node n : nodes )
 			transitions.addAll( n.getTransitions() );
@@ -141,21 +141,23 @@ public class Text extends LsplObject implements TextRange {
 	}
 
 	public Transition[] getTransitionsArray() {
-		int size = 0;
+		Transition[] transitions = new Transition[getTransitionCount()];
 
-		for ( Node n : nodes )
-			// Подсчитываем кол-во переходов в тексте
-			size += n.getTransitionCount();
-
-		Transition[] transitions = new Transition[size];
 		int i = 0;
-
 		for ( Node n : nodes )
-			// Заполняем массив переходов
 			for ( Transition t : n.transitions )
 				transitions[i++] = t;
 
 		return transitions;
+	}
+
+	protected int getTransitionCount() {
+		int size = 0;
+
+		for ( Node n : nodes )
+			size += n.getTransitionCount();
+
+		return size;
 	}
 
 	public List<Match> getMatches( Pattern pattern ) {
