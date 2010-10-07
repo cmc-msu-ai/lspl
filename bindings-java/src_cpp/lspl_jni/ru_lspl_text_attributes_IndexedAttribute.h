@@ -7,6 +7,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef ru_lspl_text_attributes_IndexedAttribute_COUNT
+#define ru_lspl_text_attributes_IndexedAttribute_COUNT 32L
 /*
  * Class:     ru_lspl_text_attributes_IndexedAttribute
  * Method:    getAbbrevation

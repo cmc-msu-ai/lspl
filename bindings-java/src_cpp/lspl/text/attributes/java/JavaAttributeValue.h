@@ -14,7 +14,7 @@ public:
 	static jobject get( JNIEnv * env, const AttributeValue & value );
 private:
 	static jclass 	indexedAttributeClazz;
-	static jmethodID indexedAttributeConstructor;
+	static jmethodID indexedAttributeCreator;
 };
 
 } } } }

@@ -7,6 +7,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef ru_lspl_text_attributes_AttributeKey_COUNT
+#define ru_lspl_text_attributes_AttributeKey_COUNT 14L
 /*
  * Class:     ru_lspl_text_attributes_AttributeKey
  * Method:    getAbbrevation

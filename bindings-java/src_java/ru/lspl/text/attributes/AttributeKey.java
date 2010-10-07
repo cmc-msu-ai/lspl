@@ -8,8 +8,10 @@ import ru.lspl.LsplObject;
  * @author alno
  */
 public class AttributeKey extends LsplObject {
+	
+	public static final int COUNT = 14;
 
-	private static AttributeKey[] list = new AttributeKey[10];
+	private static AttributeKey[] list = new AttributeKey[COUNT];
 
 	public static AttributeKey valueOf( int id ) {
 		if ( list.length <= id )
@@ -30,6 +32,14 @@ public class AttributeKey extends LsplObject {
 
 	public final String title;
 
+	private AttributeKey( int id ) {
+		super( id );
+
+		name = getName( id );
+		title = getTitle( id );
+		abbrevation = getAbbrevation( id );
+	}
+
 	public String getAbbrevation() {
 		return abbrevation;
 	}
@@ -45,18 +55,6 @@ public class AttributeKey extends LsplObject {
 	@Override
 	public String toString() {
 		return title;
-	}
-
-	@Override
-	protected void finalize() {
-	}
-
-	private AttributeKey( int id ) {
-		super( id );
-
-		name = getName( id );
-		title = getTitle( id );
-		abbrevation = getAbbrevation( id );
 	}
 
 }
