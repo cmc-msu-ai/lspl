@@ -37,8 +37,12 @@ public class FreeMemTest {
 
 		for ( int i = 0; i < 15; ++i ) {
 			for ( Node n : t1.getNodes() )
-				for ( Transition t : n.getTransitions() )
-					;
+				for ( Transition t : n.getTransitions() ) {
+					Object o = t.getAttribute( 1 );
+					if ( o != null )
+						o.toString();
+				}
+
 			//t.dump();
 			System.out.println( "C" + i );
 			Thread.sleep( 1000 );
