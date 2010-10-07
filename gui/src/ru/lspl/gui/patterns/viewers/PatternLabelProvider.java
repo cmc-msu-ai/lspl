@@ -10,16 +10,16 @@ import ru.lspl.gui.model.DocumentHolder;
 import ru.lspl.patterns.Alternative;
 
 /**
- * @author  alno
+ * @author alno
  */
 public class PatternLabelProvider extends BaseLabelProvider implements ITableLabelProvider, DocumentHolder {
-	
+
 	/**
-	 * @uml.property  name="document"
-	 * @uml.associationEnd  
+	 * @uml.property name="document"
+	 * @uml.associationEnd
 	 */
 	private Document document;
-	
+
 	private static final int COLUMN_PATTERN = 0;
 	private static final int COLUMN_PARAMS = 1;
 	private static final int COLUMN_MATCHES = 2;
@@ -28,22 +28,22 @@ public class PatternLabelProvider extends BaseLabelProvider implements ITableLab
 	public String getColumnText( Object obj, int column ) {
 		switch ( column ) {
 		case COLUMN_PATTERN:
-			if ( obj instanceof Pattern)
+			if ( obj instanceof Pattern )
 				return ((Pattern) obj).name;
-			
+
 			if ( obj instanceof Alternative )
 				return ((Alternative) obj).getSource();
-			
+
 			break;
 		case COLUMN_PARAMS:
 			break;
 		case COLUMN_MATCHES:
-			if ( obj instanceof Pattern) // Возвращаем количество сопоставлений
-				return String.valueOf( document.getAnalyzedText().getMatches( (Pattern )obj ).size() );
-			
+			if ( obj instanceof Pattern ) // Возвращаем количество сопоставлений
+				return String.valueOf( document.getAnalyzedText().getMatches( (Pattern) obj ).size() );
+
 			if ( obj instanceof Alternative )
 				return "";
-			
+
 			break;
 		}
 
@@ -57,7 +57,7 @@ public class PatternLabelProvider extends BaseLabelProvider implements ITableLab
 
 	/**
 	 * @return
-	 * @uml.property  name="document"
+	 * @uml.property name="document"
 	 */
 	@Override
 	public Document getDocument() {
@@ -66,7 +66,7 @@ public class PatternLabelProvider extends BaseLabelProvider implements ITableLab
 
 	/**
 	 * @param doc
-	 * @uml.property  name="document"
+	 * @uml.property name="document"
 	 */
 	@Override
 	public void setDocument( Document doc ) {

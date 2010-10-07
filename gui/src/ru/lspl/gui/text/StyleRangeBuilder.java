@@ -12,27 +12,28 @@ import org.eclipse.swt.widgets.Display;
 import ru.lspl.text.Transition;
 
 public class StyleRangeBuilder {
-	
+
 	public final Color singleMatchColor;
 	public final Color multiMatchColor;
-	
+
 	/**
-	 * @author  alno
+	 * @author alno
 	 */
 	private static class RangeStartComparator implements Comparator<StyleRange> {
-		
+
 		/**
-		 * @uml.property  name="iNSTANCE"
-		 * @uml.associationEnd  
+		 * @uml.property name="iNSTANCE"
+		 * @uml.associationEnd
 		 */
 		public static final RangeStartComparator INSTANCE = new RangeStartComparator();
-		
-		private RangeStartComparator() {}
+
+		private RangeStartComparator() {
+		}
 
 		@Override
-		public int compare(StyleRange r1, StyleRange r2) {
+		public int compare( StyleRange r1, StyleRange r2 ) {
 			int diff = r1.start - r2.start;
-			
+
 			if ( diff < 0 )
 				return -1;
 			else if ( diff > 0 )
@@ -41,77 +42,76 @@ public class StyleRangeBuilder {
 				return 0;
 		}
 	};
-	
-	public StyleRangeBuilder(Color singleMatchColor, Color multiMatchColor) {
+
+	public StyleRangeBuilder( Color singleMatchColor, Color multiMatchColor ) {
 		this.singleMatchColor = singleMatchColor;
 		this.multiMatchColor = multiMatchColor;
 	}
 
-	public StyleRangeBuilder(Display display) {
+	public StyleRangeBuilder( Display display ) {
 		this.singleMatchColor = new Color( display, 255, 255, 150 );
 		this.multiMatchColor = new Color( display, 220, 220, 120 );
 	}
-	
+
 	public StyleRangeBuilder() {
 		this( Display.getCurrent() );
 	}
 
-	public StyleRange[] buildRanges(Collection<? extends Transition> transitions) {
-		StyleRange[] ranges = new StyleRange[ transitions.size() ];
-		
+	public StyleRange[] buildRanges( Collection<? extends Transition> transitions ) {
+		StyleRange[] ranges = new StyleRange[transitions.size()];
+
 		int i = 0;
-		for( Transition transition : transitions ) {
+		for ( Transition transition : transitions ) {
 			StyleRange rng = new StyleRange();
 			rng.start = transition.start.endOffset;
 			rng.length = transition.end.startOffset - transition.start.endOffset;
 			rng.background = singleMatchColor;
 			ranges[i++] = rng;
 		}
-		
+
 		return packRanges( ranges );
 	}
-	
+
 	public StyleRange[] buildRanges( Transition[] transitions ) {
 		return buildRanges( Arrays.asList( transitions ) );
 	}
-	
+
 	public StyleRange[] packRanges( StyleRange[] rangesArr ) {
-		Arrays.sort(rangesArr, RangeStartComparator.INSTANCE);
-		
+		Arrays.sort( rangesArr, RangeStartComparator.INSTANCE );
+
 		ArrayList<StyleRange> ranges = new ArrayList<StyleRange>();
-		
+
 		int start = -1;
 		int singleEnd = -1;
 		int multiEnd = -1;
-		for (StyleRange range : rangesArr) {
+		for ( StyleRange range : rangesArr ) {
 			int rangeEnd = range.start + range.length;
-			
+
 			if ( start < 0 ) {
 				start = range.start;
 				singleEnd = rangeEnd;
-			} else if (range.start <= multiEnd) { // ==|==--
+			} else if ( range.start <= multiEnd ) { // ==|==--
 				multiEnd = Math.min( singleEnd, rangeEnd );
 				singleEnd = Math.max( singleEnd, rangeEnd );
-			} else if (range.start <= singleEnd) { // ==--| //--|
-				addRanges(ranges, start, multiEnd, range.start);				
+			} else if ( range.start <= singleEnd ) { // ==--| //--|
+				addRanges( ranges, start, multiEnd, range.start );
 				start = range.start;
 				multiEnd = Math.min( singleEnd, rangeEnd );
 				singleEnd = Math.max( singleEnd, rangeEnd );
 			} else { // ==-- |
-				addRanges(ranges, start, multiEnd, singleEnd);				
+				addRanges( ranges, start, multiEnd, singleEnd );
 				start = range.start;
 				multiEnd = -1;
 				singleEnd = rangeEnd;
 			}
 		}
-		
-		addRanges(ranges, start, multiEnd, singleEnd);
-		
-		return ranges.toArray(new StyleRange[ ranges.size() ] );
+
+		addRanges( ranges, start, multiEnd, singleEnd );
+
+		return ranges.toArray( new StyleRange[ranges.size()] );
 	}
 
-	private void addRanges(ArrayList<StyleRange> ranges, int start,
-			int multiEnd, int singleEnd) {
+	private void addRanges( ArrayList<StyleRange> ranges, int start, int multiEnd, int singleEnd ) {
 		if ( multiEnd >= 0 ) {
 			addMultiRange( ranges, start, multiEnd ); // Добавляем новый промежуток множественного наложения
 			addSingleRange( ranges, multiEnd, singleEnd ); // Добавляем новый промежуток одиночного наложения
@@ -119,28 +119,26 @@ public class StyleRangeBuilder {
 			addSingleRange( ranges, start, singleEnd ); // Добавляем новый промежуток одиночного наложения
 		}
 	}
-	
-	private void addSingleRange(ArrayList<StyleRange> ranges, int singleStart,
-			int singleEnd) {
+
+	private void addSingleRange( ArrayList<StyleRange> ranges, int singleStart, int singleEnd ) {
 		if ( singleStart >= singleEnd )
 			return;
-		
+
 		StyleRange rng = new StyleRange();
 		rng.start = singleStart;
 		rng.length = singleEnd - singleStart;
 		rng.background = singleMatchColor;
-		ranges.add(rng);
+		ranges.add( rng );
 	}
 
-	private void addMultiRange(ArrayList<StyleRange> ranges, int multiStart,
-			int multiEnd) {
+	private void addMultiRange( ArrayList<StyleRange> ranges, int multiStart, int multiEnd ) {
 		if ( multiStart >= multiEnd )
 			return;
-		
+
 		StyleRange rng = new StyleRange();
 		rng.start = multiStart;
 		rng.length = multiEnd - multiStart;
-		rng.background = multiMatchColor;		
-		ranges.add(rng);
+		rng.background = multiMatchColor;
+		ranges.add( rng );
 	}
 }

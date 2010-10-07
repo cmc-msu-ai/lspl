@@ -9,7 +9,7 @@ import org.eclipse.swt.graphics.Image;
 import ru.lspl.text.Transition;
 import ru.lspl.text.attributes.AttributeKey;
 
-public abstract class BaseTransitionsLabelProvider extends BaseLabelProvider implements ITableLabelProvider {	
+public abstract class BaseTransitionsLabelProvider extends BaseLabelProvider implements ITableLabelProvider {
 
 	protected static final int COLUMN_MAIN = 0;
 	protected static final int COLUMN_PARAMS = 1;
@@ -36,23 +36,23 @@ public abstract class BaseTransitionsLabelProvider extends BaseLabelProvider imp
 		if ( obj instanceof Transition ) {
 			StringBuilder builder = new StringBuilder();
 			boolean first = true;
-			for ( Map.Entry<Integer,Object> entry : ((Transition)obj).getAttributes().entrySet() ) {
+			for ( Map.Entry<Integer, Object> entry : ((Transition) obj).getAttributes().entrySet() ) {
 				if ( !first )
 					builder.append( ", " );
-				
+
 				first = false;
-				
+
 				builder.append( AttributeKey.valueOf( entry.getKey() ).getTitle() );
 				builder.append( ": " );
 				builder.append( entry.getValue().toString() );
 			}
-			
+
 			return builder.toString();
-		}	
-		
+		}
+
 		return "";
 	}
-	
+
 	protected abstract String getMainColumnText( Object obj );
 
 }

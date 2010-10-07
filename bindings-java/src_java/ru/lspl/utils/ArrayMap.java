@@ -59,7 +59,7 @@ public class ArrayMap<Value> extends AbstractMap<Integer, Value> {
 			while ( index < entries.length && entries[index] == null )
 				++index;
 
-			return entries[index];
+			return entries[index++];
 		}
 
 		@Override

@@ -7,7 +7,7 @@ import ru.lspl.text.attributes.SpeechPart;
 public class SpeechPartLabelProvider extends LabelProvider {
 
 	@Override
-	public String getText(Object obj) {		
-		return ((SpeechPart)obj).getPluralTitle();
+	public String getText( Object obj ) {
+		return ((SpeechPart) obj).getPluralTitle();
 	}
 }

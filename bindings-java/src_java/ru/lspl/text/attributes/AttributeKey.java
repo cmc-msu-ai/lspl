@@ -8,7 +8,7 @@ import ru.lspl.LsplObject;
  * @author alno
  */
 public class AttributeKey extends LsplObject {
-	
+
 	public static final int COUNT = 14;
 
 	private static AttributeKey[] list = new AttributeKey[COUNT];

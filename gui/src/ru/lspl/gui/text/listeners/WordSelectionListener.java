@@ -6,22 +6,22 @@ import ru.lspl.text.Word;
 public class WordSelectionListener implements IWordSelectionListener {
 
 	@Override
-	public void wordDoubleClick(Word word) {
+	public void wordDoubleClick( Word word ) {
 		// NOP implementation
 	}
 
 	@Override
-	public void wordSelect(Word word) {
+	public void wordSelect( Word word ) {
 		// NOP implementation
 	}
 
 	@Override
-	public void nodeDoubleClick(Node node) {
+	public void nodeDoubleClick( Node node ) {
 		// NOP implementation
 	}
 
 	@Override
-	public void nodeSelect(Node node) {
+	public void nodeSelect( Node node ) {
 		// NOP implementation
 	}
 

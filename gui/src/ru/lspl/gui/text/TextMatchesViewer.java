@@ -26,7 +26,7 @@ import ru.lspl.text.Match;
 import ru.lspl.text.Text;
 
 /**
- * @author  alno
+ * @author alno
  */
 public class TextMatchesViewer extends Composite {
 
@@ -40,8 +40,8 @@ public class TextMatchesViewer extends Composite {
 	private final Collection<IMatchSelectionListener> textMatchListeners = new ArrayList<IMatchSelectionListener>();
 
 	/**
-	 * @uml.property  name="documentListener"
-	 * @uml.associationEnd  
+	 * @uml.property name="documentListener"
+	 * @uml.associationEnd
 	 */
 	private DocumentListenerAdapter documentListener = new DocumentListenerAdapter() {
 

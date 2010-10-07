@@ -5,6 +5,7 @@ import java.util.Map;
 
 import ru.lspl.LsplObject;
 import ru.lspl.text.attributes.AttributeContainer;
+import ru.lspl.text.attributes.AttributeKey;
 import ru.lspl.utils.ArrayMap;
 
 /**
@@ -80,9 +81,12 @@ public class Transition extends LsplObject implements AttributeContainer, TextRa
 	@Override
 	public Map<Integer, Object> getAttributes() {
 		if ( attributes == null ) {
-			attributes = new ArrayMap<Object>( 20 );
+			attributes = new ArrayMap<Object>( AttributeKey.COUNT );
 
-			for ( int i = 1; i < 20; ++i ) {
+			for ( int i = 1; i < AttributeKey.COUNT; ++i ) {
+				if ( i == 12 ) // Ignore text attribute
+					continue;
+
 				Object value = getAttribute( i );
 
 				if ( value != null )

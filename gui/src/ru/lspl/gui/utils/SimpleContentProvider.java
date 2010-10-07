@@ -6,7 +6,7 @@ import org.eclipse.jface.viewers.Viewer;
 public class SimpleContentProvider implements IStructuredContentProvider {
 
 	@Override
-	public Object[] getElements(Object input) {
+	public Object[] getElements( Object input ) {
 		return (Object[]) input;
 	}
 
@@ -15,7 +15,7 @@ public class SimpleContentProvider implements IStructuredContentProvider {
 	}
 
 	@Override
-	public void inputChanged(Viewer arg0, Object arg1, Object arg2) {		
+	public void inputChanged( Viewer arg0, Object arg1, Object arg2 ) {
 	}
 
 }

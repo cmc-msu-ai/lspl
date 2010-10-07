@@ -10,9 +10,9 @@ public class DocExtractor implements TextExtractor {
 	@Override
 	public String extractText( InputStream is ) throws IOException {
 		String[] pars = new WordExtractor( is ).getParagraphText();
-		
+
 		StringBuilder text = new StringBuilder();
-			
+
 		for ( String par : pars ) {
 			String trimmedPar = par.trim();
 
@@ -23,7 +23,7 @@ public class DocExtractor implements TextExtractor {
 			text.append( trimmedPar );
 			text.append( "\n\n" );
 		}
-		
+
 		return text.toString();
 	}
 

@@ -19,207 +19,213 @@ import ru.lspl.text.Text;
 import ru.lspl.text.TextConfig;
 
 /**
- * @author  alno
+ * @author alno
  */
 public class Document {
-	
+
 	/**
-	 * @uml.property  name="eMPTY_TEXT"
-	 * @uml.associationEnd  
+	 * @uml.property name="eMPTY_TEXT"
+	 * @uml.associationEnd
 	 */
 	private static final Text EMPTY_TEXT = Text.create( "" );
-	
+
 	public boolean autoAnalyze = false;
-	
+
 	private boolean analysisNeeded = false;
-	
+
 	/**
 	 * Конфиг парсера текста
-	 * @uml.property  name="textConfig"
-	 * @uml.associationEnd  
+	 * 
+	 * @uml.property name="textConfig"
+	 * @uml.associationEnd
 	 */
-	private TextConfig textConfig = new TextConfig();	 
-	
+	private TextConfig textConfig = new TextConfig();
+
 	/**
 	 * Имя сохраненного файла
-	 * @uml.property  name="savedFileName"
+	 * 
+	 * @uml.property name="savedFileName"
 	 */
 	private String savedFileName = null;
 
 	/**
 	 * Исходный текст
-	 * @uml.property  name="sourceText"
+	 * 
+	 * @uml.property name="sourceText"
 	 */
 	private String sourceText = "";
-	
+
 	/**
 	 * Проанализированный текст
-	 * @uml.property  name="analyzedText"
-	 * @uml.associationEnd  
+	 * 
+	 * @uml.property name="analyzedText"
+	 * @uml.associationEnd
 	 */
 	private Text analyzedText = EMPTY_TEXT;
-	
+
 	/**
 	 * Построитель шаблонов, используемый при анализе
-	 * @uml.property  name="patternBuilder"
-	 * @uml.associationEnd  
+	 * 
+	 * @uml.property name="patternBuilder"
+	 * @uml.associationEnd
 	 */
 	private PatternBuilder patternBuilder = PatternBuilder.create();
-	
+
 	/**
 	 * Шаблоны, используемые при анализе
-	 * @uml.property  name="patterns"
-	 * @uml.associationEnd  multiplicity="(0 -1)"
+	 * 
+	 * @uml.property name="patterns"
+	 * @uml.associationEnd multiplicity="(0 -1)"
 	 */
 	private Pattern[] patterns = null;
-	
+
 	/**
 	 * Подписчики событий
 	 */
 	private Collection<DocumentListener> listeners = new ArrayList<DocumentListener>();
-	
+
 	/**
 	 * @return
-	 * @uml.property  name="analyzedText"
+	 * @uml.property name="analyzedText"
 	 */
 	public Text getAnalyzedText() {
 		return analyzedText;
 	}
-	
+
 	/**
 	 * @return
-	 * @uml.property  name="sourceText"
+	 * @uml.property name="sourceText"
 	 */
 	public String getSourceText() {
 		return sourceText;
 	}
-	
+
 	/**
 	 * @param srcText
-	 * @uml.property  name="sourceText"
+	 * @uml.property name="sourceText"
 	 */
 	public void setSourceText( String srcText ) {
 		sourceText = srcText;
-		
-		fireDocumentUpdated();		
+
+		fireDocumentUpdated();
 		autoAnalyzeIfEnabled();
 	}
-	
+
 	/**
 	 * @return
-	 * @uml.property  name="textConfig"
+	 * @uml.property name="textConfig"
 	 */
 	public TextConfig getTextConfig() {
 		return textConfig;
 	}
-	
+
 	/**
 	 * @param textConfig
-	 * @uml.property  name="textConfig"
+	 * @uml.property name="textConfig"
 	 */
 	public void setTextConfig( TextConfig textConfig ) {
 		this.textConfig = textConfig;
-		
-		fireDocumentUpdated();		
+
+		fireDocumentUpdated();
 		autoAnalyzeIfEnabled();
 	}
-	
+
 	public boolean isAnalysisNeeded() {
 		return analysisNeeded;
 	}
 
 	public void analyze() {
 		analyzedText = Text.create( sourceText, textConfig );
-		
+
 		for ( Pattern pattern : getPatternsArray() )
 			analyzedText.getMatches( pattern ); // Обработать текст шаблоном
-		
+
 		fireDocumentAnalyzed();
-		
+
 		analysisNeeded = false;
 	}
-	
+
 	public Pattern[] getPatternsArray() {
 		if ( patterns != null ) // Если шаблоны уже определены
 			return patterns; // Возвращаем их
-		
-		return ( patterns = patternBuilder.getDefinedPatternsArray() );
+
+		return (patterns = patternBuilder.getDefinedPatternsArray());
 	}
-	
+
 	public List<Pattern> getPatternList() {
 		return patternBuilder.definedPatterns;
 	}
-	
+
 	public void buildPattern( String source ) throws PatternBuildingException {
 		patternBuilder.build( source );
 		patterns = null;
-		
-		fireDocumentUpdated();		
+
+		fireDocumentUpdated();
 		autoAnalyzeIfEnabled();
 	}
 
 	public void clearPatterns() {
 		patternBuilder = PatternBuilder.create();
 		patterns = null;
-		
-		fireDocumentUpdated();		
+
+		fireDocumentUpdated();
 		autoAnalyzeIfEnabled();
 	}
-	
-	public void load(String fileName) throws IOException {
+
+	public void load( String fileName ) throws IOException {
 		TextExtractor extractor = selectTextExtractor( fileName );
-		
-		FileInputStream is = new FileInputStream( fileName );		
+
+		FileInputStream is = new FileInputStream( fileName );
 		String text = extractor.extractText( is );
-		is.close();		
-				
+		is.close();
+
 		setSourceText( text );
 
 		savedFileName = extractor.isLossless() ? fileName : null;
 	}
-	
+
 	public boolean hasSavedFileName() {
 		return savedFileName != null;
 	}
-	
+
 	/**
 	 * @return
-	 * @uml.property  name="savedFileName"
+	 * @uml.property name="savedFileName"
 	 */
 	public String getSavedFileName() {
 		return savedFileName;
 	}
-	
+
 	public void save() throws IOException {
 		if ( savedFileName == null )
 			throw new IllegalStateException( "Text hasn't saved filename" );
-		
+
 		save( savedFileName );
 	}
-	
-	public void save(String fileName) throws IOException {
+
+	public void save( String fileName ) throws IOException {
 		FileOutputStream fo = new FileOutputStream( fileName );
 		fo.write( sourceText.getBytes() );
 		fo.close();
-		
+
 		savedFileName = fileName;
 	}
-	
+
 	public void addListener( DocumentListener listener ) {
 		listeners.add( listener );
 	}
-	
+
 	public void removeListener( DocumentListener listener ) {
 		listeners.remove( listener );
 	}
 
 	public void clear() {
-		setSourceText( "" );		
+		setSourceText( "" );
 	}
 
 	protected TextExtractor selectTextExtractor( String fileName ) {
 		String fileNameLower = fileName.toLowerCase();
-		
+
 		if ( fileNameLower.endsWith( ".doc" ) ) {
 			return new DocExtractor();
 		} else if ( fileNameLower.endsWith( ".xls" ) ) {
@@ -247,5 +253,5 @@ public class Document {
 		else
 			analysisNeeded = true;
 	}
-	
+
 }

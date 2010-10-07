@@ -70,8 +70,7 @@ public class MainWindow extends ApplicationWindow {
 			transitions = NO_TRANSITIONS;
 			lastSelection = NO_TRANSITIONS;
 			updateTitle();
-			
-			
+
 		}
 	};
 
@@ -220,7 +219,7 @@ public class MainWindow extends ApplicationWindow {
 
 		@Override
 		public void nodeSelect( Node node ) {
-			Transition[] transitions = node.getWords().toArray( new Transition[ node.getWords().size() ] );
+			Transition[] transitions = node.getWords().toArray( new Transition[node.getWords().size()] );
 
 			infoPanel.transitionInfo.setTransitions( transitions );
 			textEditor.mark( transitions );
@@ -279,10 +278,10 @@ public class MainWindow extends ApplicationWindow {
 			if ( editPanel.patternEditor.isVisible() ) {
 				textEditor.mark( document.getAnalyzedText().getMatches( editPanel.patternEditor.getCheckedPatterns() ) );
 			}
-			
+
 			analyzeTextAction.setEnabled( false );
 		}
-		
+
 		@Override
 		public void documentUpdated( Document doc ) {
 			analyzeTextAction.setEnabled( true );
@@ -352,16 +351,16 @@ public class MainWindow extends ApplicationWindow {
 		editPanel.extendViewMenu( viewMenu );
 
 		menuManager.update( true ); // Обновляем содержимое меню
-		
+
 		ToolBarManager toolBarManager = getToolBarManager();
-		
+
 		toolBarManager.add( clearFileAction );
 		toolBarManager.add( openTextAction );
 		toolBarManager.add( saveTextAction );
 		toolBarManager.add( new Separator() );
 		toolBarManager.add( analyzeTextAction );
 		toolBarManager.update( true );
-		
+
 		analyzeTextAction.setEnabled( false ); // By default there is no text to analyze
 	}
 

@@ -31,13 +31,13 @@ import ru.lspl.text.Word;
 import ru.lspl.text.attributes.SpeechPart;
 
 /**
- * @author  alno
+ * @author alno
  */
 public class TextWordsViewer extends Composite {
 
 	/**
-	 * @uml.property  name="document"
-	 * @uml.associationEnd  
+	 * @uml.property name="document"
+	 * @uml.associationEnd
 	 */
 	private Document document = null;
 
@@ -48,8 +48,8 @@ public class TextWordsViewer extends Composite {
 	private ComboViewer spViewer = null;
 
 	/**
-	 * @uml.property  name="documentListener"
-	 * @uml.associationEnd  
+	 * @uml.property name="documentListener"
+	 * @uml.associationEnd
 	 */
 	private DocumentListenerAdapter documentListener = new DocumentListenerAdapter() {
 
@@ -176,7 +176,7 @@ public class TextWordsViewer extends Composite {
 
 	/**
 	 * @param doc
-	 * @uml.property  name="document"
+	 * @uml.property name="document"
 	 */
 	public void setDocument( Document doc ) {
 		if ( document != null )

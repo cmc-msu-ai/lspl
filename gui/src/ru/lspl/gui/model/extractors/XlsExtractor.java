@@ -10,14 +10,14 @@ public class XlsExtractor implements TextExtractor {
 
 	@Override
 	public String extractText( InputStream is ) throws IOException {
-		ExcelExtractor extractor = new ExcelExtractor(new POIFSFileSystem(is));
+		ExcelExtractor extractor = new ExcelExtractor( new POIFSFileSystem( is ) );
 
-		extractor.setFormulasNotResults(true);
-		extractor.setIncludeSheetNames(false);
-		
+		extractor.setFormulasNotResults( true );
+		extractor.setIncludeSheetNames( false );
+
 		return extractor.getText();
 	}
-	
+
 	@Override
 	public boolean isLossless() {
 		return false;

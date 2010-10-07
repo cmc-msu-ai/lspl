@@ -7,12 +7,12 @@ import ru.lspl.patterns.Pattern;
 public class PatternListener implements IPatternListener {
 
 	@Override
-	public void patternSelect(Pattern pattern) {
+	public void patternSelect( Pattern pattern ) {
 		// NOP implementation
 	}
 
 	@Override
-	public void patternDoubleClick(Pattern pattern) {
+	public void patternDoubleClick( Pattern pattern ) {
 		// NOP implementation
 	}
 
