@@ -7,6 +7,10 @@ find_package(JNI)
 
 include_directories( src_cpp ${JNI_INCLUDE_DIRS} )
 
+if(WIN32)
+    set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} -Wl,--kill-at)
+endif(WIN32)
+
 ### lspl.jar
 
 ADD_CUSTOM_TARGET(lspl.jar
