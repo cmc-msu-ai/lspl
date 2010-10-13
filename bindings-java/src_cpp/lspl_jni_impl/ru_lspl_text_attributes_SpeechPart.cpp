@@ -17,7 +17,15 @@ using namespace lspl::text::attributes;
  * Signature: (I)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_text_attributes_SpeechPart_getAbbrevation(JNIEnv * env, jclass cls, jint id) {
-	return out( env, SpeechPart( id ).getAbbrevation() );
+	try {
+		return out( env, SpeechPart( id ).getAbbrevation() );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -26,7 +34,15 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_text_attributes_SpeechPart_getAbbrevation
  * Signature: (I)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_text_attributes_SpeechPart_getName(JNIEnv * env, jclass cls, jint id) {
-	return out( env, SpeechPart( id ).getName() );
+	try {
+		return out( env, SpeechPart( id ).getName() );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -35,7 +51,15 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_text_attributes_SpeechPart_getName(JNIEnv
  * Signature: (I)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_text_attributes_SpeechPart_getTitle(JNIEnv * env, jclass cls, jint id) {
-	return out( env, SpeechPart( id ).getTitle() );
+	try {
+		return out( env, SpeechPart( id ).getTitle() );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -44,5 +68,13 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_text_attributes_SpeechPart_getTitle(JNIEn
  * Signature: (I)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_text_attributes_SpeechPart_getPluralTitle(JNIEnv * env, jclass cls, jint id) {
-	return out( env, SpeechPart( id ).getPluralTitle() );
+	try {
+		return out( env, SpeechPart( id ).getPluralTitle() );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }

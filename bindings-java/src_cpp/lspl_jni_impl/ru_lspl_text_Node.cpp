@@ -17,9 +17,17 @@ using namespace lspl::text::java;
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_text_Node_dump(JNIEnv * env, jobject obj_node ) {
-	std::ostringstream dump;
-	JavaText::getNode( env, obj_node ).dump( dump );
-	return out( env, dump.str() );
+	try {
+		std::ostringstream dump;
+		JavaText::getNode( env, obj_node ).dump( dump );
+		return out( env, dump.str() );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -28,7 +36,15 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_text_Node_dump(JNIEnv * env, jobject obj_
  * Signature: (I)Lru/lspl/text/Transition;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Node_getTransition(JNIEnv * env, jobject obj_node, jint index) {
-	return JavaTransition::get( env, JavaText::getNode( env, obj_node ).getTransition( index ).get() )->object;
+	try {
+		return JavaTransition::get( env, JavaText::getNode( env, obj_node ).getTransition( index ).get() )->object;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -37,5 +53,13 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Node_getTransition(JNIEnv * env, job
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_ru_lspl_text_Node_getTransitionCount(JNIEnv * env, jobject obj_node) {
-	return JavaText::getNode( env, obj_node ).getTransitionCount();
+	try {
+		return JavaText::getNode( env, obj_node ).getTransitionCount();
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }

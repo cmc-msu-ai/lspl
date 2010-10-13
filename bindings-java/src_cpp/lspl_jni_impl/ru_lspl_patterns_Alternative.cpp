@@ -22,7 +22,15 @@ using namespace lspl::patterns::java;
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_ru_lspl_patterns_Alternative_getDependencyCount(JNIEnv * env, jobject obj) {
-	return JavaAlternative::get( env, obj )->getDependencies().size();
+	try {
+		return JavaAlternative::get( env, obj )->getDependencies().size();
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -31,7 +39,15 @@ JNIEXPORT jint JNICALL Java_ru_lspl_patterns_Alternative_getDependencyCount(JNIE
  * Signature: (I)Lru/lspl/patterns/Pattern;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_Alternative_getDependency(JNIEnv * env, jobject obj, jint index) {
-	return JavaPattern::get( env, JavaAlternative::get( env, obj )->getDependencies().at( index ) ).object;
+	try {
+		return JavaPattern::get( env, JavaAlternative::get( env, obj )->getDependencies().at( index ) ).object;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -40,7 +56,15 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_patterns_Alternative_getDependency(JNIEnv
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_ru_lspl_patterns_Alternative_getMatcherCount(JNIEnv * env, jobject obj) {
-	return JavaAlternative::get( env, obj )->getMatcherCount();
+	try {
+		return JavaAlternative::get( env, obj )->getMatcherCount();
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -49,7 +73,15 @@ JNIEXPORT jint JNICALL Java_ru_lspl_patterns_Alternative_getMatcherCount(JNIEnv 
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_patterns_Alternative_getSource(JNIEnv * env, jobject obj) {
-	return out( env, JavaAlternative::get( env, obj )->getSource() );
+	try {
+		return out( env, JavaAlternative::get( env, obj )->getSource() );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -58,9 +90,17 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_patterns_Alternative_getSource(JNIEnv * e
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_patterns_Alternative_dump(JNIEnv * env, jobject obj) {
-	std::ostringstream dump;
-	JavaAlternative::get( env, obj )->dump( dump );
-	return out( env, dump.str() );
+	try {
+		std::ostringstream dump;
+		JavaAlternative::get( env, obj )->dump( dump );
+		return out( env, dump.str() );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -69,5 +109,11 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_patterns_Alternative_dump(JNIEnv * env, j
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_ru_lspl_patterns_Alternative_finalize(JNIEnv * env, jobject obj) {
-	JavaAlternative::remove( env, obj );
+	try {
+		JavaAlternative::remove( env, obj );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+	}
 }

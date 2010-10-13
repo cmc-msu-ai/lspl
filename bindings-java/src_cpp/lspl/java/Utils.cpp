@@ -35,4 +35,8 @@ void setupVM( JNIEnv * env ) {
 	env->GetJavaVM( &vm );
 }
 
+void throwRuntimeException( JNIEnv * env, const char * text ) {
+	env->ThrowNew( env->FindClass("java/lang/RuntimeException"), text );
+}
+
 } }

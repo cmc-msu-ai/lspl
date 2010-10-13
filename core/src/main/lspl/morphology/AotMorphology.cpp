@@ -26,10 +26,16 @@ using namespace lspl::text::attributes;
 
 #include <iostream>
 
+#ifdef WIN32
+#define PD "\\"
+#else
+#define PD "/"
+#endif
+
 namespace lspl { namespace morphology {
 
 const char * AotMorphology::findRml() {
-	static std::string candidates[] = {"data","../data","deps/aot","../deps/aot","../../deps/aot"};
+	static std::string candidates[] = {"data",".." PD "data","deps" PD "aot",".." PD "deps" PD "aot",".." PD ".." PD "deps" PD "aot"};
 
 	for ( int i = 0; i < 5; ++ i ) {
 		std::string rmlIni = candidates[i] + "/Bin/rml.ini";
@@ -67,27 +73,35 @@ AotMorphology::~AotMorphology() {
 AotMorphology::AotMorphology() {
 	setupRml();
 
-	std::string strError;
-	lemmatizer = new CLemmatizerRussian();
-	lemmatizer->m_bAllowRussianJo = true;
-	lemmatizer->m_bMaximalPrediction = true;
-	lemmatizer->m_bUseStatistic = true;
+	try {
+		std::string strError;
+		lemmatizer = new CLemmatizerRussian();
+		lemmatizer->m_bAllowRussianJo = true;
+		lemmatizer->m_bMaximalPrediction = true;
+		lemmatizer->m_bUseStatistic = true;
 
 #ifdef MSVC
-	if (!lemmatizer->LoadDictionariesRegistry(strError))
-		throw new MorphologyInitException( strError, __FILE__, 0 );
+		if (!lemmatizer->LoadDictionariesRegistry(strError))
+			throw MorphologyInitException( strError, __FILE__, 0 );
 
-	agramtab = new CRusGramTab();
-	if (!agramtab->LoadFromRegistry())
-		throw new MorphologyInitException( "Cann't load gramtab", __FILE__, 0 );
+		agramtab = new CRusGramTab();
+		if (!agramtab->LoadFromRegistry())
+			throw MorphologyInitException( "Couldn't load gramtab", __FILE__, 0 );
 #else
-	if (!lemmatizer->LoadDictionariesRegistry(strError))
-		throw new MorphologyInitException( strError, __FILE__, __LINE__ );
+		if (!lemmatizer->LoadDictionariesRegistry(strError))
+			throw MorphologyInitException( strError, __FILE__, __LINE__ );
 
-	agramtab = new CRusGramTab();
-	if (!agramtab->LoadFromRegistry())
-		throw new MorphologyInitException( "Cann't load gramtab", __FILE__, __LINE__ );
+		agramtab = new CRusGramTab();
+		if (!agramtab->LoadFromRegistry())
+			throw MorphologyInitException( "Couldn't load gramtab", __FILE__, __LINE__ );
 #endif
+	} catch ( const MorphologyInitException & e ) {
+		throw e;
+	} catch ( const CExpc & e ) {
+		throw MorphologyInitException( "Couldn't init morphology: " + e.m_strCause, __FILE__, 0 );
+	} catch (...) {
+		throw MorphologyInitException( "Couldn't init morphology due to unknown error", __FILE__, 0 );
+	}
 }
 
 void AotMorphology::appendWordForms( const std::string & token, boost::ptr_vector<WordForm> & forms ) {

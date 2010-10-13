@@ -32,7 +32,15 @@ using lspl::text::markup::WordList;
  * Signature: (Ljava/lang/String;)Lru/lspl/text/Text;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_create__Ljava_lang_String_2(JNIEnv * env, jclass cls, jstring content) {
-	return JavaText::create( env, content ).object;
+	try {
+		return JavaText::create( env, content ).object;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -41,7 +49,15 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_create__Ljava_lang_String_2(JNI
  * Signature: (Ljava/lang/String;Lru/lspl/text/TextConfig;)Lru/lspl/text/Text;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_create__Ljava_lang_String_2Lru_lspl_text_TextConfig_2(JNIEnv * env, jclass cls, jstring content, jobject config) {
-	return JavaText::create( env, content, TextDataBuilderConfig::fromJava( env, config ) ).object;
+	try {
+		return JavaText::create( env, content, TextDataBuilderConfig::fromJava( env, config ) ).object;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -50,18 +66,26 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_create__Ljava_lang_String_2Lru_
  * Signature: (I)[Lru/lspl/text/Word;
  */
 JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_Text_internalGetWords(JNIEnv * env, jobject obj_text, jint sp) {
-	const WordList & words = JavaText::get( env, obj_text ).text->getWords( lspl::text::attributes::SpeechPart( sp ) );
-	
-	jobjectArray result = env->NewObjectArray( words.size(), JavaWord::clazz, 0 );
-	
-	if ( result == 0 )
+	try {
+		const WordList & words = JavaText::get( env, obj_text ).text->getWords( lspl::text::attributes::SpeechPart( sp ) );
+
+		jobjectArray result = env->NewObjectArray( words.size(), JavaWord::clazz, 0 );
+
+		if ( result == 0 )
+			return 0;
+
+		for ( int i = 0, sz = words.size(); i < sz; ++ i ) {
+			env->SetObjectArrayElement( result, i, JavaTransition::get( env, words[i].get() )->object );
+		}
+
+		return result;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
 		return 0;
-		
-	for ( int i = 0, sz = words.size(); i < sz; ++ i ) {
-		env->SetObjectArrayElement( result, i, JavaTransition::get( env, words[i].get() )->object );
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
 	}
-	
-	return result;
 }
 
 /*
@@ -70,7 +94,15 @@ JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_Text_internalGetWords(JNIEnv * 
  * Signature: (II)Lru/lspl/text/Word;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_getWord(JNIEnv * env, jobject obj_text, jint sp, jint index) {
-	return JavaTransition::get( env, JavaText::get( env, obj_text ).text->getWords( lspl::text::attributes::SpeechPart( sp ) ).at( index ).get() )->object;
+	try {
+		return JavaTransition::get( env, JavaText::get( env, obj_text ).text->getWords( lspl::text::attributes::SpeechPart( sp ) ).at( index ).get() )->object;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -92,10 +124,12 @@ JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_Text_internalGetMatches(JNIEnv 
 		}
 		
 		return result;
-	} catch ( const std::exception & e ) {
-		std::cerr << "!!!" << e.what() << std::endl;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
 	} catch ( ... ) {
-		std::cerr << "!!!???" << std::endl;
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
 	}
 }
 
@@ -107,13 +141,13 @@ JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_Text_internalGetMatches(JNIEnv 
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_getMatch(JNIEnv * env, jobject obj_text, jobject obj_pattern, jint index) {
 	try {
 		return JavaTransition::get( env, JavaText::get( env, obj_text ).text->getMatches( *JavaPattern::get( env, obj_pattern ).pattern ).at( index ).get() )->object;
-	} catch ( const std::exception & e ) {
-		std::cerr << "!!!" << e.what() << std::endl;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
 	} catch ( ... ) {
-		std::cerr << "!!!???" << std::endl;
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
 	}
-
-	return 0;
 }
 
 /*
@@ -122,9 +156,17 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_text_Text_getMatch(JNIEnv * env, jobject 
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_text_Text_dump(JNIEnv * env, jobject obj) {
-	std::ostringstream dump;
-	JavaText::get( env, obj ).text->dump( dump );
-	return out( env, dump.str() );
+	try {
+		std::ostringstream dump;
+		JavaText::get( env, obj ).text->dump( dump );
+		return out( env, dump.str() );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -133,5 +175,11 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_text_Text_dump(JNIEnv * env, jobject obj)
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_ru_lspl_text_Text_finalize(JNIEnv * env, jobject obj) {
-	JavaText::remove( env, obj );
+	try {
+		JavaText::remove( env, obj );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+	}
 }

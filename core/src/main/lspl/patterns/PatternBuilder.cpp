@@ -362,7 +362,7 @@ public:
     	} catch ( const std::exception & e ) {
     		throw PatternBuildingException( (boost::format( "Error parsing template: %1%" ) % e.what()).str() );
     	} catch ( ... ) {
-    		throw PatternBuildingException( "Error parsing template" );
+    		throw PatternBuildingException( "Unknown error during parsing template" );
     	}
     }
 };

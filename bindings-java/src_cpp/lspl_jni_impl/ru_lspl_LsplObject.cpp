@@ -54,27 +54,33 @@ using namespace lspl::transforms;
 JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_initStatic(JNIEnv * env, jclass cls) {
 	setupVM( env );
 
-	JavaNamespace::init( env );
+	try {
+		JavaNamespace::init( env );
 
-	JavaText::init( env );
-	JavaTransition::init( env );
+		JavaText::init( env );
+		JavaTransition::init( env );
 
-	JavaLoop::init( env );
-	JavaLoopIteration::init( env );
-	JavaMatch::init( env );
-	JavaToken::init( env );
-	JavaWord::init( env );
-
-	JavaAttributeValue::init( env );
+		JavaLoop::init( env );
+		JavaLoopIteration::init( env );
+		JavaMatch::init( env );
+		JavaToken::init( env );
+		JavaWord::init( env );
 	
-	JavaAlternative::init( env );
-	JavaPattern::init( env );
-	JavaPatternBuilder::init( env );
-	
-	JavaTransform::init( env );
-	JavaTransformBuilder::init( env );
+		JavaAttributeValue::init( env );
 
-	TextDataBuilderConfig::init( env );	
+		JavaAlternative::init( env );
+		JavaPattern::init( env );
+		JavaPatternBuilder::init( env );
+
+		JavaTransform::init( env );
+		JavaTransformBuilder::init( env );
+	
+		TextDataBuilderConfig::init( env );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+	}
 }
 
 /*
@@ -83,13 +89,17 @@ JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_initStatic(JNIEnv * env, jclass c
  * Signature: (Ljava/lang/String;)V
  */
 JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_setRml(JNIEnv * env, jclass cls, jstring rml) {
-	std::string s = in( env, rml );
+	try {
+		std::string s = in( env, rml );
 
-	#ifdef WIN32
-			SetEnvironmentVariable( "RML", s.c_str() );
-	#else
-			setenv( "RML", s.c_str(), 1 );
-	#endif
+		#ifdef WIN32
+				SetEnvironmentVariable( "RML", s.c_str() );
+		#else
+				setenv( "RML", s.c_str(), 1 );
+		#endif
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+	}
 }
 
 /*
@@ -98,17 +108,22 @@ JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_setRml(JNIEnv * env, jclass cls, 
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_LsplObject_dumpMemoryStats(JNIEnv * env, jclass cls) {
-	std::ostringstream output;
-	
-	output << "Patterns: " << Pattern::aliveObjectsCount << std::endl;
-	output << "Matchers: " << Matcher::aliveObjectsCount << std::endl;
-	output << "Restrictions: " << Restriction::aliveObjectsCount << std::endl;
-	
-	output << "Texts: " << Text::aliveObjectsCount << std::endl;
-	output << "Nodes: " << Node::aliveObjectsCount << std::endl;
-	output << "Transitions: " << Transition::aliveObjectsCount << std::endl;
-	
-	output << "JavaTransition Vector: " << JavaTransition::transitions.size() << std::endl;
-	
-	return out( env, output.str() );
+	try {
+		std::ostringstream output;
+
+		output << "Patterns: " << Pattern::aliveObjectsCount << std::endl;
+		output << "Matchers: " << Matcher::aliveObjectsCount << std::endl;
+		output << "Restrictions: " << Restriction::aliveObjectsCount << std::endl;
+
+		output << "Texts: " << Text::aliveObjectsCount << std::endl;
+		output << "Nodes: " << Node::aliveObjectsCount << std::endl;
+		output << "Transitions: " << Transition::aliveObjectsCount << std::endl;
+
+		output << "JavaTransition Vector: " << JavaTransition::transitions.size() << std::endl;
+
+		return out( env, output.str() );
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }

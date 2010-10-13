@@ -13,7 +13,15 @@ using namespace lspl::text;
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_ru_lspl_text_Loop_getIterationCount (JNIEnv * env, jobject obj) {
-	return JavaTransition::get( env, obj )->transition.cast<Loop>()->getIterations().size();
+	try {
+		return JavaTransition::get( env, obj )->transition.cast<Loop>()->getIterations().size();
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -22,5 +30,13 @@ JNIEXPORT jint JNICALL Java_ru_lspl_text_Loop_getIterationCount (JNIEnv * env, j
  * Signature: (I)Lru/lspl/text/LoopIteration;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Loop_getIteration (JNIEnv * env, jobject obj, jint index) {
-	return JavaTransition::get( env, JavaTransition::get( env, obj )->transition.cast<Loop>()->getIterations().at( index ).get() )->object;
+	try {
+		return JavaTransition::get( env, JavaTransition::get( env, obj )->transition.cast<Loop>()->getIterations().at( index ).get() )->object;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }

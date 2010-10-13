@@ -20,9 +20,17 @@ using lspl::text::attributes::AttributeValue;
  * Signature: ()Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_text_Transition_dump( JNIEnv * env, jobject obj_transition ) {
-	std::ostringstream dump;
-	JavaTransition::get( env, obj_transition )->transition->dump( dump );
-	return out( env, dump.str() );
+	try {
+		std::ostringstream dump;
+		JavaTransition::get( env, obj_transition )->transition->dump( dump );
+		return out( env, dump.str() );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -31,7 +39,13 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_text_Transition_dump( JNIEnv * env, jobje
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_ru_lspl_text_Transition_finalize( JNIEnv * env, jobject obj_transition ) {
-	JavaTransition::remove( env, obj_transition );
+	try {
+		JavaTransition::remove( env, obj_transition );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+	}
 }
 
 /*
@@ -40,5 +54,13 @@ JNIEXPORT void JNICALL Java_ru_lspl_text_Transition_finalize( JNIEnv * env, jobj
  * Signature: (I)Ljava/lang/Object;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_Transition_getAttribute( JNIEnv * env, jobject obj_transition, jint key ) {
-	return JavaAttributeValue::get( env, JavaTransition::get( env, obj_transition )->transition->getAttribute( AttributeKey( key ) ) );
+	try {
+		return JavaAttributeValue::get( env, JavaTransition::get( env, obj_transition )->transition->getAttribute( AttributeKey( key ) ) );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }

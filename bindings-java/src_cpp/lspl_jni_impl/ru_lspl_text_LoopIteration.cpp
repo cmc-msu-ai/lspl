@@ -13,22 +13,30 @@ using namespace lspl::text;
  * Signature: ()[Lru/lspl/text/LoopIterationVariant;
  */
 JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_LoopIteration_internalGetVariants(JNIEnv * env, jobject obj) {
-	const LoopIteration & iteration = *JavaTransition::get( env, obj )->transition.cast<LoopIteration>();
+	try {
+		const LoopIteration & iteration = *JavaTransition::get( env, obj )->transition.cast<LoopIteration>();
 
-	jobjectArray result = env->NewObjectArray( iteration.getVariantCount(), JavaLoopIteration::variantClazz, 0 );
+		jobjectArray result = env->NewObjectArray( iteration.getVariantCount(), JavaLoopIteration::variantClazz, 0 );
 
-	if ( result == 0 )
+		if ( result == 0 )
+			return 0;
+
+		for ( int i = 0, sz = iteration.getVariantCount(); i < sz; ++ i ) {
+			const LoopIterationVariant & variant = iteration.getVariant( i );
+
+			jobject varObj = env->NewObject( JavaLoopIteration::variantClazz, JavaLoopIteration::variantConstructor, obj, i );
+
+			env->SetObjectArrayElement( result, i, varObj );
+		}
+
+		return result;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
 		return 0;
-
-	for ( int i = 0, sz = iteration.getVariantCount(); i < sz; ++ i ) {
-		const LoopIterationVariant & variant = iteration.getVariant( i );
-
-		jobject varObj = env->NewObject( JavaLoopIteration::variantClazz, JavaLoopIteration::variantConstructor, obj, i );
-
-		env->SetObjectArrayElement( result, i, varObj );
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
 	}
-
-	return result;
 }
 
 /*
@@ -37,7 +45,15 @@ JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_LoopIteration_internalGetVarian
  * Signature: (I)I
  */
 JNIEXPORT jint JNICALL Java_ru_lspl_text_LoopIteration_getVariantTransitionCount(JNIEnv * env, jobject obj, jint vindex) {
-	return JavaTransition::get(env,obj)->transition.cast<LoopIteration>()->getVariant( vindex ).size();
+	try {
+		return JavaTransition::get(env,obj)->transition.cast<LoopIteration>()->getVariant( vindex ).size();
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -46,5 +62,13 @@ JNIEXPORT jint JNICALL Java_ru_lspl_text_LoopIteration_getVariantTransitionCount
  * Signature: (II)Lru/lspl/text/Transition;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_text_LoopIteration_getVariantTransition(JNIEnv * env, jobject obj, jint vindex, jint tindex) {
-	return JavaTransition::get( env, JavaTransition::get(env,obj)->transition.cast<LoopIteration>()->getVariant( vindex ).at( tindex ).get() )->object;
+	try {
+		return JavaTransition::get( env, JavaTransition::get(env,obj)->transition.cast<LoopIteration>()->getVariant( vindex ).at( tindex ).get() )->object;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }

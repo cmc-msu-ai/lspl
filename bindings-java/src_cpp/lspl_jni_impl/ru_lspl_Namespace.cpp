@@ -26,15 +26,23 @@ using lspl::NamespaceList;
  * Signature: ([Lru/lspl/Namespace;)Lru/lspl/Namespace;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_Namespace_create(JNIEnv * env, jclass cls, jobjectArray parentArray) {
-	NamespaceList parents;
+	try {
+		NamespaceList parents;
 
-	for ( int i = 0, parentCount = env->GetArrayLength( parentArray ); i < parentCount; ++ i ) {
-		jobject parentObj = env->GetObjectArrayElement( parentArray, i );
+		for ( int i = 0, parentCount = env->GetArrayLength( parentArray ); i < parentCount; ++ i ) {
+			jobject parentObj = env->GetObjectArrayElement( parentArray, i );
 
-		parents.push_back( JavaNamespace::get( env, parentObj ).ns );
+			parents.push_back( JavaNamespace::get( env, parentObj ).ns );
+		}
+
+		return JavaNamespace::get( env, new Namespace( parents ) ).object;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
 	}
-
-	return JavaNamespace::get( env, new Namespace( parents ) ).object;
 }
 
 /*
@@ -43,7 +51,15 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_Namespace_create(JNIEnv * env, jclass cls
  * Signature: ()I
  */
 JNIEXPORT jint JNICALL Java_ru_lspl_Namespace_getDefinedPatternCount(JNIEnv * env, jobject obj) {
-	return JavaNamespace::get( env, obj ).ns->getPatternCount();
+	try {
+		return JavaNamespace::get( env, obj ).ns->getPatternCount();
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -52,9 +68,17 @@ JNIEXPORT jint JNICALL Java_ru_lspl_Namespace_getDefinedPatternCount(JNIEnv * en
  * Signature: (I)Lru/lspl/patterns/Pattern;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_Namespace_getDefinedPattern__I(JNIEnv * env, jobject obj, jint index) {
-	JavaNamespace & data = JavaNamespace::get( env, obj );
+	try {
+		JavaNamespace & data = JavaNamespace::get( env, obj );
 
-	return JavaPattern::get( env, data.ns->getPatternByIndex( index ).get() ).object;
+		return JavaPattern::get( env, data.ns->getPatternByIndex( index ).get() ).object;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -63,14 +87,22 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_Namespace_getDefinedPattern__I(JNIEnv * e
  * Signature: (Ljava/lang/String;)Lru/lspl/patterns/Pattern;
  */
 JNIEXPORT jobject JNICALL Java_ru_lspl_Namespace_getDefinedPattern__Ljava_lang_String_2(JNIEnv * env, jobject obj, jstring name) {
-	JavaNamespace & data = JavaNamespace::get( env, obj );
+	try {
+		JavaNamespace & data = JavaNamespace::get( env, obj );
 
-	Pattern * pattern = data.ns->getPatternByName( in( env, name ) ).get();
+		Pattern * pattern = data.ns->getPatternByName( in( env, name ) ).get();
 
-	if ( !pattern )
+		if ( !pattern )
+			return 0;
+
+		return JavaPattern::get( env, pattern ).object;
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
 		return 0;
-
-	return JavaPattern::get( env, pattern ).object;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -79,5 +111,11 @@ JNIEXPORT jobject JNICALL Java_ru_lspl_Namespace_getDefinedPattern__Ljava_lang_S
  * Signature: ()V
  */
 JNIEXPORT void JNICALL Java_ru_lspl_Namespace_finalize(JNIEnv * env, jobject obj) {
-	JavaNamespace::remove( env, obj );
+	try {
+		JavaNamespace::remove( env, obj );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+	}
 }

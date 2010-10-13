@@ -17,7 +17,15 @@ using namespace lspl::text::attributes;
  * Signature: (I)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_text_attributes_IndexedAttribute_getAbbrevation(JNIEnv * env, jclass cls, jint id) {
-	return out( env, AttributeValue( id ).getAbbrevation() );
+	try {
+		return out( env, AttributeValue( id ).getAbbrevation() );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -26,7 +34,15 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_text_attributes_IndexedAttribute_getAbbre
  * Signature: (I)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_text_attributes_IndexedAttribute_getName(JNIEnv * env, jclass cls, jint id) {
-	return out( env, AttributeValue( id ).getName() );
+	try {
+		return out( env, AttributeValue( id ).getName() );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }
 
 /*
@@ -35,5 +51,13 @@ JNIEXPORT jstring JNICALL Java_ru_lspl_text_attributes_IndexedAttribute_getName(
  * Signature: (I)Ljava/lang/String;
  */
 JNIEXPORT jstring JNICALL Java_ru_lspl_text_attributes_IndexedAttribute_getTitle(JNIEnv * env, jclass cls, jint id) {
-	return out( env, AttributeValue( id ).getTitle() );
+	try {
+		return out( env, AttributeValue( id ).getTitle() );
+	} catch ( const std::exception & ex ) {
+		throwRuntimeException( env, ex.what() );
+		return 0;
+	} catch ( ... ) {
+		throwRuntimeException( env, "Unknown error" );
+		return 0;
+	}
 }

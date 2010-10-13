@@ -15,6 +15,8 @@ JNIEnv * getCurrentEnv();
 
 void setupVM( JNIEnv * env );
 
+void throwRuntimeException( JNIEnv * env, const char * text );
+
 } }
 
 #endif /*_LSPL_JAVA_UTILS_H_*/
