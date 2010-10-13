@@ -16,7 +16,7 @@
 
 namespace lspl { namespace patterns { namespace expressions {
 
-class VariableExpression : public Expression {
+class LSPL_EXPORT VariableExpression : public Expression {
 public:
 	VariableExpression( const matchers::Variable & variable );
 	VariableExpression( text::attributes::SpeechPart sp, uint index );

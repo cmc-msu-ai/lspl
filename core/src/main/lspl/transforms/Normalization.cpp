@@ -4,6 +4,7 @@
  *  Created on: Sep 28, 2009
  *      Author: alno
  */
+#include "../base/BaseInternal.h"
 
 #include "Normalization.h"
 

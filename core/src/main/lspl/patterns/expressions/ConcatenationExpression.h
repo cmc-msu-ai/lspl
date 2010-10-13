@@ -16,7 +16,7 @@
 
 namespace lspl { namespace patterns { namespace expressions {
 
-class ConcatenationExpression : public Expression {
+class LSPL_EXPORT ConcatenationExpression : public Expression {
 public:
 	ConcatenationExpression() {}
 

@@ -14,7 +14,7 @@
 
 namespace lspl { namespace patterns { namespace expressions {
 
-class CurrentAnnotationExpression : public Expression {
+class LSPL_EXPORT CurrentAnnotationExpression : public Expression {
 public:
 	CurrentAnnotationExpression();
 	virtual ~CurrentAnnotationExpression();

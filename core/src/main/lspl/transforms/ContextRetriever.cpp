@@ -4,6 +4,7 @@
  *  Created on: Dec 6, 2009
  *      Author: alno
  */
+#include "../base/BaseInternal.h"
 
 #include "ContextRetriever.h"
 
