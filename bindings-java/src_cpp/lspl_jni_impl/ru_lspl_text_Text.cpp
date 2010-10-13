@@ -57,7 +57,7 @@ JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_Text_internalGetWords(JNIEnv * 
 	if ( result == 0 )
 		return 0;
 		
-	for ( uint i = 0, sz = words.size(); i < sz; ++ i ) {
+	for ( int i = 0, sz = words.size(); i < sz; ++ i ) {
 		env->SetObjectArrayElement( result, i, JavaTransition::get( env, words[i].get() )->object );
 	}
 	
@@ -87,7 +87,7 @@ JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_Text_internalGetMatches(JNIEnv 
 		if ( result == 0 )
 			return 0;
 			
-		for ( uint i = 0, sz = matches.size(); i < sz; ++ i ) {
+		for ( int i = 0, sz = matches.size(); i < sz; ++ i ) {
 			env->SetObjectArrayElement( result, i, JavaTransition::get( env, matches[i].get() )->object );
 		}
 		

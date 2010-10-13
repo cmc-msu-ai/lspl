@@ -4,7 +4,7 @@
  *	Created on: Jul 19, 2009
  *			Author: Vadim Antonov(avadim@gmail.com)
  */
-
+#include "BaseInternal.h"
 #include "Range.h"
 
 namespace lspl { namespace base {

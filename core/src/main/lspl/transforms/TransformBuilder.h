@@ -21,8 +21,8 @@ namespace lspl { namespace transforms {
 
 class LSPL_EXPORT TransformBuilder : public base::RefCountObject, public base::IdentifiedObject<TransformBuilder> {
 public:
-	TransformBuilder();
-	virtual ~TransformBuilder();
+	TransformBuilder() {}
+	virtual ~TransformBuilder() {}
 
 	/**
 	 * Построить новое преобразование для заданной альтернативы и исходного текста.
@@ -34,14 +34,7 @@ public:
 	virtual Transform * build( const patterns::Alternative & alternative, const std::string & source ) = 0;
 };
 
-template< typename Result>
-class LSPL_EXPORT TypedTransformBuilder : public TransformBuilder {
-public:
-
-	virtual TypedTransform<Result> * build( const patterns::Alternative & alternative, const std::string & source ) = 0;
-};
-
-class LSPL_EXPORT DummyTransformBuilder : public TypedTransformBuilder<int> {
+class LSPL_EXPORT DummyTransformBuilder : public TransformBuilder {
 public:
 
 	virtual TypedTransform<int> * build( const patterns::Alternative & alternative, const std::string & source );

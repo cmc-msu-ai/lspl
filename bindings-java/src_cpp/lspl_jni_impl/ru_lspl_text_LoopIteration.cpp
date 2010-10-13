@@ -20,7 +20,7 @@ JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_LoopIteration_internalGetVarian
 	if ( result == 0 )
 		return 0;
 
-	for ( uint i = 0, sz = iteration.getVariantCount(); i < sz; ++ i ) {
+	for ( int i = 0, sz = iteration.getVariantCount(); i < sz; ++ i ) {
 		const LoopIterationVariant & variant = iteration.getVariant( i );
 
 		jobject varObj = env->NewObject( JavaLoopIteration::variantClazz, JavaLoopIteration::variantConstructor, obj, i );

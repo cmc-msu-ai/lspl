@@ -22,7 +22,7 @@ JNIEXPORT jobjectArray JNICALL Java_ru_lspl_text_Match_internalGetVariants(JNIEn
 	if ( result == 0 )
 		return 0;
 
-	for ( uint i = 0, sz = match.getVariantCount(); i < sz; ++ i ) {
+	for ( int i = 0, sz = match.getVariantCount(); i < sz; ++ i ) {
 		const MatchVariant & variant = *match.getVariant( i );
 
 		jobject varObj = env->NewObject( JavaMatch::variantClazz, JavaMatch::variantConstructor, obj, i );

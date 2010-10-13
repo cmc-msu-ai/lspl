@@ -15,7 +15,7 @@
 
 namespace lspl { namespace transforms {
 
-class JavaTransformBuilder : public TypedTransformBuilder<jobject> {
+class JavaTransformBuilder : public TransformBuilder {
 public:
 	JavaTransformBuilder( JNIEnv * env, jobject obj );
 	virtual ~JavaTransformBuilder();

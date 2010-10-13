@@ -35,7 +35,7 @@ public:
 };
 
 template< typename Result >
-class LSPL_EXPORT TypedTransformResult : public TransformResult {
+class TypedTransformResult : public TransformResult {
 public:
 	TypedTransformResult( Result value ) : value( value ) {}
 	virtual ~TypedTransformResult() {}

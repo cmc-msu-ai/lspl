@@ -38,6 +38,8 @@ public:
 template< typename Result >
 class LSPL_EXPORT TypedTransform : public Transform {
 public:
+	TypedTransform() {}
+	virtual ~TypedTransform() {}
 
 	/**
 	 * Применить преобразование к варианту сопоставления.

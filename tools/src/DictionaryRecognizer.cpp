@@ -1,6 +1,7 @@
 /*
  * Author: Antonov Vadim (avadim@gmail.com)
  */
+#include "lspl/base/BaseInternal.h"
 
 #include <algorithm>
 #include <iostream>
@@ -8,7 +9,6 @@
 #include <string>
 
 #include "DictionaryRecognizer.h"
-#include "lspl/base/BaseInternal.h"
 #include "lspl/patterns/PatternBuilder.h"
 #include "lspl/text/Loop.h"
 #include "lspl/text/Match.h"

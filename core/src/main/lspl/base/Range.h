@@ -24,10 +24,10 @@ public:
 	bool IsIncludeRange(const Range &range) const;
 	bool IsIntersectRange(const Range &range) const;
 
-	friend bool operator<(const Range& rang1, const Range& range2);
-	friend bool operator>(const Range& rang1, const Range& range2);
-	friend bool operator==(const Range& rang1, const Range& range2);
-	friend bool operator!=(const Range& rang1, const Range& range2);
+	friend LSPL_EXPORT bool operator<(const Range& rang1, const Range& range2);
+	friend LSPL_EXPORT bool operator>(const Range& rang1, const Range& range2);
+	friend LSPL_EXPORT bool operator==(const Range& rang1, const Range& range2);
+	friend LSPL_EXPORT bool operator!=(const Range& rang1, const Range& range2);
 
 public:
 	uint start;
