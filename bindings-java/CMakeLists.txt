@@ -1,22 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 project(LSPL_JAVA)
 
-find_package(Boost)
+include(../common/CMakeCommon.cmake)
+
 find_package(JNI)
 
-if(MINGW)
-    SET(MY_TARGETLIB_PREFIX "")
-    SET(MY_TARGETLIB_SUFFIX ".dll")
-else(MINGW)
-    SET(MY_TARGETLIB_PREFIX "lib")
-    SET(MY_TARGETLIB_SUFFIX ".so")
-endif(MINGW)
-
-include_directories( ../deps/ ../core/src/main/ src_cpp ${JNI_INCLUDE_DIRS} ${Boost_INCLUDE_DIR} )
-link_directories(
-	${LSPL_JAVA_SOURCE_DIR}/../core/build/
-	${LSPL_JAVA_SOURCE_DIR}/../core/build-win32/
-)
+include_directories( src_cpp ${JNI_INCLUDE_DIRS} )
 
 ### lspl.jar
 

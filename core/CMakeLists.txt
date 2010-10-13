@@ -1,37 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 project(LSPL_CORE)
 
-find_package(Boost)
+include(../common/CMakeCommon.cmake)
 
-if(MINGW)
-    include_directories( ../deps/ src/main ../deps-win32/include/ ${Boost_INCLUDE_DIR})
-
-    link_directories(
-    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/AgramtabLib/
-    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/GraphanLib/
-    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/LemmatizerLib/
-    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/MorphWizardLib/
-    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/StructDictLib/
-    	${LSPL_CORE_SOURCE_DIR}/../deps-win32/lib/
-    )
-
-
-    SET(MY_TARGETLIB_PREFIX "")
-    SET(MY_TARGETLIB_SUFFIX ".dll")
-else(MINGW)
-    include_directories( ../deps/ src/main ${Boost_INCLUDE_DIR} )
-
-    link_directories(
-    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/AgramtabLib/
-    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/GraphanLib/
-    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/LemmatizerLib/
-    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/MorphWizardLib/
-    	${LSPL_CORE_SOURCE_DIR}/../deps/aot/Source/StructDictLib/
-    )
-
-    SET(MY_TARGETLIB_PREFIX "lib")
-    SET(MY_TARGETLIB_SUFFIX ".so")
-endif(MINGW)
+include_directories( src/main )
 
 ### lspl-core library
 
