@@ -3,6 +3,7 @@ package ru.lspl.gui.text;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.jface.text.TextViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.ModifyEvent;
@@ -19,8 +20,6 @@ import ru.lspl.gui.model.DocumentListenerAdapter;
 import ru.lspl.gui.text.listeners.ITextSelectionListener;
 import ru.lspl.text.Transition;
 
-import com.onpositive.richtexteditor.viewer.RichTextViewer;
-
 /**
  * @author alno
  */
@@ -28,7 +27,7 @@ public class TextEditor extends Composite implements DocumentHolder {
 
 	private static final Transition[] NO_TRANSITIONS = new Transition[0];
 
-	private final RichTextViewer textViewer;
+	private final TextViewer textViewer;
 
 	private final StyleRangeBuilder rangeBuilder;
 
@@ -69,7 +68,7 @@ public class TextEditor extends Composite implements DocumentHolder {
 	public TextEditor( Composite parent, int style ) {
 		super( parent, style );
 
-		textViewer = new RichTextViewer( this, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP );
+		textViewer = new TextViewer( this, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL | SWT.WRAP );
 		textViewer.getTextWidget().addMouseMoveListener( new MouseMoveListener() {
 
 			@Override
