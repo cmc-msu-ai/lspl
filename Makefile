@@ -36,20 +36,10 @@ java-win32: core-win32
 # Tools
 ###############################################################################
 
-./tools/build/Makefile:
-	cd tools && ./configure-linux.sh
-
-./tools/build-win32/Makefile:
-	cd tools && ./configure-win32.sh
-
-./tools/build/lspl-find: ./core/build/liblspl.so ./tools/build/Makefile
-	make -C tools/build
-
-./tools/build-win32/lspl-find.exe: ./core/build-win32/lspl.dll ./tools/build-win32/Makefile
-	make -C tools/build-win32
-
-tools: ./tools/build/lspl-find
-tools-win32: ./tools/build-win32/lspl-find.exe
+tools: core
+	make -C tools linux64
+tools-win32: core-win32
+	make -C tools win32
 
 ###############################################################################
 # GUI

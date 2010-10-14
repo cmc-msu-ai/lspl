@@ -43,7 +43,7 @@ void AotGraphan::setupRml() {
 
 	if ( const char * rml = findRml() ) {
 #ifdef WIN32
-			SetEnvironmentVariable( "RML", rml );
+			putenv( (std::string( "RML=") + rml).c_str() );
 #else
 			setenv( "RML", rml, 1 );
 #endif

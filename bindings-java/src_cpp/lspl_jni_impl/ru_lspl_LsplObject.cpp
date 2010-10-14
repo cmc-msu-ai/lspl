@@ -31,11 +31,6 @@
 
 #include <sstream>
 
-#ifdef WIN32
-	#include <windows.h>
-	#include <winuser.h>
-#endif
-
 using namespace lspl::java;
 using namespace lspl::patterns;
 using namespace lspl::patterns::java;
@@ -92,11 +87,11 @@ JNIEXPORT void JNICALL Java_ru_lspl_LsplObject_setRml(JNIEnv * env, jclass cls, 
 	try {
 		std::string s = in( env, rml );
 
-		#ifdef WIN32
-				SetEnvironmentVariable( "RML", s.c_str() );
-		#else
-				setenv( "RML", s.c_str(), 1 );
-		#endif
+#ifdef WIN32
+		putenv( ("RML=" + s).c_str() );
+#else
+		setenv( "RML", s.c_str(), 1 );
+#endif
 	} catch ( ... ) {
 		throwRuntimeException( env, "Unknown error" );
 	}

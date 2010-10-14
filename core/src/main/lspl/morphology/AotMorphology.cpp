@@ -11,11 +11,6 @@
 
 #include <string.h>
 
-#ifdef WIN32
-	#include <windows.h>
-	#include <winuser.h>
-#endif
-
 #include "aot/Source/AgramtabLib/RusGramTab.h"
 #include "aot/Source/LemmatizerLib/Lemmatizers.h"
 #include "aot/Source/LemmatizerLib/Paradigm.h"
@@ -56,7 +51,7 @@ void AotMorphology::setupRml() {
 
 	if ( const char * rml = findRml() ) {
 #ifdef WIN32
-			SetEnvironmentVariable( "RML", rml );
+			putenv( (std::string( "RML=") + rml).c_str() );
 #else
 			setenv( "RML", rml, 1 );
 #endif
