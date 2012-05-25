@@ -132,6 +132,13 @@ struct AddRestrictionImpl {
 	Matcher & findLastMatcher( boost::ptr_vector<Matcher> & matchers, const Restriction * restriction ) const;
 };
 
+struct AddNormalizationRestrictionImpl {
+	template <typename Arg1>
+	struct result { typedef void type; };
+
+	void operator()( boost::ptr_vector<Restriction> & restrictions ) const;
+};
+
 struct AddBindingImpl {
 	template <typename Arg1, typename Arg2, typename Arg3>
 	struct result { typedef void type; };
