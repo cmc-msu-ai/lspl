@@ -145,8 +145,8 @@ Matcher & AddRestrictionImpl::findLastMatcher( boost::ptr_vector<Matcher> & matc
 
 void AddNormalizationRestrictionImpl::operator()( boost::ptr_vector<Restriction> & restrictions ) const {
 	AgreementRestriction *agrRestr = new AgreementRestriction();
-	agrRestr->args.push_back(new AttributeExpression(new CurrentAnnotationExpression(), lspl::text::attributes::AttributeKey::BASE));
-	agrRestr->args.push_back(new ConstantExpression("1"));
+	agrRestr->addArgument(new AttributeExpression(new CurrentAnnotationExpression(), lspl::text::attributes::AttributeKey::BASE));
+	agrRestr->addArgument(new ConstantExpression("1"));
 	Restriction * restriction = agrRestr;
 	restrictions.push_back( restriction );
 }

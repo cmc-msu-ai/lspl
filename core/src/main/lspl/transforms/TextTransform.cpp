@@ -142,7 +142,7 @@ void TextTransform::buildStr( std::string & str, const lspl::text::MatchVariant 
 
 		AgreementRestriction* restrictions=const_cast<AgreementRestriction*>(dynamic_cast<const AgreementRestriction*>(&wordvar->restrictions[0]));
 		AttributeExpression* attr;
-		if(attr=const_cast<AttributeExpression*>(dynamic_cast<const AttributeExpression*>(&restrictions->args[0])));
+		if(attr=const_cast<AttributeExpression*>(dynamic_cast<const AttributeExpression*>(&restrictions->getArgs()[0])));
 		else {
 			if ( str.length() > 0 )
 				str += " ";
