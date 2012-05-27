@@ -49,6 +49,10 @@ public:
 	virtual bool containsVariables() const;
 	virtual bool containsCurrentAnnotation() const;
 
+	virtual boost::ptr_vector<expressions::Expression> & getArgs() {
+		return args;
+	}
+
 private:
 
 	/**

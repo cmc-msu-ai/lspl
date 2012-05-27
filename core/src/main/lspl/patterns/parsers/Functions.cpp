@@ -33,6 +33,8 @@
 
 #include "../../morphology/Morphology.h"
 
+#include <iostream>
+
 using namespace lspl::text::attributes;
 
 using namespace lspl::patterns::restrictions;
@@ -139,6 +141,14 @@ Matcher & AddRestrictionImpl::findLastMatcher( boost::ptr_vector<Matcher> & matc
 			return matchers[i];
 
 	return matchers[ 0 ];
+}
+
+void AddNormalizationRestrictionImpl::operator()( boost::ptr_vector<Restriction> & restrictions ) const {
+	AgreementRestriction *agrRestr = new AgreementRestriction();
+	agrRestr->addArgument(new AttributeExpression(new CurrentAnnotationExpression(), lspl::text::attributes::AttributeKey::BASE));
+	agrRestr->addArgument(new ConstantExpression("1"));
+	Restriction * restriction = agrRestr;
+	restrictions.push_back( restriction );
 }
 
 void AddBindingImpl::operator()( boost::ptr_map<AttributeKey,Expression> & bindings, AttributeKey att, Expression * exp ) const {

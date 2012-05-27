@@ -175,7 +175,7 @@ public:
         	alternative = ( matcher >> *(matcher|patternRestrictions) >> !bindingList >> !alternativeTransformSource )
         		[ addAlternativeDefinition( pattern.alternatives, alternative.matchers, alternative.bindings, construct_<std::string>( arg1, arg2 ), alternative.transformSource ) ];
 
-        	alternativeTransformSource = str_p("=>") >> lexeme_d[ *~chset_p("\n|") ][ alternative.transformSource = construct_<std::string>( arg1, arg2 ) ];
+        	alternativeTransformSource = str_p("=text>") >> lexeme_d[ *~chset_p("\n|") ][ alternative.transformSource = construct_<std::string>( arg1, arg2 ) ];
 
         	patternName = lexeme_d[ +chset_p("a-zA-Z" RUS_ALPHA "-") >> ~epsilon_p(chset_p("a-zA-Z" RUS_ALPHA "-")) ];
 
