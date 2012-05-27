@@ -4,6 +4,7 @@ set(CMAKE_SYSTEM_NAME Windows)
 # which compilers to use for C and C++
 set(CMAKE_C_COMPILER i586-mingw32msvc-gcc)
 set(CMAKE_CXX_COMPILER i586-mingw32msvc-g++)
+set(CMAKE_RC_COMPILER i586-mingw32msvc-windres)
 
 # here is the target environment located
 # ~/.migw-root should contain libraries required to compile (Boost, Java)
