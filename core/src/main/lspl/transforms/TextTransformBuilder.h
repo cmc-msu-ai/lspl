@@ -18,11 +18,11 @@
 
 namespace lspl { namespace transforms {
 
-class TextTransformBuilder : public lspl::transforms::TransformBuilder {  
+class LSPL_EXPORT TextTransformBuilder : public lspl::transforms::TransformBuilder {
   public:
-    TextTransformBuilder(NamespaceRef space) : space( space ) {};
+    TextTransformBuilder(NamespaceRef space);
     ~TextTransformBuilder() {};
-    
+
     TextTransform * build( const lspl::patterns::Alternative & alt, const std::string & source );
   public:
 	NamespaceRef space;

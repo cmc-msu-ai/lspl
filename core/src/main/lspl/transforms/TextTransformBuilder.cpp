@@ -20,10 +20,13 @@ using namespace phoenix;
 
 namespace lspl { namespace transforms {
 
-TextTransform * TextTransformBuilder::build( 
-  const lspl::patterns::Alternative & alt, 
+TextTransformBuilder::TextTransformBuilder(NamespaceRef space) : space( space ) {
+}
+
+TextTransform * TextTransformBuilder::build(
+  const lspl::patterns::Alternative & alt,
   const std::string & source )
-{  
+{
 	lspl::patterns::ParserAlt pars(space);
 	boost::ptr_vector<lspl::patterns::matchers::Matcher>* matchers;
 	if(!boost::spirit::parse( source.c_str(), pars[ var(matchers) = arg1 ], space_p ).full) {

@@ -22,6 +22,8 @@
 #include <lspl/text/Text.h>
 #include <lspl/text/readers/PlainTextReader.h>
 
+ #include <lspl/transforms/TextTransformBuilder.h>
+
 using lspl::uint;
 
 void printHelp() {
@@ -103,6 +105,10 @@ void processGoal( const lspl::patterns::PatternRef & goal, const lspl::text::Tex
 
 		out << "\t\t\t<match startPos=\"" << match->getRangeStart() << "\" endPos=\"" << match->getRangeEnd() << "\">\n";
 		out << "\t\t\t\t<fragment>" << match->getRangeString() << "</fragment>\n";
+
+		for ( uint variantIndex = 0; variantIndex < match->getVariantCount(); ++ variantIndex )
+			out << "\t\t\t\t<result>" << match->getVariant(variantIndex)->getTransformResult<std::string>() << "</result>\n";
+
 		out << "\t\t\t</match>\n";
 	}
 
@@ -173,7 +179,7 @@ int main(int argc, char ** argv) {
 	}
 
 	lspl::NamespaceRef ns = new lspl::Namespace();
-	lspl::patterns::PatternBuilderRef builder = new lspl::patterns::PatternBuilder( ns );
+	lspl::patterns::PatternBuilderRef builder = new lspl::patterns::PatternBuilder( ns, new lspl::transforms::TextTransformBuilder( ns ) );
 	lspl::text::readers::PlainTextReader r;
 
 	if ( pin ) {
