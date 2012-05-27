@@ -185,7 +185,7 @@ int main(int argc, char ** argv) {
 	lspl::patterns::PatternList goals = buildGoals( builder, argv, optind, argc, *err );
 	lspl::text::TextRef text = r.readFromStream( *in );
 
-	*out << "<texts>\n";
+	*out << "<?xml version=\"1.0\" encoding=\"windows-1251\"?>\n<texts>\n";
 	*out << "\t<text>\n";
 
 	for ( uint goalIndex = 0; goalIndex < goals.size(); ++ goalIndex ) {
