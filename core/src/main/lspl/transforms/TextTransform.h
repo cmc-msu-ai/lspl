@@ -8,10 +8,22 @@
 #include <boost/ptr_container/ptr_vector.hpp>
 #include "../patterns/matchers/Forward.h"
 
+#include <map>
+
+#include "../patterns/Alternative.h"
+#include "../text/Forward.h"
+#include "../text/attributes/AttributeKey.h"
+#include "../text/attributes/AttributeValue.h"
+#include "../patterns/matchers/Variable.h"
+
 namespace lspl { namespace transforms {
 
 class LSPL_EXPORT TextTransform : public TypedTransform<std::string> {
   public:
+	typedef std::multimap< patterns::matchers::Variable, text::TransitionConstRef > Map;
+	typedef Map::const_iterator ConstIterator;
+	typedef std::pair<ConstIterator,ConstIterator> ConstRange;
+
 	TextTransform();
 	virtual ~TextTransform();
 
@@ -23,9 +35,7 @@ class LSPL_EXPORT TextTransform : public TypedTransform<std::string> {
     
     virtual std::string apply( const lspl::text::MatchVariant & v ) const;  
 	void buildStr( std::string & str, const lspl::text::MatchVariant & v, const boost::ptr_vector<lspl::patterns::matchers::Matcher> & matchers ) const;
- 	void buildStr( std::string & str, const lspl::text::MatchVariant & v, const lspl::patterns::matchers::Matcher & matchers ) const;
-//	void buildStr( std::string & str, const lspl::text::LoopIterationList & iterations, const lspl::patterns::matchers::Matcher & matchers ) const;
-  
+
   private :
 	boost::ptr_vector<lspl::patterns::matchers::Matcher> *matchers;
 };

@@ -71,6 +71,10 @@ void AddTokenMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, con
 		matchers.push_back( new TokenMatcher( token ) );
 }
 
+void AddTokenMatcherNoRegexpImpl::operator()( boost::ptr_vector<Matcher> & matchers, const std::string & token ) const {
+	matchers.push_back( new TokenMatcher( token ) );
+}
+
 void AddLoopMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, uint min, uint max, std::vector<uint> & alternativesCount ) const {
 	LoopMatcher * matcher = new LoopMatcher( min, max );
 

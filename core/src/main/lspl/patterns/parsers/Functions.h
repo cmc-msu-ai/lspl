@@ -55,6 +55,14 @@ struct AddTokenMatcherImpl {
 	void operator()( boost::ptr_vector<Matcher> & matchers, const std::string & token ) const;
 };
 
+struct AddTokenMatcherNoRegexpImpl {
+
+	template <typename Arg1, typename Arg2>
+	struct result { typedef void type; };
+
+	void operator()( boost::ptr_vector<Matcher> & matchers, const std::string & token ) const;
+};
+
 struct AddLoopMatcherImpl {
 
 	template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>

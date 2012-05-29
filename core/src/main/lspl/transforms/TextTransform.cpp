@@ -22,6 +22,9 @@
 #include "../patterns/expressions/ConstantExpression.h"
 #include "../patterns/Pattern.h"
 
+#include "ContextRetriever.h"
+#include "../patterns/matchers/Context.h"
+
 #include "aot/Source/AgramtabLib/RusGramTab.h"
 #include "aot/Source/LemmatizerLib/Lemmatizers.h"
 #include "aot/Source/LemmatizerLib/Paradigm.h"
@@ -57,159 +60,83 @@ std::string TextTransform::apply( const MatchVariant & matchVariant  ) const {
 	return result;
 }
 
-void TextTransform::buildStr( std::string & str, const MatchVariant & v, const boost::ptr_vector<Matcher> & matchers ) const {
-	for ( uint i = 0; i < matchers.size(); ++ i )
-		buildStr( str, v, matchers.at(i) );
-}
+void TextTransform::buildStr( std::string & result, const MatchVariant & matchVariant, const boost::ptr_vector<Matcher> & matchers ) const {
+	ContextRetriever cr;
+	patterns::matchers::Context c = cr.apply(matchVariant);
+	for ( uint i = 0; i < matchers.size(); ++ i ) {
+		//лексема
+		if ( matchers.at(i).type == Matcher::TOKEN ) {
+			const TokenMatcher * token = dynamic_cast<const TokenMatcher*>( &matchers.at(i) );
+			if ( result.length() > 0 )
+				result += " ";
+			result += token->token;
+		} else 
+		//переменная
+		if ( matchers.at(i).type == Matcher::WORD ) {
+			const WordMatcher * wordvar = dynamic_cast<const WordMatcher*>( &matchers.at(i) );
+			ConstRange val=c.getValues(wordvar->variable);
 
-/*void TextTransform::buildStr( std::string & str, const text::LoopIterationList & iterations, const Matcher & matchers ) const {
-	for ( uint i = 0; i < iterations.size(); ++ i ) {
-		if ( const Word * word = dynamic_cast<const Word*>( &iterations[ i ]->getVariant( 0 ) ) ) {
-			if(matchers.variable==word->alternative.getMatcher( i ).variable) {
-			}
-			if ( str.length() > 0 )
-				str += " ";
-			str += word->getBase();
-		} else if ( const Loop * loop = dynamic_cast<const Loop*>( &iterations[ i ]->getVariant( 0 ) ) ) {
-			buildStr( str, loop->getIterations() );
-		} else if ( const Match * match = dynamic_cast<const Match*>( &iterations[ i ]->getVariant( 0 ) ) ) {
-			buildStr( str, *match->getVariants().at( 0 ) );
-		}
-//		buildStr( str, iterations[ i ]->getVariant( 0 ), matchers );
-	}
-}
-*/
-void TextTransform::buildStr( std::string & str, const lspl::text::MatchVariant & v, const Matcher & matchers ) const {
-/*	std::vector<AttributeKey> attrkeys;
-	std::vector<AttributeValue> attrvals;
-	std::vector<AttributeValue> formvals;
+			//переменная не найдена. либо пустой цикл, либо неизвестное имя
+			if(val.first==val.second)
+				continue;
+				
+			for(ConstIterator it=val.first; it!=val.second; it++) {
+				const Word * word = dynamic_cast<const Word*>( &*it->second );
 
-	attrkeys.push_back(AttributeKey::CASE);
-	attrkeys.push_back(AttributeKey::NUMBER);
-	attrkeys.push_back(AttributeKey::GENDER);
-	attrkeys.push_back(AttributeKey::DOC);
-	attrkeys.push_back(AttributeKey::TENSE);
-	attrkeys.push_back(AttributeKey::ANIMATE);
-	attrkeys.push_back(AttributeKey::FORM);
-	attrkeys.push_back(AttributeKey::MODE);
-	attrkeys.push_back(AttributeKey::PERSON);
-	attrkeys.push_back(AttributeKey::REFLEXIVE);
-*/
-//	std::cout<<v.alternative.getMatcherCount()<<std::endl;
-
-	if ( matchers.type == lspl::patterns::matchers::Matcher::TOKEN ) {
-		const TokenMatcher * token = dynamic_cast<const TokenMatcher*>( &matchers );
-		if ( str.length() > 0 )
-			str += " ";
-		str += token->token;
-	} else if ( matchers.type == lspl::patterns::matchers::Matcher::WORD ) {
-		const WordMatcher * wordvar = dynamic_cast<const WordMatcher*>( &matchers );
-		const Word * word=NULL;
-		for(int j=0; j<v.alternative.getMatcherCount(); j++) {
-/*			if(const Loop * loop = dynamic_cast<const Loop*>(&*v[j])) {
-				buildStr( str, loop->getIterations(), matchers );
-			}
-			else
-*/				if(wordvar->variable==v.alternative.getMatcher( j ).variable) {
-					word = dynamic_cast<const Word*>( &*v[j] );
-					break;
+				//нет правил преобразования слова
+				if(!wordvar->restrictions.size()) {
+					if ( result.length() > 0 )
+						result += " ";
+					result += word->getToken();
+					continue;
 				}
-		}
-		if(!word) {
-			std::cout<<"'Unknown variable "<<wordvar->variable<<" '"<<std::endl;
-			return;
-		}
-			//получить коллекцию форм слова
-/*			boost::ptr_vector<morphology::WordForm> forms;
-		
-		std::cout<<word->getBase()<<std::endl;
-		morphology::Morphology::instance().appendWordForms(word->getBase(), forms);
-		lspl::morphology::AotMorphology *aot=dynamic_cast<lspl::morphology::AotMorphology*>(&morphology::Morphology::instance());
-		char str[1000];
-		string stri=word->getBase();
-		aot->lemmatizer->GetAllAncodesQuick((BYTE*)stri.c_str(),true,(BYTE*)str,false);
-		std::cout<<str<<std::endl;
-		std::cout<<forms.size()<<std::endl;
-		for(uint k=0; k<forms.size(); k++) 
-			std::cout<<forms[k].getBase()<<std::endl;
-*/				
-		if(!wordvar->restrictions.size()) {
-			if ( str.length() > 0 )
-				str += " ";
-			str += word->getToken();
-			return;
+
+				AgreementRestriction* restrictions=const_cast<AgreementRestriction*>(dynamic_cast<const AgreementRestriction*>(&wordvar->restrictions[0]));
+				AttributeExpression* attr;
+				if(attr=const_cast<AttributeExpression*>(dynamic_cast<const AttributeExpression*>(&restrictions->getArgs()[0])));
+				else {
+					//есть правила согласования слова. пока не обрабатываются
+					if ( result.length() > 0 )
+						result += " ";
+					result += word->getToken();
+					continue;
+				}
+				
+				//Нормализовать слово. если есть, то всегда идет первым атрибутом
+				if(attr->attribute==AttributeKey::BASE) {
+					if ( result.length() > 0 )
+						result += " ";
+					result += word->getBase();
+					continue;
+				}
+
+				/*
+				 * здесь будет преобразование слова по заданным аттрибутам
+				 */
+
+				//если ничего выше не сработало, то вернуть слово как в тексте
+				if ( result.length() > 0 )
+					result += " ";
+				result += word->getToken();
+			}
+		} else
+		//шаблон
+		if ( matchers.at(i).type == Matcher::PATTERN ) {
+			const PatternMatcher * patternvar = dynamic_cast<const PatternMatcher*>( &matchers.at(i) );
+			ConstRange val=c.getValues(patternvar->variable);
+
+			//переменная не найдена. либо пустой цикл, либо неизвестное имя
+			if(val.first==val.second)
+				continue;
+
+			for(ConstIterator it=val.first; it!=val.second; it++) {
+				const Match * match = dynamic_cast<const Match*>( &*it->second );
+				//рекурсивно вывести шаблон
+				buildStr(result, *match->getVariants().at( 0 ), *(patternvar->pattern.alternatives.at(0).getRightMatchers()));
+			}
 		}
 
-		AgreementRestriction* restrictions=const_cast<AgreementRestriction*>(dynamic_cast<const AgreementRestriction*>(&wordvar->restrictions[0]));
-		AttributeExpression* attr;
-		if(attr=const_cast<AttributeExpression*>(dynamic_cast<const AttributeExpression*>(&restrictions->getArgs()[0])));
-		else {
-			if ( str.length() > 0 )
-				str += " ";
-			str += word->getToken();
-			return;
-		}
-		ConstantExpression* val;
-
-		//Нормализовать слово
-		if(attr->attribute==AttributeKey::BASE) {
-			if ( str.length() > 0 )
-				str += " ";
-			str += word->getBase();
-			return;
-		}
-			//найти нужную форму слова
-/*			for(uint j=0; j<attrkeys.size(); j++) {
-			for(uint k=0; k<wordvar->restrictions.size(); k++) {
-				restrictions=const_cast<AgreementRestriction*>(dynamic_cast<const AgreementRestriction*>(&wordvar->restrictions[k]));
-				attr=const_cast<AttributeExpression*>(dynamic_cast<const AttributeExpression*>(&restrictions->args[0]));
-				val=const_cast<ConstantExpression*>(dynamic_cast<const ConstantExpression*>(&restrictions->args[1]));
-				if(attrkeys[j] == attr->attribute)
-					attrvals.push_back(val->value);
-				else
-					attrvals.push_back(word->getAttribute(attrkeys[j]));
-			}
-		}
-			uint n=0;
-		bool flag=true;
-		for(n=0; n<forms.size(); n++) {
-			for(uint k=0; k<attrkeys.size(); k++) {
-				formvals.push_back(forms[n].getAttribute(0,attrkeys[k]));
-			}
-			for(uint k=0; k<attrvals.size(); k++) {
-				if(attrvals[k]!=formvals[k])
-					flag=false;
-			}
-			formvals.clear();
-			if(flag)
-				break;	
-		}
-		n--;
-			if(!flag) {
-			std::cout<<"'No requested word form found for var "<<wordvar->variable<<" '"<<std::endl;
-			continue;
-		}
-*/			
-		
-		if ( str.length() > 0 )
-			str += " ";
-		str += word->getToken();
-	} else if ( matchers.type == lspl::patterns::matchers::Matcher::PATTERN ) {
-		const PatternMatcher * patternvar = dynamic_cast<const PatternMatcher*>( &matchers );
-		const Match * match = NULL;
-		for(int j=0; j<v.alternative.getMatcherCount(); j++) 
-			if(patternvar->variable==v.alternative.getMatcher( j ).variable) {
-				match = dynamic_cast<const Match*>( &*v[j] );
-				break;
-			}
-		if(!match) {
-			std::cout<<"'Unknown variable "<<patternvar->variable<<" '"<<std::endl;
-			return;
-		}
-
-		buildStr( str, *match->getVariants().at( 0 ), patternvar->pattern.alternatives.at(0).getMatchers() );
 	}
-
 }
 
 } } // namespace lspl::transforms

@@ -124,7 +124,7 @@ public:
 */
         	function<AddImpl> add;
 			function<AddRestrictionImpl> addRestriction;
-        	function<AddTokenMatcherImpl> addTokenMatcher;
+        	function<AddTokenMatcherNoRegexpImpl> addTokenMatcher;
         	function<AddWordMatcherImpl> addWordMatcher;
         	function<AddPatternMatcherImpl> addPatternMatcher( AddPatternMatcherImpl( *self->space, typeSymbol ) );
 			function<CreateAgreementRestrictionImpl> createAgreementRestriction;

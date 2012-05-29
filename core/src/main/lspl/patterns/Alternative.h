@@ -17,6 +17,7 @@
 
 #include <memory>
 #include <boost/ptr_container/ptr_map.hpp>
+#include <boost/ptr_container/ptr_vector.hpp>
 
 namespace lspl { namespace patterns {
 
@@ -135,6 +136,21 @@ public:
 
 	const Pattern & getPattern() const { return *pattern; }
 
+	/**
+	 * Задать правую часть
+	 */
+	void setRightMatchers(boost::ptr_vector<lspl::patterns::matchers::Matcher>* rMatchers) {
+		rightMatchers = rMatchers;
+	}
+
+	/**
+	 * Получить правую часть
+	 */
+	const boost::ptr_vector<lspl::patterns::matchers::Matcher>* getRightMatchers() const {
+		return rightMatchers;
+	}
+
+
 private:
 	void appendDependencies( const matchers::Matcher & matcher );
 	void appendStartMatchers( const boost::ptr_vector<matchers::Matcher> & matchers ) const;
@@ -165,6 +181,12 @@ private:
 	std::vector<const Pattern *> dependencies;
 
 	mutable std::vector<const matchers::Matcher*> startMatchers;
+
+	/**
+	 * Правая часть шаблона
+	 */
+	boost::ptr_vector<lspl::patterns::matchers::Matcher>* rightMatchers;
+
 
 	friend class Pattern;
 };
