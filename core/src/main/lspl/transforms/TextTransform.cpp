@@ -132,7 +132,8 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 			for(ConstIterator it=val.first; it!=val.second; it++) {
 				const Match * match = dynamic_cast<const Match*>( &*it->second );
 				//рекурсивно вывести шаблон
-				buildStr(result, *match->getVariants().at( 0 ), *(patternvar->pattern.alternatives.at(0).getRightMatchers()));
+				const TextTransform *tt=dynamic_cast<const TextTransform*>(&patternvar->pattern.alternatives.at(0).getTransform());
+				buildStr(result, *match->getVariants().at( 0 ), tt->getMatchers());
 			}
 		}
 

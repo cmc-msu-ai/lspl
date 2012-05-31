@@ -32,6 +32,10 @@ class LSPL_EXPORT TextTransform : public TypedTransform<std::string> {
     ): 
     	matchers( matchers )
     {}
+
+	const boost::ptr_vector<lspl::patterns::matchers::Matcher> & getMatchers() const {
+		return *matchers;
+	}
     
     virtual std::string apply( const lspl::text::MatchVariant & v ) const;  
 	void buildStr( std::string & str, const lspl::text::MatchVariant & v, const boost::ptr_vector<lspl::patterns::matchers::Matcher> & matchers ) const;
