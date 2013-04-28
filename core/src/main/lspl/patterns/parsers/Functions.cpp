@@ -19,6 +19,7 @@
 #include "../matchers/RegexpMatcher.h"
 #include "../matchers/PatternMatcher.h"
 #include "../matchers/LoopMatcher.h"
+#include "../matchers/StringMatcher.h"
 
 #include "../expressions/VariableExpression.h"
 #include "../expressions/AttributeExpression.h"
@@ -73,6 +74,10 @@ void AddTokenMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, con
 
 void AddTokenMatcherNoRegexpImpl::operator()( boost::ptr_vector<Matcher> & matchers, const std::string & token ) const {
 	matchers.push_back( new TokenMatcher( token ) );
+}
+
+void AddStringMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, const std::string & token ) const {
+	matchers.push_back( new StringMatcher( token ) );
 }
 
 void AddLoopMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, uint min, uint max, std::vector<uint> & alternativesCount ) const {

@@ -52,7 +52,7 @@ bool AgreementRestriction::matches( const text::Transition * currentAnnotation, 
 }
 
 void AgreementRestriction::dump( std::ostream & out, const std::string & tabs ) const {
-	if ( args.size() <= 1 )
+	if ( args.size() <= 0 )
 		throw std::logic_error( "Too less arguments" );
 
 	args[0].dump( out );

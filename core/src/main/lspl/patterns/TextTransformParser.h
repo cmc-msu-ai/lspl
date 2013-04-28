@@ -1,11 +1,13 @@
 
-#ifndef _LSPL_PARSERALT_H_
-#define _LSPL_PARSERALT_H_
+#ifndef _LSPL_TEXTTRANSFORMPARSER_H_
+#define _LSPL_TEXTTRANSFORMPARSER_H_
 
 #include "../base/BaseInternal.h"
 
 #define PHOENIX_LIMIT 4
 #define BOOST_SPIRIT_CLOSURE_LIMIT 4
+
+//#define BOOST_SPIRIT_DEBUG
 
 #include "../utils/RusConsts.h"
 
@@ -51,7 +53,7 @@ using namespace lspl::patterns::expressions;
 using namespace lspl::patterns::matchers;
 using namespace lspl::patterns::parsers;
 
-LSPL_REFCOUNT_CLASS( lspl::patterns::ParserAlt );
+LSPL_REFCOUNT_CLASS( lspl::patterns::TextTransformParser );
 
 namespace lspl { namespace patterns {
 
@@ -66,7 +68,7 @@ struct transformClosure : boost::spirit::closure< transformClosure, boost::ptr_v
 	member1 matchers;
 };
 
-class ParserAlt : public grammar<ParserAlt, transformClosure::context_t> {
+class TextTransformParser : public grammar<TextTransformParser, transformClosure::context_t> {
 public:
 
 	struct AgreementRestrictionClosure : boost::spirit::closure< AgreementRestrictionClosure, Restriction *, boost::ptr_vector<Expression> > {
@@ -113,12 +115,12 @@ public:
 */
 	template <typename ScannerT> class definition {
     public:
-  		definition( const ParserAlt & self_c ) : variable( typeSymbol ) {
- 	    	ParserAlt * self = const_cast<ParserAlt *>( &self_c );
+  		definition( const TextTransformParser & self_c ) : variable( typeSymbol ) {
+ 	    	TextTransformParser * self = const_cast<TextTransformParser *>( &self_c );
  
 
 /*       	assertion<Errors> expect_restriction_end(RestrictionEndMissing);
-        	assertion<Errors> expect_restriction_body(NoRestrictionBody);
+        	assertion<Errors> expect_restriction_body(NoRestrictionBody);boost spirit fails parse space
           	assertion<Errors> expect_closing_sgl_quote(ClosingSglQuoteMissed);
         	assertion<Errors> expect_closing_dbl_quote(ClosingDblQuoteMissed);
 */
@@ -139,13 +141,24 @@ public:
 
 //       	endRestriction = expect_restriction_end( ch_p('>') );
 
-			source = eps_p[ self->matchers = new boost::ptr_vector<Matcher>() ] >> textExtractionTemplate;
+/*        	BOOST_SPIRIT_DEBUG_RULE(source);
+        	BOOST_SPIRIT_DEBUG_RULE(textExtractionTemplate);
+        	BOOST_SPIRIT_DEBUG_RULE(extractionTemplate);
+        	BOOST_SPIRIT_DEBUG_RULE(matcher);
+        	BOOST_SPIRIT_DEBUG_RULE(patternRestrictions);
+        	BOOST_SPIRIT_DEBUG_RULE(tokenMatcher);
+        	BOOST_SPIRIT_DEBUG_RULE(wordMatcher);
+        	BOOST_SPIRIT_DEBUG_RULE(patternMatcher);
+        	BOOST_SPIRIT_DEBUG_RULE(normalizeElement);
+*/
+
+			source = eps_p[ self->matchers = new boost::ptr_vector<Matcher>() ] >> textExtractionTemplate >> !lexeme_d[*space_p];
 
 			/*шаблоны_извлечения_текста::= шаблон_извлечения { шаблон_извлечения} */
 			textExtractionTemplate = extractionTemplate >> *( extractionTemplate );
 
 			/*шаблон_извлечения ::= элемент_извлечения { элемент_извлечения } [ <операция_ согласования> ]*/
-			extractionTemplate = matcher >> *( matcher ) >> !( patternRestrictions  );
+			extractionTemplate = matcher >> !( patternRestrictions );
 			
 			/*элемент_извлечения ::= элемент-строка | элемент-слово | экземпляр_шаблона | нормализованный_элемент*/
 			matcher = tokenMatcher | wordMatcher | patternMatcher | normalizeElement;
@@ -169,14 +182,14 @@ public:
         	 
          	wordTypeName = lexeme_d[ speechPart[ wordMatcherName.speechPart = arg1 ] >> ~epsilon_p(chset_p("a-zA-Z")) ];
 
-	       	wordMatcher = ( wordType >> matcherVariable >> !wordRestriction )
-        		[ addWordMatcher( *(self->matchers), wordMatcher.base, wordMatcher.speechPart, matcher.index, matcher.restrictions ) ];
+	       	wordMatcher = ( wordType >> matcherVariable >> !( wordRestriction ))
+        		[ addWordMatcher( *(self->matchers), /*wordMatcher.base*/"", wordMatcher.speechPart, matcher.index, matcher.restrictions ) ];
 
         	wordType = lexeme_d[ speechPart[ wordMatcher.speechPart = arg1 ] >> ~epsilon_p(chset_p("a-zA-Z")) ];
 
-        	wordRestriction = ch_p('<')[ wordMatcher.base = "" ]
+        	wordRestriction = ch_p('<')/*[ wordMatcher.base = "" ]*/
         	    >> (
-        	    		( wordBase >> !(chset_p(";,") >> ( matcherRestriction[add( matcher.restrictions, arg1 )] % ',' )) ) |
+//        	    		( wordBase >> !(chset_p(";,") >> ( matcherRestriction[add( matcher.restrictions, arg1 )] % ',' )) ) |
         	    		( matcherRestriction[add( matcher.restrictions, arg1 )] % ',' )
         	    ) >> ch_p('>');
 
@@ -185,9 +198,9 @@ public:
         	/*
         	 * Парсер сопоставителя шаблонов
         	 */
-			patternMatcherName = ( patternName[ patternMatcherName.name = construct_<std::string>( arg1, arg2 ) ] >> matcherVariable )[ addPatternMatcher( *(self->matchers), patternMatcherName.name, matcher.index, matcher.restrictions ) ]; 
+//			patternMatcherName = ( patternName[ patternMatcherName.name = construct_<std::string>( arg1, arg2 ) ] >> matcherVariable )[ addPatternMatcher( *(self->matchers), patternMatcherName.name, matcher.index, matcher.restrictions ) ]; 
         	 
-        	patternMatcher = ( patternName[ patternMatcher.name = construct_<std::string>( arg1, arg2 ) ] >> matcherVariable >> !( '<' >> ( matcherRestriction[add( matcher.restrictions, arg1 )] % ',' ) >> '>' ) )[ addPatternMatcher( *(self->matchers), patternMatcher.name, matcher.index, matcher.restrictions ) ];
+        	patternMatcher = ( patternName[ patternMatcher.name = construct_<std::string>( arg1, arg2 ) ] >> matcherVariable >> !( wordRestriction ) )[ addPatternMatcher( *(self->matchers), patternMatcher.name, matcher.index, matcher.restrictions ) ];
 
         	patternName = lexeme_d[ +chset_p("a-zA-Z" RUS_ALPHA "-") >> ~epsilon_p(chset_p("a-zA-Z" RUS_ALPHA "-")) ];
 
@@ -205,8 +218,8 @@ public:
         	/*
         	 * Парсеры выражений
         	 */
-        	expression = ~eps_p( str_p( "AS" ) ) >> ( stringLiteralExpression | propertyExpression | literalExpression ) >>
-            	*( expression[ expression.exp = createConcatExpression( expression.exp, arg1 ) ] );
+        	expression = ~eps_p( str_p( "AS" ) ) >> ( /*stringLiteralExpression |*/ propertyExpression | literalExpression ); //>>
+//            	*( expression[ expression.exp = createConcatExpression( expression.exp, arg1 ) ] );
 
         	localExpression = attributeKey[ localExpression.exp = createCurrentAttributeExpression( arg1 ) ];
 
@@ -232,6 +245,7 @@ public:
         	for ( uint i = 0; i < AttributeValue::indexedCount(); ++ i ) {
         		attributeValue.add( AttributeValue( i ).getAbbrevation().c_str(), AttributeValue( i ) );
         	}
+
 		}
 
 		rule<ScannerT> const & start() const { return source; }
@@ -256,8 +270,8 @@ public:
 
 	};
 	
-    ParserAlt(NamespaceRef space) : space(space) {}
-    ~ParserAlt() {}
+    TextTransformParser(NamespaceRef space) : space(space) {}
+    ~TextTransformParser() {}
 
 	lspl::NamespaceRef space;
 	
@@ -313,4 +327,4 @@ public:
 
 } } // namespace lspl::patterns
 
-#endif /*_LSPL_PARSERALT_H_*/
+#endif /*_LSPL_TEXTTRANSFORMPARSER_H_*/

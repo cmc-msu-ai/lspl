@@ -55,6 +55,8 @@ set(LSPL_CORE_SOURCES
 	src/main/lspl/transforms/TransformBuilder.cpp
 	src/main/lspl/transforms/TextTransformBuilder.cpp
 	src/main/lspl/transforms/TextTransform.cpp
+	src/main/lspl/transforms/PatternTransformBuilder.cpp
+	src/main/lspl/transforms/PatternTransform.cpp
 	src/main/lspl/transforms/ContextRetriever.cpp
 
 	src/main/lspl/text/markup/Word.cpp

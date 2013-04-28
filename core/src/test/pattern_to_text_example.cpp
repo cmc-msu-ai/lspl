@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
 	builder->build("NA = {A}<1,3> =text> A '==NORMALIZE=>' #A");
 	//выводим шаблон NA (по его правилам!) в кв. скобках, и первое существительное (второе пропускается)
 	builder->build("NG = NA N1 N2 =text> '[' NA ']' N1");
-	//выводим прилагательное и шаьблон NG в кв. скобках (по его же правилам! т.е. N2 выведено не будет!)
+	//выводим прилагательное и шаблон NG в кв. скобках (по его же правилам! т.е. N2 выведено не будет!)
 	builder->build("NF = A1 NG =text> A1 '[' NG ']'");
 	lspl::patterns::PatternRef pattern = ns->getPatternByName("NF");
 

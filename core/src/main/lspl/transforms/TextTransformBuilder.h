@@ -30,4 +30,4 @@ class LSPL_EXPORT TextTransformBuilder : public lspl::transforms::TransformBuild
 
 } } // namespace lspl::transforms
 
-#endif /* _LSPL_TRANFORMS_TRANSFORMBUILDER_H_ */
+#endif /* _LSPL_TRANFORMS_TEXTTRANSFORMBUILDER_H_ */

@@ -8,6 +8,7 @@
 #ifndef _LSPL_MORPHOLOGY_AOTMORPHOLOGY_H_
 #define _LSPL_MORPHOLOGY_AOTMORPHOLOGY_H_
 
+#include <cstdlib>
 #include "Morphology.h"
 
 class CLemmatizer;
@@ -29,6 +30,9 @@ public:
 
 	std::string getAttributesString( uint64 attValues );
 
+	bool getParadigm(std::string word, std::vector<CFormInfo> &form);
+	int getSP(const char *code) const;
+	
 	std::string upcase( const char * str );
 	std::string upcase( const char * start, const char * end );
 

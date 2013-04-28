@@ -175,7 +175,7 @@ public:
         	alternative = ( matcher >> *(matcher|patternRestrictions) >> !bindingList >> !alternativeTransformSource )
         		[ addAlternativeDefinition( pattern.alternatives, alternative.matchers, alternative.bindings, construct_<std::string>( arg1, arg2 ), alternative.transformSource ) ];
 
-        	alternativeTransformSource = str_p("=text>") >> lexeme_d[ *~chset_p("\n|") ][ alternative.transformSource = construct_<std::string>( arg1, arg2 ) ];
+        	alternativeTransformSource = ( str_p("=text>") | str_p("=pattern>") ) >> lexeme_d[ *~chset_p("\n|") ][ alternative.transformSource = construct_<std::string>( arg1, arg2 ) ];
 
         	patternName = lexeme_d[ +chset_p("a-zA-Z" RUS_ALPHA "-") >> ~epsilon_p(chset_p("a-zA-Z" RUS_ALPHA "-")) ];
 
@@ -360,7 +360,7 @@ public:
         		throw PatternBuildingException( (boost::format( "Error parsing template: %1%. Descriptor: %2%. Where: %3%" ) % err.what() % err.descriptor % err.where).str() );
     		}
     	} catch ( const std::exception & e ) {
-    		throw PatternBuildingException( (boost::format( "Error parsing template: %1%" ) % e.what()).str() );
+    		throw PatternBuildingException( (boost::format( "Error parsing template: %1% in template %2%" ) % e.what() % str).str() );
     	} catch ( ... ) {
     		throw PatternBuildingException( "Unknown error during parsing template" );
     	}

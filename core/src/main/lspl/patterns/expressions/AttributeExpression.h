@@ -32,7 +32,7 @@ public:
 
 public:
 
-	boost::scoped_ptr<const Expression> base;
+	/*boost::scoped_ptr<const Expression>*/ const Expression* base;
 	text::attributes::AttributeKey attribute;
 };
 

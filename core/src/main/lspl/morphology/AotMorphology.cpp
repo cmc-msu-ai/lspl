@@ -162,6 +162,14 @@ SpeechPart AotMorphology::getSpeechPart( const char * gramCode ) {
 	return speechPartMap[ speechPartAot ];
 }
 
+bool AotMorphology::getParadigm(std::string word, std::vector<CFormInfo> &form) {
+	return lemmatizer->CreateParadigmCollection(false, word, true, true, form);
+}
+
+int AotMorphology::getSP(const char *code) const {
+	return agramtab->GetPartOfSpeech(code);
+}
+
 uint64 AotMorphology::getAttributes( const char * gramCode ) {
 	QWORD result;
 	agramtab->GetGrammems( gramCode, result);

@@ -49,7 +49,7 @@ public:
 	virtual bool containsVariables() const;
 	virtual bool containsCurrentAnnotation() const;
 
-	virtual boost::ptr_vector<expressions::Expression> & getArgs() {
+	virtual const boost::ptr_vector<expressions::Expression> & getArgs() const {
 		return args;
 	}
 

@@ -30,6 +30,10 @@ public:
 	virtual bool containsVariables() const;
 	virtual bool containsCurrentAnnotation() const;
 
+	text::attributes::AttributeValue getValue() const {
+		return value;
+	}
+
 private:
 
 	text::attributes::AttributeValue value;

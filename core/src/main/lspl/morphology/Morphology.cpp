@@ -92,7 +92,7 @@ AttributeValue Morphology::extractAttributeValue( uint64 attributeSet, Attribute
 	AttributeInfo info = attributeInfos[ key.index - 1 ];
 
 	for ( int i = 0; i < info.bitsCount; ++ i )
-		if ( attributeSet & ( 1 << info.bits[ i ] ) )
+		if ( attributeSet & ( ((uint64)1) << info.bits[ i ] ) )
 			return info.values[ i ];
 
 	return AttributeValue::UNDEFINED;

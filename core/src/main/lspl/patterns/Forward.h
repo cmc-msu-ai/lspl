@@ -11,7 +11,8 @@ class Alternative;
 
 LSPL_REFCOUNT_FORWARD( Pattern );
 LSPL_REFCOUNT_FORWARD( PatternBuilder );
-LSPL_REFCOUNT_FORWARD( ParserAlt );
+LSPL_REFCOUNT_FORWARD( TextTransformParser );
+LSPL_REFCOUNT_FORWARD( PatternTransformParser );
 
 } } // namespace lspl::patterns
 

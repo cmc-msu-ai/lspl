@@ -33,6 +33,10 @@ public:
 	virtual bool containsVariables() const;
 	virtual bool containsCurrentAnnotation() const;
 
+	matchers::Variable getVariable() const {
+		return variable;
+	}
+
 private:
 
 	matchers::Variable variable;
