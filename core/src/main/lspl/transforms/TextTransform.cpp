@@ -476,19 +476,19 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 					continue;
 				}
 			
-				//ошибка, нужная часть речи не найдена в АОТе, вернуть слово как в тексте
+				//ошибка, нужная часть речи для слова не найдена в АОТе, вернуть слово как в тексте
 				if(!posflag) {
 					if ( result.length() > 0 )
 						result += " ";
-					result += "POSerror " + word->getToken();
+					result += /*"POSerror " +*/ word->getToken();
 					continue;
 				}
 
 
-				//ошибка, нужная форма слова не найдена, вернуть слово как в тексте
+				//ошибка, нужная форма слова не найдена в АОТе, вернуть слово как в тексте
 				if ( result.length() > 0 )
 					result += " ";
-				result += "WFerror " + word->getToken();
+				result += /*"WFerror " +*/ word->getToken();
 
 			}
 		} else
