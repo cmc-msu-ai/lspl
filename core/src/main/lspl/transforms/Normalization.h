@@ -20,6 +20,7 @@ public:
 	virtual ~Normalization();
 
 	virtual std::string apply( const text::MatchVariant & matchVariant ) const;
+	virtual std::string apply( const text::MatchVariant & matchVariant, unsigned int ) const {};
 	virtual std::string normalize( const text::MatchVariant & matchVariant ) const;
 private:
 
