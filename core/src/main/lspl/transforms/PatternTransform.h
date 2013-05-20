@@ -26,7 +26,7 @@ class LSPL_EXPORT PatternTransform : public TypedTransform<lspl::patterns::Patte
 	typedef Map::const_iterator ConstIterator;
 	typedef std::pair<ConstIterator,ConstIterator> ConstRange;
 
-	PatternTransform();
+	PatternTransform() {};
 	virtual ~PatternTransform();
 
     PatternTransform(
@@ -41,8 +41,7 @@ class LSPL_EXPORT PatternTransform : public TypedTransform<lspl::patterns::Patte
 		return *matchers;
 	}
     
-    virtual lspl::patterns::PatternRef apply( const lspl::text::MatchVariant & v ) const;  
-    virtual lspl::patterns::PatternRef apply( const lspl::text::MatchVariant & v, unsigned int globalattributes ) const {};  
+    virtual lspl::patterns::PatternRef apply( const lspl::text::MatchVariant & v ) const;
 	void buildStr( std::string & str, const lspl::text::MatchVariant & v, const boost::ptr_vector<lspl::patterns::matchers::Matcher> & matchers ) const;
 
   private :

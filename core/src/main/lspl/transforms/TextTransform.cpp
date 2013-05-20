@@ -52,16 +52,16 @@ namespace lspl { namespace transforms {
 
 
 const unsigned int TextTransform::SpeechPartTable[22] = { 1, 2, 3, 6, 6, 6, 12, 12, 7, 7, 9, 0, 8, 11, 10, 0, 10, 2, 4, 5, 4, 3 };
-const unsigned int TextTransform::GrammemClear[11] = {  	0xFFFFFFFE,
-															0xFFFFFF01,
-															0xFFFFFCFF,
-															0xFFFFE3FF,
-															0xFFFF1FFF,
-															0xFFF8FFFF,
-															0xFFE7FFFF,
-															0xFF9FFFFF,
+const unsigned int TextTransform::GrammemClear[11] = {  	0xFFFFFFFE,		//un
+															0xFFFFFF01,		//падеж
+															0xFFFFFCFF,		//число
+															0xFFFFE3FF,		//род
+															0xFFFF1FFF,		//степень сравнения
+															0xFFF8FFFF,		//время
+															0xFFE7FFFF,		//одушевленность
+															0xFF9FFFFF,		//форма
 															0xF87FFFFF,
-															0xC7FFFFFF,
+															0xC7FFFFFF,		//лицо
 															0x3FFFFFFF
 															};
 
@@ -84,6 +84,8 @@ const unsigned int TextTransform::ClearSP[14] = {			0,
 
 
 TextTransform::~TextTransform() {
+	matchers->clear();
+	delete matchers;
 }
 
 std::string TextTransform::apply( const MatchVariant & matchVariant  ) const {
@@ -106,9 +108,9 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 
 
 	/*
-	 * у каждого элемента (слово или шаблон) есть поле с атрибутами, соответствующими параметрам вывода
-	 * бит-маска соответствующая 32 признакам, определенным в библиотеке
-	 * в ней накапливаются все правила для этого элемента
+	 * в attributes содержатся арибуты для вывода каждого элемента (слово или шаблон), у которого меняется форма
+	 * атрибуты - бит-маска соответствующая 32 признакам, определенным в библиотеке
+	 * в ней накапливаются все правила для конкретного элемента
 	 * 
 	 * общая схема:
 	 * 1) первый проход по правой части собирает все правила преобразования
@@ -497,7 +499,7 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 			const PatternMatcher * patternvar = dynamic_cast<const PatternMatcher*>( &matchers.at(i) );
 			ConstRange val=c.getValues(patternvar->variable);
 
-			//переменная не найдена. либо пустой цикл, либо неизвестное имя; 
+			//переменная не найдена. либо пустой цикл, либо неизвестное имя
 			if(val.first==val.second)
 				continue;
 

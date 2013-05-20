@@ -21,7 +21,7 @@ namespace lspl { namespace transforms {
 class LSPL_EXPORT TextTransformBuilder : public lspl::transforms::TransformBuilder {
   public:
     TextTransformBuilder(NamespaceRef space);
-    ~TextTransformBuilder() {};
+    virtual ~TextTransformBuilder() {};
 
     TextTransform * build( const lspl::patterns::Alternative & alt, const std::string & source );
   public:

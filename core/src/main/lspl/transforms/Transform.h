@@ -33,7 +33,7 @@ public:
 	 * @return упакованный результат применения
 	 */
 	virtual TransformResult * applyAndBox( const text::MatchVariant & matchVariant ) const = 0;
-	virtual TransformResult * applyAndBox( const text::MatchVariant & matchVariant, unsigned int globalattributes ) const = 0;
+	virtual TransformResult * applyAndBox( const text::MatchVariant & matchVariant, unsigned int globalattributes ) const {};
 };
 
 template< typename Result >
@@ -50,7 +50,7 @@ public:
 	 */
 	virtual Result apply( const text::MatchVariant & matchVariant ) const = 0;
 
-	virtual Result apply( const text::MatchVariant & matchVariant, unsigned int globalattributes ) const = 0;
+	virtual Result apply( const text::MatchVariant & matchVariant, unsigned int globalattributes ) const {};
 
 	/**
 	 * Применить преобразование к варианту сопоставления и упаковать результат.

@@ -51,10 +51,9 @@ using namespace lspl::patterns::matchers;
 
 namespace lspl { namespace transforms {
 
-PatternTransform::PatternTransform() {
-}
-
 PatternTransform::~PatternTransform() {
+	matchers->clear();
+	delete matchers;
 }
 
 lspl::patterns::PatternRef PatternTransform::apply( const MatchVariant & matchVariant  ) const {

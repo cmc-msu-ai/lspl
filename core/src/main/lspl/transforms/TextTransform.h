@@ -29,7 +29,7 @@ class LSPL_EXPORT TextTransform : public TypedTransform<std::string> {
 
 	struct cmp {
 		bool operator() (const text::Transition* left, const text::Transition* right) const {
-			return (left != right);
+			return (left < right);
 		}
 	};
 	typedef std::map<const text::Transition*,unsigned int, cmp> AttributesMap;

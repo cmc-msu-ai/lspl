@@ -19,7 +19,7 @@ public:
 	virtual ~ContextRetriever();
 
 	virtual patterns::matchers::Context apply( const text::MatchVariant & matchVariant ) const;
-	virtual patterns::matchers::Context apply( const text::MatchVariant & matchVariant, unsigned int globalattributes ) const {};
+
 private:
 
 	void appendToContext( patterns::matchers::Context & ctx, const text::Transition & transition, const patterns::matchers::Matcher & matcher ) const;
