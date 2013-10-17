@@ -14,11 +14,11 @@ using namespace std;
 int main(int argc, char** argv) {
 	lspl::NamespaceRef ns = new lspl::Namespace();
 	lspl::patterns::PatternBuilderRef builder = new lspl::patterns::PatternBuilder(ns, new lspl::transforms::TextTransformBuilder(ns));
-	//âûâîäèì öèêë ïðèëàãàòåëüíûõ è íîðìàëèçóåì åãî
+	//Ð²Ñ‹Ð²Ð¾Ð´Ð¸Ð¼ Ñ†Ð¸ÐºÐ» Ð¿Ñ€Ð¸Ð»Ð°Ð³Ð°Ñ‚ÐµÐ»ÑŒÐ½Ñ‹Ñ… Ð¸ Ð½Ð¾Ñ€Ð¼Ð°Ð»Ð¸Ð·ÑƒÐµÐ¼ ÐµÐ³Ð¾
 	builder->build("NA = {A}<1,3> =text> A '==NORMALIZE=>' #A");
-	//âûâîäèì øàáëîí NA (ïî åãî ïðàâèëàì!) â êâ. ñêîáêàõ, è ïåðâîå ñóùåñòâèòåëüíîå (âòîðîå ïðîïóñêàåòñÿ)
+	//Ð²Ñ‹Ð²Ð¾Ð´Ð¸Ð¼ ÑˆÐ°Ð±Ð»Ð¾Ð½ NA (Ð¿Ð¾ ÐµÐ³Ð¾ Ð¿Ñ€Ð°Ð²Ð¸Ð»Ð°Ð¼!) Ð² ÐºÐ². ÑÐºÐ¾Ð±ÐºÐ°Ñ…, Ð¸ Ð¿ÐµÑ€Ð²Ð¾Ðµ ÑÑƒÑ‰ÐµÑÑ‚Ð²Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾Ðµ (Ð²Ñ‚Ð¾Ñ€Ð¾Ðµ Ð¿Ñ€Ð¾Ð¿ÑƒÑÐºÐ°ÐµÑ‚ÑÑ)
 	builder->build("NG = NA N1 N2 =text> '[' NA ']' N1");
-	//âûâîäèì ïðèëàãàòåëüíîå è øàáëîí NG â êâ. ñêîáêàõ (ïî åãî æå ïðàâèëàì! ò.å. N2 âûâåäåíî íå áóäåò!)
+	//Ð²Ñ‹Ð²Ð¾Ð´Ð¸Ð¼ Ð¿Ñ€Ð¸Ð»Ð°Ð³Ð°Ñ‚ÐµÐ»ÑŒÐ½Ð¾Ðµ Ð¸ ÑˆÐ°Ð±Ð»Ð¾Ð½ NG Ð² ÐºÐ². ÑÐºÐ¾Ð±ÐºÐ°Ñ… (Ð¿Ð¾ ÐµÐ³Ð¾ Ð¶Ðµ Ð¿Ñ€Ð°Ð²Ð¸Ð»Ð°Ð¼! Ñ‚.Ðµ. N2 Ð²Ñ‹Ð²ÐµÐ´ÐµÐ½Ð¾ Ð½Ðµ Ð±ÑƒÐ´ÐµÑ‚!)
 	builder->build("NF = A1 NG =text> A1 '[' NG ']'");
 	lspl::patterns::PatternRef pattern = ns->getPatternByName("NF");
 
