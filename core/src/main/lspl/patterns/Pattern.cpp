@@ -20,14 +20,14 @@ void Pattern::dump( std::ostream & out, const std::string & tabs ) const {
 	out << "Pattern{ name = " << name << ", alternatives = [\n\t" << tabs;
 
 	bool first = true;
-	BOOST_FOREACH( const Alternative & alt, alternatives ) {
+	for( boost::ptr_vector<Alternative>::const_iterator altIt = alternatives.begin(); altIt != alternatives.end(); ++ altIt ) {
 		if ( first ) {
 			first = false;
 		} else {
 			out << ",\n\t" << tabs;
 		}
 
-		alt.dump( out, tabs + "\t" );
+		altIt->dump( out, tabs + "\t" );
 	}
 
 	out << "\n" << tabs << "] }";
@@ -56,7 +56,8 @@ void Pattern::addAlternatives( boost::ptr_vector<Alternative> & r ) {
 void Pattern::updateDependencies() {
 	dependencies.clear();
 
-	BOOST_FOREACH( const Alternative & alt, alternatives ) {
+	for( boost::ptr_vector<Alternative>::const_iterator altIt = alternatives.begin(); altIt != alternatives.end(); ++ altIt ) {
+		const Alternative & alt = *altIt;
 		BOOST_FOREACH( const Pattern * ptr, alt.getDependencies() ) {
 			bool found = false;
 
@@ -135,14 +136,14 @@ std::string Pattern::getSource() const {
 	std::string result = "";
 
 	bool first = true;
-	BOOST_FOREACH( const Alternative & alt, alternatives ) {
+	for( boost::ptr_vector<Alternative>::const_iterator altIt = alternatives.begin(); altIt != alternatives.end(); ++ altIt ) {
 		if ( first ) {
 			first = false;
 		} else {
 			result += " | ";
 		}
 
-		result += alt.getSource();
+		result += altIt->getSource();
 	}
 
 	return result;

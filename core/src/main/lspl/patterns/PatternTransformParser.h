@@ -43,7 +43,7 @@
 #include <string>
 
 using namespace std;
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 using namespace phoenix;
 
 using namespace lspl::text::attributes;
@@ -64,37 +64,37 @@ namespace lspl { namespace patterns {
 
 
 
-struct transformClosure : boost::spirit::closure< transformClosure, boost::ptr_vector<Matcher>* > {
+struct transformClosure : boost::spirit::classic::closure< transformClosure, boost::ptr_vector<Matcher>* > {
 	member1 matchers;
 };
 
 class PatternTransformParser : public grammar<PatternTransformParser, transformClosure::context_t> {
 public:
 
-	struct AgreementRestrictionClosure : boost::spirit::closure< AgreementRestrictionClosure, Restriction *, boost::ptr_vector<Expression> > {
+	struct AgreementRestrictionClosure : boost::spirit::classic::closure< AgreementRestrictionClosure, Restriction *, boost::ptr_vector<Expression> > {
 		member1 restriction;
 		member2 args;
 	};
 
-	struct MatcherClosure : boost::spirit::closure< MatcherClosure, uint, boost::ptr_vector<Restriction> > {
+	struct MatcherClosure : boost::spirit::classic::closure< MatcherClosure, uint, boost::ptr_vector<Restriction> > {
 		member1 index;
 		member2 restrictions;
 	};
 
-	struct TokenMatcherClosure : boost::spirit::closure< TokenMatcherClosure, std::string > {
+	struct TokenMatcherClosure : boost::spirit::classic::closure< TokenMatcherClosure, std::string > {
 		member1 token;
 	};
 
-	struct WordMatcherClosure : boost::spirit::closure< WordMatcherClosure, std::string, SpeechPart > {
+	struct WordMatcherClosure : boost::spirit::classic::closure< WordMatcherClosure, std::string, SpeechPart > {
 		member1 base;
 		member2 speechPart;
 	};
 
-	struct PatternMatcherClosure : boost::spirit::closure< PatternMatcherClosure, std::string > {
+	struct PatternMatcherClosure : boost::spirit::classic::closure< PatternMatcherClosure, std::string > {
 		member1 name;
 	};
 
-	struct ExpressionClosure : boost::spirit::closure< ExpressionClosure, Expression*, boost::ptr_vector<Expression> > {
+	struct ExpressionClosure : boost::spirit::classic::closure< ExpressionClosure, Expression*, boost::ptr_vector<Expression> > {
 		member1 exp;
 		member2 args;
 	};
@@ -117,7 +117,7 @@ public:
     public:
   		definition( const PatternTransformParser & self_c ) : variable( typeSymbol ) {
  	    	PatternTransformParser * self = const_cast<PatternTransformParser *>( &self_c );
- 
+
 
 /*       	assertion<Errors> expect_restriction_end(RestrictionEndMissing);
         	assertion<Errors> expect_restriction_body(NoRestrictionBody);
@@ -131,7 +131,7 @@ public:
         	function<AddPatternMatcherImpl> addPatternMatcher( AddPatternMatcherImpl( *self->space, typeSymbol ) );
 			function<CreateAgreementRestrictionImpl> createAgreementRestriction;
 			function<AddNormalizationRestrictionImpl> AddNormalizationRestriction;
-		
+
 			function<CreateCurrentAttributeExpressionImpl> createCurrentAttributeExpression;
 			function<CreateVariableExpressionImpl> createVariableExpression;
 			function<CreateAttributeExpressionImpl> createAttributeExpression;
@@ -168,7 +168,7 @@ public:
         	 * Парсер сопоставителя слов
         	 */
 //			wordMatcherName = ( wordTypeName >> matcherVariable )[ addWordMatcher( *(self->matchers), wordMatcherName.base, wordMatcherName.speechPart, matcher.index, matcher.restrictions ) ];
-        	 
+
 //         	wordTypeName = lexeme_d[ speechPart[ wordMatcherName.speechPart = arg1 ] >> ~epsilon_p(chset_p("a-zA-Z")) ];
 
 	       	wordMatcher = ( wordType >> matcherVariable >> !wordRestriction )
@@ -187,8 +187,8 @@ public:
         	/*
         	 * Парсер сопоставителя шаблонов
         	 */
-//			patternMatcherName = ( patternName[ patternMatcherName.name = construct_<std::string>( arg1, arg2 ) ] >> matcherVariable )[ addPatternMatcher( *(self->matchers), patternMatcherName.name, matcher.index, matcher.restrictions ) ]; 
-        	 
+//			patternMatcherName = ( patternName[ patternMatcherName.name = construct_<std::string>( arg1, arg2 ) ] >> matcherVariable )[ addPatternMatcher( *(self->matchers), patternMatcherName.name, matcher.index, matcher.restrictions ) ];
+
         	patternMatcher = ( patternName[ patternMatcher.name = construct_<std::string>( arg1, arg2 ) ] >> matcherVariable >> !( '.' >> ( matcherRestriction[add( matcher.restrictions, arg1 )] /*% ','*/ ) /*>> '>'*/ ) )[ addPatternMatcher( *(self->matchers), patternMatcher.name, matcher.index, matcher.restrictions ) ];
 
         	patternName = lexeme_d[ +chset_p("a-zA-Z" RUS_ALPHA "-") >> ~epsilon_p(chset_p("a-zA-Z" RUS_ALPHA "-")) ];
@@ -265,15 +265,15 @@ public:
     	AttributeKeyParser attributeKey;
 
 	};
-	
+
     PatternTransformParser(NamespaceRef space) : space(space) {}
     ~PatternTransformParser() {}
 
 	lspl::NamespaceRef space;
-	
+
 /*    PatternBuilder::BuildInfo build( const char * str ) throw (PatternBuildingException) {
     	try {
-    		parse_info<const char *> pi = boost::spirit::parse( str, *this, space_p );
+		parse_info<const char *> pi = boost::spirit::classic::parse( str, *this, space_p );
 
         	PatternBuilder::BuildInfo bi;
         	bi.parseLength = (uint) pi.length;
@@ -313,7 +313,7 @@ public:
     		throw PatternBuildingException( "Unknown error during parsing template" );
     	}
     }
-*/    
+*/
 };
 
 

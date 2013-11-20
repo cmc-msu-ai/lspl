@@ -26,7 +26,7 @@
 
 #include <boost/spirit/iterator/file_iterator.hpp>
 
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 using namespace phoenix;
 
 using namespace lspl::text::attributes;
@@ -37,39 +37,39 @@ namespace lspl { namespace text { namespace readers {
 class JsonTextReader::Parser : public grammar<JsonTextReader::Parser> {
 public:
 
-	struct ConfigClosure : public boost::spirit::closure< ConfigClosure, bool, bool, bool > {
+	struct ConfigClosure : public boost::spirit::classic::closure< ConfigClosure, bool, bool, bool > {
 		member1 analyzePunctuation;
 		member2 analyzeSpaces;
 		member3 splitToSentences;
 	};
 
-	struct NodeClosure : public boost::spirit::closure< NodeClosure, uint, uint > {
+	struct NodeClosure : public boost::spirit::classic::closure< NodeClosure, uint, uint > {
 		member1 startOffset;
 		member2 endOffset;
 	};
 
-	struct AnnotationClosure : public boost::spirit::closure< AnnotationClosure, uint, uint > {
+	struct AnnotationClosure : public boost::spirit::classic::closure< AnnotationClosure, uint, uint > {
 		member1 start;
 		member2 end;
 	};
 
-	struct WordClosure : public boost::spirit::closure< WordClosure, std::string, std::string, uint, uint64 > {
+	struct WordClosure : public boost::spirit::classic::closure< WordClosure, std::string, std::string, uint, uint64 > {
 		member1 token;
 		member2 base;
 		member3 speechPart;
 		member4 attributes;
 	};
 
-	struct MatchClosure : public boost::spirit::closure< MatchClosure, std::string, Match::AttributesMap> {
+	struct MatchClosure : public boost::spirit::classic::closure< MatchClosure, std::string, Match::AttributesMap> {
 		member1 patternName;
 		member2 attributes;
 	};
 
-	struct AttributesClosure : public boost::spirit::closure< AttributesClosure, Match::AttributesMap > {
+	struct AttributesClosure : public boost::spirit::classic::closure< AttributesClosure, Match::AttributesMap > {
 		member1 attributes;
 	};
 
-	struct AttributeClosure : public boost::spirit::closure< AttributeClosure, std::string, attributes::AttributeValue > {
+	struct AttributeClosure : public boost::spirit::classic::closure< AttributeClosure, std::string, attributes::AttributeValue > {
 		member1 name;
 		member2 value;
 	};
@@ -315,7 +315,7 @@ public:
 	}
 
 	void parseFrom( const char * str ) {
-		parse_info<const char *> pi = boost::spirit::parse( str, *this, space_p );
+		parse_info<const char *> pi = boost::spirit::classic::parse( str, *this, space_p );
 
 		/*std::cout << "Parsed: " << pi.length << std::endl;
 		std::cout << "Tail: " << pi.stop << std::endl;*/

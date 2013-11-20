@@ -14,21 +14,17 @@
 
 #include "matchers/Matcher.h"
 
-#include <boost/spirit/core.hpp>
-#include <boost/spirit/attribute.hpp>
-#include <boost/spirit/symbols.hpp>
-#include <boost/spirit/error_handling/exceptions.hpp>
-#include <boost/spirit/utility/functor_parser.hpp>
-#include <boost/spirit/utility/confix.hpp>
-#include <boost/spirit/utility/lists.hpp>
-#include <boost/spirit/utility/distinct.hpp>
-#include <boost/spirit/dynamic/switch.hpp>
-#include <boost/spirit/phoenix/binders.hpp>
-#include <boost/spirit/phoenix/functions.hpp>
+#include <boost/spirit/include/classic_core.hpp>
+#include <boost/spirit/include/classic_attribute.hpp>
+#include <boost/spirit/include/classic_symbols.hpp>
+#include <boost/spirit/include/classic_error_handling.hpp>
+#include <boost/spirit/include/classic_utility.hpp>
+#include <boost/spirit/include/classic_dynamic.hpp>
+#include <boost/spirit/include/phoenix1.hpp>
 
 #include <boost/format.hpp>
 
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 using namespace phoenix;
 
 using namespace lspl::text::attributes;
@@ -45,63 +41,63 @@ namespace lspl { namespace patterns {
 class ParserImpl : public grammar<ParserImpl>, public PatternBuilder::Parser {
 public:
 
-	struct AgreementRestrictionClosure : public boost::spirit::closure< AgreementRestrictionClosure, Restriction *, boost::ptr_vector<Expression> > {
+	struct AgreementRestrictionClosure : public boost::spirit::classic::closure< AgreementRestrictionClosure, Restriction *, boost::ptr_vector<Expression> > {
 		member1 restriction;
 		member2 args;
 	};
 
-	struct DictionaryRestrictionClosure : public boost::spirit::closure< DictionaryRestrictionClosure, Restriction *, std::string, boost::ptr_vector<Expression> > {
+	struct DictionaryRestrictionClosure : public boost::spirit::classic::closure< DictionaryRestrictionClosure, Restriction *, std::string, boost::ptr_vector<Expression> > {
 		member1 restriction;
 		member2 dictionaryName;
 		member3 args;
 	};
 
-	struct MatcherClosure : public boost::spirit::closure< MatcherClosure, uint, boost::ptr_vector<Restriction> > {
+	struct MatcherClosure : public boost::spirit::classic::closure< MatcherClosure, uint, boost::ptr_vector<Restriction> > {
 		member1 index;
 		member2 restrictions;
 	};
 
-	struct WordMatcherClosure : public boost::spirit::closure< WordMatcherClosure, std::string, SpeechPart > {
+	struct WordMatcherClosure : public boost::spirit::classic::closure< WordMatcherClosure, std::string, SpeechPart > {
 		member1 base;
 		member2 speechPart;
 	};
 
-	struct TokenMatcherClosure : public boost::spirit::closure< TokenMatcherClosure, std::string > {
+	struct TokenMatcherClosure : public boost::spirit::classic::closure< TokenMatcherClosure, std::string > {
 		member1 token;
 	};
 
-	struct PatternMatcherClosure : public boost::spirit::closure< PatternMatcherClosure, std::string > {
+	struct PatternMatcherClosure : public boost::spirit::classic::closure< PatternMatcherClosure, std::string > {
 		member1 name;
 	};
 
-	struct LoopMatcherClosure : public boost::spirit::closure< LoopMatcherClosure, uint, uint, std::vector<uint> > {
+	struct LoopMatcherClosure : public boost::spirit::classic::closure< LoopMatcherClosure, uint, uint, std::vector<uint> > {
 		member1 min;
 		member2 max;
 		member3 alternativesCount;
 	};
 
-	struct LoopBodyClosure : public boost::spirit::closure< LoopBodyClosure, uint > {
+	struct LoopBodyClosure : public boost::spirit::classic::closure< LoopBodyClosure, uint > {
 		member1 matcherCount;
 	};
 
-	struct PatternClosure : public boost::spirit::closure< PatternClosure, std::string, boost::ptr_vector<Alternative> > {
+	struct PatternClosure : public boost::spirit::classic::closure< PatternClosure, std::string, boost::ptr_vector<Alternative> > {
 		member1 name;
 		member2 alternatives;
 	};
 
-	struct AlternativeClosure : public boost::spirit::closure< AlternativeClosure, uint, boost::ptr_vector<Matcher>, boost::ptr_map<AttributeKey,Expression>, std::string > {
+	struct AlternativeClosure : public boost::spirit::classic::closure< AlternativeClosure, uint, boost::ptr_vector<Matcher>, boost::ptr_map<AttributeKey,Expression>, std::string > {
 		member1 stub;
 		member2 matchers;
 		member3 bindings;
 		member4 transformSource;
 	};
 
-	struct BindingClosure : public boost::spirit::closure< BindingClosure, AttributeKey, Expression * > {
+	struct BindingClosure : public boost::spirit::classic::closure< BindingClosure, AttributeKey, Expression * > {
 		member1 att;
 		member2 exp;
 	};
 
-	struct ExpressionClosure : public boost::spirit::closure< ExpressionClosure, Expression*, boost::ptr_vector<Expression> > {
+	struct ExpressionClosure : public boost::spirit::classic::closure< ExpressionClosure, Expression*, boost::ptr_vector<Expression> > {
 		member1 exp;
 		member2 args;
 	};
@@ -325,7 +321,7 @@ public:
 
     PatternBuilder::BuildInfo build( const char * str ) throw (PatternBuildingException) {
     	try {
-    		parse_info<const char *> pi = boost::spirit::parse( str, *this, space_p );
+		parse_info<const char *> pi = boost::spirit::classic::parse( str, *this, space_p );
 
         	PatternBuilder::BuildInfo bi;
         	bi.parseLength = (uint) pi.length;

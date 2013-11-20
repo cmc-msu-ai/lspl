@@ -21,7 +21,7 @@
 #include "../../text/attributes/SpeechPart.h"
 #include "../../text/attributes/AttributeKey.h"
 
-#include <boost/spirit/symbols.hpp>
+#include <boost/spirit/include/classic_symbols.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
 #include <boost/ptr_container/ptr_map.hpp>
 
@@ -81,13 +81,13 @@ struct AddLoopMatcherImpl {
 
 struct DefinePattern {
 public:
-	DefinePattern( Namespace & space, boost::spirit::symbols<uint> & typeSymbol ) :
+	DefinePattern( Namespace & space, boost::spirit::classic::symbols<uint> & typeSymbol ) :
 		space( space ), typeSymbol( typeSymbol ) {}
 
 	PatternRef getPattern( const std::string & name ) const;
 private:
 	Namespace & space;
-	boost::spirit::symbols<uint> & typeSymbol;
+	boost::spirit::classic::symbols<uint> & typeSymbol;
 };
 
 struct AddPatternMatcherImpl : public DefinePattern {
@@ -95,7 +95,7 @@ struct AddPatternMatcherImpl : public DefinePattern {
 	template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>
 	struct result { typedef void type; };
 
-	AddPatternMatcherImpl( Namespace & space, boost::spirit::symbols<uint> & typeSymbol ) :
+	AddPatternMatcherImpl( Namespace & space, boost::spirit::classic::symbols<uint> & typeSymbol ) :
 		DefinePattern( space, typeSymbol ) {}
 
 	void operator()( boost::ptr_vector<Matcher> & matchers, const std::string & name, uint index, boost::ptr_vector< Restriction > & restrictions ) const;
@@ -120,7 +120,7 @@ struct AddPatternDefinitionImpl : public DefinePattern {
 	template <typename Arg1, typename Arg2>
 	   struct result { typedef void type; };
 
-	AddPatternDefinitionImpl( Namespace & space, boost::spirit::symbols<uint> & typeSymbol, transforms::TransformBuilder & transformBuilder ) :
+	AddPatternDefinitionImpl( Namespace & space, boost::spirit::classic::symbols<uint> & typeSymbol, transforms::TransformBuilder & transformBuilder ) :
 		DefinePattern( space, typeSymbol ), transformBuilder( transformBuilder ) {}
 
 	void operator()( const std::string & name, boost::ptr_vector<Alternative> & alts ) const;

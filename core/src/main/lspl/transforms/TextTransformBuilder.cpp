@@ -7,8 +7,7 @@
 #include "../patterns/matchers/Matcher.h"
 #include <boost/ptr_container/ptr_vector.hpp>
 #include "../patterns/TextTransformParser.h"
-#include <boost/spirit/phoenix/binders.hpp>
-#include <boost/spirit/phoenix/functions.hpp>
+#include <boost/spirit/include/phoenix1.hpp>
 
 #include "../Namespace.h"
 
@@ -30,7 +29,7 @@ TextTransform * TextTransformBuilder::build(
 	lspl::patterns::TextTransformParser pars(space);
 	boost::ptr_vector<lspl::patterns::matchers::Matcher>* matchers=NULL;
 
-	parse_info<const char *> pi = boost::spirit::parse( source.c_str(), pars[ var(matchers) = arg1 ], space_p );
+	parse_info<const char *> pi = boost::spirit::classic::parse( source.c_str(), pars[ var(matchers) = arg1 ], space_p );
 
 	if(!pi.full) {
 		throw lspl::patterns::PatternBuildingException( source.c_str() );
