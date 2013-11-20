@@ -7,16 +7,12 @@
 
 #include "Parser.h"
 
-#include <boost/spirit/core.hpp>
-#include <boost/spirit/attribute.hpp>
-#include <boost/spirit/symbols.hpp>
-#include <boost/spirit/utility/functor_parser.hpp>
-#include <boost/spirit/utility/confix.hpp>
-#include <boost/spirit/utility/lists.hpp>
-#include <boost/spirit/utility/distinct.hpp>
-#include <boost/spirit/dynamic/switch.hpp>
-#include <boost/spirit/phoenix/binders.hpp>
-#include <boost/spirit/phoenix/functions.hpp>
+#include <boost/spirit/include/classic_core.hpp>
+#include <boost/spirit/include/classic_attribute.hpp>
+#include <boost/spirit/include/classic_symbols.hpp>
+#include <boost/spirit/include/classic_utility.hpp>
+#include <boost/spirit/include/classic_dynamic.hpp>
+#include <boost/spirit/include/phoenix1.hpp>
 
 #include <boost/ptr_container/ptr_vector.hpp>
 
@@ -24,25 +20,25 @@
 
 #include <lspl/utils/RusConsts.h>
 
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 using namespace phoenix;
 
 namespace lspl { namespace terms {
 
-struct TermClosure : public boost::spirit::closure< TermClosure, boost::shared_ptr<Term> > {
+struct TermClosure : public boost::spirit::classic::closure< TermClosure, boost::shared_ptr<Term> > {
 	member1 term;
 };
 
-struct SequenceClosure : public boost::spirit::closure< SequenceClosure, boost::shared_ptr<Sequence> > {
+struct SequenceClosure : public boost::spirit::classic::closure< SequenceClosure, boost::shared_ptr<Sequence> > {
 	member1 term;
 };
 
-struct GroupClosure : public boost::spirit::closure< GroupClosure, boost::shared_ptr<Group>, boost::shared_ptr<Term> > {
+struct GroupClosure : public boost::spirit::classic::closure< GroupClosure, boost::shared_ptr<Group>, boost::shared_ptr<Term> > {
 	member1 group;
 	member2 first;
 };
 
-struct WordClosure : public boost::spirit::closure< WordClosure, boost::shared_ptr<Term>, bool, std::string > {
+struct WordClosure : public boost::spirit::classic::closure< WordClosure, boost::shared_ptr<Term>, bool, std::string > {
 	member1 term;
 	member2 fixed;
 	member3 token;
@@ -154,7 +150,7 @@ Parser::~Parser() {
 
 std::auto_ptr<ParseInfo> Parser::parse( const char * str ) {
 	boost::shared_ptr<Term> term;
-	parse_info<> bpi = boost::spirit::parse( str, (*impl)[ var(term) = arg1 ], space_p );
+	parse_info<> bpi = boost::spirit::classic::parse( str, (*impl)[ var(term) = arg1 ], space_p );
 
 	std::auto_ptr<ParseInfo> pi( new ParseInfo() );
 	pi->term = term;

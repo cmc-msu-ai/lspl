@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include <boost/spirit/core.hpp>
+#include <boost/spirit/include/classic_core.hpp>
 
 #include "lspl/terms/Parser.h"
 
@@ -159,10 +159,10 @@ private:
 
 void PatternSetBuilder::append( TermPtr & term ) {
 
-	if ( boost::shared_ptr<Group> g = boost::shared_dynamic_cast<Group>( term ) ) {
-		if ( boost::shared_ptr<Word> w = boost::shared_dynamic_cast<Word>( g->getFirst() ) ) {
+	if ( boost::shared_ptr<Group> g = boost::dynamic_pointer_cast<Group>( term ) ) {
+		if ( boost::shared_ptr<Word> w = boost::dynamic_pointer_cast<Word>( g->getFirst() ) ) {
 			addGroup( wordGroups, w->getBase(), g );
-		} else if ( boost::shared_ptr<Token> t = boost::shared_dynamic_cast<Token>( g->getFirst() ) ) {
+		} else if ( boost::shared_ptr<Token> t = boost::dynamic_pointer_cast<Token>( g->getFirst() ) ) {
 			addGroup( wordGroups, t->getToken(), g );
 		} else {
 			others.push_back( term );
@@ -228,7 +228,7 @@ void convertFile( std::istream * in, std::ostream * out, std::ostream * err ) {
 		if ( pi->hit ) {
 			b.append( pi->term );
 
-			cur = boost::spirit::parse( pi->stop, *boost::spirit::space_p ).stop;
+			cur = boost::spirit::classic::parse( pi->stop, *boost::spirit::classic::space_p ).stop;
 		} else {
 			char const * reset = cur;
 

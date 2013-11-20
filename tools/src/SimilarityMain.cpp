@@ -47,7 +47,7 @@ int main(int argc, char** argv) {
 	//terms2.push_back(lspl::Util::in.convert("правильность"));
 	ExtractTerms(matches2, terms2);
 	delete recognizer;
-	char *similar_patterns_file = "similarity_patterns.txt";
+	const char *similar_patterns_file = "similarity_patterns.txt";
 	if (argc == 5) {
 		similar_patterns_file = argv[4];
 	}
