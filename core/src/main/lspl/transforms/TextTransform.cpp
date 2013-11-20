@@ -111,7 +111,7 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 	 * в attributes содержатся арибуты для вывода каждого элемента (слово или шаблон), у которого меняется форма
 	 * атрибуты - бит-маска соответствующая 32 признакам, определенным в библиотеке
 	 * в ней накапливаются все правила для конкретного элемента
-	 * 
+	 *
 	 * общая схема:
 	 * 1) первый проход по правой части собирает все правила преобразования
 	 * 2) к главным словам шаблона применяются глобальные правила, заданыне в шаблоне-родителе при выводе
@@ -157,8 +157,8 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 								//если атрибуты преобразования ранее не задавались, то задать атрибуты этого слова как в тексте (задаются только если надо преобразовывать слово, и только один раз в самом начале перед всеми преобразованиями)
 								if(!outAttributes)
 									for(uint id=1; id<=10; id++)
-										outAttributes |= 1<<(trans->getAttribute(AttributeKey::AttributeKey( id )).value);
-										
+										outAttributes |= 1<<(trans->getAttribute(AttributeKey( id )).value);
+
 								//нормализация слова
 								if(trans->type == Transition::WORD) {
 									//задать нормализацию в зависимости от части речи
@@ -170,7 +170,7 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 								else
 									//нормализация шаблона
 									if(trans->type == Transition::MATCH) {
-										outAttributes = (outAttributes & ClearSP[13]) | (Normalized & ~ClearSP[13]); 
+										outAttributes = (outAttributes & ClearSP[13]) | (Normalized & ~ClearSP[13]);
 									}
 								continue;
 							}
@@ -178,7 +178,7 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 								//задать атрибуты перед преобразованием как в тексте
 								if(!outAttributes)
 									for(uint id=1; id<=10; id++)
-										outAttributes |= 1<<(trans->getAttribute(AttributeKey::AttributeKey( id )).value);
+										outAttributes |= 1<<(trans->getAttribute(AttributeKey( id )).value);
 
 						   	//изменить требуемые атрибуты в исходном слове/шаблоне
 							if(const ConstantExpression *attrVal=dynamic_cast<const ConstantExpression*>(&restriction->getArgs()[1]))
@@ -199,7 +199,7 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 			if(it->first == AttributeKey::UNDEFINED)
 				if(const VariableExpression *varExpr = dynamic_cast<const VariableExpression*>(it->second)) {
 					ConstRange val=c.getValues(varExpr->getVariable());
-				
+
 					if(val.first==val.second)
 						continue;
 
@@ -211,7 +211,7 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 
 						if(!outAttributes)
 							for(uint id=1; id<=10; id++)
-								outAttributes |= 1<<(trans->getAttribute(AttributeKey::AttributeKey( id )).value);
+								outAttributes |= 1<<(trans->getAttribute(AttributeKey( id )).value);
 
 
 						if(trans->type == Transition::WORD) {
@@ -224,7 +224,7 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 						else
 							//задать глобальные атрибуты шаблону
 							if(trans->type == Transition::MATCH) {
-								outAttributes = (outAttributes & ClearSP[13]) | (globalAttributes & ~ClearSP[13]); 
+								outAttributes = (outAttributes & ClearSP[13]) | (globalAttributes & ~ClearSP[13]);
 							}
 					}
 				}
@@ -255,29 +255,29 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 
 							ConstRange val1=c.getValues(varExpr1->getVariable());
 							ConstRange val2=c.getValues(varExpr2->getVariable());
-						
+
 							//переменная не найдена. либо пустой цикл, либо неизвестное имя
 							if(val1.first==val1.second || val2.first==val2.second)
 								continue;
-							
+
 							const Transition *trans2 = dynamic_cast<const Transition*>( &*(val2.first)->second );
 							if(!trans2)
 								continue;
-								
+
 							unsigned int tmpAttribute=attributes.insert(AttributesPair(trans2, 0)).first->second;
 							if(!tmpAttribute)
 								for(uint id=1; id<=10; id++)
-									tmpAttribute |= 1<<(trans2->getAttribute(AttributeKey::AttributeKey( id )).value);
-					
+									tmpAttribute |= 1<<(trans2->getAttribute(AttributeKey( id )).value);
+
 							for(ConstIterator it=val1.first; it!=val1.second; it++) {
 								const Transition *trans1 = dynamic_cast<const Transition*>( &*it->second );
 								if(!trans1)
 									continue;
 								unsigned int &outAttributes = attributes.insert(AttributesPair(trans1, 0)).first->second;
-									
+
 								if(!outAttributes)
 									for(uint id=1; id<=10; id++)
-										outAttributes |= 1<<(trans1->getAttribute(AttributeKey::AttributeKey( id )).value);
+										outAttributes |= 1<<(trans1->getAttribute(AttributeKey( id )).value);
 
 								outAttributes = (outAttributes & GrammemClear[attrKey1->attribute.index]) | (tmpAttribute & ~GrammemClear[attrKey1->attribute.index]);
 							}
@@ -306,8 +306,8 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 					//word1 согласовывается с word2 => word2 не меняется, его атрибуты не надо просчитывать, чтобы оно потом вывелось без изменений. поэтому его атрибуты считаются в tmp
 					if(!tmpAttribute)
 						for(uint id=1; id<=10; id++)
-							tmpAttribute |= 1<<(trans2->getAttribute(AttributeKey::AttributeKey( id )).value);
-					
+							tmpAttribute |= 1<<(trans2->getAttribute(AttributeKey( id )).value);
+
 					for(ConstIterator it=val1.first; it!=val1.second; it++) {
 						const Transition *trans1 = dynamic_cast<const Transition*>( &*it->second );
 						if(!trans1)
@@ -316,21 +316,21 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 
 						if(!outAttributes)
 							for(uint id=1; id<=10; id++)
-								outAttributes |= 1<<(trans1->getAttribute(AttributeKey::AttributeKey( id )).value);
+								outAttributes |= 1<<(trans1->getAttribute(AttributeKey( id )).value);
 
 						if(trans1->type == Transition::WORD) {
 							//скопировать нужные имеющиеся атрибуты для слова
 							int sp = dynamic_cast<const Word*>(trans1)->getSpeechPart().id;
 							for(uint id=1; id<=10; id++)
 								if( tmpAttribute & ~GrammemClear[id] )
-									outAttributes = (outAttributes & (ClearSP[sp] | GrammemClear[id])) | (tmpAttribute & ~ClearSP[sp] & ~GrammemClear[id]); 
+									outAttributes = (outAttributes & (ClearSP[sp] | GrammemClear[id])) | (tmpAttribute & ~ClearSP[sp] & ~GrammemClear[id]);
 						}
 						else
 							//скопировать нужные имеющиеся атрибуты для шаблона
 							if(trans1->type == Transition::MATCH) {
 								for(uint id=1; id<=10; id++)
 									if( tmpAttribute & ~GrammemClear[id] )
-										outAttributes = (outAttributes & (ClearSP[13] | GrammemClear[id])) | (tmpAttribute & ~ClearSP[13] & ~GrammemClear[id]); 
+										outAttributes = (outAttributes & (ClearSP[13] | GrammemClear[id])) | (tmpAttribute & ~ClearSP[13] & ~GrammemClear[id]);
 							}
 					}
 				}
@@ -341,15 +341,15 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 
 	//вывести все слова в заданных нужных формах
 	for ( uint i = 0; i < matchers.size(); ++ i ) {
-	
+
 		//лексема
 		if ( matchers.at(i).type == Matcher::TOKEN ) {
 			const TokenMatcher * token = dynamic_cast<const TokenMatcher*>( &matchers.at(i) );
 			if ( result.length() > 0 )
 				result += " ";
 			result += token->token;
-		} else 
-		
+		} else
+
 		//переменная
 		if ( matchers.at(i).type == Matcher::WORD ) {
 			const WordMatcher * wordvar = dynamic_cast<const WordMatcher*>( &matchers.at(i) );
@@ -358,7 +358,7 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 			//переменная не найдена. либо пустой цикл, либо неизвестное имя
 			if(val.first==val.second)
 				continue;
-				
+
 			for(ConstIterator it=val.first; it!=val.second; ++it) {
 				const Word * word = dynamic_cast<const Word*>( &*it->second );
 				if(!word)
@@ -432,7 +432,7 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 									//полная/краткая форма прилагательных/причастий различается в части речи
 									(((aotsp == 1 || aotsp == 18)?1:0) << 21) |
 									(((aotsp == 17 || aotsp == 20)?1:0) << 22) |
-								
+
 //									(((tmpGrammem >> 13) & 1) << 23) |
 //									(((tmpGrammem >> 15) & 1) << 24) |
 //									(((tmpGrammem >> 14) & 1) << 25) |
@@ -445,7 +445,7 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 //									(((tmpGrammem >> 15) & 1) << 30) |
 //									(((tmpGrammem >> 14) & 1) << 31)
 									;
-								
+
 						if(aotsp == 21) {
 							if(outAttributes == sGrammem)
 								break;
@@ -477,7 +477,7 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 				if(posflag==2) {
 					continue;
 				}
-			
+
 				//ошибка, нужная часть речи для слова не найдена в АОТе, вернуть слово как в тексте
 				if(!posflag) {
 					if ( result.length() > 0 )

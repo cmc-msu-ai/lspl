@@ -7,8 +7,7 @@
 #include "../patterns/matchers/Matcher.h"
 #include <boost/ptr_container/ptr_vector.hpp>
 #include "../patterns/PatternTransformParser.h"
-#include <boost/spirit/phoenix/binders.hpp>
-#include <boost/spirit/phoenix/functions.hpp>
+#include <boost/spirit/include/phoenix1.hpp>
 
 #include "../Namespace.h"
 

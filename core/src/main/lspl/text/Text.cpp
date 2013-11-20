@@ -186,8 +186,8 @@ void Text::processWithoutIndices( const Pattern & pattern ) {
 	Context context; // Контекст сопоставления
 
 	for ( uint nodeIndex = 0; nodeIndex < nodes.size(); ++ nodeIndex ) {
-		BOOST_FOREACH( const patterns::Alternative & alt, pattern.getAlternatives() ) // Перебираем все альтернативы шаблона
-			matcher.buildTransitions( *nodes[nodeIndex], pattern, alt, context, results );
+		for( boost::ptr_vector<patterns::Alternative>::const_iterator altIt = pattern.getAlternatives().begin(); altIt != pattern.getAlternatives().end(); ++ altIt ) // Перебираем все альтернативы шаблона
+			matcher.buildTransitions( *nodes[nodeIndex], pattern, *altIt, context, results );
 
 		for ( uint i = 0; i < results.size(); ++ i )
 			addMatchToMarkup( results[i].cast<Match>() );

@@ -25,17 +25,13 @@
 
 #include "../Namespace.h"
 
-#include <boost/spirit/core.hpp>
-#include <boost/spirit/attribute.hpp>
-#include <boost/spirit/symbols.hpp>
-#include <boost/spirit/error_handling/exceptions.hpp>
-#include <boost/spirit/utility/functor_parser.hpp>
-#include <boost/spirit/utility/confix.hpp>
-#include <boost/spirit/utility/lists.hpp>
-#include <boost/spirit/utility/distinct.hpp>
-#include <boost/spirit/dynamic/switch.hpp>
-#include <boost/spirit/phoenix/binders.hpp>
-#include <boost/spirit/phoenix/functions.hpp>
+#include <boost/spirit/include/classic_core.hpp>
+#include <boost/spirit/include/classic_attribute.hpp>
+#include <boost/spirit/include/classic_symbols.hpp>
+#include <boost/spirit/include/classic_error_handling.hpp>
+#include <boost/spirit/include/classic_utility.hpp>
+#include <boost/spirit/include/classic_dynamic.hpp>
+#include <boost/spirit/include/phoenix1.hpp>
 
 #include <boost/format.hpp>
 
