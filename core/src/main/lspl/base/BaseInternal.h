@@ -11,8 +11,6 @@
 
 #include <boost/foreach.hpp>
 
-#define foreach BOOST_FOREACH
-
 #ifdef MSVC // Версия для Microsoft Visual Studio
 
 #	define LSPL_REFCOUNT_CLASS(className) \

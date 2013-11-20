@@ -17,8 +17,8 @@ AndRestriction::~AndRestriction() {
 }
 
 bool AndRestriction::matches( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const {
-	foreach( const Restriction & r, args )
-		if ( !r.matches( currentAnnotation, currentVar, ctx ) )
+	for( boost::ptr_vector<Restriction>::const_iterator it = args.begin(); it != args.end(); ++ it )
+		if ( !it->matches( currentAnnotation, currentVar, ctx ) )
 			return false;
 
 	return true;
@@ -51,24 +51,24 @@ bool AndRestriction::equals( const Restriction & r ) const {
 }
 
 bool AndRestriction::containsVariable( matchers::Variable var ) const {
-	foreach( const Restriction & r, args )
-		if ( r.containsVariable( var ) )
+	for( boost::ptr_vector<Restriction>::const_iterator it = args.begin(); it != args.end(); ++ it )
+		if ( it->containsVariable( var ) )
 			return true;
 
 	return false;
 }
 
 bool AndRestriction::containsVariables() const {
-	foreach( const Restriction & r, args )
-		if ( r.containsVariables() )
+	for( boost::ptr_vector<Restriction>::const_iterator it = args.begin(); it != args.end(); ++ it )
+		if ( it->containsVariables() )
 			return true;
 
 	return false;
 }
 
 bool AndRestriction::containsCurrentAnnotation() const {
-	foreach( const Restriction & r, args )
-		if ( r.containsCurrentAnnotation() )
+	for( boost::ptr_vector<Restriction>::const_iterator it = args.begin(); it != args.end(); ++ it )
+		if ( it->containsCurrentAnnotation() )
 			return true;
 
 	return false;

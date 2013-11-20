@@ -35,7 +35,7 @@ void Node::dump(std::ostream & out, std::string tabs) const {
 
 	bool first = true;
 
-	foreach ( const TransitionRef & tr, transitions ) {
+	BOOST_FOREACH( const TransitionRef & tr, transitions ) {
 		if ( first ) {
 			first = false;
 		} else {

@@ -26,8 +26,8 @@ DictionaryRestriction::~DictionaryRestriction() {
 bool DictionaryRestriction::matches( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const {
 	std::vector<std::string> words;
 
-	foreach( const Expression & arg, args ) {
-		Expression::ValueListPtr v = arg.evaluate( currentAnnotation, currentVar, ctx );
+	for( boost::ptr_vector<Expression>::const_iterator it = args.begin(); it != args.end(); ++ it ) {
+		Expression::ValueListPtr v = it->evaluate( currentAnnotation, currentVar, ctx );
 
 		words.push_back( v->empty() ? AttributeValue::UNDEFINED.getString() : v->back().getString() );
 	}
@@ -55,24 +55,24 @@ bool DictionaryRestriction::equals( const Restriction & r ) const {
 }
 
 bool DictionaryRestriction::containsVariable( matchers::Variable var ) const {
-	foreach( const Expression & exp, args )
-		if ( exp.containsVariable( var ) )
+	for( boost::ptr_vector<Expression>::const_iterator it = args.begin(); it != args.end(); ++ it )
+		if ( it->containsVariable( var ) )
 			return true;
 
 	return false;
 }
 
 bool DictionaryRestriction::containsVariables() const {
-	foreach( const Expression & exp, args )
-		if ( exp.containsVariables() )
+	for( boost::ptr_vector<Expression>::const_iterator it = args.begin(); it != args.end(); ++ it )
+		if ( it->containsVariables() )
 			return true;
 
 	return false;
 }
 
 bool DictionaryRestriction::containsCurrentAnnotation() const {
-	foreach( const Expression & exp, args )
-		if ( exp.containsCurrentAnnotation() )
+	for( boost::ptr_vector<Expression>::const_iterator it = args.begin(); it != args.end(); ++ it )
+		if ( it->containsCurrentAnnotation() )
 			return true;
 
 	return false;

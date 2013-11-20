@@ -105,7 +105,7 @@ RestrictedMatchList Text::getRestrictedMatches( const Pattern & pattern, const R
 	RestrictedMatchList results;
 	MatchList matches = getMatches( pattern );
 
-	foreach( const MatchRef & match, matches ) {
+	BOOST_FOREACH( const MatchRef & match, matches ) {
 		RestrictedMatchRef rm;
 
 		for ( uint i = 0; i < match->getVariantCount(); ++ i ) {
@@ -138,7 +138,7 @@ bool Text::prepareIndices( const Pattern & pattern, IndexIteratorsList & iterato
 		if ( startMatchers.empty() ) // Если для альтернативы не определеныин начальные элементы, то это какая-та ошибка
 			throw std::logic_error( "No start matchers" );
 
-		foreach ( const Matcher* matcher, startMatchers ) {
+		BOOST_FOREACH( const Matcher* matcher, startMatchers ) {
 			switch ( matcher->type ) {
 			case Matcher::WORD: {
 				Index::Iterator * it = speechPartIndex.createIterator( static_cast<const WordMatcher *>( matcher )->speechPart );
@@ -186,7 +186,7 @@ void Text::processWithoutIndices( const Pattern & pattern ) {
 	Context context; // Контекст сопоставления
 
 	for ( uint nodeIndex = 0; nodeIndex < nodes.size(); ++ nodeIndex ) {
-		foreach ( const patterns::Alternative & alt, pattern.getAlternatives() ) // Перебираем все альтернативы шаблона
+		BOOST_FOREACH( const patterns::Alternative & alt, pattern.getAlternatives() ) // Перебираем все альтернативы шаблона
 			matcher.buildTransitions( *nodes[nodeIndex], pattern, alt, context, results );
 
 		for ( uint i = 0; i < results.size(); ++ i )

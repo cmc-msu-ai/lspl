@@ -64,8 +64,8 @@ void AgreementRestriction::dump( std::ostream & out, const std::string & tabs ) 
 }
 
 bool AgreementRestriction::checkAgreement( const std::vector<AttributeValue> & val1, const std::vector<AttributeValue> & val2 ) const {
-	foreach ( AttributeValue v1, val1 )
-		foreach ( AttributeValue v2, val2 )
+	BOOST_FOREACH( AttributeValue v1, val1 )
+		BOOST_FOREACH( AttributeValue v2, val2 )
 			if ( !checkAgreement( v1, v2 ) )
 				return false;
 
@@ -128,24 +128,24 @@ bool AgreementRestriction::equals( const Restriction & r ) const {
 }
 
 bool AgreementRestriction::containsVariable( matchers::Variable var ) const {
-	foreach( const Expression & exp, args )
-		if ( exp.containsVariable( var ) )
+	for( boost::ptr_vector<Expression>::const_iterator it = args.begin(); it != args.end(); ++ it )
+		if ( it->containsVariable( var ) )
 			return true;
 
 	return false;
 }
 
 bool AgreementRestriction::containsVariables() const {
-	foreach( const Expression & exp, args )
-		if ( exp.containsVariables() )
+	for( boost::ptr_vector<Expression>::const_iterator it = args.begin(); it != args.end(); ++ it )
+		if ( it->containsVariables() )
 			return true;
 
 	return false;
 }
 
 bool AgreementRestriction::containsCurrentAnnotation() const {
-	foreach( const Expression & exp, args )
-		if ( exp.containsCurrentAnnotation() )
+	for( boost::ptr_vector<Expression>::const_iterator it = args.begin(); it != args.end(); ++ it )
+		if ( it->containsCurrentAnnotation() )
 			return true;
 
 	return false;

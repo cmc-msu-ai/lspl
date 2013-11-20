@@ -151,10 +151,10 @@ static void processLoopIteration( const LoopIterationMatchState & state, std::ve
 			processLoopIteration( loopIterationMatchState, results );
 		}
 	} else {
-		const AnnotationChainMatcher & curMatcher = static_cast<const AnnotationChainMatcher &>( state.getCurrentMatcher() );
+		const AnnotationChainMatcher & chainMatcher = static_cast<const AnnotationChainMatcher &>( state.getCurrentMatcher() );
 		ChainList chains;
 
-		curMatcher.buildChains( state.getCurrentNode(), state.context, chains );
+		chainMatcher.buildChains( state.getCurrentNode(), state.context, chains );
 
 		for ( uint i = 0; i < chains.size(); ++ i ) {
 			LoopIterationMatchState loopIterationMatchState( state, chains[i].first, chains[i].second );

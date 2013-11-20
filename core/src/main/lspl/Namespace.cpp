@@ -83,7 +83,7 @@ PatternRef Namespace::getPatternByName( const std::string & name ) const {
 	if ( i != patternMap->map.end() )
 		return *i;
 
-	foreach ( const NamespaceRef parent, parents )
+	BOOST_FOREACH( const NamespaceRef parent, parents )
 		if ( PatternRef ref = parent->getPatternByName( name ) )
 			return ref;
 
@@ -110,7 +110,7 @@ DictionaryRef Namespace::getDictionaryByName( const std::string & name ) const {
 	if ( i != dictionaryMap->map.end() )
 		return *i;
 
-	foreach ( const NamespaceRef parent, parents )
+	BOOST_FOREACH( const NamespaceRef parent, parents )
 		if ( DictionaryRef ref = parent->getDictionaryByName( name ) )
 			return ref;
 

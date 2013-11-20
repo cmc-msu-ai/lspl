@@ -14,6 +14,13 @@
 
 using namespace lspl::patterns::matchers;
 
+template<typename T, typename A, typename CA>
+inline boost::mpl::true_ *
+boost_foreach_is_lightweight_proxy( boost::ptr_vector<T,A,CA>&, boost::foreach::tag )
+{
+    return 0;
+}
+
 namespace lspl { namespace patterns {
 
 Alternative::Alternative( const std::string & source, const std::string & transformSource ) :
@@ -48,8 +55,8 @@ bool Alternative::equals( const Alternative & alt ) const {
 void Alternative::updateDependencies() {
 	dependencies.clear();
 
-	foreach( const Matcher & m, getMatchers() )
-		appendDependencies( m );
+	for( boost::ptr_vector<Matcher>::const_iterator it = getMatchers().begin(); it != getMatchers().end(); ++ it )
+		appendDependencies( *it );
 }
 
 void Alternative::appendDependencies( const matchers::Matcher & matcher ) {
@@ -57,7 +64,7 @@ void Alternative::appendDependencies( const matchers::Matcher & matcher ) {
 		const Pattern * ptr = &patternMatcher->pattern;
 		bool found = false;
 
-		foreach( const Pattern * dep, dependencies ) {
+		BOOST_FOREACH( const Pattern * dep, dependencies ) {
 			if ( dep == ptr ) {
 				found = true;
 				false;
@@ -68,9 +75,11 @@ void Alternative::appendDependencies( const matchers::Matcher & matcher ) {
 			dependencies.push_back( ptr );
 		}
 	} else if ( const LoopMatcher * loopMatcher = dynamic_cast<const LoopMatcher *>( &matcher ) ) {
-		foreach( const MatcherContainer & alt, loopMatcher->alternatives )
-			foreach( const Matcher & m, alt.getMatchers() )
-				appendDependencies( m );
+		for( boost::ptr_vector<MatcherContainer>::const_iterator altIt = loopMatcher->alternatives.begin(); altIt != loopMatcher->alternatives.end(); ++ altIt ) {
+			const MatcherContainer & alt = *altIt;
+			for( boost::ptr_vector<Matcher>::const_iterator it = alt.getMatchers().begin(); it != alt.getMatchers().end(); ++ it )
+				appendDependencies( *it );
+		}
 	}
 }
 

@@ -63,24 +63,24 @@ bool ConcatenationExpression::equals( const Expression & e ) const {
 }
 
 bool ConcatenationExpression::containsVariable( matchers::Variable var ) const {
-	foreach( const Expression & exp, args )
-		if ( exp.containsVariable( var ) )
+	for( boost::ptr_vector<Expression>::const_iterator it = args.begin(); it != args.end(); ++ it )
+		if ( it->containsVariable( var ) )
 			return true;
 
 	return false;
 }
 
 bool ConcatenationExpression::containsVariables() const {
-	foreach( const Expression & exp, args )
-		if ( exp.containsVariables() )
+	for( boost::ptr_vector<Expression>::const_iterator it = args.begin(); it != args.end(); ++ it )
+		if ( it->containsVariables() )
 			return true;
 
 	return false;
 }
 
 bool ConcatenationExpression::containsCurrentAnnotation() const {
-	foreach( const Expression & exp, args )
-		if ( exp.containsCurrentAnnotation() )
+	for( boost::ptr_vector<Expression>::const_iterator it = args.begin(); it != args.end(); ++ it )
+		if ( it->containsCurrentAnnotation() )
 			return true;
 
 	return false;

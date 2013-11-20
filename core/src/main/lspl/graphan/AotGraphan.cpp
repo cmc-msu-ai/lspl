@@ -78,7 +78,7 @@ void AotGraphan::analyzeString( const std::string & str, boost::ptr_vector<Unit>
 			throw std::logic_error( file.GetLastError() );
 #endif
 
-		foreach ( const CGraLine & line, file.GetUnits() ) {
+		BOOST_FOREACH( const CGraLine & line, file.GetUnits() ) {
 			units.push_back( new Unit( line.GetToken(), line.GetTokenLength(), line.GetInputOffset(), line.IsWordOrNumberOrAbbr() ? Unit::WORD : line.IsPunct() ? Unit::PUNCT : Unit::UNKNOWN ) );
 		}
 	} catch ( const std::exception & e ) {

@@ -20,7 +20,7 @@ void Pattern::dump( std::ostream & out, const std::string & tabs ) const {
 	out << "Pattern{ name = " << name << ", alternatives = [\n\t" << tabs;
 
 	bool first = true;
-	foreach ( const Alternative & alt, alternatives ) {
+	BOOST_FOREACH( const Alternative & alt, alternatives ) {
 		if ( first ) {
 			first = false;
 		} else {
@@ -56,11 +56,11 @@ void Pattern::addAlternatives( boost::ptr_vector<Alternative> & r ) {
 void Pattern::updateDependencies() {
 	dependencies.clear();
 
-	foreach( const Alternative & alt, alternatives ) {
-		foreach( const Pattern * ptr, alt.getDependencies() ) {
+	BOOST_FOREACH( const Alternative & alt, alternatives ) {
+		BOOST_FOREACH( const Pattern * ptr, alt.getDependencies() ) {
 			bool found = false;
 
-			foreach( const Pattern * dep, dependencies ) {
+			BOOST_FOREACH( const Pattern * dep, dependencies ) {
 				if ( dep == ptr ) {
 					found = true;
 					false;
@@ -102,7 +102,7 @@ bool Pattern::dependsOn( const Pattern & pattern, bool transitive ) const {
 
 		return deepDependsOn( &pattern, stack );
 	} else {
-		foreach( const Pattern * p, dependencies ) {
+		BOOST_FOREACH( const Pattern * p, dependencies ) {
 			if ( p == &pattern ) // Если нашли шаблон в зависимостях
 				return true;
 		}
@@ -112,13 +112,13 @@ bool Pattern::dependsOn( const Pattern & pattern, bool transitive ) const {
 }
 
 bool Pattern::deepDependsOn( const Pattern * target, std::vector<const Pattern*> & stack ) const {
-	foreach( const Pattern * p, stack )
+	BOOST_FOREACH( const Pattern * p, stack )
 		if ( p == this )
 			return false;
 
 	stack.push_back( this ); // Помещаем текущий шаблон в стек
 
-	foreach( const Pattern * p, dependencies ) {
+	BOOST_FOREACH( const Pattern * p, dependencies ) {
 		if ( p == target ) // Если нашли шаблон в зависимостях
 			return true;
 
@@ -135,7 +135,7 @@ std::string Pattern::getSource() const {
 	std::string result = "";
 
 	bool first = true;
-	foreach ( const Alternative & alt, alternatives ) {
+	BOOST_FOREACH( const Alternative & alt, alternatives ) {
 		if ( first ) {
 			first = false;
 		} else {
