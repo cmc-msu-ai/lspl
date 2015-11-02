@@ -74,7 +74,7 @@ const char* lspl_annotation_attribute_value( const char* attribute_name );
 typedef struct lspl_annotation_iterator lspl_annotation_iterator;
 
 // Создаёт итератор для заданной разметки. Возвращает NULL в случае ошибки.
-lspl_annotation_iterator* lspl_create_markup_iterator( lspl_markup* markup );
+lspl_annotation_iterator* lspl_create_annotation_iterator( lspl_markup* markup );
 
 // Удаляет ранее созданный annotation_iterator.
 void lspl_free_annotation_iterator( lspl_annotation_iterator* annotation_iterator );
