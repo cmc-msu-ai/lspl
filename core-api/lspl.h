@@ -9,13 +9,31 @@ extern "C" {
 #endif
 
 //------------------------------------------------------------------------------
+// Информация об ошибке.
+typedef struct lspl_error lspl_error;
+
+// Возвращает код ошибки.
+int lspl_error_code( const lspl_error* error );
+
+// Возвращает текст ошибки.
+const char* lspl_error_text( const lspl_error* error );
+
+// Освобождает область в динамической памяти выделенную для lspl_error.
+void lspl_error_free( lspl_error* error );
+
+//------------------------------------------------------------------------------
 // База шаблонов.
 typedef struct lspl_grammar lspl_grammar; 
 
 // Создаёт базу шаблонов из текстового описания шаблонов.
 // Возвращает NULL в случае ошибки или новый объект в динамической памяти,
 // для освобождения, которого обязательно использование lspl_free_grammar.
-lspl_grammar* lspl_create_grammar( const char* patterns_text );
+// Через параметр error можно получить информацию о произошедшей ошибке.
+// Если информация об ошибке не итересна можно передать NULL в качесте аргумента.
+// В случае если в error был передан ненулевой указатель и произошла ошибка,
+// необходимо освободить выделенную память с помощью lspl_error_free.
+lspl_grammar* lspl_create_grammar( const char* patterns_text,
+	lspl_error** error );
 
 // Удаляет ранее созданный объект lspl_grammar.
 void lspl_free_grammar( lspl_grammar* grammar );
