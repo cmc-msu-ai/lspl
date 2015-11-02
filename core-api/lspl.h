@@ -51,9 +51,9 @@ typedef struct lspl_annotation lspl_annotation;
 
 // Возвращают смещение в байтах от начала текста.
 // Начало наложения.
-int lspl_annotation_start( const lspl_annotation* annotation );
+int lspl_annotation_get_start( const lspl_annotation* annotation );
 // Конец наложения.
-int lspl_annotation_end( const lspl_annotation* annotation );
+int lspl_annotation_get_end( const lspl_annotation* annotation );
 
 // Возвращают длину текста аннотации в байтах.
 int lspl_annotation_text_length( const lspl_annotation* annotation );
@@ -67,7 +67,7 @@ int lspl_annotation_text( const lspl_annotation* annotation,
 int lspl_annotation_has_attribute( const char* attribute_name );
 
 // Возращает строковое значение атрибута аннотации или NULL если такого атрибута нет.
-const char* lspl_annotation_attribute_value( const char* attribute_name );
+const char* lspl_annotation_get_string_attribute( const char* attribute_name );
 
 //------------------------------------------------------------------------------
 // Итератор для обхода аннотаций.
