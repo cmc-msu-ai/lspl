@@ -19,7 +19,7 @@ int lspl_error_code( const lspl_error* error );
 const char* lspl_error_text( const lspl_error* error );
 
 // Освобождает область в динамической памяти выделенную для lspl_error.
-void lspl_error_free( lspl_error* error );
+void lspl_free_error( lspl_error* error );
 
 //------------------------------------------------------------------------------
 // База шаблонов.
