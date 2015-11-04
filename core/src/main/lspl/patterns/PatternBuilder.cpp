@@ -319,6 +319,61 @@ public:
     ParserImpl( NamespaceRef space, transforms::TransformBuilderRef tb ) : Parser( space, tb ) {}
     ~ParserImpl() {}
 
+    PatternBuilder::BuildInfo buildNoException(const char * str ){
+        try {
+        parse_info<const char *> pi = boost::spirit::classic::parse( str, *this, space_p );
+
+            PatternBuilder::BuildInfo bi;
+            bi.parseLength = (uint) pi.length;
+            bi.parseTail = pi.stop;
+
+            return bi;
+        } catch ( parser_error<Errors,const char *> & err ) {
+            PatternBuilder::BuildInfo errBi;
+            errBi.parseLength = -1;
+            errBi.parseTail = str;
+            switch( err.descriptor ) {
+            case BindingEndMissing:
+                errBi.errorMsg =  "Binding end missing";
+            case RestrictionEndMissing:
+                errBi.errorMsg = "Restriction end missing";
+            case LoopEndMissing:
+                errBi.errorMsg = "Loop end missing";
+            case OptionalEndMissing:
+                errBi.errorMsg = "Optional group end missing";
+            case NoMatchersInAlternative:
+                errBi.errorMsg = "No matchers in alternative" ;
+            case NoMatchersInGroup:
+                errBi.errorMsg = "No matchers in group";
+            case NoRestrictionBody:
+                errBi.errorMsg = "No valid restrictions" ;
+            case InvalidPatternName:
+                errBi.errorMsg = "Invalid pattern name";
+            case ClosingSglQuoteMissed:
+                errBi.errorMsg = "Closing single quote missed";
+            case ClosingDblQuoteMissed:
+                errBi.errorMsg =  "Closing double quote missed";
+            case AttributeValueExpected:
+                errBi.errorMsg = "Invalid or no attribute value";
+            default:
+                errBi.errorMsg = (boost::format( "Error parsing template: %1%. Descriptor: %2%. Where: %3%" ) % err.what() % err.descriptor % err.where).str();
+            }
+            return errBi;
+        } catch ( const std::exception & e ) {
+            PatternBuilder::BuildInfo errBi;
+            errBi.parseLength = -1;
+            errBi.parseTail = str;
+            errBi.errorMsg= (boost::format( "Error parsing template: %1% in template %2%" ) % e.what() % str).str();
+            return errBi;
+        } catch ( ... ) {
+            PatternBuilder::BuildInfo errBi;
+            errBi.parseLength = -1;
+            errBi.parseTail = str;
+            errBi.errorMsg = "Unknown error during parsing template";
+            return errBi;
+        }
+    }
+
     PatternBuilder::BuildInfo build( const char * str ) throw (PatternBuildingException) {
     	try {
 		parse_info<const char *> pi = boost::spirit::classic::parse( str, *this, space_p );
@@ -377,7 +432,11 @@ PatternBuilder::~PatternBuilder() {
 }
 
 PatternBuilder::BuildInfo PatternBuilder::build( const std::string & str ) throw (PatternBuildingException) {
-	return parser->build( str.c_str() );
+    return parser->build( str.c_str() );
+}
+
+PatternBuilder::BuildInfo PatternBuilder::buildNoException(const std::string &str){
+    return parser->buildNoException(str.c_str());
 }
 
 } } // namespace lspl::patterns
