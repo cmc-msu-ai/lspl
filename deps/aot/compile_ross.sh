@@ -23,7 +23,7 @@ fi
 if [ -x /usr/bin/gmake ] || [ -x /usr/local/bin/gmake ]; then
 	make_tool=gmake
 else
-	make_tool=make
+	make_tool="make -j8"
 fi
 
 
@@ -36,7 +36,10 @@ if [ "$?" -ne "0" ]; then
 fi
 
 echo "======== Compiling $1  ========"
-Bin/StructDictLoader FromTxt $1/ross.txt  $1
+if [ $(uname) != "Darwin" ]; then
+	Bin/StructDictLoader FromTxt $1/ross.txt  $1
+fi
+
 if [ "$?" -ne "0" ]; then
 	errorstr="Cannot compile $1!"
 	halt;

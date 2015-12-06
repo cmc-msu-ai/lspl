@@ -43,7 +43,7 @@ fi;
 if [ -x /usr/bin/gmake ] || [ -x /usr/local/bin/gmake ]; then
 	make_tool=gmake
 else
-	make_tool=make
+	make_tool="make -j8"
 fi
 
 echo "================ Compiling GraphmatThick ==================="
@@ -57,9 +57,10 @@ fi
 
 
 echo "======== Checking $1 tokenizer ========"
-Bin/GraphmatThick $1 Test/Graphan/$Language/text1.txt -gra Test/Graphan/$Language/text1.gra
-
-cmp Test/Graphan/$Language/text1.gra Test/Graphan/$Language/result.gra
+if [ $(uname) != "Darwin" ]; then
+	Bin/GraphmatThick $1 Test/Graphan/$Language/text1.txt -gra Test/Graphan/$Language/text1.gra
+	cmp Test/Graphan/$Language/text1.gra Test/Graphan/$Language/result.gra
+fi
 
 if [ "$?" -ne "0" ]; then
 	# rm Test/Graphan/$Language/text1.gra

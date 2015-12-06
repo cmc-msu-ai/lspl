@@ -22,6 +22,10 @@ aot-win32: ./deps/aot/Source/LemmatizerLib/libLemmatizermrst.a
 
 core: aot
 	make -C core linux64
+core-mac: aot
+	make -C core mac
+core-mac-xcode: aot
+	make -C core mac-xcode
 core-win32: aot-win32
 	make -C core win32
 

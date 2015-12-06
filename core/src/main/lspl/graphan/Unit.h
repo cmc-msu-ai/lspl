@@ -8,6 +8,7 @@
 #ifndef _LSPL_GRAPHAN_TOKEN_H_
 #define _LSPL_GRAPHAN_TOKEN_H_
 
+#include <string>
 #include "../base/Base.h"
 
 namespace lspl { namespace graphan {

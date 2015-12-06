@@ -120,20 +120,20 @@ public:
           	assertion<Errors> expect_closing_sgl_quote(ClosingSglQuoteMissed);
         	assertion<Errors> expect_closing_dbl_quote(ClosingDblQuoteMissed);
 */
-        	function<AddImpl> add;
-			function<AddRestrictionImpl> addRestriction;
-        	function<AddStringMatcherImpl> addStringMatcher;
-        	function<AddWordMatcherImpl> addWordMatcher;
-        	function<AddPatternMatcherImpl> addPatternMatcher( AddPatternMatcherImpl( *self->space, typeSymbol ) );
-			function<CreateAgreementRestrictionImpl> createAgreementRestriction;
-			function<AddNormalizationRestrictionImpl> AddNormalizationRestriction;
+        	phoenix::function<AddImpl> add;
+			phoenix::function<AddRestrictionImpl> addRestriction;
+        	phoenix::function<AddStringMatcherImpl> addStringMatcher;
+        	phoenix::function<AddWordMatcherImpl> addWordMatcher;
+        	phoenix::function<AddPatternMatcherImpl> addPatternMatcher( AddPatternMatcherImpl( *self->space, typeSymbol ) );
+			phoenix::function<CreateAgreementRestrictionImpl> createAgreementRestriction;
+			phoenix::function<AddNormalizationRestrictionImpl> AddNormalizationRestriction;
 
-			function<CreateCurrentAttributeExpressionImpl> createCurrentAttributeExpression;
-			function<CreateVariableExpressionImpl> createVariableExpression;
-			function<CreateAttributeExpressionImpl> createAttributeExpression;
-			function<CreateConcatExpressionImpl> createConcatExpression;
-			function<CreateStringLiteralExpressionImpl> createStringLiteralExpression;
-			function<CreateLiteralExpressionImpl> createLiteralExpression;
+			phoenix::function<CreateCurrentAttributeExpressionImpl> createCurrentAttributeExpression;
+			phoenix::function<CreateVariableExpressionImpl> createVariableExpression;
+			phoenix::function<CreateAttributeExpressionImpl> createAttributeExpression;
+			phoenix::function<CreateConcatExpressionImpl> createConcatExpression;
+			phoenix::function<CreateStringLiteralExpressionImpl> createStringLiteralExpression;
+			phoenix::function<CreateLiteralExpressionImpl> createLiteralExpression;
 
 //       	endRestriction = expect_restriction_end( ch_p('>') );
 

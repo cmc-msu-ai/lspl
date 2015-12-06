@@ -21,7 +21,7 @@ fi;
 if [ -x /usr/bin/gmake ] || [ -x /usr/local/bin/gmake ]; then
 	make_tool=gmake
 else
-	make_tool=make
+	make_tool="make -j8"
 fi
 
 

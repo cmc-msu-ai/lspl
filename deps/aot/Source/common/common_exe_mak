@@ -21,8 +21,10 @@ endif
 
 $(ExeName) : $(objects) $(libs)
 	$(mode_error)
+ifneq ($(shell uname), Darwin)
 	$(CXX)  $(lib_mode_switch) $(lparams)  $(objects) $(contrib) $(libs_argument) $(stllib)  -o $(ExeName)
 	cp $(ExeName) ../../Bin
+endif
 
 $(libs): %$(ct).$(lib_ext) : FORCE
 	$(mode_error)
