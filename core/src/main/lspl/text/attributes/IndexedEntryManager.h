@@ -31,6 +31,9 @@ public:
 			boost::multi_index::hashed_unique< 
 				boost::multi_index::member< Entry, const std::string, &Entry::abbrevation >
 			>,
+			boost::multi_index::hashed_unique< 
+				boost::multi_index::member< Entry, const std::string, &Entry::name >
+			>,
 			boost::multi_index::random_access<
 			>
 		>
@@ -44,7 +47,7 @@ public:
 	}
 	
 	Entry & at( uint index ) {
-		return *map.get<1>().at( index );
+		return *map.get<2>().at( index );
 	}
 public:
 	EntryMap map;

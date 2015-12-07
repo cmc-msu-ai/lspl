@@ -54,9 +54,21 @@ uint AttributeKey::count() {
  * Найти аттрибут по его аббревиатуре
  */
 AttributeKey AttributeKey::findByAbbrevation( const std::string & abbrevation ) {
-	IndexedAttributeKeyManager::Iterator i = indexedAttributeKeyManager.map.find( abbrevation );
+	auto i = indexedAttributeKeyManager.map.get<0>().find( abbrevation );
 
-	if ( i == indexedAttributeKeyManager.map.end() )
+	if ( i == indexedAttributeKeyManager.map.get<0>().end() )
+		return AttributeKey( 0 );
+
+	return AttributeKey( (*i)->id );
+}
+
+/**
+ * Найти аттрибут по его имени
+ */
+AttributeKey AttributeKey::findByName( const std::string & name ) {
+	auto i = indexedAttributeKeyManager.map.get<1>().find( name );
+
+	if ( i == indexedAttributeKeyManager.map.get<1>().end() )
 		return AttributeKey( 0 );
 
 	return AttributeKey( (*i)->id );

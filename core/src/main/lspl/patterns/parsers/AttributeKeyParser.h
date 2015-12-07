@@ -29,6 +29,9 @@ struct AttributeKeyParserImpl {
 		if ( result_t::UNDEFINED != ( result = AttributeKey::findByAbbrevation( attKey ) ) ) // Ищем аттрибут по аббревиатуре
 			return r;
 
+		if ( result_t::UNDEFINED != ( result = AttributeKey::findByName( attKey ) ) ) // Ищем аттрибут по имени
+			return r;
+
 		result = AttributeKey::create( attKey, attKey, attKey ); // Создаем новый аттрибут
 		return r;
 	}

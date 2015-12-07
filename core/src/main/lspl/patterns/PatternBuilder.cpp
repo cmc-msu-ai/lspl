@@ -274,12 +274,15 @@ public:
         	 */
 
         	for ( uint i = 0; i < SpeechPart::COUNT; ++ i ) {
-        		speechPart.add( SpeechPart( i ).getAbbrevation().c_str(), SpeechPart( i ) );
-        		typeSymbol.add( SpeechPart( i ).getAbbrevation().c_str(), i );
+                speechPart.add( SpeechPart( i ).getAbbrevation().c_str(), SpeechPart( i ) );
+                speechPart.add( SpeechPart( i ).getName().c_str(), SpeechPart( i ) );
+                typeSymbol.add( SpeechPart( i ).getAbbrevation().c_str(), i );
+                typeSymbol.add( SpeechPart( i ).getName().c_str(), i );
         	}
 
         	for ( uint i = 0; i < AttributeValue::indexedCount(); ++ i ) {
-        		attributeValue.add( AttributeValue( i ).getAbbrevation().c_str(), AttributeValue( i ) );
+                attributeValue.add( AttributeValue( i ).getAbbrevation().c_str(), AttributeValue( i ) );
+                attributeValue.add( AttributeValue( i ).getName().c_str(), AttributeValue( i ) );
         	}
         }
 
