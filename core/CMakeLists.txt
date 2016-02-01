@@ -92,6 +92,8 @@ set_target_properties(lspl
 
 if(MINGW)
 	target_link_libraries(lspl pcrecpp iconv Graphanrmst Lemmatizerrmst StructDictrmst MorphWizardrmst Agramtabrmst pcre)
+elseif(APPLE)
+	target_link_libraries(lspl pcrecpp iconv pcre Graphanrst Lemmatizerrst StructDictrst MorphWizardrst Agramtabrst)
 else(MINGW)
 	target_link_libraries(lspl pcrecpp pcre Graphanrst Lemmatizerrst StructDictrst MorphWizardrst Agramtabrst)
 endif(MINGW)

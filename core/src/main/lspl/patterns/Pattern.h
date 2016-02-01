@@ -1,6 +1,7 @@
 #ifndef _LSPL_PATTERNS_PATTERN_H_
 #define _LSPL_PATTERNS_PATTERN_H_
 
+#include <string>
 #include "Forward.h"
 #include "../text/Forward.h"
 

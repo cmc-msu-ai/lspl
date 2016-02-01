@@ -50,6 +50,7 @@ static void testSimplePatterns() {
 	assertBuilds( "Act = N<бизнес-вумен> V" );
 	assertBuilds( "Act = N<g=fem> V" );
 	assertBuilds( "N2<координата, n=plur>" );
+	assertBuilds( "Act = Noun<gender=feminine> Verb Adjective" );
 	assertFails( "Act1 = N1 N1" ); // Wrong rule naming: Act1
 	assertFails( "Act = N1 N1 <3270 0" );
 	assertFails( "Act = N1 N1 <3=7>" );

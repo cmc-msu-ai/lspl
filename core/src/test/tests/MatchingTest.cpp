@@ -49,6 +49,7 @@ static void testSimplePatterns() {
 	assertMatches( "Мама мыла раму", 0, 2, "Act = N { { V<N=V> }<1,1> }<1,1>" );
 	assertMatches( "Мама мыла раму", 0, 2, "Act = N V<N.g=V.g>" );
 	assertMatches( "Мама мыла раму", 0, 2, "Act = N<g=fem> V" );
+	assertMatches( "Мама мыла раму", 0, 2, "Act = Noun<gender=feminine> Verb" );
 	assertMatches( "Мама мыла раму", 0, 2, "Act = \"мама\" V" );
 	assertNoMatches( "Мама мыла раму", "Act = N<папа> V" );
 }

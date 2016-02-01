@@ -38,6 +38,11 @@ public:
 	static AttributeKey findByAbbrevation( const std::string & abbrevation );
 
 	/**
+	 * Найти аттрибут по его имени
+	 */
+	static AttributeKey findByName( const std::string & name );
+
+	/**
 	 * Зарегистрировать новый аттрибут
 	 */
 	static AttributeKey create( const std::string & abbrevation, const std::string & name, const std::string & title );
