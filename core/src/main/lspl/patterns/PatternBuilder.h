@@ -9,6 +9,7 @@
 #include "../transforms/TransformBuilder.h"
 
 #include <string>
+#include <map>
 
 #include <boost/scoped_ptr.hpp>
 
@@ -47,19 +48,17 @@ public:
 	 */
 	class Parser {
 	public:
-		Parser( NamespaceRef space, transforms::TransformBuilderRef transformBuilder ) : space( space ), transformBuilder( transformBuilder ) {}
+		Parser( NamespaceRef space, const std::map<std::string, transforms::TransformBuilderRef>& transformBuilders ) : space( space ), transformBuilders( transformBuilders ) {}
 		virtual ~Parser() {}
 
 		virtual BuildInfo build( const char * str ) throw (PatternBuildingException) = 0;
 	public:
 		NamespaceRef space;
-		transforms::TransformBuilderRef transformBuilder;
+		const std::map<std::string, transforms::TransformBuilderRef>& transformBuilders;
 	};
 
 public:
-	PatternBuilder();
-	PatternBuilder( const NamespaceRef & ns );
-	PatternBuilder( const NamespaceRef & ns, const transforms::TransformBuilderRef & tb );
+	PatternBuilder( const NamespaceRef & ns = new Namespace() );
 	virtual ~PatternBuilder();
 
 	/**
@@ -70,7 +69,7 @@ public:
 public:
 
 	NamespaceRef space;
-	transforms::TransformBuilderRef transformBuilder;
+	std::map<std::string, transforms::TransformBuilderRef> transformBuilders;
 
 private:
 

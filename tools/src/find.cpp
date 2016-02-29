@@ -22,8 +22,8 @@
 #include <lspl/text/Text.h>
 #include <lspl/text/readers/PlainTextReader.h>
 
-#include <lspl/transforms/TextTransformBuilder.h>
-#include <lspl/transforms/PatternTransformBuilder.h>
+#include <lspl/transforms/TextTransform.h>
+#include <lspl/transforms/PatternTransform.h>
 
 using lspl::uint;
 
@@ -32,6 +32,7 @@ void printHelp() {
 		<< "Options:" << std::endl
 		<< "  -h - show this help message" << std::endl
 		<< "  -p <file> - specify patterns file (in CP1251 encoding)" << std::endl
+		<< "  -s <file> - specify target patterns file (in CP1251 encoding)" << std::endl
 		<< "  -i <file> - specify input file (in CP1251 encoding)" << std::endl
 		<< "  -o <file> - specify output file for all patterns (in CP1251 encoding)" << std::endl
 		<< "  -t <file> - specify output file for patterns with text transformation (in CP1251 encoding)" << std::endl
@@ -39,7 +40,7 @@ void printHelp() {
 		<< "  -e <file> - specify error output file (in CP1251 encoding)" << std::endl;
 }
 
-void buildPatterns( const lspl::patterns::PatternBuilderRef builders[], std::istream & in, std::ostream & err ) {
+void buildPatterns( const lspl::patterns::PatternBuilderRef builder, std::istream & in, std::ostream & err ) {
 	char buffer[1000];
 	while (!in.eof()) {
 		in.getline( buffer, sizeof(buffer), '\n' );
@@ -48,15 +49,7 @@ void buildPatterns( const lspl::patterns::PatternBuilderRef builders[], std::ist
 
 		try {
 			std::string pattern(buffer);
-			lspl::patterns::PatternBuilder::BuildInfo info;
-			if (pattern.find("=pattern>") != std::string::npos) {
-				info = builders[2]->build( pattern );
-			} else if (pattern.find("=text>") != std::string::npos) {
-				info = builders[1]->build( pattern );
-			} else {
-				info = builders[0]->build( pattern );
-			}
-
+			const auto info = builder->build( pattern );
 			if ( info.parseTail.length() > 0 ) {
 				err << "Error during parsing '" << buffer << "': '" << info.parseTail << "' not parsed" << std::endl;
 			}
@@ -68,48 +61,46 @@ void buildPatterns( const lspl::patterns::PatternBuilderRef builders[], std::ist
 	}
 }
 
-lspl::patterns::PatternList buildGoals( const lspl::patterns::PatternBuilderRef builders[], char ** argv, int start, int end, std::ostream & err ) {
-	lspl::patterns::PatternList goals;
-
-	for ( int i = start; i < end; ++i ) {
-		std::string source( argv[i] );
-
-		if ( source == "*" ) { // Цель * - найти ВСЕ шаблоны
-			for ( uint i = 0, sz = builders[0]->space->getPatternCount(); i < sz; ++i )
-				goals.push_back( builders[0]->space->getPatternByIndex( i ) );
-
-			continue;
-		}
-
-		try {
-			lspl::patterns::PatternRef goal = builders[0]->space->getPatternByName( source );
-
-			if ( !goal ) {
-				lspl::patterns::PatternBuilder::BuildInfo info;
-				if (source.find("=pattern>") != std::string::npos) {
-					info = builders[2]->build( source );
-				} else if (source.find("=text>") != std::string::npos) {
-					info = builders[1]->build( source );
-				} else {
-					info = builders[0]->build( source );
-				}
-
-				if ( info.parseTail.length() == 0 ) {
-					goal = builders[0]->space->getPatternByName( source );
-				} else {
-					err << "Error during parsing '" << source << "': '" << info.parseTail << "' not parsed" << std::endl;
-				}
+void buildGoal(const std::string& source, const lspl::patterns::PatternBuilderRef builder, std::ostream & err, lspl::patterns::PatternList& goals ) {
+	if ( source == "*" ) { // Цель * - найти ВСЕ шаблоны
+		for ( uint i = 0, sz = builder->space->getPatternCount(); i < sz; ++i )
+			goals.push_back( builder->space->getPatternByIndex( i ) );
+		return;
+	}
+	try {
+		lspl::patterns::PatternRef goal = builder->space->getPatternByName( source );
+		if ( !goal ) {
+			const auto info = builder->build( source );
+			if ( info.parseTail.length() == 0 ) {
+				goal = builder->space->getPatternByName( source );
+			} else {
+				err << "Error during parsing '" << source << "': '" << info.parseTail << "' not parsed" << std::endl;
 			}
+		}
+		if ( goal ) {
+			goals.push_back( goal );
+		}
+	} catch ( std::exception & ex ) {
+		err << "Error during parsing '" << source << "': " << ex.what() << std::endl;
+	} catch ( ... ) {
+		err << "Unknown error during parsing '" << source << "'" << std::endl;
+	}
+}
 
-			if ( goal )
-				goals.push_back( goal );
-		} catch ( std::exception & ex ) {
-			err << "Error during parsing '" << source << "': " << ex.what() << std::endl;
-		} catch ( ... ) {
-			err << "Unknown error during parsing '" << source << "'" << std::endl;
+lspl::patterns::PatternList buildGoals( const lspl::patterns::PatternBuilderRef builder, char ** argv, int start, int end, std::ostream & err, std::istream * tpin ) {
+	lspl::patterns::PatternList goals;
+	if (tpin) {
+		char buffer[1000];
+		while (!tpin->eof()) {
+			tpin->getline( buffer, sizeof(buffer), '\n' );
+			buffer[tpin->gcount()] = 0;
+			buildGoal(std::string(buffer), builder, err, goals);
+		}
+	} else {
+		for ( int i = start; i < end; ++i ) {
+			buildGoal(std::string(argv[i]), builder, err, goals);
 		}
 	}
-
 	return goals;
 }
 
@@ -127,6 +118,8 @@ void processGoal( const lspl::patterns::PatternRef & goal, const lspl::text::Tex
 
 	lspl::text::MatchList matches = text->getMatches( goal );
 
+	lspl::text::MatchList matchesPos;
+
 	out << "\t\t<goal name=\"" << goal->name << "\">\n";
 
 	for ( uint matchIndex = 0; matchIndex < matches.size(); ++ matchIndex ) {
@@ -136,8 +129,10 @@ void processGoal( const lspl::patterns::PatternRef & goal, const lspl::text::Tex
 		out << "\t\t\t\t<fragment>" << match->getRangeString() << "</fragment>\n";
 
 		if (patternType == 1) {
-			for ( uint variantIndex = 0; variantIndex < match->getVariantCount(); ++ variantIndex )
-				out << "\t\t\t\t<result>" << match->getVariant(variantIndex)->getTransformResult<std::string>() << "</result>\n";
+			for ( uint variantIndex = 0; variantIndex < match->getVariantCount(); ++ variantIndex ) {
+				const auto& result = match->getVariant(variantIndex)->getTransformResult<lspl::transforms::TextTransformResult>();
+				out << "\t\t\t\t<result pos=\"" << result.pos << "\">" << result.text << "</result>\n";
+			}
 		} else if (patternType == 2) {
 			for ( uint variantIndex = 0; variantIndex < match->getVariantCount(); ++ variantIndex ) {
 				lspl::patterns::PatternRef pt = match->getVariant(variantIndex)->getTransformResult<lspl::patterns::PatternRef>();
@@ -157,6 +152,7 @@ int main(int argc, char ** argv) {
 
 	std::istream * in = &std::cin;
 	std::istream * pin = 0;
+	std::istream * tpin = 0;
 	std::ostream * out = &std::cout;
 	std::ostream * outt = &std::cout;
 	std::ostream * outp = &std::cout;
@@ -168,7 +164,7 @@ int main(int argc, char ** argv) {
 	}
 
 	char c;
-	while ((c = getopt(argc, argv, "hi:o:e:p:t:r:")) != -1) {
+	while ((c = getopt(argc, argv, "hi:o:e:p:t:r:s:")) != -1) {
 		switch (c) {
 		case 'i':
 			in = new std::ifstream( optarg );
@@ -205,15 +201,20 @@ int main(int argc, char ** argv) {
 				return 1;
 			}
 			break;
-		case 'p': {
+		case 'p':
 			pin = new std::ifstream( optarg );
 			if ( pin->fail() ) {
 				std::cerr << "Error opening '" << optarg << "' as pattern file" << std::endl;
 				return 1;
 			}
-
 			break;
-		}
+		case 's':
+			tpin = new std::ifstream( optarg );
+			if ( tpin->fail() ) {
+				std::cerr << "Error opening '" << optarg << "' as target pattern file" << std::endl;
+				return 1;
+			}
+			break;
 		case 'h':
 		default:
 			printHelp();
@@ -231,18 +232,15 @@ int main(int argc, char ** argv) {
 
 	lspl::NamespaceRef ns = new lspl::Namespace();
 	lspl::patterns::PatternBuilderRef builder = new lspl::patterns::PatternBuilder( ns );
-	lspl::patterns::PatternBuilderRef builderText = new lspl::patterns::PatternBuilder( ns, new lspl::transforms::TextTransformBuilder( ns ) );
-	lspl::patterns::PatternBuilderRef builderPattern = new lspl::patterns::PatternBuilder( ns, new lspl::transforms::PatternTransformBuilder( ns ) );
-	const lspl::patterns::PatternBuilderRef builders[] = {builder, builderText, builderPattern};
 	lspl::text::readers::PlainTextReader r;
 
 	if ( pin ) {
-		buildPatterns( builders, *pin, *err );
+		buildPatterns( builder, *pin, *err );
 		delete pin;
 		pin = 0;
 	}
 
-	lspl::patterns::PatternList goals = buildGoals( builders, argv, optind, argc, *err );
+	lspl::patterns::PatternList goals = buildGoals( builder, argv, optind, argc, *err, tpin );
 	lspl::text::TextRef text = r.readFromStream( *in );
 
 	*out << "<?xml version=\"1.0\" encoding=\"windows-1251\"?>\n<texts>\n\t<text>\n";

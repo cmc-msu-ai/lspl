@@ -42,6 +42,10 @@ java-win32: core-win32
 
 tools: core
 	make -C tools linux64
+tools-mac: core-mac
+	make -C tools mac
+tools-mac-xcode: core-mac-xcode
+	make -C tools mac-xcode
 tools-win32: core-win32
 	make -C tools win32
 

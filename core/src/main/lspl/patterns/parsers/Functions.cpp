@@ -116,12 +116,18 @@ void AddPatternMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, c
 	matchers.push_back( matcher );
 }
 
-void AddAlternativeDefinitionImpl::operator()( boost::ptr_vector<Alternative> & alts, boost::ptr_vector<Matcher> & matchers, boost::ptr_map<AttributeKey,Expression> & bindings, const std::string & source, const std::string & transformSource ) const {
+void AddAlternativeDefinitionImpl::operator()( boost::ptr_vector<Alternative> & alts, boost::ptr_vector<Matcher> & matchers, boost::ptr_map<AttributeKey,Expression> & bindings, const std::string & source, const std::string & transformSource, const std::string & transformType ) const {
 	Alternative * alternative = new Alternative( source, transformSource ); // Добавляем новую альтернативу к шаблону
 
 	alternative->addMatchers( matchers ); // Добавляем сопоставители
 	alternative->addBindings( bindings ); // Добавляем связывания
 	alternative->updateDependencies(); // Обновляем зависимости альтернативы
+
+	const auto transformBuilder = transformBuilders.find(transformType);
+	if (transformBuilder == transformBuilders.end())
+		throw PatternBuildingException("Invalid transform type: =" + transformType + ">");
+
+	alternative->setTransform( std::auto_ptr<transforms::Transform>( transformBuilder->second->build( *alternative, alternative->getTransformSource() ) ) );
 
 	alts.push_back( alternative );
 }
@@ -131,11 +137,6 @@ void AddPatternDefinitionImpl::operator()( const std::string & name, boost::ptr_
 
 	pattern->addAlternatives( alts ); // Добавляем альтернативы к шаблону
 	pattern->updateDependencies(); // Обновляем зависимости шаблона
-
-	for( boost::ptr_vector<Alternative>::const_iterator altIt = pattern->getAlternatives().begin(); altIt != pattern->getAlternatives().end(); ++ altIt ) {
-		const Alternative & alt = *altIt;
-		const_cast<Alternative &>( alt ).setTransform( std::auto_ptr<transforms::Transform>( transformBuilder.build( alt, alt.getTransformSource() ) ) ); // Устанавливаем преобразование
-	}
 }
 
 void AddRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matchers, Restriction * restriction ) const {

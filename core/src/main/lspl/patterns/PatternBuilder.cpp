@@ -14,6 +14,10 @@
 
 #include "matchers/Matcher.h"
 
+#include "../transforms/TransformBuilder.h"
+#include "../transforms/TextTransformBuilder.h"
+#include "../transforms/PatternTransformBuilder.h"
+
 #include <boost/spirit/include/classic_core.hpp>
 #include <boost/spirit/include/classic_attribute.hpp>
 #include <boost/spirit/include/classic_symbols.hpp>
@@ -85,11 +89,12 @@ public:
 		member2 alternatives;
 	};
 
-	struct AlternativeClosure : public boost::spirit::classic::closure< AlternativeClosure, uint, boost::ptr_vector<Matcher>, boost::ptr_map<AttributeKey,Expression>, std::string > {
+	struct AlternativeClosure : public boost::spirit::classic::closure< AlternativeClosure, uint, boost::ptr_vector<Matcher>, boost::ptr_map<AttributeKey,Expression>, std::string, std::string > {
 		member1 stub;
 		member2 matchers;
 		member3 bindings;
 		member4 transformSource;
+        member5 transformType;
 	};
 
 	struct BindingClosure : public boost::spirit::classic::closure< BindingClosure, AttributeKey, Expression * > {
@@ -143,8 +148,8 @@ public:
         	function<AddWordMatcherImpl> addWordMatcher;
         	function<AddTokenMatcherImpl> addTokenMatcher;
         	function<AddLoopMatcherImpl> addLoopMatcher;
-        	function<AddAlternativeDefinitionImpl> addAlternativeDefinition( AddAlternativeDefinitionImpl( *self.transformBuilder ) );
-        	function<AddPatternDefinitionImpl> addPatternDefinition( AddPatternDefinitionImpl( *self.space, typeSymbol, *self.transformBuilder ) );
+        	function<AddAlternativeDefinitionImpl> addAlternativeDefinition( AddAlternativeDefinitionImpl( self.transformBuilders ) );
+        	function<AddPatternDefinitionImpl> addPatternDefinition( AddPatternDefinitionImpl( *self.space, typeSymbol ) );
 
 			function<CreateAgreementRestrictionImpl> createAgreementRestriction;
 			function<CreateDictionaryRestrictionImpl> createDictionaryRestriction( *self.space );
@@ -169,9 +174,10 @@ public:
         		)[ addPatternDefinition( pattern.name, pattern.alternatives ) ];
 
         	alternative = ( matcher >> *(matcher|patternRestrictions) >> !bindingList >> !alternativeTransformSource )
-        		[ addAlternativeDefinition( pattern.alternatives, alternative.matchers, alternative.bindings, construct_<std::string>( arg1, arg2 ), alternative.transformSource ) ];
+        		[ addAlternativeDefinition( pattern.alternatives, alternative.matchers, alternative.bindings, construct_<std::string>( arg1, arg2 ), alternative.transformSource, alternative.transformType ) ];
 
-        	alternativeTransformSource = ( str_p("=text>") | str_p("=pattern>") ) >> lexeme_d[ *~chset_p("\n|") ][ alternative.transformSource = construct_<std::string>( arg1, arg2 ) ];
+        	alternativeTransformSource = ch_p('=') >> lexeme_d[ +chset_p("a-z") ] [ alternative.transformType = construct_<std::string>( arg1, arg2 ) ] >> ch_p('>')
+                >> lexeme_d[ *~chset_p("\n|") ][ alternative.transformSource = construct_<std::string>( arg1, arg2 ) ];
 
         	patternName = lexeme_d[ +chset_p("a-zA-Z" RUS_ALPHA "-") >> ~epsilon_p(chset_p("a-zA-Z" RUS_ALPHA "-")) ];
 
@@ -319,7 +325,7 @@ public:
     	AttributeKeyParser attributeKey;
     };
 
-    ParserImpl( NamespaceRef space, transforms::TransformBuilderRef tb ) : Parser( space, tb ) {}
+    ParserImpl( NamespaceRef space, const std::map<std::string, transforms::TransformBuilderRef>& tbs ) : Parser( space, tbs ) {}
     ~ParserImpl() {}
 
     PatternBuilder::BuildInfo build( const char * str ) throw (PatternBuildingException) {
@@ -366,15 +372,13 @@ public:
     }
 };
 
-PatternBuilder::PatternBuilder() : space( new Namespace() ), transformBuilder( new transforms::DummyTransformBuilder() ), parser( new ParserImpl( space, transformBuilder ) ) {
+PatternBuilder::PatternBuilder( const NamespaceRef & ns ) :
+    space( ns ),
+    parser( new ParserImpl( space, transformBuilders ) ) {
+    transformBuilders.insert(std::make_pair("", new transforms::DummyTransformBuilder()));
+    transformBuilders.insert(std::make_pair("text", new transforms::TextTransformBuilder( space )));
+    transformBuilders.insert(std::make_pair("pattern", new transforms::PatternTransformBuilder( space )));
 }
-
-PatternBuilder::PatternBuilder( const NamespaceRef & ns ) : space( ns ), transformBuilder( new transforms::DummyTransformBuilder() ), parser( new ParserImpl( space, transformBuilder ) ) {
-}
-
-PatternBuilder::PatternBuilder( const NamespaceRef & ns, const transforms::TransformBuilderRef & tb ) : space( ns ), transformBuilder( tb ), parser( new ParserImpl( space, transformBuilder ) ) {
-}
-
 
 PatternBuilder::~PatternBuilder() {
 }

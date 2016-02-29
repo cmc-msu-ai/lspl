@@ -41,17 +41,6 @@ public:
 		return transformResult->getValue<Result>();
 	}
 
-	//получить результат преобразования с атрибутом
-	//теперь у альтернативы может быть несколько результатов преобразования
-	//это нужно для рекурсивного вывода шаблонов, которым нужно изменять атрибуты
-	template <typename Result>
-	Result getTransformResult(unsigned int globalattributes) const {
-		if ( !globalattributes && transformResult )
-			return transformResult->getValue<Result>();
-
-		return alternative.getTransform().applyAndBox( *this, globalattributes )->getValue<Result>(); // Вычисляем значение преобразования, если его еще нет
-	}
-
 private:
 
 	transforms::TransformResult * calculateTransformResult() const;
