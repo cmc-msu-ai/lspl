@@ -1,0 +1,10 @@
+language: java
+dist: trusty
+jdk:
+  - oraclejdk8
+addons:
+  apt:
+    packages:
+      - libboost-dev
+script:
+  - make
