@@ -372,12 +372,16 @@ public:
     }
 };
 
-PatternBuilder::PatternBuilder( const NamespaceRef & ns ) :
+PatternBuilder::PatternBuilder( const NamespaceRef & ns, transforms::TransformBuilderRef defaultTransformBuilder ) :
     space( ns ),
     parser( new ParserImpl( space, transformBuilders ) ) {
-    transformBuilders.insert(std::make_pair("", new transforms::DummyTransformBuilder()));
+    transformBuilders.insert(std::make_pair("", defaultTransformBuilder));
     transformBuilders.insert(std::make_pair("text", new transforms::TextTransformBuilder( space )));
     transformBuilders.insert(std::make_pair("pattern", new transforms::PatternTransformBuilder( space )));
+}
+
+PatternBuilder::PatternBuilder( const NamespaceRef & ns ) : PatternBuilder(ns, new transforms::DummyTransformBuilder()) {
+    // Just delegate to two-arg constructor with dummy transform as default
 }
 
 PatternBuilder::~PatternBuilder() {
