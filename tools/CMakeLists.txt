@@ -23,7 +23,7 @@ set(LSPL_GENERATOR_SOURCES
 	src/generator.cpp
 )
 
-add_executable(lspl-gen ${LSPL_GENERATOR_SOURCES})
+add_executable(lspl-gen ${LSPL_GENERATOR_SOURCES} boost_system)
 
 target_link_libraries(lspl-gen lspl)
 

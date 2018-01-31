@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 #include <utility>
+#include <complex>
 
 #include <boost/shared_ptr.hpp>
 
