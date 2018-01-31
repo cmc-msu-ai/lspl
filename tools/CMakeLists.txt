@@ -94,7 +94,7 @@ set(LSPL_UTIL_TEST_SOURCES
 
 add_executable(lspl-util-test ${LSPL_UTIL_TEST_SOURCES})
 
-target_link_libraries(lspl-util-test lspl)
+target_link_libraries(lspl-util-test lspl boost_system)
 
 # Flags for effective error parsing
 
