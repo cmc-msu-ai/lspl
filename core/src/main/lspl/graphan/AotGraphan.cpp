@@ -64,19 +64,13 @@ void AotGraphan::analyzeString( const std::string & str, boost::ptr_vector<Unit>
 	try {
 		CGraphmatFile file;
 
-#ifdef MSVC
-		if ( !file.LoadDicts() ) // Загружаем словари
+		if( !file.LoadDicts() ) { // Загружаем словари
 			throw std::logic_error( file.GetLastError() );
+		}
 
-		if ( !file.LoadStringToGraphan( str ) ) // Загружаем файл
+		if( !file.LoadStringToGraphan( str ) ) { // Загружаем файл
 			throw std::logic_error( file.GetLastError() );
-#else
-		if ( !file.LoadDicts() ) // Загружаем словари
-			throw std::logic_error( file.GetLastError() );
-
-		if ( !file.LoadStringToGraphan( str ) ) // Загружаем файл
-			throw std::logic_error( file.GetLastError() );
-#endif
+		}
 
 		BOOST_FOREACH( const CGraLine & line, file.GetUnits() ) {
 			units.push_back( new Unit( line.GetToken(), line.GetTokenLength(), line.GetInputOffset(), line.IsWordOrNumberOrAbbr() ? Unit::WORD : line.IsPunct() ? Unit::PUNCT : Unit::UNKNOWN ) );
