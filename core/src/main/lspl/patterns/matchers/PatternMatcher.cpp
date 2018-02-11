@@ -106,7 +106,8 @@ static void processCompoundPattern( const PatternMatchState & state, TransitionL
 			}
 		}
 
-		newTransitions.push_back( new Match( state.startNode, currentNode, state.getAlternative().getPattern(), state.releaseVariant(), attributes ) ); // TODO Optimize
+		const Pattern& pattern = state.getAlternative().getPattern();
+		newTransitions.push_back( new Match( state.startNode, currentNode, pattern, state.releaseVariant(), attributes ) ); // TODO Optimize
 
 		return;
 	}
