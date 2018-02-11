@@ -26,7 +26,7 @@
 namespace cute {
 	template <typename Listener=null_listener>
 	struct runner : Listener{
-		runner():Listener(){}
+		runner(){}
 		runner(Listener &s):Listener(s){}
 		bool operator()(test const &t){
 			return runit(t);
@@ -34,11 +34,9 @@ namespace cute {
 		bool operator()(suite const &s,char const *info=""){
 			Listener::begin(s,info);
 			bool result=true;
-			for(suite::const_iterator it=s.begin();
-			    it != s.end();
-			    ++it){
-			    	result = this->runit(*it) && result;
-			    }
+			for(suite::const_iterator it=s.begin(); it != s.end(); ++it){
+				result = this->runit(*it) && result;
+			}
 			Listener::end(s,info);
 			return result;
 		}
