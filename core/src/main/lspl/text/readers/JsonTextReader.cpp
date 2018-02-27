@@ -1,3 +1,4 @@
+#include <complex>
 #include "../../base/BaseInternal.h"
 #include "JsonTextReader.h"
 

@@ -11,6 +11,7 @@
 #include <string>
 #include <map>
 
+#include <complex>
 #include <boost/scoped_ptr.hpp>
 
 namespace lspl { namespace patterns {
