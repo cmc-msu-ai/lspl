@@ -3,6 +3,7 @@ project(LSPL_CORE)
 add_definitions(-std=c++11)
 
 include(../common/CMakeCommon.cmake)
+find_package(Boost COMPONENTS system REQUIRED)
 
 include_directories( src/main )
 
@@ -84,6 +85,7 @@ set(LSPL_CORE_SOURCES
 )
 
 add_library(lspl SHARED ${LSPL_CORE_SOURCES})
+target_link_libraries(lspl ${Boost_SYSTEM_LIBRARY})
 
 set_target_properties(lspl
     PROPERTIES
@@ -133,6 +135,6 @@ if(CMAKE_COMPILER_IS_GNUCC)
 endif(CMAKE_COMPILER_IS_GNUCC)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fmessage-length=0")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 

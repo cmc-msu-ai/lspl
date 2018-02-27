@@ -20,7 +20,13 @@
 
 namespace lspl { namespace transforms {
 
-class LSPL_EXPORT TextTransform : public TypedTransform<std::string> {
+struct TextTransformResult {
+	std::string text;
+	std::string pos;
+};
+
+// template<typename Result>
+class LSPL_EXPORT TextTransform : public TypedTransform<TextTransformResult> {
   public:
 	typedef boost::ptr_map<text::attributes::AttributeKey, patterns::expressions::Expression> BindingMap;
 	typedef std::multimap< patterns::matchers::Variable, text::TransitionConstRef > Map;
@@ -58,10 +64,11 @@ class LSPL_EXPORT TextTransform : public TypedTransform<std::string> {
 		return bindings;
 	}
     
-    virtual std::string apply( const lspl::text::MatchVariant & v ) const;  
-    virtual std::string apply( const lspl::text::MatchVariant & v, unsigned int attributes) const;  
-	void buildStr( 
-		std::string & str, 
+    virtual TextTransformResult apply( const lspl::text::MatchVariant & v ) const;  
+    virtual TextTransformResult apply( const lspl::text::MatchVariant & v, unsigned int attributes) const;  
+
+	void buildStr(
+		TextTransformResult & str, 
 		const lspl::text::MatchVariant & v, 
 		const boost::ptr_vector<lspl::patterns::matchers::Matcher> & matchers, 
 		unsigned int globalAttributes

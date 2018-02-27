@@ -7,6 +7,8 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+#undef ru_lspl_Namespace_DefinedPatternList_MAX_ARRAY_SIZE
+#define ru_lspl_Namespace_DefinedPatternList_MAX_ARRAY_SIZE 2147483639L
 #ifdef __cplusplus
 }
 #endif

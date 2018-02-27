@@ -71,15 +71,15 @@ set(LSPL_JAVA_SOURCES
 
 	src_cpp/lspl_jni_impl/ru_lspl_LsplObject.cpp
 	src_cpp/lspl_jni_impl/ru_lspl_Namespace.cpp
-	
+
 	src_cpp/lspl_jni_impl/ru_lspl_patterns_Alternative.cpp
 	src_cpp/lspl_jni_impl/ru_lspl_patterns_Pattern.cpp
 	src_cpp/lspl_jni_impl/ru_lspl_patterns_PatternBuilder.cpp
-	
+
 	src_cpp/lspl_jni_impl/ru_lspl_text_attributes_AttributeKey.cpp
-	src_cpp/lspl_jni_impl/ru_lspl_text_attributes_IndexedAttribute.cpp	
+	src_cpp/lspl_jni_impl/ru_lspl_text_attributes_IndexedAttribute.cpp
 	src_cpp/lspl_jni_impl/ru_lspl_text_attributes_SpeechPart.cpp
-	
+
 	src_cpp/lspl_jni_impl/ru_lspl_text_Loop.cpp
 	src_cpp/lspl_jni_impl/ru_lspl_text_LoopIteration.cpp
 	src_cpp/lspl_jni_impl/ru_lspl_text_Match.cpp
@@ -106,6 +106,6 @@ if(CMAKE_COMPILER_IS_GNUCC)
 endif(CMAKE_COMPILER_IS_GNUCC)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fmessage-length=0")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fmessage-length=0")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 

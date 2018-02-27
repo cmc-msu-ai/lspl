@@ -103,16 +103,16 @@ struct AddPatternMatcherImpl : public DefinePattern {
 
 struct AddAlternativeDefinitionImpl {
 
-	template <typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5>
+	template <typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6>
 	struct result { typedef void type; };
 
-	AddAlternativeDefinitionImpl( transforms::TransformBuilder & transformBuilder ) :
-		transformBuilder( transformBuilder ) {}
+	AddAlternativeDefinitionImpl( const std::map<std::string, transforms::TransformBuilderRef>& transformBuilders ) :
+		transformBuilders( transformBuilders ) {}
 
-	void operator()( boost::ptr_vector<Alternative> & alts, boost::ptr_vector<Matcher> & matchers, boost::ptr_map<AttributeKey,Expression> & bindings, const std::string & source, const std::string & transformSource ) const;
+	void operator()( boost::ptr_vector<Alternative> & alts, boost::ptr_vector<Matcher> & matchers, boost::ptr_map<AttributeKey,Expression> & bindings, const std::string & source, const std::string & transformSource, const std::string & transformType ) const;
 
 private:
-	transforms::TransformBuilder & transformBuilder;
+	const std::map<std::string, transforms::TransformBuilderRef>& transformBuilders;
 };
 
 struct AddPatternDefinitionImpl : public DefinePattern {
@@ -120,13 +120,10 @@ struct AddPatternDefinitionImpl : public DefinePattern {
 	template <typename Arg1, typename Arg2>
 	   struct result { typedef void type; };
 
-	AddPatternDefinitionImpl( Namespace & space, boost::spirit::classic::symbols<uint> & typeSymbol, transforms::TransformBuilder & transformBuilder ) :
-		DefinePattern( space, typeSymbol ), transformBuilder( transformBuilder ) {}
+	AddPatternDefinitionImpl( Namespace & space, boost::spirit::classic::symbols<uint> & typeSymbol) :
+		DefinePattern( space, typeSymbol ) {}
 
 	void operator()( const std::string & name, boost::ptr_vector<Alternative> & alts ) const;
-
-private:
-	transforms::TransformBuilder & transformBuilder;
 };
 
 struct AddImpl {

@@ -88,19 +88,19 @@ TextTransform::~TextTransform() {
 	delete matchers;
 }
 
-std::string TextTransform::apply( const MatchVariant & matchVariant  ) const {
-	std::string result = "";
+TextTransformResult TextTransform::apply( const MatchVariant & matchVariant  ) const {
+	TextTransformResult result = { "", "" };
 	buildStr( result, matchVariant, *matchers, 0 );
 	return result;
 }
 
-std::string TextTransform::apply( const MatchVariant & matchVariant, unsigned int attributes ) const {
-	std::string result = "";
+TextTransformResult TextTransform::apply( const MatchVariant & matchVariant, unsigned int attributes ) const {
+	TextTransformResult result = { "", "" };
 	buildStr( result, matchVariant, *matchers, attributes );
 	return result;
 }
 
-void TextTransform::buildStr( std::string & result, const MatchVariant & matchVariant, const boost::ptr_vector<Matcher> & matchers, unsigned int globalAttributes) const {
+void TextTransform::buildStr( TextTransformResult & result, const MatchVariant & matchVariant, const boost::ptr_vector<Matcher> & matchers, unsigned int globalAttributes) const {
 	ContextRetriever cr;
 	patterns::matchers::Context c = cr.apply(matchVariant);
 
@@ -345,9 +345,12 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 		//лексема
 		if ( matchers.at(i).type == Matcher::TOKEN ) {
 			const TokenMatcher * token = dynamic_cast<const TokenMatcher*>( &matchers.at(i) );
-			if ( result.length() > 0 )
-				result += " ";
-			result += token->token;
+			if ( result.text.length() > 0 ) {
+				result.text += " ";
+				result.pos += " ";
+			}
+			result.text += token->token;
+			result.pos += "L";
 		} else
 
 		//переменная
@@ -367,9 +370,12 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 
 				//нет правил преобразования слова
 				if(!outAttributes) {
-					if ( result.length() > 0 )
-						result += " ";
-					result += word->getToken();
+					if ( result.text.length() > 0 ) {
+						result.text += " ";
+						result.pos += " ";
+					}
+					result.text += word->getToken();
+					result.pos += word->getSpeechPart().getAbbrevation();
 					continue;
 				}
 
@@ -465,9 +471,12 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 
 					//если нашли слово с требемыми атрибутами, то дописать к результату это слово
 					if( attrNum < f->GetCount() ) {
-						if ( result.length() > 0 )
-							result += " ";
-						result += f->GetWordForm( attrNum );
+						if ( result.text.length() > 0 ) {
+							result.text += " ";
+							result.pos += " ";
+						}
+						result.text += f->GetWordForm( attrNum );
+						result.pos += word->getSpeechPart().getAbbrevation();
 						posflag=2;
 						break;
 					}
@@ -480,17 +489,23 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 
 				//ошибка, нужная часть речи для слова не найдена в АОТе, вернуть слово как в тексте
 				if(!posflag) {
-					if ( result.length() > 0 )
-						result += " ";
-					result += /*"POSerror " +*/ word->getToken();
+					if ( result.text.length() > 0 ) {
+						result.text += " ";
+						result.pos += " ";
+					}
+					result.text += /*"POSerror " +*/ word->getToken();
+					result.pos += word->getSpeechPart().getAbbrevation();
 					continue;
 				}
 
 
 				//ошибка, нужная форма слова не найдена в АОТе, вернуть слово как в тексте
-				if ( result.length() > 0 )
-					result += " ";
-				result += /*"WFerror " +*/ word->getToken();
+				if ( result.text.length() > 0 ) {
+					result.text += " ";
+					result.pos += " ";
+				}
+				result.text += /*"WFerror " +*/ word->getToken();
+				result.pos += word->getSpeechPart().getAbbrevation();
 
 			}
 		} else
@@ -509,9 +524,15 @@ void TextTransform::buildStr( std::string & result, const MatchVariant & matchVa
 					continue;
 
 				//получить результат преобразования вложенного шаблона с заданными атрибутами
-				if ( result.length() > 0 )
-					result += " ";
-				result += match->getVariants().at( 0 )->getTransformResult<std::string>(attributes.insert(AttributesPair(match, 0)).first->second);
+				if ( result.text.length() > 0 ) {
+					result.text += " ";
+					result.pos += " ";
+				}
+				const auto& matchVariant = *match->getVariants().at( 0 );
+				const auto& attributesValue = attributes.insert(AttributesPair(match, 0)).first->second;
+				const auto& patternResult = attributesValue == 0 ? match->getVariants().at( 0 )->getTransformResult<TextTransformResult>() : static_cast<const TextTransform&>(matchVariant.alternative.getTransform()).apply(matchVariant, attributesValue);
+				result.text += patternResult.text;
+				result.pos += patternResult.pos;
 
 //				TextTransform *tt;
 //				if(tt = const_cast<TextTransform*>(dynamic_cast<const TextTransform*>(&match->getVariants().at(0)->alternative.getTransform()/*&patternvar->pattern.alternatives.at(j).getTransform()*/)))
