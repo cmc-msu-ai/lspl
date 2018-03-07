@@ -5,6 +5,7 @@ include(../common/CMakeCommon.cmake)
 
 include_directories( src/main )
 
+find_package(Boost COMPONENTS system REQUIRED)
 ### LsplConsole
 
 set(LSPL_CONSOLE_SOURCES
@@ -25,7 +26,7 @@ set(LSPL_GENERATOR_SOURCES
 
 add_executable(lspl-gen ${LSPL_GENERATOR_SOURCES})
 
-target_link_libraries(lspl-gen lspl)
+target_link_libraries(lspl-gen lspl ${Boost_SYSTEM_LIBRARY})
 
 ### lspl-find
 
@@ -103,7 +104,7 @@ if(CMAKE_COMPILER_IS_GNUCC)
 endif(CMAKE_COMPILER_IS_GNUCC)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fmessage-length=0")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fmessage-length=0")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 

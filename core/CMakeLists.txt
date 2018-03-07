@@ -66,6 +66,7 @@ set(LSPL_CORE_SOURCES
 	src/main/lspl/text/Transition.cpp
 	src/main/lspl/text/Text.cpp
 	src/main/lspl/text/Match.cpp
+	src/main/lspl/text/writers/StreamTextWriter.cpp
 	src/main/lspl/text/writers/JsonTextWriter.cpp
 	src/main/lspl/text/writers/TextWriter.cpp
 	src/main/lspl/text/readers/JsonTextReader.cpp

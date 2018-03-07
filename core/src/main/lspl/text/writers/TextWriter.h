@@ -12,7 +12,7 @@ class LSPL_EXPORT TextWriter {
 public:
 	TextWriter();
 	virtual ~TextWriter();
-	
+
 	virtual void writeToStream( const Text & text, std::ostream & os ) = 0;
 };
 
