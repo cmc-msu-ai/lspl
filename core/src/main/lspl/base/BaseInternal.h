@@ -11,17 +11,7 @@
 
 #include <boost/foreach.hpp>
 
-#ifdef MSVC // Версия для Microsoft Visual Studio
-
-#	define LSPL_REFCOUNT_CLASS(className) \
-	template<> lspl::uint lspl::base::IdentifiedObject<className>::count = 0; \
-	template lspl::base::RefCountPtr<className>;
-
-#else
-
-#	define LSPL_REFCOUNT_CLASS(className) \
-	template<> lspl::uint lspl::base::IdentifiedObject<className>::count = 0;
-
-#endif
+#define LSPL_REFCOUNT_CLASS(className) \
+template<> lspl::uint lspl::base::IdentifiedObject<className>::count = 0;
 
 #endif//_LSPL_BASE_BASEINTERNAL_H_
