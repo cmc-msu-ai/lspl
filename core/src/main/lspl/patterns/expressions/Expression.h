@@ -96,6 +96,11 @@ inline std::ostream & operator << ( std::ostream & out, const Expression & val )
 	return out;
 }
 
+inline Expression* new_clone( const Expression& r )
+{
+	return nullptr;
+}
+
 } } }
 
 #endif /* _LSPL_PATTERNS_EXPRESSIONS_EXPRESSION_H_ */

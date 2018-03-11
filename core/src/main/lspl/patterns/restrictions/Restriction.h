@@ -91,6 +91,11 @@ public:
 	static uint aliveObjectsCount;
 };
 
+inline Restriction* new_clone( const Restriction& r )
+{
+	return nullptr;
+}
+
 } } } // namespace lspl::patterns::matchers
 
 #endif//_LSPL_PATTERNS_RESTRICTIONS_RESTRICTION_H_

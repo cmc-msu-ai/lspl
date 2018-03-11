@@ -134,6 +134,11 @@ public:
 
 };
 
+inline Matcher* new_clone( const Matcher& r )
+{
+	return nullptr;
+}
+
 } } } // namespace lspl::patterns::matchers
 
 #endif /*_LSPL_MATHCERS_MATCHER_H_*/

@@ -169,6 +169,11 @@ private:
 	friend class Pattern;
 };
 
+inline Alternative* new_clone( const Alternative& r )
+{
+	return nullptr;
+}
+
 } }
 
 #endif /*_LSPL_PATTERNS_ALTERNATIVE_H_*/
