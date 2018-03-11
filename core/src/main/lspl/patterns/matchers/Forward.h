@@ -14,7 +14,7 @@ class PatternMatcher;
 class LoopMatcher;
 class WordMatcher;
 class TokenMatcher;
-
+class MatcherContainer;
 class Variable;
 class Context;
 
