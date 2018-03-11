@@ -5,7 +5,7 @@
 #include "../TextBuilder.h"
 #include "../../morphology/Morphology.h"
 #include "../../graphan/Graphan.h"
-
+#include "../../patterns/matchers/Matcher.h"
 #include "../../utils/Conversion.h"
 
 #include <string>

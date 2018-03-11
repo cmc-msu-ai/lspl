@@ -11,6 +11,7 @@
 #include "VariableExpression.h"
 #include "../../text/Transition.h"
 #include "../matchers/Context.h"
+#include "../matchers/Matcher.h"
 
 using namespace lspl::text::attributes;
 using namespace lspl::patterns::matchers;

@@ -8,6 +8,7 @@
 #include "../../text/Transition.h"
 #include "../../text/attributes/AttributeKey.h"
 #include "../matchers/Context.h"
+#include "../matchers/Matcher.h"
 #include "DictionaryRestriction.h"
 
 using namespace lspl::text::attributes;

@@ -3,6 +3,7 @@
 #include "../../text/attributes/SpeechPart.h"
 
 #include "../Pattern.h"
+#include "../matchers/Matcher.h"
 #include "Variable.h"
 
 namespace lspl { namespace patterns { namespace matchers {

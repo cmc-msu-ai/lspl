@@ -2,6 +2,7 @@
 
 #include "Pattern.h"
 #include "Alternative.h"
+#include "matchers/Matcher.h"
 
 #include "../text/Text.h"
 

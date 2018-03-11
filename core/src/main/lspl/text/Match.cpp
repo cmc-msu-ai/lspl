@@ -8,6 +8,7 @@
 
 #include "../patterns/Pattern.h"
 #include "../patterns/Alternative.h"
+#include "../patterns/matchers/Matcher.h"
 
 #include "../transforms/Transform.h"
 

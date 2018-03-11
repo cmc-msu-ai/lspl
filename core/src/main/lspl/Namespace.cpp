@@ -2,6 +2,7 @@
 
 #include "Namespace.h"
 
+#include "patterns/matchers/Matcher.h"
 #include "patterns/Pattern.h"
 
 #include <boost/multi_index_container.hpp>

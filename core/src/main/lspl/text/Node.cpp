@@ -11,6 +11,8 @@
 #include "markup/Word.h"
 #include "markup/Token.h"
 
+#include "../patterns/matchers/Matcher.h"
+
 LSPL_REFCOUNT_CLASS( lspl::text::Node )
 
 namespace lspl { namespace text {

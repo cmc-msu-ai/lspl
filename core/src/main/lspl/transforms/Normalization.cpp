@@ -14,6 +14,7 @@
 #include "../text/markup/Word.h"
 #include "../morphology/Morphology.h"
 #include "../morphology/WordForm.h"
+#include "../patterns/matchers/Matcher.h"
 
 using lspl::text::markup::Word;
 using lspl::text::markup::Token;

@@ -1,7 +1,7 @@
 #include "../../base/BaseInternal.h"
 
 #include "Context.h"
-
+#include "Matcher.h"
 #include "../../text/Transition.h"
 #include "../../text/attributes/AttributeValue.h"
 

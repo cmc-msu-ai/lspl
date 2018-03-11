@@ -9,7 +9,7 @@
 #define _LSPL_TRANSFORMS_CONTEXTRETRIEVER_H_
 
 #include "Transform.h"
-#include "../patterns/matchers/Context.h"
+#include "../patterns/matchers/Forward.h"
 
 namespace lspl { namespace transforms {
 

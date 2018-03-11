@@ -4,6 +4,7 @@
 
 #include "../patterns/Pattern.h"
 #include "../patterns/PatternBuilder.h"
+#include "../patterns/matchers/Matcher.h"
 
 #include "../text/Text.h"
 #include "../text/readers/PlainTextReader.h"

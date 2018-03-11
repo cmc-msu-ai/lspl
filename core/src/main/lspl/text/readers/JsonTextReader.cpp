@@ -3,6 +3,7 @@
 #include "JsonTextReader.h"
 
 #include "../../patterns/Pattern.h"
+#include "../../patterns/matchers/Matcher.h"
 
 #include "../TextConfig.h"
 #include "../TextBuilder.h"
