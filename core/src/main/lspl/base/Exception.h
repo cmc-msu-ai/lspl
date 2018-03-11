@@ -11,7 +11,7 @@ namespace lspl { namespace base {
 /**
  * Базовый класс исключения в библиотеке
  */
-class LSPL_EXPORT Exception : public std::exception {
+class Exception : public std::exception {
 public:
 	Exception(const std::string & description, const std::string & sourceFileName, int sourceLineNumber) :
 		description(description),
@@ -19,13 +19,10 @@ public:
 		sourceLineNumber(sourceLineNumber) {}
 
 	Exception(const std::string & description) :
-			description(description) {}
+		description(description) {}
 
-	~Exception() throw() {}
-
-	const char* what() const throw () {
-		return description.c_str();
-	}
+	~Exception() {}
+	const char* what() const noexcept { return description.c_str(); }
 
 private:
 
