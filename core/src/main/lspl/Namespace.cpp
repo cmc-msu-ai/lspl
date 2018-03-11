@@ -9,6 +9,7 @@
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/random_access_index.hpp>
 #include <boost/multi_index/member.hpp>
+#include <boost/multi_index/mem_fun.hpp>
 
 #include <map>
 #include <string>
@@ -44,7 +45,7 @@ public:
 		base::Reference< Dictionary >,
 		boost::multi_index::indexed_by<
 			boost::multi_index::hashed_unique<
-				boost::multi_index::member< Dictionary, const std::string, &Dictionary::name >
+				boost::multi_index::const_mem_fun< Dictionary, const std::string&, &Dictionary::Name >
 			>,
 			boost::multi_index::random_access<
 			>

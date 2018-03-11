@@ -51,6 +51,9 @@ public:
 	/**
 	 * Имя словаря
 	 */
+	const std::string& Name() const;
+
+private:
 	const std::string name;
 };
 

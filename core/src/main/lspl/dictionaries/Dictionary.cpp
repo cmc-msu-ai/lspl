@@ -43,4 +43,8 @@ bool Dictionary::accepts( const std::string & w1, const std::string & w2, const 
 	return accepts( v );
 }
 
+const std::string& Dictionary::Name() const {
+	return name;
+}
+
 } } // namespace lspl::dictionaries
