@@ -34,7 +34,7 @@ namespace lspl { namespace text { namespace readers {
 class JsonTextReader::Parser : public grammar<JsonTextReader::Parser> {
 public:
 
-	struct ConfigClosure : public boost::spirit::classic::closure< ConfigClosure, bool, bool, bool > {
+	struct ConfigClosure : public boost::spirit::classic::closure< ConfigClosure, int, int, int > {
 		member1 analyzePunctuation;
 		member2 analyzeSpaces;
 		member3 splitToSentences;
@@ -94,11 +94,11 @@ public:
 			parser( const_cast<Parser&>( parser ) ) {
 		}
 
-		void operator()( bool analyzePunctuation, bool analyzeSpaces, bool splitToSentences ) const {
+		void operator()( int analyzePunctuation, int analyzeSpaces, int splitToSentences ) const {
 			TextConfig config;
-			config.analyzePunctuation = analyzePunctuation;
-			config.analyzeSpaces = analyzeSpaces;
-			config.splitToSentences = splitToSentences;
+			config.analyzePunctuation = analyzePunctuation != 0;
+			config.analyzeSpaces = analyzeSpaces != 0;
+			config.splitToSentences = splitToSentences != 0;
 			parser.builder.setConfig( config );
 		}
 	private:
@@ -183,113 +183,113 @@ public:
 		}
 	};
 
-    template <typename ScannerT> class definition {
-    public:
-        definition( const Parser & self ) {
-        	document = "{" >> ( ( config | content | nodes | annotations ) % "," ) >> "}";
+	template <typename ScannerT> class definition {
+	public:
+		definition( const Parser & self ) {
+			document = "{" >> ( ( config | content | nodes | annotations ) % "," ) >> "}";
 
-        	defineConfig( self );
-        	defineNodes( self );
-        	defineAnnotations( self );
-        	defineContent( self );
-        	defineAttributes( self );
-        }
+			defineConfig( self );
+			defineNodes( self );
+			defineAnnotations( self );
+			defineContent( self );
+			defineAttributes( self );
+		}
 
-        void defineContent( const Parser & self ) {
-        	function<SetContentImpl> setContent( self );
+		void defineContent( const Parser & self ) {
+			function<SetContentImpl> setContent( self );
 
-        	content = str_p( "content" ) >> ":" >> "'" >> ( *~ch_p('\'') )[ setContent( arg1, arg2 ) ] >> "'";
-        }
+			content = str_p( "content" ) >> ":" >> "'" >> ( *~ch_p('\'') )[ setContent( arg1, arg2 ) ] >> "'";
+		}
 
-        void defineConfig( const Parser & self ) {
-        	function<SetConfigImpl> setConfig( self );
+		void defineConfig( const Parser & self ) {
+			function<SetConfigImpl> setConfig( self );
 
-        	config = ( str_p("config") >> ":" >> "{" >> ( ( configAnalyzePunctuation | configAnalyzeSpaces | configSplitToSentences ) % "," ) >> "}" )[ setConfig( config.analyzePunctuation, config.analyzeSpaces, config.splitToSentences ) ];
+			config = ( str_p("config") >> ":" >> "{" >> ( ( configAnalyzePunctuation | configAnalyzeSpaces | configSplitToSentences ) % "," ) >> "}" )[ setConfig( config.analyzePunctuation, config.analyzeSpaces, config.splitToSentences ) ];
 
-        	configAnalyzePunctuation = str_p( "analyzePunctuation" ) >> ":" >> int_p[ config.analyzePunctuation = arg1 ];
-        	configAnalyzeSpaces = str_p( "analyzeSpaces" ) >> ":" >> int_p[ config.analyzeSpaces = arg1 ];
-        	configSplitToSentences = str_p( "splitToSentences" ) >> ":" >> int_p[ config.splitToSentences = arg1 ];
-        }
+			configAnalyzePunctuation = str_p( "analyzePunctuation" ) >> ":" >> int_p[ config.analyzePunctuation = arg1 ];
+			configAnalyzeSpaces = str_p( "analyzeSpaces" ) >> ":" >> int_p[ config.analyzeSpaces = arg1 ];
+			configSplitToSentences = str_p( "splitToSentences" ) >> ":" >> int_p[ config.splitToSentences = arg1 ];
+		}
 
-        void defineNodes( const Parser & self ) {
-        	function<AddNodeImpl> addNode( self );
+		void defineNodes( const Parser & self ) {
+			function<AddNodeImpl> addNode( self );
 
-        	nodes = str_p("nodes") >> ":" >> "[" >> ( node % "," ) >> "]";
-        	node =  ("{" >> ( ( nodeStartOffset | nodeEndOffset ) % "," ) >> "}" )[ addNode( node.startOffset, node.endOffset ) ];
+			nodes = str_p("nodes") >> ":" >> "[" >> ( node % "," ) >> "]";
+			node =  ("{" >> ( ( nodeStartOffset | nodeEndOffset ) % "," ) >> "}" )[ addNode( node.startOffset, node.endOffset ) ];
 
-        	nodeStartOffset = str_p( "startOffset" ) >> ":" >> int_p[ node.startOffset = arg1 ];
-        	nodeEndOffset = str_p( "endOffset" ) >> ":" >> int_p[ node.endOffset = arg1 ];
-        }
+			nodeStartOffset = str_p( "startOffset" ) >> ":" >> int_p[ node.startOffset = arg1 ];
+			nodeEndOffset = str_p( "endOffset" ) >> ":" >> int_p[ node.endOffset = arg1 ];
+		}
 
-        void defineAnnotations( const Parser & self ) {
-        	function<AddWordImpl> addWord( self );
-        	function<AddMatchImpl> addMatch( self );
+		void defineAnnotations( const Parser & self ) {
+			function<AddWordImpl> addWord( self );
+			function<AddMatchImpl> addMatch( self );
 
-        	annotations = str_p("annotations") >> ":" >> "[" >> ( annotation % "," ) >> "]";
+			annotations = str_p("annotations") >> ":" >> "[" >> ( annotation % "," ) >> "]";
 
-        	annotation = "{" >> str_p( "type" ) >> ":" >> switch_p[
-        			case_p<'0'>( "," >> eps_p ), // Пробел
-        			case_p<'1'>( "," >> punct ), // Пунктуация
-        			case_p<'2'>( "," >> word ), // Слово
-        			case_p<'3'>( "," >> match ), // Сопоставление
-        			case_p<'4'>( "," >> eps_p ) // Цикл
-        		] >> "}";
+			annotation = "{" >> str_p( "type" ) >> ":" >> switch_p[
+					case_p<'0'>( "," >> eps_p ), // Пробел
+					case_p<'1'>( "," >> punct ), // Пунктуация
+					case_p<'2'>( "," >> word ), // Слово
+					case_p<'3'>( "," >> match ), // Сопоставление
+					case_p<'4'>( "," >> eps_p ) // Цикл
+				] >> "}";
 
-        	word = ( ( annotationStart | annotationEnd | wordToken | wordBase | wordSpeechPart | wordAttributes ) % "," )[ addWord( annotation.start, annotation.end, word.token, word.base, word.speechPart, word.attributes ) ];
-        	match = ( annotationStart | annotationEnd | matchPattern | matchAttributes ) % ",";
-        	punct = ( annotationStart | annotationEnd ) % ",";
+			word = ( ( annotationStart | annotationEnd | wordToken | wordBase | wordSpeechPart | wordAttributes ) % "," )[ addWord( annotation.start, annotation.end, word.token, word.base, word.speechPart, word.attributes ) ];
+			match = ( annotationStart | annotationEnd | matchPattern | matchAttributes ) % ",";
+			punct = ( annotationStart | annotationEnd ) % ",";
 
-        	annotationStart = str_p( "start" ) >> ":" >> int_p[ annotation.start = arg1 ];
-        	annotationEnd = str_p( "end" ) >> ":" >> int_p[ annotation.end = arg1 ];
+			annotationStart = str_p( "start" ) >> ":" >> int_p[ annotation.start = arg1 ];
+			annotationEnd = str_p( "end" ) >> ":" >> int_p[ annotation.end = arg1 ];
 
-        	wordToken = str_p( "token" ) >> ":" >> "'" >> (*~ch_p('\''))[ word.token = construct_<std::string>( arg1, arg2 ) ] >> "'";
-        	wordBase = str_p( "base" ) >> ":" >> "'" >> (*~ch_p('\''))[ word.base = construct_<std::string>( arg1, arg2 ) ] >> "'";
-        	wordSpeechPart = str_p( "speechPart" ) >> ":" >> int_p[ word.speechPart = arg1 ];
-        	wordAttributes = str_p( "attributes" ) >> ":" >> uint_parser<uint64, 10, 1, -1>()[ word.attributes = arg1 ];
+			wordToken = str_p( "token" ) >> ":" >> "'" >> (*~ch_p('\''))[ word.token = construct_<std::string>( arg1, arg2 ) ] >> "'";
+			wordBase = str_p( "base" ) >> ":" >> "'" >> (*~ch_p('\''))[ word.base = construct_<std::string>( arg1, arg2 ) ] >> "'";
+			wordSpeechPart = str_p( "speechPart" ) >> ":" >> int_p[ word.speechPart = arg1 ];
+			wordAttributes = str_p( "attributes" ) >> ":" >> uint_parser<uint64, 10, 1, -1>()[ word.attributes = arg1 ];
 
-        	matchPattern = str_p( "pattern" ) >> ":" >> "'" >> (*~ch_p('\''))[ match.patternName = construct_<std::string>( arg1, arg2 ) ] >> "'";
-        	matchAttributes = str_p( "attributes" ) >> ":" >> attributes[ match.attributes = arg1 ];
-        }
+			matchPattern = str_p( "pattern" ) >> ":" >> "'" >> (*~ch_p('\''))[ match.patternName = construct_<std::string>( arg1, arg2 ) ] >> "'";
+			matchAttributes = str_p( "attributes" ) >> ":" >> attributes[ match.attributes = arg1 ];
+		}
 
-        void defineAttributes( const Parser & self ) {
-        	function<GetIndexedAttributeValueImpl> getIndexedAttributeValue;
-        	function<GetStringAttributeValueImpl> getStringAttributeValue;
-        	function<AddAttributeToSetImpl> addAttributeToSet;
+		void defineAttributes( const Parser & self ) {
+			function<GetIndexedAttributeValueImpl> getIndexedAttributeValue;
+			function<GetStringAttributeValueImpl> getStringAttributeValue;
+			function<AddAttributeToSetImpl> addAttributeToSet;
 
-        	attributes = "{" >> ( attribute % "," ) >> "}";
-        	attribute = ( lexeme_d[ +chset_p("a-zA-Z") ][ attribute.name = construct_<std::string>( arg1, arg2 ) ] >> ":" >> ( indexedAttributeValue | stringAttributeValue | compoundAttributeValue ) )[ addAttributeToSet( attributes.attributes, attribute.name, attribute.value ) ];
+			attributes = "{" >> ( attribute % "," ) >> "}";
+			attribute = ( lexeme_d[ +chset_p("a-zA-Z") ][ attribute.name = construct_<std::string>( arg1, arg2 ) ] >> ":" >> ( indexedAttributeValue | stringAttributeValue | compoundAttributeValue ) )[ addAttributeToSet( attributes.attributes, attribute.name, attribute.value ) ];
 
-        	indexedAttributeValue = uint_p[ attribute.value = getIndexedAttributeValue( arg1 ) ];
-        	stringAttributeValue = "'" >> (*~ch_p('\''))[ attribute.value = getStringAttributeValue( arg1, arg2 ) ] >> "'";
-        	compoundAttributeValue = nothing_p;
-        }
+			indexedAttributeValue = uint_p[ attribute.value = getIndexedAttributeValue( arg1 ) ];
+			stringAttributeValue = "'" >> (*~ch_p('\''))[ attribute.value = getStringAttributeValue( arg1, arg2 ) ] >> "'";
+			compoundAttributeValue = nothing_p;
+		}
 
-        rule<ScannerT> const & start() const { return document; }
+		rule<ScannerT> const & start() const { return document; }
 
-    private:
-    	rule<ScannerT> document, content;
+	private:
+		rule<ScannerT> document, content;
 
-    	rule<ScannerT, ConfigClosure::context_t> config;
-    	rule<ScannerT> configAnalyzePunctuation, configAnalyzeSpaces, configSplitToSentences; // Правила разбора конфигурации
+		rule<ScannerT, ConfigClosure::context_t> config;
+		rule<ScannerT> configAnalyzePunctuation, configAnalyzeSpaces, configSplitToSentences; // Правила разбора конфигурации
 
-    	rule<ScannerT, NodeClosure::context_t> node;
-    	rule<ScannerT> nodes, nodeStartOffset, nodeEndOffset;
+		rule<ScannerT, NodeClosure::context_t> node;
+		rule<ScannerT> nodes, nodeStartOffset, nodeEndOffset;
 
-    	rule<ScannerT, AnnotationClosure::context_t> annotation;
-    	rule<ScannerT> annotations, punct;
+		rule<ScannerT, AnnotationClosure::context_t> annotation;
+		rule<ScannerT> annotations, punct;
 
-    	rule<ScannerT, WordClosure::context_t> word;
-    	rule<ScannerT> wordToken, wordBase, wordSpeechPart, wordAttributes;
+		rule<ScannerT, WordClosure::context_t> word;
+		rule<ScannerT> wordToken, wordBase, wordSpeechPart, wordAttributes;
 
-    	rule<ScannerT, MatchClosure::context_t> match;
-    	rule<ScannerT> matchPattern, matchAttributes;
+		rule<ScannerT, MatchClosure::context_t> match;
+		rule<ScannerT> matchPattern, matchAttributes;
 
-    	rule<ScannerT, AttributesClosure::context_t> attributes;
-    	rule<ScannerT, AttributeClosure::context_t> attribute;
-    	rule<ScannerT> indexedAttributeValue, stringAttributeValue, compoundAttributeValue;
+		rule<ScannerT, AttributesClosure::context_t> attributes;
+		rule<ScannerT, AttributeClosure::context_t> attribute;
+		rule<ScannerT> indexedAttributeValue, stringAttributeValue, compoundAttributeValue;
 
-    	rule<ScannerT> annotationStart, annotationEnd;
-    };
+		rule<ScannerT> annotationStart, annotationEnd;
+	};
 
 public:
 	Parser( TextBuilder & builder, Namespace & ns ) :
