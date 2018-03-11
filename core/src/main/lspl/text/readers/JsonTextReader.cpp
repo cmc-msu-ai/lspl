@@ -298,7 +298,7 @@ public:
 
 	void parseFrom( std::istream & is ) {
 		is.seekg( 0, std::ios_base::end );
-		int size = is.tellg();
+		size_t size = static_cast<size_t>( is.tellg() );
 		is.seekg( 0, std::ios_base::beg );
 
 		// TODO Оптимизировать, не выделять

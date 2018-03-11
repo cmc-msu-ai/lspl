@@ -49,7 +49,7 @@ void Pattern::addAlternative( Alternative * alt ) {
 
 void Pattern::addAlternatives( boost::ptr_vector<Alternative> & r ) {
 	alternatives.transfer( alternatives.end(), r.begin(), r.end(), r );
-	for( int i = 0; i < alternatives.size(); ++ i ) {
+	for( size_t i = 0; i < alternatives.size(); ++ i ) {
 		alternatives[i].pattern = this;
 	}
 }

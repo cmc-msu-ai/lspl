@@ -24,7 +24,7 @@ Variable::Variable( const std::string &base ) {
 				text::attributes::SpeechPart::ABBREVATIONS[i]) {
 			continue;
 		}
-		if (speechPart == -1 || speechSize < size) {
+		if (speechPart == -1 || static_cast<size_t>( speechSize ) < size) {
 			speechPart = i;
 			speechSize = size;
 		}

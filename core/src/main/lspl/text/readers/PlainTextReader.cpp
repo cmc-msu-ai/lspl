@@ -27,7 +27,7 @@ PlainTextReader::~PlainTextReader() {
 
 TextRef PlainTextReader::readFromStream( std::istream & is, const std::string & enc ) {
 	is.seekg( 0, std::ios_base::end );
-	int size = is.tellg();
+	size_t size = static_cast<size_t>( is.tellg() );
 	char * buffer = new char[ size ];
 
 	is.seekg( 0, std::ios_base::beg );
@@ -42,7 +42,7 @@ TextRef PlainTextReader::readFromStream( std::istream & is, const std::string & 
 
 TextRef PlainTextReader::readFromStream( std::istream & is ) {
 	is.seekg( 0, std::ios_base::end );
-	int size = is.tellg();
+	size_t size = static_cast<size_t>( is.tellg() );
 	is.seekg( 0, std::ios_base::beg );
 
 	// TODO Оптимизировать, не выделять

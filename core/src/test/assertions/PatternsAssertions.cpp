@@ -41,7 +41,7 @@ void assertFailsImpl( const NamespaceRef & ns, const std::string & patternSource
 
 	try {
 		info = builder.build( patternSource );
-	} catch ( std::exception & ex ) {
+	} catch ( std::exception& ) {
 		return;
 	} catch (...) {
 		throw cute::test_failure( "ERROR: Unknown exception", file, line);
