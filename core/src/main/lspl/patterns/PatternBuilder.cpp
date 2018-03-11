@@ -381,7 +381,7 @@ public:
 		}
 	}
 
-    PatternBuilder::BuildInfo build( const char * str ) throw (PatternBuildingException) {
+    PatternBuilder::BuildInfo build( const char * str ) {
     	try {
 		parse_info<const char *> pi = boost::spirit::classic::parse( str, *this, space_p );
 
@@ -440,7 +440,7 @@ PatternBuilder::PatternBuilder( const NamespaceRef & ns ) : PatternBuilder(ns, n
 PatternBuilder::~PatternBuilder() {
 }
 
-PatternBuilder::BuildInfo PatternBuilder::build( const std::string & str ) throw (PatternBuildingException) {
+PatternBuilder::BuildInfo PatternBuilder::build( const std::string & str ) {
 	return parser->build( str.c_str() );
 }
 

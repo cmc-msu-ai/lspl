@@ -56,7 +56,7 @@ public:
 		Parser( NamespaceRef space, const std::map<std::string, transforms::TransformBuilderRef>& transformBuilders ) : space( space ), transformBuilders( transformBuilders ) {}
 		virtual ~Parser() {}
 
-		virtual BuildInfo build( const char * str ) throw (PatternBuildingException) = 0;
+		virtual BuildInfo build( const char * str ) = 0;
 		virtual BuildInfo buildNoException(const char * str ) = 0;
 
 	public:
@@ -72,7 +72,7 @@ public:
 	/**
 	 * Определить новые шаблоны из исходника
 	 */
-	BuildInfo build( const std::string & str ) throw (PatternBuildingException);
+	BuildInfo build( const std::string & str );
 	BuildInfo buildNoException(const std::string& str);
 public:
 
