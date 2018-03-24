@@ -4,7 +4,13 @@
 #include "Forward.h"
 #include "Matcher.h"
 
+#ifdef WIN32
+#define PCRE_STATIC
 #include <pcrecpp.h>
+#undef PCRE_STATIC
+#else
+#include <pcrecpp.h>
+#endif
 
 namespace lspl { namespace patterns { namespace matchers {
 
