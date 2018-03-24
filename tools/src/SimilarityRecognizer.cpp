@@ -6,6 +6,7 @@
 #include <boost/scoped_ptr.hpp>
 
 #include "lspl/patterns/Pattern.h"
+#include "lspl/patterns/matchers/Context.h"
 #include "lspl/patterns/expressions/AttributeExpression.h"
 #include "lspl/patterns/expressions/ConstantExpression.h"
 #include "lspl/patterns/expressions/VariableExpression.h"
