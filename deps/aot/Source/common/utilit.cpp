@@ -343,14 +343,7 @@ void ErrorMessage (const string& Titul, const string& Message)
 		if (q.empty()|| (q[q.length() -1]!='\n'))	q+='\n';
 		GlobalErrorMessage(q);
 		return;
-	};
-	
-	#ifdef WIN32
-		#ifndef _CONSOLE
-			MessageBox(0, Message.c_str(), Titul.c_str(), MB_OK);
-			return;
-		#endif
-	#endif
+	}
 
 	string q = Message;
 	if (q.empty()|| (q[q.length() -1]!='\n'))	q+='\n';
