@@ -297,18 +297,7 @@ public:
 	}
 
 	void parseFrom( std::istream & is ) {
-		is.seekg( 0, std::ios_base::end );
-		size_t size = static_cast<size_t>( is.tellg() );
-		is.seekg( 0, std::ios_base::beg );
-
-		// TODO Оптимизировать, не выделять
-		char * buffer = new char[ size ];
-		is.read( buffer, size );
-		std::string content( buffer, size );
-
-		parseFrom( content.c_str() );
-
-		delete[] buffer;
+		parseFrom( std::string( std::istreambuf_iterator<char>( is ), {} ).c_str() );
 	}
 
 	void parseFrom( const char * str ) {
