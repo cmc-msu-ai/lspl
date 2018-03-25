@@ -81,9 +81,6 @@
     <ClInclude Include="string_socket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SyntaxHolder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="util_classes.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -132,9 +129,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="string_socket.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SyntaxHolder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="utilit.cpp">
