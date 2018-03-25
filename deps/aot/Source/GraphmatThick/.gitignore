@@ -1,9 +1,4 @@
 *.d
 *.ormst
 *.orst
-*.suo
-*.user
-Debug
-Release
-GraphmatThick
-*.exe
+*.a

@@ -24,7 +24,8 @@ SynCommonLib
 
 # Visual Studio 2015 cache/options directory
 .vs/**
-debug/**
+debug
+release
 
 # Visual C++ cache files
 ipch/**

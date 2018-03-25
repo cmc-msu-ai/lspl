@@ -1,8 +1,4 @@
 *.d
 *.ormst
 *.orst
-*.suo
-*.user
-Debug
-Release
 *.a
