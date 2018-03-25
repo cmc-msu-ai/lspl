@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 project(LSPL_CORE)
-add_definitions(-std=c++11)
+add_definitions(-std=c++11 -Wno-deprecated)
 
 include(../common/CMakeCommon.cmake)
 find_package(Boost COMPONENTS system REQUIRED)

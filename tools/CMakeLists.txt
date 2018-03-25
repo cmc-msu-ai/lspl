@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 project(LSPL_TOOLS)
+add_definitions(-std=c++11 -Wno-deprecated)
 
 include(../common/CMakeCommon.cmake)
 

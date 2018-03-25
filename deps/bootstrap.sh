@@ -1,6 +1,7 @@
 #!/bin/bash
 
 path=$(pwd)
+git submodule init
 git submodule update --recursive pcre
 cd ./pcre && cmake . && make -j
 cd $path
