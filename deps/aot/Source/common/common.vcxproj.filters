@@ -60,9 +60,6 @@
     <ClInclude Include="iconv_cpp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imports.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LemWord.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -82,9 +79,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="string_socket.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="string_tokenizer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SyntaxHolder.h">

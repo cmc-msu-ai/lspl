@@ -45,6 +45,7 @@
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>WIN32;NO_UNISTD;USE_FSEEK32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -71,7 +72,6 @@
     <ClInclude Include="gra_descr_primitives.h" />
     <ClInclude Include="Homonym.h" />
     <ClInclude Include="iconv_cpp.h" />
-    <ClInclude Include="imports.h" />
     <ClInclude Include="LemWord.h" />
     <ClInclude Include="MorphologyHolder.h" />
     <ClInclude Include="MorphXmlToken.h" />
@@ -79,7 +79,6 @@
     <ClInclude Include="rus_numerals.h" />
     <ClInclude Include="SortWithTempFiles.h" />
     <ClInclude Include="string_socket.h" />
-    <ClInclude Include="string_tokenizer.h" />
     <ClInclude Include="SyntaxHolder.h" />
     <ClInclude Include="utilit.h" />
     <ClInclude Include="util_classes.h" />

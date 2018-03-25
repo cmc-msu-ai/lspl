@@ -21,9 +21,6 @@
     <ClInclude Include="Consent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Descriptors.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="graline.h">
       <Filter>Header Files</Filter>
     </ClInclude>

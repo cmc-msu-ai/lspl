@@ -24,9 +24,15 @@
     <ClInclude Include="wizard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="pcre_rml.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="wizard.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pcre_rml.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

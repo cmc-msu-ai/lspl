@@ -13,12 +13,7 @@ if(WIN32)
     )
 
     link_directories(
-        ${CMAKE_SOURCE_DIR}/../deps/aot/Source/common/
-        ${CMAKE_SOURCE_DIR}/../deps/aot/Source/AgramtabLib/
-        ${CMAKE_SOURCE_DIR}/../deps/aot/Source/GraphanLib/
-        ${CMAKE_SOURCE_DIR}/../deps/aot/Source/LemmatizerLib/
-        ${CMAKE_SOURCE_DIR}/../deps/aot/Source/MorphWizardLib/
-        ${CMAKE_SOURCE_DIR}/../deps/aot/Source/StructDictLib/
+        ${CMAKE_SOURCE_DIR}/../deps/aot/Source/
         ${ICONV_PATH}/lib/
         ${PCRE_PATH}/lib/
         ${CMAKE_BINARY_DIR}/

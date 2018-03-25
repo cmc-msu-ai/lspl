@@ -43,6 +43,7 @@
       <PreprocessorDefinitions>WIN32;_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeader />
       <WarningLevel>Level3</WarningLevel>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -55,7 +56,6 @@
   <ItemGroup>
     <ClInclude Include="abbrev.h" />
     <ClInclude Include="Consent.h" />
-    <ClInclude Include="Descriptors.h" />
     <ClInclude Include="graline.h" />
     <ClInclude Include="GraphanDicts.h" />
     <ClInclude Include="GraphmatFile.h" />
