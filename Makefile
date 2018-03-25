@@ -4,12 +4,13 @@
 
 all: tools
 
-deps:
+./deps/aot/Source/LemmatizerLib/libLemmatizerrst.a:
 	cd deps/ && ./bootstrap.sh
 
+aot: ./deps/aot/Source/LemmatizerLib/libLemmatizerrst.a
 # Core
 
-core: deps
+core: aot
 	make -C core linux64
 core-mac: aot
 	make -C core mac
