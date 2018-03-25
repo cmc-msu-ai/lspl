@@ -1,3 +1,6 @@
 [submodule "deps/boost"]
 	path = deps/boost
 	url = git://github.com/boostorg/boost
+[submodule "deps/pcre"]
+	path = deps/pcre
+	url = https://github.com/vmg/pcre.git
