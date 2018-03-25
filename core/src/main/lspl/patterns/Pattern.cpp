@@ -48,17 +48,17 @@ void Pattern::addAlternative( Alternative * alt ) {
 }
 
 void Pattern::addAlternatives( boost::ptr_vector<Alternative> & r ) {
-	alternatives.transfer( alternatives.end(), r.begin(), r.end(), r );
-	for( size_t i = 0; i < alternatives.size(); ++ i ) {
-		alternatives[i].pattern = this;
+	for( Alternative & alt : r ) {
+		alt.pattern = this;
 	}
+	alternatives.transfer( alternatives.end(), r.begin(), r.end(), r );
 }
 
 void Pattern::updateDependencies() {
 	dependencies.clear();
 
-	for( boost::ptr_vector<Alternative>::const_iterator altIt = alternatives.begin(); altIt != alternatives.end(); ++ altIt ) {
-		const Alternative & alt = *altIt;
+	for( const Alternative & alt : alternatives ) {
+
 		BOOST_FOREACH( const Pattern * ptr, alt.getDependencies() ) {
 			bool found = false;
 
