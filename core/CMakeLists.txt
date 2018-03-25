@@ -5,6 +5,10 @@ add_definitions(-std=c++11 -Wno-deprecated)
 include(../common/CMakeCommon.cmake)
 find_package(Boost COMPONENTS system REQUIRED)
 
+if (NOT Boost_SYSTEM_FOUND)
+  set(Boost_SYSTEM_LIBRARY ${CMAKE_SOURCE_DIR}/../deps/boost/build/lib/libboost_system.a)
+endif()
+
 include_directories( src/main )
 
 ### lspl-core library
