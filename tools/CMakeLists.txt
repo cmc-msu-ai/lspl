@@ -1,9 +1,15 @@
 cmake_minimum_required(VERSION 2.6)
 project(LSPL_TOOLS)
+add_definitions(-std=c++11 -Wno-deprecated)
 
 include(../common/CMakeCommon.cmake)
 
 include_directories( src/main )
+
+find_package(Boost COMPONENTS system)
+if (NOT Boost_SYSTEM_FOUND)
+  set(Boost_SYSTEM_LIBRARY ${CMAKE_SOURCE_DIR}/../deps/boost/build/lib/libboost_system.a)
+endif()
 
 ### LsplConsole
 
@@ -25,7 +31,7 @@ set(LSPL_GENERATOR_SOURCES
 
 add_executable(lspl-gen ${LSPL_GENERATOR_SOURCES})
 
-target_link_libraries(lspl-gen lspl)
+target_link_libraries(lspl-gen lspl ${Boost_SYSTEM_LIBRARY})
 
 ### lspl-find
 
@@ -103,7 +109,7 @@ if(CMAKE_COMPILER_IS_GNUCC)
 endif(CMAKE_COMPILER_IS_GNUCC)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fmessage-length=0")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -fmessage-length=0")
 endif(CMAKE_COMPILER_IS_GNUCXX)
 
 

@@ -42,6 +42,10 @@ public:
 		 * Неразобранная строка
 		 */
 		std::string parseTail;
+		/**
+		  * Текст ошибки, если есть.
+		 */
+		std::string errorMsg;
 	};
 
 	/**
@@ -53,6 +57,8 @@ public:
 		virtual ~Parser() {}
 
 		virtual BuildInfo build( const char * str ) throw (PatternBuildingException) = 0;
+		virtual BuildInfo buildNoException(const char * str ) = 0;
+
 	public:
 		NamespaceRef space;
 		const std::map<std::string, transforms::TransformBuilderRef>& transformBuilders;
@@ -67,7 +73,7 @@ public:
 	 * Определить новые шаблоны из исходника
 	 */
 	BuildInfo build( const std::string & str ) throw (PatternBuildingException);
-
+	BuildInfo buildNoException(const std::string& str);
 public:
 
 	NamespaceRef space;
