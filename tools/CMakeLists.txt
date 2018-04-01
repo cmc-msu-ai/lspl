@@ -6,7 +6,7 @@ include(../common/CMakeCommon.cmake)
 
 include_directories( src/main )
 
-find_package(Boost COMPONENTS system REQUIRED)
+find_package(Boost COMPONENTS system)
 if (NOT Boost_SYSTEM_FOUND)
   set(Boost_SYSTEM_LIBRARY ${CMAKE_SOURCE_DIR}/../deps/boost/build/lib/libboost_system.a)
 endif()
