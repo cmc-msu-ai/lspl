@@ -5,7 +5,7 @@ git submodule init
 git submodule update --recursive pcre
 cd ./pcre && cmake . && make -j
 cd $path
-if [[ $(ldconfig -p | grep libboost) ]]; then
+if [[ $(ls /usr/lib /usr/local/lib /lib | grep libboost_system) ]]; then
     echo "System boost found"
 else
     echo "System boost not found, will compile from srcs"
