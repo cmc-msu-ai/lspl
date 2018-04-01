@@ -105,10 +105,11 @@ target_link_libraries(lspl-util-test lspl)
 # Flags for effective error parsing
 
 if(CMAKE_COMPILER_IS_GNUCC)
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fmessage-length=0")
 endif(CMAKE_COMPILER_IS_GNUCC)
 
 if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fmessage-length=0")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fmessage-length=0")
 endif(CMAKE_COMPILER_IS_GNUCXX)
+
 
