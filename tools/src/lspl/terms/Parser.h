@@ -8,6 +8,7 @@
 #ifndef _LSPL_TERMS_PARSER_H_
 #define _LSPL_TERMS_PARSER_H_
 
+#include <complex>
 #include "Term.h"
 
 #include <memory>

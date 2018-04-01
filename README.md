@@ -1,7 +1,7 @@
-# Lspl
-
-Язык лексико-синтаксических шаблонов
-
-## Статус
-
-[<img src="https://secure.travis-ci.org/cmc-msu-ai/lspl.png?branch=master" alt="Build Status" />](http://travis-ci.org/cmc-msu-ai/lspl)
+# LSPL
+Форк библиотеки lspl, в котором добавлены методы не выбрасывающие исключений.
+# Сборка
+<ul>
+<li>make</li>
+<li>sudo make install</li>
+</ul>
