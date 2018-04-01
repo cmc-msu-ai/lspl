@@ -57,7 +57,7 @@ public:
 		virtual ~Parser() {}
 
 		virtual BuildInfo build( const char * str ) throw (PatternBuildingException) = 0;
-        virtual BuildInfo buildNoException(const char * str ) = 0;
+		virtual BuildInfo buildNoException(const char * str ) = 0;
 
 	public:
 		NamespaceRef space;
@@ -73,7 +73,7 @@ public:
 	 * Определить новые шаблоны из исходника
 	 */
 	BuildInfo build( const std::string & str ) throw (PatternBuildingException);
-    BuildInfo buildNoException(const std::string& str);
+	BuildInfo buildNoException(const std::string& str);
 public:
 
 	NamespaceRef space;

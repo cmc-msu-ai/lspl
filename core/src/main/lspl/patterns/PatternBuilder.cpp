@@ -441,11 +441,11 @@ PatternBuilder::~PatternBuilder() {
 }
 
 PatternBuilder::BuildInfo PatternBuilder::build( const std::string & str ) throw (PatternBuildingException) {
-    return parser->build( str.c_str() );
+	return parser->build( str.c_str() );
 }
 
 PatternBuilder::BuildInfo PatternBuilder::buildNoException(const std::string &str){
-    return parser->buildNoException(str.c_str());
+	return parser->buildNoException(str.c_str());
 }
 
 } } // namespace lspl::patterns
