@@ -35,7 +35,7 @@ TextTransform * TextTransformBuilder::build(
 		throw lspl::patterns::PatternBuildingException( source.c_str() );
 	}
 
-    return new TextTransform( matchers, alt.getBindings() );
+	return new TextTransform( matchers, alt.getBindings() );
 }
 
 

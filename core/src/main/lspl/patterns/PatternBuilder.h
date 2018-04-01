@@ -42,10 +42,10 @@ public:
 		 * Неразобранная строка
 		 */
 		std::string parseTail;
-        /**
-          * Текст ошибки, если есть.
-          */
-        std::string errorMsg;
+		/**
+		  * Текст ошибки, если есть.
+		 */
+		std::string errorMsg;
 	};
 
 	/**

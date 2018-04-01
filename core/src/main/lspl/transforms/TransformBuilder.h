@@ -31,7 +31,7 @@ public:
 	 * @param source исходный код
 	 * @return новый экземпляр преобразования. При этом жизненный цикл экземпляра не управляется никем, за удаление экземпляра отвественнен получатель.
 	 */
-    virtual Transform * build( const patterns::Alternative & alternative, const std::string & source ) = 0;
+	virtual Transform * build( const patterns::Alternative & alternative, const std::string & source ) = 0;
 };
 
 class LSPL_EXPORT DummyTransformBuilder : public TransformBuilder {
