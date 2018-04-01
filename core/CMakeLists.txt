@@ -1,7 +1,13 @@
 cmake_minimum_required(VERSION 2.6)
 project(LSPL_CORE)
+add_definitions(-std=c++11 -Wno-deprecated)
 
 include(../common/CMakeCommon.cmake)
+find_package(Boost COMPONENTS system)
+
+if (NOT Boost_SYSTEM_FOUND)
+  set(Boost_SYSTEM_LIBRARY ${CMAKE_SOURCE_DIR}/../deps/boost/build/lib/libboost_system.a)
+endif()
 
 include_directories( src/main )
 
@@ -64,6 +70,7 @@ set(LSPL_CORE_SOURCES
 	src/main/lspl/text/Transition.cpp
 	src/main/lspl/text/Text.cpp
 	src/main/lspl/text/Match.cpp
+	src/main/lspl/text/writers/StreamTextWriter.cpp
 	src/main/lspl/text/writers/JsonTextWriter.cpp
 	src/main/lspl/text/writers/TextWriter.cpp
 	src/main/lspl/text/readers/JsonTextReader.cpp
@@ -83,6 +90,7 @@ set(LSPL_CORE_SOURCES
 )
 
 add_library(lspl SHARED ${LSPL_CORE_SOURCES})
+target_link_libraries(lspl ${Boost_SYSTEM_LIBRARY})
 
 set_target_properties(lspl
     PROPERTIES
