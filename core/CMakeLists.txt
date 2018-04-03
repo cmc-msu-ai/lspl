@@ -1,12 +1,12 @@
 cmake_minimum_required(VERSION 2.6)
 project(LSPL_CORE)
-add_definitions(-std=c++11 -Wno-deprecated)
 
 include(../common/CMakeCommon.cmake)
 find_package(Boost COMPONENTS system)
 
 if(WIN32)
 else(WIN32)
+    add_definitions(-std=c++11 -Wno-deprecated)
     if (NOT Boost_SYSTEM_FOUND)
         set(Boost_SYSTEM_LIBRARY ${CMAKE_SOURCE_DIR}/../deps/boost/build/lib/libboost_system.a)
     endif()
