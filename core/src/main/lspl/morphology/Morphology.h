@@ -10,7 +10,7 @@
 
 namespace lspl { namespace morphology {
 
-class LSPL_EXPORT MorphologyInitException : public base::Exception{
+class MorphologyInitException : public base::Exception{
 public:
 	MorphologyInitException(const std::string & description, const std::string & sourceFileName, int sourceLineNumber) :
 		Exception( description, sourceFileName, sourceLineNumber) {}

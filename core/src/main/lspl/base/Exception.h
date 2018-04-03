@@ -22,7 +22,7 @@ public:
 		description(description) {}
 
 	~Exception() {}
-	const char* what() const noexcept { return description.c_str(); }
+	const char* what() const noexcept override { return description.c_str(); }
 
 private:
 
