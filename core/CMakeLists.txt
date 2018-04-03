@@ -5,9 +5,12 @@ add_definitions(-std=c++11 -Wno-deprecated)
 include(../common/CMakeCommon.cmake)
 find_package(Boost COMPONENTS system)
 
-if (NOT Boost_SYSTEM_FOUND)
-  set(Boost_SYSTEM_LIBRARY ${CMAKE_SOURCE_DIR}/../deps/boost/build/lib/libboost_system.a)
-endif()
+if(WIN32)
+else(WIN32)
+    if (NOT Boost_SYSTEM_FOUND)
+        set(Boost_SYSTEM_LIBRARY ${CMAKE_SOURCE_DIR}/../deps/boost/build/lib/libboost_system.a)
+    endif()
+endif(WIN32)
 
 include_directories( src/main )
 
