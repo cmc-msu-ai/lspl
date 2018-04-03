@@ -85,7 +85,7 @@ struct LoopIterationMatchState : public boost::noncopyable {
 
 private:
 
-	mutable std::auto_ptr<LoopIterationVariant> variant; // Вариант сопоставления
+	mutable std::unique_ptr<LoopIterationVariant> variant; // Вариант сопоставления
 
 };
 

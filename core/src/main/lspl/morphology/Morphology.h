@@ -51,7 +51,7 @@ public:
 	 * @param token слово для анализа
 	 * @return ptr_vector интерпретаций слова
 	 */
-	std::auto_ptr< boost::ptr_vector<WordForm> > getWordForms( const std::string & token ) {
+	std::unique_ptr< boost::ptr_vector<WordForm> > getWordForms( const std::string & token ) {
 		boost::ptr_vector<WordForm> result;
 		appendWordForms( token, result );
 		return result.release();

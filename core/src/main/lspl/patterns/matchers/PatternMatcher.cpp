@@ -86,7 +86,7 @@ struct PatternMatchState {
 	}
 
 private:
-	mutable std::auto_ptr<MatchVariant> variant; // Вариант сопоставления
+	mutable std::unique_ptr<MatchVariant> variant; // Вариант сопоставления
 };
 
 static void processCompoundPattern( const PatternMatchState & state, TransitionList & newTransitions ) {

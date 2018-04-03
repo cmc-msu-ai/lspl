@@ -18,7 +18,7 @@ template<typename T, typename A, typename CA>
 inline boost::mpl::true_ *
 boost_foreach_is_lightweight_proxy( boost::ptr_vector<T,A,CA>&, boost::foreach::tag )
 {
-    return 0;
+	return 0;
 }
 
 namespace lspl { namespace patterns {
@@ -30,8 +30,8 @@ Alternative::Alternative( const std::string & source, const std::string & transf
 Alternative::~Alternative() {
 }
 
-void Alternative::setTransform( std::auto_ptr<transforms::Transform> t ) {
-	transform = t;
+void Alternative::setTransform( std::unique_ptr<transforms::Transform> t ) {
+	transform = std::move( t );
 }
 
 bool Alternative::equals( const Alternative & alt ) const {

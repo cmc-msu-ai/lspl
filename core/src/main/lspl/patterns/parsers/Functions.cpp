@@ -127,7 +127,7 @@ void AddAlternativeDefinitionImpl::operator()( boost::ptr_vector<Alternative> & 
 	if (transformBuilder == transformBuilders.end())
 		throw PatternBuildingException("Invalid transform type: =" + transformType + ">");
 
-	alternative->setTransform( std::auto_ptr<transforms::Transform>( transformBuilder->second->build( *alternative, alternative->getTransformSource() ) ) );
+	alternative->setTransform( std::unique_ptr<transforms::Transform>( transformBuilder->second->build( *alternative, alternative->getTransformSource() ) ) );
 
 	alts.push_back( alternative );
 }

@@ -16,13 +16,13 @@
 
 namespace lspl { namespace patterns {
 
-class LSPL_EXPORT PatternBuildingException : public base::Exception {
+class PatternBuildingException : public base::Exception {
 public:
 	PatternBuildingException(const std::string & description) :
 		Exception( description ) {
 	}
 
-	~PatternBuildingException() throw() {}
+	~PatternBuildingException() {}
 };
 
 class LSPL_EXPORT PatternBuilder : public base::RefCountObject, public base::IdentifiedObject<PatternBuilder> {

@@ -31,7 +31,7 @@ namespace lspl { namespace patterns { namespace expressions {
 class LSPL_EXPORT Expression {
 public:
 	typedef std::vector<text::attributes::AttributeValue> ValueList;
-	typedef std::auto_ptr<ValueList> ValueListPtr;
+	typedef std::unique_ptr<ValueList> ValueListPtr;
 public:
 	Expression();
 	virtual ~Expression();
