@@ -9,6 +9,6 @@ addons:
 script:
   - make
 env:
-  - IS_INSIDE_TRAVIC_SI=1
+  - IS_INSIDE_TRAVIS_CI=1
 git:
   submodules: false
