@@ -8,3 +8,5 @@ addons:
       - libboost-dev
 script:
   - make
+env:
+  - IS_INSIDE_TRAVIC_SI=1

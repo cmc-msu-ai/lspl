@@ -7,6 +7,8 @@ cd ./pcre && cmake . && make -j
 cd $path
 if [[ $(ls /usr/lib /usr/local/lib /lib | grep libboost_system) ]]; then
     echo "System boost found"
+elif [[ -n "${IS_INSIDE_TRAVIS_CI}" ]]; then
+    echo "Boost compilation skiped by env variable"
 else
     echo "System boost not found, will compile from srcs"
     git submodule update --recursive boost
@@ -15,4 +17,3 @@ else
 fi
 cd $path
 cd aot && ./build-linux.sh
-
