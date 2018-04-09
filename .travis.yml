@@ -5,7 +5,7 @@ jdk:
 addons:
   apt:
     packages:
-      - libboost-dev
+      - libboost-all-dev
 script:
   - make
 env:
