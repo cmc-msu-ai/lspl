@@ -10,3 +10,5 @@ script:
   - make
 env:
   - IS_INSIDE_TRAVIC_SI=1
+git:
+  submodules: false
