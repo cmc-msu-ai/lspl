@@ -78,7 +78,6 @@ set(LSPL_CORE_SOURCES
     src/main/lspl/text/readers/JsonTextReader.cpp
     src/main/lspl/text/readers/TextReader.cpp
     src/main/lspl/text/readers/PlainTextReader.cpp
-    src/main/lspl/text/indexes/Index.cpp
     src/main/lspl/text/indexes/PatternIndex.cpp
     src/main/lspl/text/indexes/SpeechPartIndex.cpp
     src/main/lspl/text/Node.cpp

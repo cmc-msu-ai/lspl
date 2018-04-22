@@ -28,20 +28,20 @@ public:
 class SpeechPartIndex::IteratorImpl : public Index::Iterator {
 public:
 	IteratorImpl(Impl::IndexValue & value) : it( value.begin() ), end( value.end() ) {
+	}
 
-	};
 
 	virtual Transition * get() {
 		return it->get();
-	};
+	}
 
 	virtual void increment() {
 		++ it;
-	};
+	}
 
 	virtual bool finished() {
 		return it == end;
-	};
+	}
 
 private:
 	Impl::IndexValue::iterator it;
