@@ -18,8 +18,8 @@ using lspl::morphology::Morphology;
 
 namespace lspl { namespace patterns { namespace matchers {
 
-WordMatcher::WordMatcher( const std::string & base, SpeechPart speechPart )  :
-	AnnotationMatcher( WORD ), base( Morphology::instance().upcase( base ) ), speechPart( speechPart ) {
+WordMatcher::WordMatcher(SpeechPart speechPart, BaseComparator *baseComparator)  :
+	AnnotationMatcher( WORD ), baseComparator(baseComparator), speechPart( speechPart ) {
 
 }
 
@@ -42,16 +42,25 @@ bool WordMatcher::matchTransition( const Transition & transition, const Context 
 	if ( speechPart != SpeechPart::WORD && speechPart != word.getSpeechPart() ) // Проверяем соответствие частей речи
 		return false;
 
-	if ( base != "" && base != word.getBase() ) // Проверяем соответствие начальной формы
-		return false;
+	if (baseComparator != nullptr && !baseComparator->match(word))
+			return false;
 
 	return matchRestrictions( transition, context );
 }
 
 void WordMatcher::dump( std::ostream & out, const std::string & tabs ) const {
-	out << "WordMatcher{ base = " << base << ", speechPart = " << speechPart.getAbbrevation() << ", variable = " << variable << ", restrictions = ";
+	out << "WordMatcher{ speechPart = " << speechPart.getAbbrevation() << ", variable = " << variable << ", baseComparator = ";
+	if (baseComparator == nullptr)
+		out << "NULL";
+	else
+		baseComparator->dump( out );
+	out << ", restrictions = ";
 	dumpRestrictions( out );
 	out << " }";
+}
+
+void WordMatcher::setBaseComparator(BaseComparator *cmp) {
+	baseComparator.reset(cmp);
 }
 
 bool WordMatcher::equals( const Matcher & m ) const {
@@ -60,7 +69,14 @@ bool WordMatcher::equals( const Matcher & m ) const {
 	const WordMatcher & wm = static_cast<const WordMatcher &>( m );
 
 	if ( wm.speechPart != speechPart ) return false; // Различная часть речи
-	if ( wm.base != base ) return false; // Различная основа
+
+	if (wm.baseComparator == nullptr && baseComparator == nullptr)
+		return true;
+
+	if (wm.baseComparator == nullptr || baseComparator == nullptr)
+		return false;
+
+	if ( !wm.baseComparator->equals(*baseComparator) ) return false; // Различная основа
 
 	return true;
 }

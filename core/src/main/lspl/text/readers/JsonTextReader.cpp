@@ -1,6 +1,8 @@
 #include "../../base/BaseInternal.h"
 #include "JsonTextReader.h"
 
+#include <complex>
+
 #include "../../patterns/Pattern.h"
 
 #include "../TextConfig.h"

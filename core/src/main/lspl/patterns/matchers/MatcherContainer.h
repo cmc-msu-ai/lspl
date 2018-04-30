@@ -34,7 +34,7 @@ public:
 	/**
 	 * Создать новый сопоставитель слов
 	 */
-	WordMatcher & newWordMatcher( const std::string & base, text::attributes::SpeechPart speechPart );
+	WordMatcher & newWordMatcher( text::attributes::SpeechPart speechPart );
 
 	/**
 	 * Создать новый сопоставитель шаблона
@@ -94,6 +94,10 @@ public:
 	 * Получить список сопоставителей в контейнере
 	 */
 	const boost::ptr_vector<Matcher> & getMatchers() const {
+		return matchers;
+	}
+
+	boost::ptr_vector<Matcher> & getMatchers() {
 		return matchers;
 	}
 

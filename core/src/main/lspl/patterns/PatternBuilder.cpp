@@ -1,35 +1,32 @@
 #include "../base/BaseInternal.h"
-
-#define PHOENIX_LIMIT 4
-#define BOOST_SPIRIT_CLOSURE_LIMIT 4
-
-#include "../utils/RusConsts.h"
+#include "../Namespace.h"
 
 #include "PatternBuilder.h"
 #include "Pattern.h"
 
-#include "parsers/Functions.h"
-#include "parsers/VariableParser.h"
-#include "parsers/AttributeKeyParser.h"
+#include "parsers/CharacterSets.h"
+
+#include "../morphology/Morphology.h"
 
 #include "matchers/Matcher.h"
+#include "matchers/TokenMatcher.h"
+#include "matchers/RegexpMatcher.h"
+#include "matchers/LoopMatcher.h"
+#include "matchers/PatternMatcher.h"
+#include "matchers/WordMatcher.h"
 
 #include "../transforms/TransformBuilder.h"
 #include "../transforms/TextTransformBuilder.h"
 #include "../transforms/PatternTransformBuilder.h"
 
-#include <boost/spirit/include/classic_core.hpp>
-#include <boost/spirit/include/classic_attribute.hpp>
-#include <boost/spirit/include/classic_symbols.hpp>
-#include <boost/spirit/include/classic_error_handling.hpp>
-#include <boost/spirit/include/classic_utility.hpp>
-#include <boost/spirit/include/classic_dynamic.hpp>
-#include <boost/spirit/include/phoenix1.hpp>
+#include "restrictions/AgreementRestriction.h"
+#include "restrictions/NotRestriction.h"
+#include "restrictions/OrRestriction.h"
 
-#include <boost/format.hpp>
-
-using namespace boost::spirit::classic;
-using namespace phoenix;
+#include "expressions/CurrentAnnotationExpression.h"
+#include "expressions/ConstantExpression.h"
+#include "expressions/AttributeExpression.h"
+#include "expressions/VariableExpression.h"
 
 using namespace lspl::text::attributes;
 
@@ -37,340 +34,782 @@ using namespace lspl::patterns::restrictions;
 using namespace lspl::patterns::expressions;
 using namespace lspl::patterns::matchers;
 using namespace lspl::patterns::parsers;
+using lspl::morphology::Morphology;
 
 LSPL_REFCOUNT_CLASS( lspl::patterns::PatternBuilder );
 
 namespace lspl { namespace patterns {
 
-class ParserImpl : public grammar<ParserImpl>, public PatternBuilder::Parser {
+class ParserImpl: public PatternBuilder::Parser {
+private:
+	const char *buffer;
+	uint pos;
+
+	/*
+	 * Пропускает пробельные символы в буфере
+	 */
+	void skipSpaces() {
+		while (isSpace(buffer[pos]))
+			++pos;
+	}
+
+	/**
+	 * Проверка на наличие впереди конца ввода
+	 */
+	bool seekEndOfInput() {
+		skipSpaces();
+		return buffer[pos] == '\0';
+	}
+
+	/**
+	 * Создаёт экземпляр исключения с заданным сообщением об ошибке, хранящий
+	 * информацию о текущей позиции парсера и входных данных
+	 */
+	PatternBuildingException produceException(const std::string &description) {
+		std::string combinedDesc = description;
+		combinedDesc += " at character #" + std::to_string(pos);
+		PatternBuildingException e(combinedDesc, buffer, pos);
+		return e;
+	}
+
+	/*
+	 * Вырезать из токена-идентификатора индекс
+	 */
+	bool cutIndexFromToken(std::string &token, uint &index) {
+		int pos = token.length();
+		while (pos != 0 && isDigit(token[pos - 1]))
+			--pos;
+
+		if (pos == token.length())
+			return false;
+		if (pos == 0)
+			throw produceException("Invalid token: matcher with index expected, but only integer found");
+
+		try {
+			index = std::stoul(token.substr(pos));
+		} catch (std::out_of_range &e) {
+			throw produceException("Integer overflow in matcher index");
+		} catch (...) {
+			throw produceException("Unknown exception while retrieving matcher index");
+		}
+
+		token.resize(pos);
+		return true;
+	}
+
+	/*
+	 *  Убеждается, что текст продолжается строкой pattern
+	 */
+	bool strFollows(const char *pattern) {
+		skipSpaces();
+		uint i = 0;
+		while (pattern[i] != '\0' && pattern[i] == buffer[pos + i])
+			++i;
+		return pattern[i] == '\0';
+	}
+
+	/*
+	 * В точности повторяет действие функции strFollows, но считывает pattern из буфера
+	 * и кидает исключение, если не встречает строку
+	 */
+	void readStrFollows(const char *pattern) {
+		if (!strFollows(pattern))
+			throw produceException(std::string("Expected \"") + pattern + "\"");
+		pos += strlen(pattern);
+	}
+
+	/**
+	 * Считывает токен
+	 */
+	std::string readToken() {
+		skipSpaces();
+		std::string token;
+		while (!isInvalidChar(buffer[pos]) && !isPunct(buffer[pos]) && !isSpace(buffer[pos]))
+			token += buffer[pos++];
+		return token;
+	}
+
+	/*
+	 * Считывает беззнаковое целое
+	 */
+	uint readUInt() {
+		std::string token = readToken();
+		uint index = 0;
+		try {
+			index = std::stoul(token);
+		} catch (std::out_of_range &e) {
+			throw produceException("Integer overflow");
+		} catch (...) {
+			throw produceException("Unknown exception");
+		}
+		return index;
+	}
+
+	/**
+	 * Обработка имени шаблона
+	 */
+	std::string readPatternName() {
+		skipSpaces();
+		if (getCharacterSets(buffer[pos]) != (LSPL_CHARACTERSETS_LATIN | LSPL_CHARACTERSETS_UPPERCASE))
+			throw produceException("Pattern name should start with an uppercase latin letter");
+		std::string patternName = readToken();
+		if (!isLatin(patternName.back()))
+			throw produceException("Pattern name should end with a latin letter");
+		return patternName;
+	}
+
+	/**
+	 * Обработка параметров шаблона
+	 */
+	std::vector<Expression*> readPatternArguments(PatternRef pattern) {
+		std::vector<Expression*> result;
+		readStrFollows("(");
+		result.push_back(readAttributeExpression());
+		while (strFollows(",")) {
+			readStrFollows(",");
+			result.push_back(readAttributeExpression());
+		}
+		readStrFollows(")");
+		return result;
+	}
+
+	/**
+	 * Является ли строка регулярным выражением?
+	 */
+	static bool isRegexp( const std::string & str ) {
+		static std::string regexSymbols(".[{()\\*+?|^$'");
+
+		for (uint i = 0; i < regexSymbols.length(); ++i)
+			if (str.find(regexSymbols.at(i) ) != std::string::npos)
+				return true;
+
+		return false;
+	}
+
+	/*
+	 * Разделить строку на токены
+	 */
+	static std::vector<std::string> split(const std::string &contents) {
+		std::vector<std::string> words;
+		std::string word;
+		for (uint i = 0; i < contents.length(); ++i) {
+			if (!isSpace(contents[i]))
+				word += contents[i];
+			else if (word.length() != 0)
+				words.push_back(word);
+		}
+		if (word.length() != 0)
+			words.push_back(word);
+		return words;
+	}
+
+	/**
+	 * Считать строковую константу
+	 */
+	std::string readStringConstant() {
+		readStrFollows("\"");
+		std::string contents;
+		while (buffer[pos] != '\0' && buffer[pos] != '\"')
+			contents += buffer[pos++];
+		if (buffer[pos] == '\0')
+			throw produceException("Unexpected end of input (closing \" excepted)");
+		readStrFollows("\"");
+		return contents;
+	}
+
+	/**
+	 * элемент_строка := "регулярное выражение"
+	 */
+	Matcher* readStringMatcher() {
+		std::string contents = readStringConstant();
+		if (isRegexp(contents))
+			return new RegexpMatcher(contents);
+
+		// Разделяем на отдельные слова, если строка не является
+		// регулярным выражением
+		std::vector<std::string> words = split(contents);
+		if (words.size() == 0)
+			throw produceException("Empty string cannot be matched");
+		if (words.size() == 1)
+			return new TokenMatcher(words[0]);
+
+		// Слов больше, чем одно. Создаём отдельные сопоставители для каждого слова
+		LoopMatcher *wordMatcher = new LoopMatcher(1, 1);
+		MatcherContainer &container = wordMatcher->newAlternative();
+		for (std::string &word : words)
+			container.addMatcher(new TokenMatcher(word));
+		return wordMatcher;
+	}
+
+	/**
+	 * Обработка элемента шаблона
+	 *
+	 * элемент_шаблона ::= простой_элемент | опциональный_элемент | повторение_элементов
+     *                                     | (набор_альтернатив)
+     *
+     * простой элемент := элемент_строка | элемент_слово | экземпляр_шаблона
+	 */
+	Matcher* readMatcher() {
+		skipSpaces();
+		if (strFollows("{"))
+			return readNestedMatcher(0, 0, "{", "}", true);
+		if (strFollows("["))
+			return readNestedMatcher(0, 1, "[", "]", false);
+		if (strFollows("("))
+			return readNestedMatcher(1, 1, "(", ")", false);
+		if (strFollows("\""))
+			return readStringMatcher();
+
+		// элемент_слово
+		std::string token = readToken();
+		if (token == "")
+			throw produceException("Matcher expected");
+		uint index = 0;
+		cutIndexFromToken(token, index);
+		for (int i = 0; i < SpeechPart::COUNT; ++i)
+			if (token == SpeechPart(i).getAbbrevation())
+				return readWordMatcher(SpeechPart(i), index);
+
+		// экземпляр_шаблона
+		PatternRef pattern = space->getPatternByName(token);
+		if (!pattern)
+			throw produceException("No pattern with specified name");
+		return readPatternMatcher(pattern, index);
+	}
+
+	/*
+	 * Считать сопоставитель с вложенным списком альтернатив, т.е.
+	 *
+	 *   1) опциональный_элемент
+	 *   2) (набор_альтернатив)
+	 *   3) повторение_элементов
+	 *
+	 *  В параметрах min и max задаётся минимальное и максимальное количество повторений
+	 *  (см. LoopMatcher)
+	 *
+	 *  lbrace и rbrace -- это открывающая и закрывающая скобка (круглая, квадратная или
+	 *  фигурная)
+	 *
+	 *  Параметр allow задаёт, можно ли переопределять значения min и max в самом коде шаблона
+	 *
+	 */
+	Matcher* readNestedMatcher(uint min, uint max, const char* lbrace, const char* rbrace, bool allow) {
+		readStrFollows(lbrace);
+		std::vector<std::vector<Matcher*> > alts = readAlternatives();
+		readStrFollows(rbrace);
+
+		if (allow && strFollows("<") && !strFollows("<<")) {
+			readStrFollows("<");
+			min = readUInt();
+			if (strFollows(",")) {
+				readStrFollows(",");
+				max = readUInt();
+			}
+			readStrFollows(">");
+		}
+
+		LoopMatcher *matcher = new LoopMatcher(min, max);
+		for (std::vector<Matcher*> &alt : alts)
+			matcher->newAlternative().addMatchers(alt.begin(), alt.end());
+		return matcher;
+	}
+
+	/**
+	 * Считать основу слова или лемму
+	 */
+	std::string readMatcherBase() {
+		std::string token;
+		while (isCyrillic(buffer[pos]) || isDigit(buffer[pos]) || buffer[pos] == '-')
+			token += buffer[pos++];
+		if (token.empty())
+			throw produceException("Empty lemma or stem");
+		if (token.front() == '-' || token.back() == '-')
+			throw produceException("Lemma or stem can't start/finish with a hyphen");
+		return token;
+	}
+
+	/**
+	 * Считывает последовательность альтернатив лемм/основ
+	 */
+	AlternativeBaseComparator* readAlternativeBaseComparator(AlternativeBaseComparator *cmp) {
+		cmp->addAlternativeBase(readMatcherBase());
+		while (strFollows("|")) {
+			readStrFollows("|");
+			cmp->addAlternativeBase(readMatcherBase());
+		}
+		return cmp;
+	}
+
+	/**
+	 * условия_на_лемму ::= [ lemma = ] лемма { | лемма }  |  [ lemma ]  != лемма { | лемма }
+	 */
+	void readLemmaRestriction(Matcher *matcher) {
+		WordMatcher *word_m = dynamic_cast<WordMatcher*>(matcher);
+		if (word_m == nullptr)
+			throw produceException("No lemma restrictions on a non-word matcher");
+
+		bool readAnouncement = false;
+		if (strFollows("lemma")) {
+			readStrFollows("lemma");
+			readAnouncement = true;
+		}
+
+		bool negative = false;  // !=
+		if (strFollows("="))
+			readStrFollows("=");
+		else if (strFollows("!=")) {
+			negative = true;
+			readStrFollows("!=");
+		} else if (readAnouncement)
+			throw produceException("= or != expected");
+
+		if (strFollows("\""))
+			word_m->setBaseComparator(new LemmaRegexpComparator(readStringConstant(), negative));
+		else
+			word_m->setBaseComparator(readAlternativeBaseComparator(new LemmaComparator(negative)));
+	}
+
+	/**
+	  * условия_на_основу ::= stem = основа { | основа } | stem  != основа { | основа}
+	  */
+	void readStemRestriction(Matcher *matcher) {
+		readStrFollows("stem");
+
+		WordMatcher *word_m = dynamic_cast<WordMatcher*>(matcher);
+		if (word_m == nullptr)
+			throw produceException("No stem restrictions on a non-word matcher");
+
+		bool negative = false;  // !=
+		if (strFollows("="))
+			readStrFollows("=");
+		else if (strFollows("!=")) {
+			negative = true;
+			readStrFollows("!=");
+		} else
+			throw produceException("= or != expected");
+
+		if (strFollows("\""))
+			word_m->setBaseComparator(new StemRegexpComparator(readStringConstant(), negative));
+		else
+			word_m->setBaseComparator(readAlternativeBaseComparator(new StemComparator(negative)));
+	}
+
+	/**
+	 * Создаёт для сопоставителя ограничение на характеристику attributeName, которая в качестве
+	 * значений может принимать аргументы из набора attributeNames
+	 *
+	 * negative == true меняет поведения ограничения на обратное (условие не должно выполняться)
+	 */
+	Restriction* appendMatcherAttributeRestriction(std::string &attributeName, bool negative, std::vector<std::string> attributeNames) {
+		std::vector<AttributeValue> values(attributeNames.size());
+		std::transform(attributeNames.begin(), attributeNames.end(), values.begin(), AttributeValue::findIndexedByAbbrevation);
+
+		std::vector<AttributeValue>::iterator it;
+		if ((it = std::find(values.begin(), values.end(), AttributeValue::UNDEFINED)) != values.end())
+			throw produceException("Unknown attribute value \"" + attributeNames[it - values.begin()] + "\"");
+
+		AttributeKey key = attributeName != "" ? AttributeKey::findByAbbrevation(attributeName)
+											   : Morphology::instance().getAttributeKeyByValue(attributeNames.front());
+		if (key == AttributeKey::UNDEFINED)
+			throw produceException("Unable to retrieve attribute type");
+
+		it = std::find_if(values.begin(), values.end(), [&](AttributeValue &v){ return Morphology::instance().getAttributeKeyByValue(v) != key; });
+		if (it != values.end())
+			throw produceException("Attribute value \"" + attributeNames[it - values.begin()] + "\" doesn't correspond to common attribute type");
+
+		// Аргрументы проверены, можно собирать ограничение
+		Restriction* result;
+		std::vector<AgreementRestriction*> alternativeRestrictions;
+		for (AttributeValue &v: values){
+			AgreementRestriction *r = new AgreementRestriction();
+			r->addArgument(new AttributeExpression(new CurrentAnnotationExpression(), key));
+			r->addArgument(new ConstantExpression(v));
+			alternativeRestrictions.push_back(r);
+		}
+
+		if (alternativeRestrictions.size() == 1)
+			result = alternativeRestrictions.front();
+		else {
+			OrRestriction *r = new OrRestriction();
+			for (Restriction *alt : alternativeRestrictions)
+				r->addArgument(alt);
+			result = r;
+		}
+
+		if (negative)
+			result = new NotRestriction(result);
+		return result;
+	}
+
+
+	/**
+	 * Чтение одного ограничения на аттрибут
+	 *
+	 * характеристика ::= [ название_ признака = ]  значение_ признака { | значение_ признака } |
+	 *                    [ название_ признака ]  != значение_ признака { | значение_ признака }
+	 *
+	 */
+	void readAttributeRestriction(Matcher *matcher) {
+		bool negative = false; // !=
+		std::string attributeName;
+		std::vector<std::string> valueNames;
+
+		skipSpaces();
+		if (isLatin(buffer[pos])) {
+			attributeName = readToken();
+			if (strFollows("|") || strFollows(",") || strFollows(">")) {
+				valueNames.emplace_back(std::move(attributeName));
+				if (strFollows("|")) readStrFollows("|");
+			}
+			else if (strFollows("="))
+				readStrFollows("=");
+			else if (!strFollows("!="))
+				throw produceException("Invalid expression in matcher restriction");
+		}
+
+		if (strFollows("!=")) {
+			readStrFollows("!=");
+			negative = true;
+		};
+
+		skipSpaces();
+		if (!isLatin(buffer[pos]))
+			return;
+
+		valueNames.push_back(readToken());
+		while (strFollows("|")) {
+			readStrFollows("");
+			valueNames.push_back(readToken());
+			if (valueNames.back().length() == 0)
+				throw produceException("Expression value expected");
+		}
+
+		matcher->addRestriction(appendMatcherAttributeRestriction(attributeName, negative, valueNames));
+	}
+
+	/**
+	 * Чтение одного ограничения сопоставителя
+	 *
+	 */
+	void readMatcherRestriction(Matcher *matcher) {
+		if (strFollows("lemma") || isCyrillic(buffer[pos]) || strFollows("\""))
+			readLemmaRestriction(matcher);
+		else if (strFollows("stem"))
+			readStemRestriction(matcher);
+		else if (strFollows("!=")) {
+			// По одному != непонятно, что будет дальше, ограничение на лемму или на признак
+			// Запоминаем позицию для отката назад, если не угадали
+			uint backtrack_pos = pos;
+			readStrFollows("!=");
+			skipSpaces();
+			if (isCyrillic(buffer[pos]) || isDigit(buffer[pos])) {
+				pos = backtrack_pos;
+				readLemmaRestriction(matcher);
+			} else {
+				pos = backtrack_pos;
+				readAttributeRestriction(matcher);
+			}
+
+		} else
+			readAttributeRestriction(matcher);
+	}
+
+	/*
+	 * Чтение списка ограничений сопоставителя
+	 */
+	void readMatcherRestrictions(Matcher *matcher) {
+		readStrFollows("<");
+		readMatcherRestriction(matcher);
+		while (!strFollows(">")) {
+			readStrFollows(",");
+			readAttributeRestriction(matcher);
+		}
+		readStrFollows(">");
+	}
+
+	/**
+	 * Считать сопоставитель-шаблон
+	 *
+	 * экземпляр-шаблона ::= имя_шаблона [индекс] | имя_шаблона [индекс]  <характеристика { , характеристика }>
+	 */
+	Matcher* readPatternMatcher(PatternRef pattern, uint index) {
+		PatternMatcher *matcher = new PatternMatcher(*pattern);
+		matcher->variable = Variable(*pattern, index);
+		if (strFollows("<") && !strFollows("<<"))
+			readMatcherRestrictions(matcher);
+		return matcher;
+	}
+
+	/*
+	 * Считать сопоставитель-слово
+	 */
+	Matcher* readWordMatcher(const SpeechPart &sp, uint index) {
+		WordMatcher *matcher = new WordMatcher(sp);
+		matcher->variable = Variable(sp, index);
+		if (strFollows("<") && !strFollows("<<"))
+			readMatcherRestrictions(matcher);
+		return matcher;
+	}
+
+	/*
+	 * Сгенерировать сопоставитель, реализующий перестановку из
+	 * указанного набора сопоставителей
+	 */
+	Matcher* makePermutationMatcher(std::vector<Matcher*> source) {
+		if (source.size() == 0)
+			throw produceException("Internal error: empty permutation requested");
+		if (source.size() == 1)
+			return source.front();
+
+		LoopMatcher *wordMatcher = new LoopMatcher(1, 1, true);
+		sort(source.begin(), source.end());
+		do {
+			wordMatcher->newAlternative().addMatchers(source.begin(), source.end());
+		} while (next_permutation(source.begin(), source.end()));
+		return wordMatcher;
+	}
+
+	/**
+	 * Считать одно имя переменной + признак (если есть)
+	 *
+	 * имя ::= имя_элемента  [. название_признака]   | имя_шаблона [индекс]  [. название_признака]
+	 */
+	Expression* readAttributeExpression() {
+		std::string token = readToken();
+		if (token == "")
+			throw produceException("Variable name expected");
+		uint index = 0;
+		cutIndexFromToken(token, index);
+
+		// Элемент-слово
+		Expression* result = nullptr;
+		for (int i = 0; i < SpeechPart::COUNT; ++i)
+			if (token == SpeechPart(i).getAbbrevation()) {
+				result = new VariableExpression(SpeechPart(i), index);
+				break;
+			}
+
+		// Шаблон
+		if (!result) {
+			PatternRef pattern = space->getPatternByName(token);
+			if (!pattern)
+				throw produceException("No pattern with specified name");
+			result = new VariableExpression(*pattern, index);
+		}
+
+		if (strFollows(".")) {
+			readStrFollows(".");
+			AttributeKey key = AttributeKey::findByAbbrevation(readToken());
+			if (key == AttributeKey::UNDEFINED)
+				throw produceException("Unknown attribute");
+			result = new AttributeExpression(result, key);
+		}
+
+		return result;
+	}
+
+	/**
+	 * Считать = или ==
+	 */
+	std::string readAgreement() {
+		if (strFollows("==")) {
+			readStrFollows("==");
+			return "==";
+		}
+		if (strFollows("=")) {
+			readStrFollows("=");
+			return "=";
+		}
+		throw produceException("= or == expected");
+	}
+
+	/**
+	 * Считать одно ограничение согласования для перестановки
+	 *
+	 * условие ::= условие_ согласования
+	 * условие_ согласования ::= имя = имя { = имя } | имя == имя { == имя }
+	 */
+	void readPermutationRestriction(std::vector<Matcher*> &matchers) {
+
+		std::vector<Expression*> exps(1, readAttributeExpression());
+		std::string agreementType = readAgreement();
+		exps.push_back(readAttributeExpression());
+		while (strFollows("=")) {
+			if (readAgreement() != agreementType)
+				throw produceException("Weak (=) and strong (==) agreements mixed");
+			exps.push_back(readAttributeExpression());
+		}
+		AgreementRestriction *restriction = new AgreementRestriction();
+		for (Expression *e : exps)
+			restriction->addArgument(e);
+
+
+		// Ок, теперь нужно найти необходимый сопоставитель. Перебираем их от последнего к первому и смотрим
+		for (std::vector<Matcher*>::reverse_iterator it = matchers.rbegin(); it != matchers.rend(); ++it)
+			if ((*it)->variable != Variable() && restriction->containsVariable((*it)->variable)) {
+				(*it)->addRestriction(restriction);
+				return;
+			}
+
+		// Ограничение не подошло ни к одному сопоставителю. Возможно, тут совсем ничего не нужно делать?
+		// Мы пересрахуемся и всё же добавим ограничение в конец.
+		matchers.back()->addRestriction(restriction);
+		// FIXME: возможно, нужно бросить исключение?
+	}
+
+	/**
+	 * Считать ограничения согласования для перестановки
+	 *
+	 * условия ::= условие {,  условие }
+	 */
+	void readPermutationRestrictions(std::vector<Matcher*> &matchers) {
+		readStrFollows("<<");
+		readPermutationRestriction(matchers);
+		while (strFollows(",")) {
+			readStrFollows(",");
+			readPermutationRestriction(matchers);
+		}
+		readStrFollows(">>");
+	}
+
+	/**
+	 * Обработка шаблона распознавания (последовательности перестановок)
+	 *
+	 * шаблон_распознавания ::= последовательность_перестановок
+     *
+     * последовательность_перестановок ::= последовательность_элементов
+     *                                     { ~ последовательность_элементов }
+     *                                     [ <<условия>> ]
+     *
+     * последовательность элементов := элемент_шаблона { элемент_шаблона }
+     *
+	 */
+	std::vector<Matcher*> readPermutation() {
+		std::vector<Matcher*> matchers;
+		std::vector<Matcher*> permutation;
+		permutation.push_back(readMatcher());
+		static std::string followers = "[({\"~";
+
+		while (!seekEndOfInput() && (isLatin(buffer[pos]) || followers.find(buffer[pos]) != std::string::npos)) {
+			if (strFollows("~"))
+				readStrFollows("~");
+			else
+				matchers.push_back(makePermutationMatcher(std::move(permutation)));
+			permutation.push_back(readMatcher());
+		}
+		matchers.push_back(makePermutationMatcher(std::move(permutation)));
+		if (strFollows("<<"))
+			readPermutationRestrictions(matchers);
+		return matchers;
+	}
+
+	std::vector<std::vector<Matcher*> > readAlternatives() {
+		std::vector<std::vector<Matcher*> >	alts;
+		alts.push_back(readPermutation());
+		while (strFollows("|"))
+			alts.push_back(readPermutation());
+		return alts;
+	}
+
+	/**
+	 * Считать альтернативу шаблона pattern, сохранив её source
+	 */
+	void readAlternativeWithSource(PatternRef pattern) {
+		uint before_pos = pos;
+		std::vector<Matcher*> alt = readPermutation();
+		pattern->newAlternative(std::string(buffer + before_pos, buffer + pos)).addMatchers(alt.begin(), alt.end());
+	}
+
+	/**
+	 * Прицепить к альтернативе параметр шаблона
+	 */
+	void appendAlternativeBinding(Alternative &alt, Expression *exp) {
+		AttributeKey key = AttributeKey::UNDEFINED;
+		Variable var;
+
+		if (dynamic_cast<AttributeExpression*>(exp)) {
+			// Переменная с аттрибутом
+			AttributeExpression* attrexp = static_cast<AttributeExpression*>(exp);
+			key = attrexp->attribute;
+			const VariableExpression* varexp = dynamic_cast<const VariableExpression*>(attrexp->base);
+			if (!varexp) throw new std::logic_error("Invalid alternative binding in parser");
+			var = varexp->getVariable();
+		} else if (dynamic_cast<VariableExpression*>(exp)) {
+			// Просто переменная, без аттрибута
+			var = static_cast<VariableExpression*>(exp)->getVariable();
+		} else
+			throw new std::logic_error("Invalid alternative binding in parser");
+
+		bool applicable = false;
+		for (uint i = 0; i < alt.getMatcherCount(); ++i)
+			if (alt.getMatcher(i).containsVariable(var))
+				applicable = true;
+
+		// Создаём связывание и добавляем его к альтенративе шаблона
+		if (applicable) {
+			Expression *e = new VariableExpression(var);
+			if (key != AttributeKey::UNDEFINED)
+				e = new AttributeExpression(e, key);
+			alt.addBinding(key, e);
+		}
+	}
+
+	/**
+	 * Обработка шаблона
+	 *
+	 * описание_шаблона ::= имя_шаблона [ (параметры_шаблона) ] =
+	 *                      шаблон_распознавания { | шаблон_распознавания }
+	 *                      [ (параметры_шаблона) ]
+	 *                      [ =text> шаблоны_извлечения_текста ]
+	 *
+	 *  TODO: =>text пока никак не обрабатывается
+	 */
+	void readPattern() {
+		std::string patternName = readPatternName();
+		PatternRef pattern = space->getPatternByName(patternName);
+		if (!pattern)
+			pattern = space->addPattern(new Pattern(patternName));
+
+		std::vector<Expression*> arguments;
+		uint alternativeCountBefore = pattern->alternatives.size();
+		// Параметры шаблона (слева)
+		if (strFollows("(")) {
+			arguments = readPatternArguments(pattern);
+		}
+
+		readStrFollows("=");
+		readAlternativeWithSource(pattern);
+		while (strFollows("|")) {
+			readStrFollows("|");
+			readAlternativeWithSource(pattern);
+		}
+
+		for (Expression *exp : arguments) {
+			for (uint i = alternativeCountBefore; i < pattern->alternatives.size(); ++i)
+				appendAlternativeBinding(pattern->alternatives[i], exp);
+			delete exp;
+		}
+	}
+
 public:
-
-	struct AgreementRestrictionClosure : public boost::spirit::classic::closure< AgreementRestrictionClosure, Restriction *, boost::ptr_vector<Expression> > {
-		member1 restriction;
-		member2 args;
-	};
-
-	struct DictionaryRestrictionClosure : public boost::spirit::classic::closure< DictionaryRestrictionClosure, Restriction *, std::string, boost::ptr_vector<Expression> > {
-		member1 restriction;
-		member2 dictionaryName;
-		member3 args;
-	};
-
-	struct MatcherClosure : public boost::spirit::classic::closure< MatcherClosure, uint, boost::ptr_vector<Restriction> > {
-		member1 index;
-		member2 restrictions;
-	};
-
-	struct WordMatcherClosure : public boost::spirit::classic::closure< WordMatcherClosure, std::string, SpeechPart > {
-		member1 base;
-		member2 speechPart;
-	};
-
-	struct TokenMatcherClosure : public boost::spirit::classic::closure< TokenMatcherClosure, std::string > {
-		member1 token;
-	};
-
-	struct PatternMatcherClosure : public boost::spirit::classic::closure< PatternMatcherClosure, std::string > {
-		member1 name;
-	};
-
-	struct LoopMatcherClosure : public boost::spirit::classic::closure< LoopMatcherClosure, uint, uint, std::vector<uint> > {
-		member1 min;
-		member2 max;
-		member3 alternativesCount;
-	};
-
-	struct LoopBodyClosure : public boost::spirit::classic::closure< LoopBodyClosure, uint > {
-		member1 matcherCount;
-	};
-
-	struct PatternClosure : public boost::spirit::classic::closure< PatternClosure, std::string, boost::ptr_vector<Alternative> > {
-		member1 name;
-		member2 alternatives;
-	};
-
-	struct AlternativeClosure : public boost::spirit::classic::closure< AlternativeClosure, uint, boost::ptr_vector<Matcher>, boost::ptr_map<AttributeKey,Expression>, std::string, std::string > {
-		member1 stub;
-		member2 matchers;
-		member3 bindings;
-		member4 transformSource;
-        member5 transformType;
-	};
-
-	struct BindingClosure : public boost::spirit::classic::closure< BindingClosure, AttributeKey, Expression * > {
-		member1 att;
-		member2 exp;
-	};
-
-	struct ExpressionClosure : public boost::spirit::classic::closure< ExpressionClosure, Expression*, boost::ptr_vector<Expression> > {
-		member1 exp;
-		member2 args;
-	};
-
-	enum Errors {
-		BindingEndMissing,
-		RestrictionEndMissing,
-		LoopEndMissing,
-		OptionalEndMissing,
-		NoMatchersInAlternative,
-		NoMatchersInGroup,
-		NoRestrictionBody,
-		InvalidPatternName,
-		ClosingSglQuoteMissed,
-		ClosingDblQuoteMissed,
-		AttributeValueExpected
-	};
-
-    template <typename ScannerT> class definition {
-    public:
-    public:
-        definition( const ParserImpl & self_c ) : variable( typeSymbol ) {
-        	ParserImpl & self = *const_cast<ParserImpl *>( &self_c );
-
-        	assertion<Errors> expect_binding_end(BindingEndMissing);
-        	assertion<Errors> expect_restriction_end(RestrictionEndMissing);
-        	assertion<Errors> expect_loop_end(LoopEndMissing);
-        	assertion<Errors> expect_optional_end(OptionalEndMissing);
-        	assertion<Errors> expect_alt_matcher(NoMatchersInAlternative);
-        	assertion<Errors> expect_grp_matcher(NoMatchersInGroup);
-        	assertion<Errors> expect_restriction_body(NoRestrictionBody);
-        	assertion<Errors> expect_valid_pattern_name(InvalidPatternName);
-        	assertion<Errors> expect_closing_sgl_quote(ClosingSglQuoteMissed);
-        	assertion<Errors> expect_closing_dbl_quote(ClosingDblQuoteMissed);
-        	assertion<Errors> expect_attribute_value(AttributeValueExpected);
-
-        	function<AddImpl> add;
-
-			function<AddBindingImpl> addBinding;
-			function<AddRestrictionImpl> addRestriction;
-
-        	function<AddPatternMatcherImpl> addPatternMatcher( AddPatternMatcherImpl( *self.space, typeSymbol ) );
-        	function<AddWordMatcherImpl> addWordMatcher;
-        	function<AddTokenMatcherImpl> addTokenMatcher;
-        	function<AddLoopMatcherImpl> addLoopMatcher;
-        	function<AddAlternativeDefinitionImpl> addAlternativeDefinition( AddAlternativeDefinitionImpl( self.transformBuilders ) );
-        	function<AddPatternDefinitionImpl> addPatternDefinition( AddPatternDefinitionImpl( *self.space, typeSymbol ) );
-
-			function<CreateAgreementRestrictionImpl> createAgreementRestriction;
-			function<CreateDictionaryRestrictionImpl> createDictionaryRestriction( *self.space );
-
-			function<CreateCurrentAttributeExpressionImpl> createCurrentAttributeExpression;
-			function<CreateVariableExpressionImpl> createVariableExpression;
-			function<CreateAttributeExpressionImpl> createAttributeExpression;
-			function<CreateConcatExpressionImpl> createConcatExpression;
-			function<CreateStringLiteralExpressionImpl> createStringLiteralExpression;
-			function<CreateLiteralExpressionImpl> createLiteralExpression;
-
-        	endLoop = expect_loop_end( ch_p( '}' ) );
-        	endOptional = expect_optional_end( ch_p( ']' ) );
-        	endBinding = expect_binding_end( ch_p(')') );
-        	endRestriction = expect_restriction_end( ch_p('>') );
-
-        	source = *pattern;
-
-        	pattern = (
-        			( patternName[ pattern.name = construct_<std::string>( arg1, arg2 ) ] >> '=' >> ( alternative % '|' ) ) |
-        			( ( alternative % '|' )[ pattern.name = construct_<std::string>( arg1, arg2 ) ] >> !( ch_p('=') >> expect_valid_pattern_name( nothing_p ) ) )
-        		)[ addPatternDefinition( pattern.name, pattern.alternatives ) ];
-
-        	alternative = ( matcher >> *(matcher|patternRestrictions) >> !bindingList >> !alternativeTransformSource )
-        		[ addAlternativeDefinition( pattern.alternatives, alternative.matchers, alternative.bindings, construct_<std::string>( arg1, arg2 ), alternative.transformSource, alternative.transformType ) ];
-
-        	alternativeTransformSource = ch_p('=') >> lexeme_d[ +chset_p("a-z") ] [ alternative.transformType = construct_<std::string>( arg1, arg2 ) ] >> ch_p('>')
-                >> lexeme_d[ *~chset_p("\n|") ][ alternative.transformSource = construct_<std::string>( arg1, arg2 ) ];
-
-        	patternName = lexeme_d[ +chset_p("a-zA-Z" RUS_ALPHA "-") >> ~epsilon_p(chset_p("a-zA-Z" RUS_ALPHA "-")) ];
-
-        	binding = ( expression[ binding.exp = arg1 ] >> !( "AS" >> attributeKey[ binding.att = arg1 ] ) )
-        		[ addBinding( alternative.bindings, binding.att, binding.exp ) ];
-
-        	bindingList = '(' >> binding % ',' >> endBinding;
-
-        	/*
-        	 * Парсер сопоставителя
-        	 */
-
-        	matcher = wordMatcher | tokenMatcher | patternMatcher | loopMatcher;
-
-        	matcherVariable = epsilon_p[ matcher.index = 0 ] >> !uint_p[ matcher.index = arg1 ];
-
-        	/*
-        	 * Парсер сопоставителя слов
-        	 */
-
-        	wordMatcher = ( wordType >> matcherVariable >> !wordRestriction )
-        		[ addWordMatcher( alternative.matchers, wordMatcher.base, wordMatcher.speechPart, matcher.index, matcher.restrictions ) ];
-
-        	wordType = lexeme_d[ speechPart[ wordMatcher.speechPart = arg1 ] >> ~epsilon_p(chset_p("a-zA-Z")) ];
-
-        	wordRestriction = ch_p('<')[ wordMatcher.base = "" ]
-        	    >> (
-        	    		( wordBase >> !(chset_p(";,") >> ( matcherRestriction[add( matcher.restrictions, arg1 )] % ',' )) ) |
-        	    		( matcherRestriction[add( matcher.restrictions, arg1 )] % ',' )
-        	    ) >> endRestriction;
-
-        	wordBase = ( lexeme_d[ +chset_p("a-zA-Z0-9" RUS_ALPHA "-") ] >> epsilon_p(chset_p(";,>")) )[ wordMatcher.base = construct_<std::string>( arg1, arg2 ) ];
-
-        	/*
-        	 * Парсер сопоставителя лексем
-        	 */
-
-        	tokenMatcher = lexeme_d[ switch_p[
-        	         case_p< '"' >( (+~ch_p('"'))[ tokenMatcher.token = construct_<std::string>( arg1, arg2 ) ] >> expect_closing_dbl_quote( ch_p('"') ) ),
-        	         case_p< '\'' >( (+~ch_p('\''))[ tokenMatcher.token = construct_<std::string>( arg1, arg2 ) ] >> expect_closing_sgl_quote( ch_p('\'') ) )
-        	    ] ][ addTokenMatcher( alternative.matchers, tokenMatcher.token ) ];
-
-        	/*
-        	 * Парсер сопоставителя шаблонов
-        	 */
-
-        	patternMatcher = ( patternName[ patternMatcher.name = construct_<std::string>( arg1, arg2 ) ] >> matcherVariable >> !( '<' >> ( matcherRestriction[add( matcher.restrictions, arg1 )] % ',' ) >> '>' ) )[ addPatternMatcher( alternative.matchers, patternMatcher.name, matcher.index, matcher.restrictions ) ];
-
-        	/*
-        	 * Парсер сопоставителя циклов
-        	 */
-        	loopMatcher = switch_p[
-	        		case_p< '{' >( ( loopBody % '|' ) >> endLoop[ loopMatcher.min = 0 ][ loopMatcher.max = 0 ] >> !loopRestriction ),
-	        		case_p< '[' >( ( loopBody % '|' ) >> endOptional[ loopMatcher.min = 0 ][ loopMatcher.max = 1 ] )
-	        	][ addLoopMatcher( alternative.matchers, loopMatcher.min, loopMatcher.max, loopMatcher.alternativesCount ) ];
-
-        	loopBody = expect_grp_matcher( matcher[ loopBody.matcherCount = 1 ] ) >> ( *(matcher[ loopBody.matcherCount ++ ] | patternRestrictions) )[ add( loopMatcher.alternativesCount, loopBody.matcherCount ) ];
-
-        	loopRestriction = '<' >> epsilon_p(chset_p("0-9,")) >> !uint_p[ loopMatcher.min = arg1 ] >> !( ',' >> uint_p[ loopMatcher.max = arg1 ] ) >> endRestriction;
-
-        	/*
-        	 * Парсеры ограничений
-        	 */
-
-        	matcherRestriction = ( localExpression[ add( matcherRestriction.args, arg1 ) ] >> *( '=' >> expression[ add( matcherRestriction.args, arg1 ) ] ) )
-				[ matcherRestriction.restriction = createAgreementRestriction( matcherRestriction.args ) ];
-
-        	patternRestrictions = '<' >> expect_restriction_body( (
-        			agreementRestriction[addRestriction( alternative.matchers, arg1 )] |
-        			dictionaryRestriction[addRestriction( alternative.matchers, arg1 )]
-				) % ',' ) >> endRestriction;
-
-        	agreementRestriction = ( expression[ add( agreementRestriction.args, arg1 ) ] % '=' )
-        		[ agreementRestriction.restriction = createAgreementRestriction( agreementRestriction.args ) ];
-
-        	dictionaryRestriction = ( ( lexeme_d[ +chset_p("a-zA-Z") ][ dictionaryRestriction.dictionaryName = construct_<std::string>( arg1, arg2 ) ] ) >> "(" >> ( expression[ add( dictionaryRestriction.args, arg1 ) ] % "," ) >> ")" )
-        		[ dictionaryRestriction.restriction = createDictionaryRestriction( dictionaryRestriction.dictionaryName, dictionaryRestriction.args ) ];
-
-        	/*
-        	 * Парсеры выражений
-        	 */
-
-        	expression = ~eps_p( str_p( "AS" ) ) >> ( stringLiteralExpression | propertyExpression | literalExpression ) >>
-            	*( expression[ expression.exp = createConcatExpression( expression.exp, arg1 ) ] );
-
-        	localExpression = attributeKey[ localExpression.exp = createCurrentAttributeExpression( arg1 ) ];
-
-        	propertyExpression = variable[ expression.exp = createVariableExpression( arg1 ) ] >>
-    			*( '.' >> attributeKey[ expression.exp = createAttributeExpression( expression.exp, arg1 ) ] );
-
-        	stringLiteralExpression = lexeme_d[ switch_p[
-        	    case_p< '"' >( (+~ch_p('"'))[ expression.exp = createStringLiteralExpression( arg1, arg2 ) ] >> expect_closing_dbl_quote( ch_p('"') ) ),
-        	    case_p< '\'' >( (+~ch_p('\''))[ expression.exp = createStringLiteralExpression( arg1, arg2 ) ] >> expect_closing_sgl_quote( ch_p('\'') ) )
-        	] ];
-
-        	literalExpression = attributeValue[ expression.exp = createLiteralExpression( arg1 ) ];
-
-        	/*
-        	 * Таблицы символов
-        	 */
-
-        	for ( uint i = 0; i < SpeechPart::COUNT; ++ i ) {
-                speechPart.add( SpeechPart( i ).getAbbrevation().c_str(), SpeechPart( i ) );
-                speechPart.add( SpeechPart( i ).getName().c_str(), SpeechPart( i ) );
-                typeSymbol.add( SpeechPart( i ).getAbbrevation().c_str(), i );
-                typeSymbol.add( SpeechPart( i ).getName().c_str(), i );
-        	}
-
-        	for ( uint i = 0; i < AttributeValue::indexedCount(); ++ i ) {
-                attributeValue.add( AttributeValue( i ).getAbbrevation().c_str(), AttributeValue( i ) );
-                attributeValue.add( AttributeValue( i ).getName().c_str(), AttributeValue( i ) );
-        	}
-        }
-
-        rule<ScannerT> const & start() const { return source; }
-
-    private:
-
-    	symbols<uint> typeSymbol;
-    	symbols<SpeechPart> speechPart;
-    	symbols<AttributeValue> attributeValue;
-
-    	rule<ScannerT> patternName, wordType, source, wordBase, wordRestriction, matcherVariable, loopRestriction, patternRestrictions, bindingList, endLoop, endOptional, endBinding, endRestriction, alternativeTransformSource;
-
-    	rule<ScannerT, AlternativeClosure::context_t> alternative;
-
-    	rule<ScannerT, AgreementRestrictionClosure::context_t> agreementRestriction, matcherRestriction;
-    	rule<ScannerT, DictionaryRestrictionClosure::context_t> dictionaryRestriction;
-
-    	rule<ScannerT, MatcherClosure::context_t> matcher;
-    	rule<ScannerT, WordMatcherClosure::context_t> wordMatcher;
-    	rule<ScannerT, PatternMatcherClosure::context_t> patternMatcher;
-    	rule<ScannerT, LoopMatcherClosure::context_t> loopMatcher;
-    	rule<ScannerT, LoopBodyClosure::context_t> loopBody;
-    	rule<ScannerT, TokenMatcherClosure::context_t> tokenMatcher;
-
-    	rule<ScannerT, BindingClosure::context_t> binding;
-
-    	rule<ScannerT, PatternClosure::context_t> pattern;
-
-    	rule<ScannerT, ExpressionClosure::context_t> expression, localExpression;
-    	rule<ScannerT> propertyExpression, stringLiteralExpression, literalExpression;
-
-    	VariableParser variable;
-    	AttributeKeyParser attributeKey;
-    };
-
-    ParserImpl( NamespaceRef space, const std::map<std::string, transforms::TransformBuilderRef>& tbs ) : Parser( space, tbs ) {}
-    ~ParserImpl() {}
-
-    PatternBuilder::BuildInfo build( const char * str ) throw (PatternBuildingException) {
-    	try {
-		parse_info<const char *> pi = boost::spirit::classic::parse( str, *this, space_p );
-
-        	PatternBuilder::BuildInfo bi;
-        	bi.parseLength = (uint) pi.length;
-        	bi.parseTail = pi.stop;
-
-        	return bi;
-    	} catch ( parser_error<Errors,const char *> & err ) {
-    		switch( err.descriptor ) {
-    		case BindingEndMissing:
-    			throw PatternBuildingException( "Binding end missing" );
-    		case RestrictionEndMissing:
-    			throw PatternBuildingException( "Restriction end missing" );
-    		case LoopEndMissing:
-    		    throw PatternBuildingException( "Loop end missing" );
-    		case OptionalEndMissing:
-    		    throw PatternBuildingException( "Optional group end missing" );
-    		case NoMatchersInAlternative:
-    		    throw PatternBuildingException( "No matchers in alternative" );
-    		case NoMatchersInGroup:
-    		    throw PatternBuildingException( "No matchers in group" );
-    		case NoRestrictionBody:
-    		    throw PatternBuildingException( "No valid restrictions" );
-    		case InvalidPatternName:
-    		    throw PatternBuildingException( "Invalid pattern name" );
-    		case ClosingSglQuoteMissed:
-    			throw PatternBuildingException( "Closing single quote missed" );
-    		case ClosingDblQuoteMissed:
-    			throw PatternBuildingException( "Closing double quote missed" );
-    		case AttributeValueExpected:
-    			throw PatternBuildingException( "Invalid or no attribute value" );
-    		default:
-        		throw PatternBuildingException( (boost::format( "Error parsing template: %1%. Descriptor: %2%. Where: %3%" ) % err.what() % err.descriptor % err.where).str() );
-    		}
-    	} catch ( const std::exception & e ) {
-    		throw PatternBuildingException( (boost::format( "Error parsing template: %1% in template %2%" ) % e.what() % str).str() );
-    	} catch ( ... ) {
-    		throw PatternBuildingException( "Unknown error during parsing template" );
-    	}
-    }
+	ParserImpl(NamespaceRef space, const std::map<std::string, transforms::TransformBuilderRef>& tbs):
+		Parser(space, tbs), buffer(nullptr), pos(0) {}
+	~ParserImpl() {}
+
+	PatternBuilder::BuildInfo build(const char * str) throw (PatternBuildingException) {
+		buffer = str;
+		pos = 0;
+
+		while (!seekEndOfInput())
+			readPattern();
+
+		PatternBuilder::BuildInfo bi;
+		bi.parseLength = pos;
+		bi.parseTail = std::string(buffer + pos);
+		return bi;
+	}
 };
+
 
 PatternBuilder::PatternBuilder( const NamespaceRef & ns, transforms::TransformBuilderRef defaultTransformBuilder ) :
     space( ns ),
@@ -386,6 +825,7 @@ PatternBuilder::PatternBuilder( const NamespaceRef & ns ) : PatternBuilder(ns, n
 
 PatternBuilder::~PatternBuilder() {
 }
+
 
 PatternBuilder::BuildInfo PatternBuilder::build( const std::string & str ) throw (PatternBuildingException) {
 	return parser->build( str.c_str() );

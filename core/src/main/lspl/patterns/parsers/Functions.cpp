@@ -57,7 +57,15 @@ static bool isRegexp( const std::string & str ) {
 }
 
 void AddWordMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, const std::string & base, SpeechPart speechPart, uint index, boost::ptr_vector< Restriction > & restrictions ) const {
-   	Matcher * matcher = new WordMatcher( base, speechPart );
+   	WordMatcher * matcher;
+
+   	if (base == "")
+   		matcher = new WordMatcher( speechPart );
+   	else {
+   		LemmaComparator *lcmp = new LemmaComparator(false);
+   		lcmp->addAlternativeBase(base);
+   		matcher = new WordMatcher( speechPart, lcmp );
+   	}
 
    	matcher->variable = Variable( speechPart, index );
    	matcher->addRestrictions( restrictions );
@@ -125,7 +133,7 @@ void AddAlternativeDefinitionImpl::operator()( boost::ptr_vector<Alternative> & 
 
 	const auto transformBuilder = transformBuilders.find(transformType);
 	if (transformBuilder == transformBuilders.end())
-		throw PatternBuildingException("Invalid transform type: =" + transformType + ">");
+		throw PatternBuildingException("Invalid transform type: =" + transformType + ">", "", 0);
 
 	alternative->setTransform( std::auto_ptr<transforms::Transform>( transformBuilder->second->build( *alternative, alternative->getTransformSource() ) ) );
 
@@ -176,7 +184,7 @@ Restriction * CreateDictionaryRestrictionImpl::operator()( const std::string & d
 	dictionaries::DictionaryRef dict = ns.getDictionaryByName( dictionaryName );
 
 	if ( !dict ) // Не нашли словаря - выкидываем исключение
-		throw PatternBuildingException( "No dictionary found" );
+		throw PatternBuildingException( "No dictionary found", "", 0 );
 
 	DictionaryRestriction * dr = new DictionaryRestriction( dict );
 

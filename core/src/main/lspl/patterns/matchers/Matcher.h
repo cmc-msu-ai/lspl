@@ -53,6 +53,11 @@ public:
 	virtual bool equals( const Matcher & m ) const;
 
 	/**
+	 * Содержит ли сопоставитель переменную
+	 */
+	virtual bool containsVariable(const Variable &) const;
+
+	/**
 	 * Добавить ограничение к сопоставителю
 	 * @param r ограничение
 	 */

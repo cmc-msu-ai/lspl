@@ -39,6 +39,7 @@ public:
 
 	const std::string & getToken() const { return token->getToken(); }
 	const std::string & getBase() const { return base; }
+	const std::string & getStem() const { return stem; }
 
 	attributes::SpeechPart getSpeechPart() const { return speechPart; }
 

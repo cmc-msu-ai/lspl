@@ -21,6 +21,7 @@ set(LSPL_CORE_SOURCES
 	src/main/lspl/morphology/AotMorphology.cpp
 	
 	src/main/lspl/patterns/Alternative.cpp
+	src/main/lspl/patterns/matchers/BaseComparator.cpp
 	src/main/lspl/patterns/matchers/Context.cpp
 	src/main/lspl/patterns/matchers/LoopMatcher.cpp
 	src/main/lspl/patterns/matchers/Matcher.cpp
@@ -42,8 +43,12 @@ set(LSPL_CORE_SOURCES
 	src/main/lspl/patterns/restrictions/DictionaryRestriction.cpp
 	src/main/lspl/patterns/restrictions/AgreementRestriction.cpp
 	src/main/lspl/patterns/restrictions/AndRestriction.cpp
-	
+	src/main/lspl/patterns/restrictions/NotRestriction.cpp
+	src/main/lspl/patterns/restrictions/OrRestriction.cpp
+
+	src/main/lspl/patterns/parsers/CharacterSets.cpp
 	src/main/lspl/patterns/parsers/Functions.cpp
+
 	src/main/lspl/patterns/Pattern.cpp
 	src/main/lspl/patterns/PatternBuilder.cpp
 	src/main/lspl/utils/Conversion.cpp

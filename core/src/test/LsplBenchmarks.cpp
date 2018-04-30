@@ -37,16 +37,16 @@ void definePatterns( NamespaceRef ns ) {
 	std::cout.flush();
 
 	boost::timer tm;
-	builder->build( "Pact = N V" );
-	builder->build( "Act = N V <N=V>" );
-	builder->build( "AAA = A (A) | Ap (Ap)" );
-	builder->build( "ABB = {A} N <A=N>" );
-	builder->build( "ACC = {AAA} N <AAA=N>" );
-	builder->build( "ADD = \"à\" Act" );
-	builder->build( "AEE = N \"è\" N" );
-	builder->build( "ANom = N<c=nom> V" );
-	builder->build( "AGen = N<c=gen> V" );
 
+	builder->build( "Pact = N V" );              // 5582  [v]
+	builder->build( "Act = N V <<N=V>>" );       // 4505  [v]
+	builder->build( "AAA (A, Ap) = A | Ap");     // 27333 [v]
+	builder->build( "ABB = {A} N <<A=N>>" );     // 48508 [v]
+	builder->build( "ACC = {AAA} N <<AAA=N>>" ); // 49146 [v]
+	builder->build( "ADD = \"à\" Act" );         // 55    [v]
+	builder->build( "AEE = N \"è\" N" );         // 446   [v]
+	builder->build( "ANom = N<c=nom> V" );       // 4199  [v]
+	builder->build( "AGen = N<c=gen> V" );       // 1373  [v]
 	std::cout << "Done in " << tm.elapsed() << " seconds." << std::endl;
 }
 
@@ -58,6 +58,9 @@ void findPatterns() {
 
 	for ( uint i = 0; i < ns->getPatternCount(); ++ i ) {
 		patterns::PatternRef pt = ns->getPatternByIndex( i );
+		std::cout << "Dumping: ";
+		pt->dump(std::cout);
+		std::cout << std::endl << std::endl;
 
 		std::cout << "Matching " << pt->getSource() << "... ";
 		std::cout.flush();
@@ -83,7 +86,14 @@ int main() {
 	std::cout << "Testing matching performance..." << std::endl;
 
 	loadMorphology();
-	findPatterns();
+
+	try {
+		findPatterns();
+	} catch (patterns::PatternBuildingException &e) {
+		std::cerr << "Pattern building exception" << std::endl;
+		std::cerr << e.what() << std::endl;
+		std::cerr << e.input << std::endl;
+	}
 
 	std::cout << "Exiting..." << std::endl;
 

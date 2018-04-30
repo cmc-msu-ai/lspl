@@ -19,7 +19,7 @@ using lspl::patterns::expressions::Expression;
 
 namespace lspl { namespace patterns { namespace restrictions {
 
-AgreementRestriction::AgreementRestriction() {
+AgreementRestriction::AgreementRestriction(bool weak): weak(weak) {
 }
 
 AgreementRestriction::~AgreementRestriction() {
@@ -74,7 +74,7 @@ bool AgreementRestriction::checkAgreement( const std::vector<AttributeValue> & v
 
 bool AgreementRestriction::checkAgreement( AttributeValue val1, AttributeValue val2 ) const {
 	if ( val1 == AttributeValue::UNDEFINED || val2 == AttributeValue::UNDEFINED )
-		return true;
+		return weak || (val1 == val2);
 
 	if ( val1.type != val2.type )
 		return false;
@@ -91,12 +91,12 @@ bool AgreementRestriction::checkAgreement( AttributeValue val1, AttributeValue v
 			for ( uint i = 0; i < AttributeKey::count(); ++ i ) {
 				AttributeValue sv1 = cont1.getAttribute( AttributeKey(i) );
 
-				if ( sv1 == AttributeValue::UNDEFINED )
+				if ( weak && sv1 == AttributeValue::UNDEFINED )
 					continue;
 
 				AttributeValue sv2 = cont2.getAttribute( AttributeKey(i) );
 
-				if ( sv2 == AttributeValue::UNDEFINED )
+				if ( weak && sv2 == AttributeValue::UNDEFINED )
 					continue;
 
 				if ( sv1.type == AttributeType::STRING && sv2.type == AttributeType::STRING )

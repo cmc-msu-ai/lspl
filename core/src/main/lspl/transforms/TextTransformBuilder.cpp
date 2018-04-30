@@ -32,7 +32,7 @@ TextTransform * TextTransformBuilder::build(
 	parse_info<const char *> pi = boost::spirit::classic::parse( source.c_str(), pars[ var(matchers) = arg1 ], space_p );
 
 	if(!pi.full) {
-		throw lspl::patterns::PatternBuildingException( source.c_str() );
+		throw lspl::patterns::PatternBuildingException( "Transform builder failed", source, pi.length);
 	}
 
 	return new TextTransform( matchers, alt.getBindings() );

@@ -8,6 +8,7 @@
 #include "../Namespace.h"
 #include "../transforms/TransformBuilder.h"
 
+#include <complex>
 #include <string>
 #include <map>
 
@@ -17,8 +18,11 @@ namespace lspl { namespace patterns {
 
 class LSPL_EXPORT PatternBuildingException : public base::Exception {
 public:
-	PatternBuildingException(const std::string & description) :
-		Exception( description ) {
+	uint errorPos;
+	std::string input;
+
+	PatternBuildingException(const std::string & description, const std::string &input, uint errorPos) :
+		Exception(description), input(input), errorPos(errorPos) {
 	}
 
 	~PatternBuildingException() throw() {}

@@ -18,6 +18,8 @@ class TokenMatcher;
 class Variable;
 class Context;
 
+class BaseComparator;
+
 } } } // namespace lspl::patterns::matchers
 
 #endif /*_LSPL_PATTERNS_MATCHERS_FORWARD_H_*/

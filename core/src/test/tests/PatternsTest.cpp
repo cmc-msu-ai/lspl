@@ -49,8 +49,11 @@ static void testSimplePatterns() {
 	assertBuilds( "Act = N<бизнес> V" );
 	assertBuilds( "Act = N<бизнес-вумен> V" );
 	assertBuilds( "Act = N<g=fem> V" );
-	assertBuilds( "N2<координата, n=plur>" );
-	assertBuilds( "Act = Noun<gender=feminine> Verb Adjective" );
+	assertBuilds( "Act = N2<координата, n=plur>" );
+	assertBuilds( "Act = V<stem=ход>" );
+	assertBuilds( "Act = A N<lemma=подъезд|приезд>" );
+	assertBuilds( "Act = N<!=верхний>" );
+	assertFails( "Act = N <lemma=один,stem=два>" );
 	assertFails( "Act1 = N1 N1" ); // Wrong rule naming: Act1
 	assertFails( "Act = N1 N1 <3270 0" );
 	assertFails( "Act = N1 N1 <3=7>" );
@@ -59,28 +62,23 @@ static void testSimplePatterns() {
 
 static void testPatternNames() {
 	// Names
-	assertBuilds( "бизнесвуман = N<бизнес-вумен> V" );
-	assertBuilds( "бизнес-вуман = N<бизнес-вумен> V" );
+	assertFails( "бизнесвуман = N<бизнес-вумен> V" );
+	assertFails( "бизнес-вуман = N<бизнес-вумен> V" );
 }
 
 static void testRestrictions() {
 	// Restrictions
-	assertBuilds( "Act = N V <N=V>" );
-	assertBuilds( "Act = A N V <A=N> <N=V>" );
-}
-
-static void testUnnamedPatterns() {
-	// Unnamed
-	assertBuilds( "N V" );
-	assertBuilds( "N<бизнес> V" );
+	assertBuilds( "Act = N V <<N=V>>" );
+	assertBuilds( "Act = A N V <<A=N=V>>" );
+	assertBuilds( "Act = A N V <<A==N==V>>" );
 }
 
 static void testTokens() {
 	// Tokens
-	assertBuilds( "\"мама\"" );
-	assertBuilds( "'мама'" );
-	assertBuilds( "\"м.*ама\"" );
-	assertBuilds( "'мам+а'" );
+	assertBuilds( "Act = \"мама\"" );
+	assertFails( "Act = 'мама'" );
+	assertBuilds( "Act = \"м.*ама\"" );
+	assertBuilds( "Act = \"мам+а\"" );
 
 	assertFails( "'мама" );
 	assertFails( "\"мама" );
@@ -92,11 +90,11 @@ static void testLoops() {
 	assertBuilds( "AAA = { N V }" );
 	assertBuilds( "AAA = { N V }<1>" );
 	assertBuilds( "AAA = { N V }<1,5>" );
-	assertBuilds( "AAA = { N V <N=V> }<1>" );
-	assertBuilds( "AAA = { A N V <N=V> <A=N> }<1>" );
-	assertBuilds( "AAA = A N { V }<1> <N=V>" );
-	assertBuilds( "AAA = A N { V } <N=V>" );
-	assertBuilds( "AAA = A N { V } <A=N=V>" );
+	assertBuilds( "AAA = { N V <<N=V>> }<1>" );
+	assertBuilds( "AAA = { A N V <<N=V=A>> }<1>" );
+	assertBuilds( "AAA = A N { V }<1> <<N=V>>" );
+	assertBuilds( "AAA = A N { V } <<N=V>>" );
+	assertBuilds( "AAA = A N { V } <<A=N=V>>" );
 }
 
 static void testLoopAlternatives() {
@@ -105,28 +103,21 @@ static void testLoopAlternatives() {
 	assertBuilds( "AAA = { N | V }" );
 	assertBuilds( "AAA = { N | V }<1>" );
 	assertBuilds( "AAA = { N | V }<1,5>" );
-	assertBuilds( "AAA = { 'да' | 'нет' }" );
+	assertBuilds( "AAA = { \"да\" | \"нет\" }" );
 }
 
 static void testParameters() {
 	// Parameters
-	assertBuilds( "AAA = N V ( N )" );
-	assertBuilds( "AAA = N V ( N.c AS d )" );
-	assertBuilds( "AAA = N V ( N.c, V.t )" );
-	assertBuilds( "AAA = N V ( N.c AS d, V.t AS h )" );
+	assertBuilds( "AAA ( N ) = N V" );
+	assertBuilds( "AAA ( N.c ) = N V" );
+	assertBuilds( "AAA ( N.c, V.t ) = N V" );
 }
 
-static void testCompoundAttributes() {
-	// Compound attributes
-	assertBuilds( "AAA = N V ( N.k.l, V.t )" );
-	assertFails( "AAA = N V ( .k.l, V.t )" );
-}
-
-static void testConcat() {
+/*static void testConcat() {
 	// Concat
 	assertBuilds( "AAA = N V ( N V AS f )" );
 	assertBuilds( "AAA = N V ( N V )" );
-}
+}*/
 
 static void testMultipleEquals() {
 	// Multiple equal
@@ -134,7 +125,7 @@ static void testMultipleEquals() {
 	assertBuilds("AAA = N1 N2 N3 <N1=N2=N3>");
 }
 
-static void testDictionaries() {
+/*static void testDictionaries() {
 	NamespaceRef ns = new Namespace();
 	ns->addDictionary( new dictionaries::MemoryDictionary("DIC") );
 
@@ -162,7 +153,7 @@ static void testLiteralsInDictionaries() {
 	assertBuildsNS( "AAA = N V <DIC('aaa')>", ns );
 	assertBuildsNS( "AAA = N V <DIC(V,'dvf')>", ns );
 	assertBuildsNS( "AAA = N V <DIC(V 'gggg')>", ns );
-}
+}*/
 
 static void testParentNamespace() {
 	NamespaceRef ns1 = new Namespace();
@@ -188,18 +179,18 @@ cute::suite patternBuildingSuite() {
 	s += CUTE(testSimplePatterns);
 	s += CUTE(testPatternNames);
 	s += CUTE(testRestrictions);
-	s += CUTE(testUnnamedPatterns);
+	//s += CUTE(testUnnamedPatterns);
 	s += CUTE(testTokens);
 	s += CUTE(testLoops);
 	s += CUTE(testLoopAlternatives);
 	s += CUTE(testParameters);
-	s += CUTE(testCompoundAttributes);
-	s += CUTE(testConcat);
+	//s += CUTE(testCompoundAttributes);
+	//s += CUTE(testConcat);
 	s += CUTE(testMultipleEquals);
-	s += CUTE(testDictionaries);
-	s += CUTE(testExpressionsInDictionaries);
-	s += CUTE(testLiteralsInDictionaries);
-	s += CUTE(testParentNamespace);
+	//s += CUTE(testDictionaries);
+	//s += CUTE(testExpressionsInDictionaries);
+	//s += CUTE(testLiteralsInDictionaries);
+	//s += CUTE(testParentNamespace);
 	s += CUTE(testMemoryLeaks);
 
 	return s;
@@ -208,32 +199,32 @@ cute::suite patternBuildingSuite() {
 static void testEquality() {
 	Pattern p1("TP");
 	Alternative & a = p1.newAlternative( "A N" );
-	a.newWordMatcher( "",SpeechPart::ADJECTIVE );
-	a.newWordMatcher( "",SpeechPart::NOUN );
+	a.newWordMatcher( SpeechPart::ADJECTIVE );
+	a.newWordMatcher( SpeechPart::NOUN );
 
 	{
 		Alternative & a2 = p1.newAlternative( "A N" );
-		a2.newWordMatcher( "",SpeechPart::ADJECTIVE );
-		a2.newWordMatcher( "",SpeechPart::NOUN );
+		a2.newWordMatcher( SpeechPart::ADJECTIVE );
+		a2.newWordMatcher( SpeechPart::NOUN );
 
 		assertTrueM( a.equals( a2 ), "a1 should be equal a2" );
 
 		Alternative & a3 = p1.newAlternative( "A A" );
-		a3.newWordMatcher( "",SpeechPart::ADJECTIVE );
-		a3.newWordMatcher( "",SpeechPart::ADJECTIVE );
+		a3.newWordMatcher( SpeechPart::ADJECTIVE );
+		a3.newWordMatcher( SpeechPart::ADJECTIVE );
 
 		assertFalseM( a.equals( a3 ), "a1 shouldn't be equal a3" );
 
 		Alternative & a4 = p1.newAlternative( "A N A" );
-		a4.newWordMatcher( "",SpeechPart::ADJECTIVE );
-		a4.newWordMatcher( "",SpeechPart::NOUN );
-		a4.newWordMatcher( "",SpeechPart::ADJECTIVE );
+		a4.newWordMatcher( SpeechPart::ADJECTIVE );
+		a4.newWordMatcher( SpeechPart::NOUN );
+		a4.newWordMatcher( SpeechPart::ADJECTIVE );
 
 		assertFalseM( a.equals( a4 ), "a1 shouldn't be equal a4" );
 
 		Alternative & a5 = p1.newAlternative( "A { N }" );
-		a4.newWordMatcher( "",SpeechPart::ADJECTIVE );
-		a4.newLoopMatcher(0,0).newAlternative().newWordMatcher( "",SpeechPart::NOUN );
+		a4.newWordMatcher( SpeechPart::ADJECTIVE );
+		a4.newLoopMatcher(0,0).newAlternative().newWordMatcher( SpeechPart::NOUN );
 
 		assertFalseM( a.equals( a5 ), "a1 shouldn't be equal a5" );
 	}
@@ -245,8 +236,8 @@ static void testEquality() {
 		r6->addArgument( new ConstantExpression( AttributeValue::ACCUSATIVE ) );
 
 		Alternative & a6 = p1.newAlternative( "A<c=acc> N" );
-		a6.newWordMatcher( "",SpeechPart::ADJECTIVE ).addRestriction( r6 );
-		a6.newWordMatcher( "",SpeechPart::NOUN );
+		a6.newWordMatcher( SpeechPart::ADJECTIVE ).addRestriction( r6 );
+		a6.newWordMatcher( SpeechPart::NOUN );
 
 		assertFalseM( a.equals( a6 ), "a1 shouldn't be equal a6" );
 
@@ -255,8 +246,8 @@ static void testEquality() {
 		r61->addArgument( new ConstantExpression( AttributeValue::ACCUSATIVE ) );
 
 		Alternative & a61 = p1.newAlternative( "A<c=acc> N" );
-		a61.newWordMatcher( "",SpeechPart::ADJECTIVE ).addRestriction( r61 );
-		a61.newWordMatcher( "",SpeechPart::NOUN );
+		a61.newWordMatcher( SpeechPart::ADJECTIVE ).addRestriction( r61 );
+		a61.newWordMatcher( SpeechPart::NOUN );
 
 		assertTrueM( a6.equals( a61 ), "a6 should be equal a61" );
 
@@ -265,8 +256,8 @@ static void testEquality() {
 		r7->addArgument( new ConstantExpression( AttributeValue::NOMINATIVE ) );
 
 		Alternative & a7 = p1.newAlternative( "A<c=acc> N" );
-		a7.newWordMatcher( "",SpeechPart::ADJECTIVE ).addRestriction( r7 );
-		a7.newWordMatcher( "",SpeechPart::NOUN );
+		a7.newWordMatcher( SpeechPart::ADJECTIVE ).addRestriction( r7 );
+		a7.newWordMatcher( SpeechPart::NOUN );
 
 		assertFalseM( a6.equals( a7 ), "a6 shouldn't be equal a7" );
 	}
@@ -274,29 +265,29 @@ static void testEquality() {
 	// With bindings
 	{
 		Alternative & ab = p1.newAlternative( "A<c=acc> N" );
-		ab.newWordMatcher( "",SpeechPart::ADJECTIVE );
-		ab.newWordMatcher( "",SpeechPart::NOUN );
+		ab.newWordMatcher( SpeechPart::ADJECTIVE );
+		ab.newWordMatcher( SpeechPart::NOUN );
 		ab.addBinding( AttributeKey::CASE, new AttributeExpression( new VariableExpression( Variable( SpeechPart::ADJECTIVE, 0 ) ), AttributeKey::CASE ) );
 
 		assertFalseM( a.equals( ab ), "a shouldn't be equal ab" );
 
 		Alternative & ab1 = p1.newAlternative( "A<c=acc> N" );
-		ab1.newWordMatcher( "",SpeechPart::ADJECTIVE );
-		ab1.newWordMatcher( "",SpeechPart::NOUN );
+		ab1.newWordMatcher( SpeechPart::ADJECTIVE );
+		ab1.newWordMatcher( SpeechPart::NOUN );
 		ab1.addBinding( AttributeKey::CASE, new AttributeExpression( new VariableExpression( Variable( SpeechPart::ADJECTIVE, 0 ) ), AttributeKey::CASE ) );
 
 		assertTrueM( ab.equals( ab1 ), "ab should be equal ab1" );
 
 		Alternative & ab2 = p1.newAlternative( "A<c=acc> N" );
-		ab2.newWordMatcher( "",SpeechPart::ADJECTIVE );
-		ab2.newWordMatcher( "",SpeechPart::NOUN );
+		ab2.newWordMatcher( SpeechPart::ADJECTIVE );
+		ab2.newWordMatcher( SpeechPart::NOUN );
 		ab2.addBinding( AttributeKey::CASE, new AttributeExpression( new VariableExpression( Variable( SpeechPart::ADJECTIVE, 2 ) ), AttributeKey::CASE ) );
 
 		assertFalseM( ab.equals( ab2 ), "ab shouldn't be equal ab2" );
 
 		Alternative & ab3 = p1.newAlternative( "A<c=acc> N" );
-		ab3.newWordMatcher( "",SpeechPart::ADJECTIVE );
-		ab3.newWordMatcher( "",SpeechPart::NOUN );
+		ab3.newWordMatcher( SpeechPart::ADJECTIVE );
+		ab3.newWordMatcher( SpeechPart::NOUN );
 		ab3.addBinding( AttributeKey::DOC, new AttributeExpression( new VariableExpression( Variable( SpeechPart::ADJECTIVE, 0 ) ), AttributeKey::CASE ) );
 
 		assertFalseM( ab.equals( ab3 ), "ab shouldn't be equal ab3" );
@@ -306,15 +297,15 @@ static void testEquality() {
 static void testRemoveDuplicates() {
 	Pattern p2("TP");
 	Alternative & a1 = p2.newAlternative( "A N" );
-	a1.newWordMatcher( "",SpeechPart::ADJECTIVE );
-	a1.newWordMatcher( "",SpeechPart::NOUN );
+	a1.newWordMatcher( SpeechPart::ADJECTIVE );
+	a1.newWordMatcher( SpeechPart::NOUN );
 
 	Alternative & a2 = p2.newAlternative( "A N" );
-	a2.newWordMatcher( "",SpeechPart::ADJECTIVE );
-	a2.newWordMatcher( "",SpeechPart::NOUN );
+	a2.newWordMatcher( SpeechPart::ADJECTIVE );
+	a2.newWordMatcher( SpeechPart::NOUN );
 
 	Alternative & a3 = p2.newAlternative( "A" );
-	a3.newWordMatcher( "",SpeechPart::ADJECTIVE );
+	a3.newWordMatcher( SpeechPart::ADJECTIVE );
 
 	p2.removeDuplicateAlternatives();
 

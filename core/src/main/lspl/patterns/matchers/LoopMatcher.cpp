@@ -198,13 +198,29 @@ static void processLoop( const LoopMatchState & state, ChainList & results ) {
 	processLoop( state, iterations, results );
 }
 
-LoopMatcher::LoopMatcher() : AnnotationChainMatcher( LOOP ), minLoops( 0 ), maxLoops( 0 ) {
+LoopMatcher::LoopMatcher() : AnnotationChainMatcher( LOOP ), minLoops( 0 ), maxLoops( 0 ), is_permutation(false) {
 }
 
-LoopMatcher::LoopMatcher( uint min, uint max ) : AnnotationChainMatcher( LOOP ), minLoops( min ), maxLoops( max ) {
+LoopMatcher::LoopMatcher( uint min, uint max, bool is_permutation ) : AnnotationChainMatcher( LOOP ), minLoops( min ), maxLoops( max ),
+		is_permutation(is_permutation)
+{
 }
 
 LoopMatcher::~LoopMatcher() {
+	/**
+	 * Если сопоставитель содержит перестановку, то очищать нужно только первую альтернативу, т.к. вторая и последующие
+	 * состоят из тех же самых указателей. Да, это грязный хак, но без этого придётся существенно переделывать всю систему
+	 * сопоставителей.
+	 */
+	if (is_permutation) {
+		for (uint i = 1; i < alternatives.size(); ++i) {
+			uint j = alternatives[i].getMatchers().size();
+			do {
+				--j;
+				alternatives[i].getMatchers().release(alternatives[i].getMatchers().begin() + j).release();
+			} while (j != 0);
+		}
+	}
 }
 
 void LoopMatcher::buildChains( const text::Node & node, const Context & context, ChainList & results ) const {
@@ -271,6 +287,14 @@ void LoopMatcher::dump( std::ostream & out, const std::string & tabs ) const {
 	}
 
 	out << "\n" << tabs << "] }";
+}
+
+bool LoopMatcher::containsVariable(const Variable &var) const {
+	for ( uint i = 0; i < alternatives.size(); ++i )
+		for (uint j = 0; j < alternatives[i].getMatcherCount(); ++j)
+			if (alternatives[i].getMatcher(j).containsVariable(var))
+				return true;
+	return var == variable;
 }
 
 } } } // namespace lspl::patterns::matchers
