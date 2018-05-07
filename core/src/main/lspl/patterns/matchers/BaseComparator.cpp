@@ -30,11 +30,12 @@ void AlternativeBaseComparator::dump(std::ostream & out, const std::string & tab
 
 bool AlternativeBaseComparator::match(const Word &word) const {
 	bool result = negative;
-	for (const std::string &alt : alts)
-		if ((getWordValue(word) == alt) ^ negative) {
+	for (const std::string &alt : alts) {
+		if (getWordValue(word) == alt) {
 			result = !result;
 			break;
 		}
+	}
 	return result;
 }
 
@@ -47,7 +48,7 @@ void RegexpBaseComparator::dump(std::ostream &out, const std::string &tabs) cons
 }
 
 bool RegexpBaseComparator::match(const Word &word) const {
-	return exp.FullMatch(getWordValue(word));
+	return exp.FullMatch(getWordValue(word)) != negative;
 }
 
 bool RegexpBaseComparator::equals(const BaseComparator &other) const {

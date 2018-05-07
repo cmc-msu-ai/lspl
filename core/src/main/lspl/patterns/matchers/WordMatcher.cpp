@@ -43,7 +43,7 @@ bool WordMatcher::matchTransition( const Transition & transition, const Context 
 		return false;
 
 	if (baseComparator != nullptr && !baseComparator->match(word))
-			return false;
+		return false;
 
 	return matchRestrictions( transition, context );
 }

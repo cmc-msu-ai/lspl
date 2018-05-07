@@ -195,8 +195,10 @@ private:
 		for (uint i = 0; i < contents.length(); ++i) {
 			if (!isSpace(contents[i]))
 				word += contents[i];
-			else if (word.length() != 0)
+			else if (word.length() != 0) {
 				words.push_back(word);
+				word.clear();
+			}
 		}
 		if (word.length() != 0)
 			words.push_back(word);
@@ -231,13 +233,14 @@ private:
 		if (words.size() == 0)
 			throw produceException("Empty string cannot be matched");
 		if (words.size() == 1)
-			return new TokenMatcher(words[0]);
+			return new TokenMatcher(words.front());
 
 		// Слов больше, чем одно. Создаём отдельные сопоставители для каждого слова
 		LoopMatcher *wordMatcher = new LoopMatcher(1, 1);
 		MatcherContainer &container = wordMatcher->newAlternative();
-		for (std::string &word : words)
+		for (std::string &word : words) {
 			container.addMatcher(new TokenMatcher(word));
+		}
 		return wordMatcher;
 	}
 
@@ -639,7 +642,7 @@ private:
 				throw produceException("Weak (=) and strong (==) agreements mixed");
 			exps.push_back(readAttributeExpression());
 		}
-		AgreementRestriction *restriction = new AgreementRestriction();
+		AgreementRestriction *restriction = new AgreementRestriction(agreementType == "=");
 		for (Expression *e : exps)
 			restriction->addArgument(e);
 
@@ -706,8 +709,10 @@ private:
 	std::vector<std::vector<Matcher*> > readAlternatives() {
 		std::vector<std::vector<Matcher*> >	alts;
 		alts.push_back(readPermutation());
-		while (strFollows("|"))
+		while (strFollows("|")) {
+			readStrFollows("|");
 			alts.push_back(readPermutation());
+		}
 		return alts;
 	}
 

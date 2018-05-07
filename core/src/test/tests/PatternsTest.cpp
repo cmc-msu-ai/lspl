@@ -9,8 +9,6 @@
 
 #include "../assertions/PatternsAssertions.h"
 
-#include <iostream>
-
 #include <lspl/patterns/Pattern.h>
 #include <lspl/patterns/matchers/Matcher.h>
 #include <lspl/patterns/matchers/LoopMatcher.h>
@@ -121,8 +119,8 @@ static void testParameters() {
 
 static void testMultipleEquals() {
 	// Multiple equal
-	assertBuilds("AAA = N1 N2 N3 <N1.c=N2.c=N3.c>");
-	assertBuilds("AAA = N1 N2 N3 <N1=N2=N3>");
+	assertBuilds("AAA = N1 N2 N3 <<N1.c=N2.c=N3.c>>");
+	assertBuilds("AAA = N1 N2 N3 <<N1=N2=N3>>");
 }
 
 /*static void testDictionaries() {
@@ -190,7 +188,7 @@ cute::suite patternBuildingSuite() {
 	//s += CUTE(testDictionaries);
 	//s += CUTE(testExpressionsInDictionaries);
 	//s += CUTE(testLiteralsInDictionaries);
-	//s += CUTE(testParentNamespace);
+	s += CUTE(testParentNamespace);
 	s += CUTE(testMemoryLeaks);
 
 	return s;
