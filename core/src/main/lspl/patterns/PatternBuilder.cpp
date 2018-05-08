@@ -40,6 +40,8 @@ LSPL_REFCOUNT_CLASS( lspl::patterns::PatternBuilder );
 
 namespace lspl { namespace patterns {
 
+typedef std::unique_ptr<Matcher> MatcherPtr;
+
 class ParserImpl: public PatternBuilder::Parser {
 private:
 	const char *buffer;
@@ -222,10 +224,10 @@ private:
 	/**
 	 * элемент_строка := "регулярное выражение"
 	 */
-	Matcher* readStringMatcher() {
+	MatcherPtr readStringMatcher() {
 		std::string contents = readStringConstant();
 		if (isRegexp(contents))
-			return new RegexpMatcher(contents);
+			return MatcherPtr(new RegexpMatcher(contents));
 
 		// Разделяем на отдельные слова, если строка не является
 		// регулярным выражением
@@ -233,7 +235,7 @@ private:
 		if (words.size() == 0)
 			throw produceException("Empty string cannot be matched");
 		if (words.size() == 1)
-			return new TokenMatcher(words.front());
+			return MatcherPtr(new TokenMatcher(words.front()));
 
 		// Слов больше, чем одно. Создаём отдельные сопоставители для каждого слова
 		LoopMatcher *wordMatcher = new LoopMatcher(1, 1);
@@ -241,7 +243,7 @@ private:
 		for (std::string &word : words) {
 			container.addMatcher(new TokenMatcher(word));
 		}
-		return wordMatcher;
+		return MatcherPtr(wordMatcher);
 	}
 
 	/**
@@ -252,7 +254,7 @@ private:
      *
      * простой элемент := элемент_строка | элемент_слово | экземпляр_шаблона
 	 */
-	Matcher* readMatcher() {
+	MatcherPtr readMatcher() {
 		skipSpaces();
 		if (strFollows("{"))
 			return readNestedMatcher(0, 0, "{", "}", true);
@@ -296,9 +298,9 @@ private:
 	 *  Параметр allow задаёт, можно ли переопределять значения min и max в самом коде шаблона
 	 *
 	 */
-	Matcher* readNestedMatcher(uint min, uint max, const char* lbrace, const char* rbrace, bool allow) {
+	MatcherPtr readNestedMatcher(uint min, uint max, const char* lbrace, const char* rbrace, bool allow) {
 		readStrFollows(lbrace);
-		std::vector<std::vector<Matcher*> > alts = readAlternatives();
+		std::vector<std::vector<MatcherPtr> > alts = readAlternatives();
 		readStrFollows(rbrace);
 
 		if (allow && strFollows("<") && !strFollows("<<")) {
@@ -312,9 +314,9 @@ private:
 		}
 
 		LoopMatcher *matcher = new LoopMatcher(min, max);
-		for (std::vector<Matcher*> &alt : alts)
-			matcher->newAlternative().addMatchers(alt.begin(), alt.end());
-		return matcher;
+		for (std::vector<MatcherPtr> &alt : alts)
+			matcher->newAlternative().addMatchers(alt);
+		return MatcherPtr(matcher);
 	}
 
 	/**
@@ -346,8 +348,8 @@ private:
 	/**
 	 * условия_на_лемму ::= [ lemma = ] лемма { | лемма }  |  [ lemma ]  != лемма { | лемма }
 	 */
-	void readLemmaRestriction(Matcher *matcher) {
-		WordMatcher *word_m = dynamic_cast<WordMatcher*>(matcher);
+	void readLemmaRestriction(MatcherPtr &matcher) {
+		WordMatcher *word_m = dynamic_cast<WordMatcher*>(matcher.get());
 		if (word_m == nullptr)
 			throw produceException("No lemma restrictions on a non-word matcher");
 
@@ -375,10 +377,10 @@ private:
 	/**
 	  * условия_на_основу ::= stem = основа { | основа } | stem  != основа { | основа}
 	  */
-	void readStemRestriction(Matcher *matcher) {
+	void readStemRestriction(MatcherPtr &matcher) {
 		readStrFollows("stem");
 
-		WordMatcher *word_m = dynamic_cast<WordMatcher*>(matcher);
+		WordMatcher *word_m = dynamic_cast<WordMatcher*>(matcher.get());
 		if (word_m == nullptr)
 			throw produceException("No stem restrictions on a non-word matcher");
 
@@ -452,7 +454,7 @@ private:
 	 *                    [ название_ признака ]  != значение_ признака { | значение_ признака }
 	 *
 	 */
-	void readAttributeRestriction(Matcher *matcher) {
+	void readAttributeRestriction(MatcherPtr &matcher) {
 		bool negative = false; // !=
 		std::string attributeName;
 		std::vector<std::string> valueNames;
@@ -494,7 +496,7 @@ private:
 	 * Чтение одного ограничения сопоставителя
 	 *
 	 */
-	void readMatcherRestriction(Matcher *matcher) {
+	void readMatcherRestriction(MatcherPtr &matcher) {
 		if (strFollows("lemma") || isCyrillic(buffer[pos]) || strFollows("\""))
 			readLemmaRestriction(matcher);
 		else if (strFollows("stem"))
@@ -520,7 +522,7 @@ private:
 	/*
 	 * Чтение списка ограничений сопоставителя
 	 */
-	void readMatcherRestrictions(Matcher *matcher) {
+	void readMatcherRestrictions(MatcherPtr &matcher) {
 		readStrFollows("<");
 		readMatcherRestriction(matcher);
 		while (!strFollows(">")) {
@@ -535,41 +537,46 @@ private:
 	 *
 	 * экземпляр-шаблона ::= имя_шаблона [индекс] | имя_шаблона [индекс]  <характеристика { , характеристика }>
 	 */
-	Matcher* readPatternMatcher(PatternRef pattern, uint index) {
+	MatcherPtr readPatternMatcher(PatternRef pattern, uint index) {
 		PatternMatcher *matcher = new PatternMatcher(*pattern);
+		MatcherPtr result(matcher);
 		matcher->variable = Variable(*pattern, index);
 		if (strFollows("<") && !strFollows("<<"))
-			readMatcherRestrictions(matcher);
-		return matcher;
+			readMatcherRestrictions(result);
+		return result;
 	}
 
 	/*
 	 * Считать сопоставитель-слово
 	 */
-	Matcher* readWordMatcher(const SpeechPart &sp, uint index) {
+	MatcherPtr readWordMatcher(const SpeechPart &sp, uint index) {
 		WordMatcher *matcher = new WordMatcher(sp);
+		MatcherPtr result(matcher);
 		matcher->variable = Variable(sp, index);
 		if (strFollows("<") && !strFollows("<<"))
-			readMatcherRestrictions(matcher);
-		return matcher;
+			readMatcherRestrictions(result);
+		return result;
 	}
 
 	/*
 	 * Сгенерировать сопоставитель, реализующий перестановку из
 	 * указанного набора сопоставителей
 	 */
-	Matcher* makePermutationMatcher(std::vector<Matcher*> source) {
+	MatcherPtr makePermutationMatcher(std::vector<MatcherPtr> source) {
 		if (source.size() == 0)
 			throw produceException("Internal error: empty permutation requested");
 		if (source.size() == 1)
-			return source.front();
+			return std::move(source.front());
 
+		std::vector<Matcher*> permutation;
+		for (uint i = 0; i < source.size(); ++i)
+			permutation.push_back(source[i].release());
 		LoopMatcher *wordMatcher = new LoopMatcher(1, 1, true);
-		sort(source.begin(), source.end());
+		sort(permutation.begin(), permutation.end());
 		do {
-			wordMatcher->newAlternative().addMatchers(source.begin(), source.end());
-		} while (next_permutation(source.begin(), source.end()));
-		return wordMatcher;
+			wordMatcher->newAlternative().addMatchers(permutation.begin(), permutation.end());
+		} while (next_permutation(permutation.begin(), permutation.end()));
+		return MatcherPtr(wordMatcher);
 	}
 
 	/**
@@ -632,7 +639,7 @@ private:
 	 * условие ::= условие_ согласования
 	 * условие_ согласования ::= имя = имя { = имя } | имя == имя { == имя }
 	 */
-	void readPermutationRestriction(std::vector<Matcher*> &matchers) {
+	void readPermutationRestriction(std::vector<MatcherPtr> &matchers) {
 
 		std::vector<Expression*> exps(1, readAttributeExpression());
 		std::string agreementType = readAgreement();
@@ -648,7 +655,7 @@ private:
 
 
 		// Ок, теперь нужно найти необходимый сопоставитель. Перебираем их от последнего к первому и смотрим
-		for (std::vector<Matcher*>::reverse_iterator it = matchers.rbegin(); it != matchers.rend(); ++it)
+		for (std::vector<MatcherPtr>::reverse_iterator it = matchers.rbegin(); it != matchers.rend(); ++it)
 			if ((*it)->variable != Variable() && restriction->containsVariable((*it)->variable)) {
 				(*it)->addRestriction(restriction);
 				return;
@@ -665,7 +672,7 @@ private:
 	 *
 	 * условия ::= условие {,  условие }
 	 */
-	void readPermutationRestrictions(std::vector<Matcher*> &matchers) {
+	void readPermutationRestrictions(std::vector<MatcherPtr> &matchers) {
 		readStrFollows("<<");
 		readPermutationRestriction(matchers);
 		while (strFollows(",")) {
@@ -687,9 +694,9 @@ private:
      * последовательность элементов := элемент_шаблона { элемент_шаблона }
      *
 	 */
-	std::vector<Matcher*> readPermutation() {
-		std::vector<Matcher*> matchers;
-		std::vector<Matcher*> permutation;
+	std::vector<MatcherPtr> readPermutation() {
+		std::vector<MatcherPtr> matchers;
+		std::vector<MatcherPtr> permutation;
 		permutation.push_back(readMatcher());
 		static std::string followers = "[({\"~";
 
@@ -706,8 +713,8 @@ private:
 		return matchers;
 	}
 
-	std::vector<std::vector<Matcher*> > readAlternatives() {
-		std::vector<std::vector<Matcher*> >	alts;
+	std::vector<std::vector<MatcherPtr> > readAlternatives() {
+		std::vector<std::vector<MatcherPtr> > alts;
 		alts.push_back(readPermutation());
 		while (strFollows("|")) {
 			readStrFollows("|");
@@ -721,8 +728,8 @@ private:
 	 */
 	void readAlternativeWithSource(PatternRef pattern) {
 		uint before_pos = pos;
-		std::vector<Matcher*> alt = readPermutation();
-		pattern->newAlternative(std::string(buffer + before_pos, buffer + pos)).addMatchers(alt.begin(), alt.end());
+		std::vector<MatcherPtr> alt = readPermutation();
+		pattern->newAlternative(std::string(buffer + before_pos, buffer + pos)).addMatchers(alt);
 	}
 
 	/**
