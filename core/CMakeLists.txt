@@ -115,6 +115,16 @@ else(WIN32)
     target_link_libraries(lspl pcrecpp pcre Graphanrst Lemmatizerrst StructDictrst MorphWizardrst Agramtabrst)
 endif(WIN32)
 
+### lspl-find binary
+
+set(LSPL_FIND_SOURCES
+	src/find/find.cpp
+)
+
+add_executable(lspl-find ${LSPL_FIND_SOURCES})
+
+target_link_libraries(lspl-find lspl)
+
 ### lspl-test binary
 
 set(LSPL_TEST_SOURCES
