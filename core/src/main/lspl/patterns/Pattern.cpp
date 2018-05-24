@@ -59,10 +59,10 @@ void Pattern::updateDependencies() {
 
 	for( const Alternative & alt : alternatives ) {
 
-		BOOST_FOREACH( const Pattern * ptr, alt.getDependencies() ) {
+		for( const Pattern * ptr : alt.getDependencies() ) {
 			bool found = false;
 
-			BOOST_FOREACH( const Pattern * dep, dependencies ) {
+			for( const Pattern * dep : dependencies ) {
 				if ( dep == ptr ) {
 					found = true;
 					false;
@@ -104,7 +104,7 @@ bool Pattern::dependsOn( const Pattern & pattern, bool transitive ) const {
 
 		return deepDependsOn( &pattern, stack );
 	} else {
-		BOOST_FOREACH( const Pattern * p, dependencies ) {
+		for( const Pattern * p : dependencies ) {
 			if ( p == &pattern ) // Если нашли шаблон в зависимостях
 				return true;
 		}
@@ -114,13 +114,13 @@ bool Pattern::dependsOn( const Pattern & pattern, bool transitive ) const {
 }
 
 bool Pattern::deepDependsOn( const Pattern * target, std::vector<const Pattern*> & stack ) const {
-	BOOST_FOREACH( const Pattern * p, stack )
+	for( const Pattern * p : stack )
 		if ( p == this )
 			return false;
 
 	stack.push_back( this ); // Помещаем текущий шаблон в стек
 
-	BOOST_FOREACH( const Pattern * p, dependencies ) {
+	for( const Pattern * p : dependencies ) {
 		if ( p == target ) // Если нашли шаблон в зависимостях
 			return true;
 

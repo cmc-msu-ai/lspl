@@ -65,8 +65,8 @@ void AgreementRestriction::dump( std::ostream & out, const std::string & tabs ) 
 }
 
 bool AgreementRestriction::checkAgreement( const std::vector<AttributeValue> & val1, const std::vector<AttributeValue> & val2 ) const {
-	BOOST_FOREACH( AttributeValue v1, val1 )
-		BOOST_FOREACH( AttributeValue v2, val2 )
+	for( AttributeValue v1 : val1 )
+		for( AttributeValue v2 : val2 )
 			if ( !checkAgreement( v1, v2 ) )
 				return false;
 

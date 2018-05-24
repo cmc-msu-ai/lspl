@@ -9,8 +9,6 @@
 #	endif
 #endif
 
-#include <boost/foreach.hpp>
-
 #define LSPL_REFCOUNT_CLASS(className) \
 template<> lspl::uint lspl::base::IdentifiedObject<className>::count = 0;
 

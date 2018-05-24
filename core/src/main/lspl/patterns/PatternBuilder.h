@@ -8,11 +8,10 @@
 #include "../Namespace.h"
 #include "../transforms/TransformBuilder.h"
 
-#include <string>
 #include <map>
-
+#include <memory>
+#include <string>
 #include <complex>
-#include <boost/scoped_ptr.hpp>
 
 namespace lspl { namespace patterns {
 
@@ -84,7 +83,7 @@ private:
 	/**
 	 * Текущий парсер билдера
 	 */
-	boost::scoped_ptr<Parser> parser;
+	std::unique_ptr<Parser> parser;
 };
 
 } } // namespace lspl::patterns

@@ -7,7 +7,7 @@
 #include "patterns/Forward.h"
 #include "dictionaries/Dictionary.h"
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 namespace lspl {
 
@@ -95,8 +95,8 @@ private:
 	class PatternMap;
 	class DictionaryMap;
 private:
-	boost::scoped_ptr<PatternMap> patternMap;
-	boost::scoped_ptr<DictionaryMap> dictionaryMap;
+	std::unique_ptr<PatternMap> patternMap;
+	std::unique_ptr<DictionaryMap> dictionaryMap;
 	NamespaceList parents;
 };
 

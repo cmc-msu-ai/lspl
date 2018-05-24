@@ -105,7 +105,7 @@ RestrictedMatchList Text::getRestrictedMatches( const Pattern & pattern, const R
 	RestrictedMatchList results;
 	MatchList matches = getMatches( pattern );
 
-	BOOST_FOREACH( const MatchRef & match, matches ) {
+	for( const MatchRef & match : matches ) {
 		RestrictedMatchRef rm;
 
 		for ( uint i = 0; i < match->getVariantCount(); ++ i ) {
@@ -138,7 +138,7 @@ bool Text::prepareIndices( const Pattern & pattern, IndexIteratorsList & iterato
 		if ( startMatchers.empty() ) // Если для альтернативы не определеныин начальные элементы, то это какая-та ошибка
 			throw std::logic_error( "No start matchers" );
 
-		BOOST_FOREACH( const Matcher* matcher, startMatchers ) {
+		for( const Matcher* matcher : startMatchers ) {
 			switch ( matcher->type ) {
 			case Matcher::WORD: {
 				Index::Iterator * it = speechPartIndex.createIterator( static_cast<const WordMatcher *>( matcher )->speechPart );

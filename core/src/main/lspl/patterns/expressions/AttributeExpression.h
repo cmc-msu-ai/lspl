@@ -12,7 +12,7 @@
 #include "Expression.h"
 #include "../../text/attributes/AttributeKey.h"
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 namespace lspl { namespace patterns { namespace expressions {
 
@@ -32,7 +32,7 @@ public:
 
 public:
 
-	/*boost::scoped_ptr<const Expression>*/ const Expression* base;
+	/*std::unique_ptr<const Expression>*/ const Expression* base;
 	text::attributes::AttributeKey attribute;
 };
 

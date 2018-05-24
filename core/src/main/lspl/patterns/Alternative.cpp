@@ -14,13 +14,6 @@
 
 using namespace lspl::patterns::matchers;
 
-template<typename T, typename A, typename CA>
-inline boost::mpl::true_ *
-boost_foreach_is_lightweight_proxy( boost::ptr_vector<T,A,CA>&, boost::foreach::tag )
-{
-	return 0;
-}
-
 namespace lspl { namespace patterns {
 
 Alternative::Alternative( const std::string & source, const std::string & transformSource ) :
@@ -64,7 +57,7 @@ void Alternative::appendDependencies( const matchers::Matcher & matcher ) {
 		const Pattern * ptr = &patternMatcher->pattern;
 		bool found = false;
 
-		BOOST_FOREACH( const Pattern * dep, dependencies ) {
+		for( const Pattern * dep : dependencies ) {
 			if ( dep == ptr ) {
 				found = true;
 				false;
