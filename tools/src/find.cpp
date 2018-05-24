@@ -13,7 +13,11 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef _WIN32
+#include "getopt.c" // simple workaround for windows
+#else
 #include <unistd.h>
+#endif
 
 #include <lspl/Namespace.h>
 #include <lspl/patterns/Pattern.h>
@@ -39,12 +43,12 @@ void printHelp() {
 		<< "  -t <file> - specify output file for patterns with text transformation " << std::endl
 		<< "  -r <file> - specify output file for patterns with pattern transformation " << std::endl
 		<< "  -e <file> - specify error output file " << std::endl
-        << "  -c <enc>  - specify encoding of input files (windows-1251 default)" << std::endl;
+		<< "  -c <enc>  - specify encoding of input files (windows-1251 default)" << std::endl;
 }
 
 void buildPatterns( const lspl::patterns::PatternBuilderRef builder, std::istream & in, std::ostream & err, const std::string& enc) {
 	char buffer[1000];
-    lspl::text::readers::PlainTextReader reader;
+	lspl::text::readers::PlainTextReader reader;
 	while (!in.eof()) {
 		in.getline( buffer, sizeof(buffer), '\n' );
 
@@ -98,7 +102,7 @@ lspl::patterns::PatternList buildGoals( const lspl::patterns::PatternBuilderRef 
 		while (!tpin->eof()) {
 			tpin->getline( buffer, sizeof(buffer), '\n' );
 			buffer[tpin->gcount()] = 0;
-            buildGoal(std::string(buffer), builder, err, goals);
+			buildGoal(std::string(buffer), builder, err, goals);
 		}
 	} else {
 		for ( int i = start; i < end; ++i ) {
@@ -118,18 +122,18 @@ void processGoal( const lspl::patterns::PatternRef & goal, const lspl::text::Tex
 		patternType = 0;
 	}
 
-    lspl::text::writers::StreamTextWriter writer(outs[patternType], enc);
+	lspl::text::writers::StreamTextWriter writer(outs[patternType], enc);
 
 	lspl::text::MatchList matches = text->getMatches( goal );
 
 	lspl::text::MatchList matchesPos;
 
-    writer <<"\t\t<goal name=\"" << goal->name << "\">\n";
+	writer <<"\t\t<goal name=\"" << goal->name << "\">\n";
 
 	for ( uint matchIndex = 0; matchIndex < matches.size(); ++ matchIndex ) {
 		lspl::text::MatchRef match = matches[ matchIndex ];
 
-        writer << "\t\t\t<match startPos=\"" << match->getRangeStart() << "\" endPos=\"" << match->getRangeEnd() << "\">\n";
+		writer << "\t\t\t<match startPos=\"" << match->getRangeStart() << "\" endPos=\"" << match->getRangeEnd() << "\">\n";
 		writer << "\t\t\t\t<fragment>" << match->getRangeString() << "</fragment>\n";
 
 		if (patternType == 1) {
@@ -161,7 +165,7 @@ int main(int argc, char ** argv) {
 	std::ostream * outt = &std::cout;
 	std::ostream * outp = &std::cout;
 	std::ostream * err = &std::cerr;
-    std::string encoding = "windows-1251";
+	std::string encoding = "windows-1251";
 
 	if ( argc <= 1 ) {
 		printHelp();
@@ -220,9 +224,9 @@ int main(int argc, char ** argv) {
 				return 1;
 			}
 			break;
-        case 'c':
-            encoding = optarg;
-            break;
+		case 'c':
+			encoding = optarg;
+			break;
 		case 'h':
 		default:
 			printHelp();
