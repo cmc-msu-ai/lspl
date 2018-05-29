@@ -39,7 +39,7 @@ else(WIN32)
         ${CMAKE_SOURCE_DIR}/../deps/aot/Source/LemmatizerLib/
         ${CMAKE_SOURCE_DIR}/../deps/aot/Source/MorphWizardLib/
         ${CMAKE_SOURCE_DIR}/../deps/aot/Source/StructDictLib/
-        ${CMAKE_SOURCE_DIR}/../core/build-linux64/
+        ${CMAKE_SOURCE_DIR}/../core/
     )
 
     SET(MY_TARGETLIB_PREFIX "lib")

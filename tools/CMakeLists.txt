@@ -13,7 +13,7 @@ set(LSPL_CONSOLE_SOURCES
 
 add_executable(lspl-console ${LSPL_CONSOLE_SOURCES})
 
-target_link_libraries(lspl-console lspl)
+target_link_libraries(lspl-console lspl boost_system)
 
 ### LsplGenerator
 
@@ -23,9 +23,9 @@ set(LSPL_GENERATOR_SOURCES
 	src/generator.cpp
 )
 
-add_executable(lspl-gen ${LSPL_GENERATOR_SOURCES} boost_system)
+add_executable(lspl-gen ${LSPL_GENERATOR_SOURCES})
 
-target_link_libraries(lspl-gen lspl)
+target_link_libraries(lspl-gen lspl boost_system)
 
 ### lspl-find
 
@@ -35,7 +35,7 @@ set(LSPL_FIND_SOURCES
 
 add_executable(lspl-find ${LSPL_FIND_SOURCES})
 
-target_link_libraries(lspl-find lspl)
+target_link_libraries(lspl-find lspl boost_system)
 
 ### lspl-DictionaryRecognizer
 
@@ -51,7 +51,7 @@ set(LSPL_DICTIONARY_RECOGNIZER_SOURCES
 
 add_executable(lspl-dictionary-recognizer ${LSPL_DICTIONARY_RECOGNIZER_SOURCES})
 
-target_link_libraries(lspl-dictionary-recognizer lspl)
+target_link_libraries(lspl-dictionary-recognizer lspl boost_system)
 
 ### lspl-Similarity
 
@@ -70,7 +70,7 @@ set(LSPL_SIMILARITY_SOURCES
 
 add_executable(lspl-similarity ${LSPL_SIMILARITY_SOURCES})
 
-target_link_libraries(lspl-similarity lspl)
+target_link_libraries(lspl-similarity lspl boost_system)
 
 ### lspl-RangeSetDecartTreeTest
 
@@ -82,7 +82,7 @@ set(LSPL_RANGESET_DECART_TREE_TEST_SOURCES
 
 add_executable(lspl-rangeset-decart-tree-test ${LSPL_RANGESET_DECART_TREE_TEST_SOURCES})
 
-target_link_libraries(lspl-rangeset-decart-tree-test lspl)
+target_link_libraries(lspl-rangeset-decart-tree-test lspl boost_system)
 
 ### lspl-UtilTest
 
