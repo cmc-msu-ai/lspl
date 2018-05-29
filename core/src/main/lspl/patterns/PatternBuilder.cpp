@@ -257,11 +257,11 @@ private:
 	MatcherPtr readMatcher() {
 		skipSpaces();
 		if (strFollows("{"))
-			return readNestedMatcher(0, 0, "{", "}", true);
+			return readNestedMatcher(0, 0, "{", "}", true, false);
 		if (strFollows("["))
-			return readNestedMatcher(0, 1, "[", "]", false);
+			return readNestedMatcher(0, 1, "[", "]", false, false);
 		if (strFollows("("))
-			return readNestedMatcher(1, 1, "(", ")", false);
+			return readNestedMatcher(1, 1, "(", ")", false, true);
 		if (strFollows("\""))
 			return readStringMatcher();
 
@@ -297,10 +297,28 @@ private:
 	 *
 	 *  Параметр allow задаёт, можно ли переопределять значения min и max в самом коде шаблона
 	 *
+	 *  Параметр canBeBinding задаёт, может ли вложенный список альтернатив на самом деле
+	 *  быть параметрами шаблона
+	 *
 	 */
-	MatcherPtr readNestedMatcher(uint min, uint max, const char* lbrace, const char* rbrace, bool allow) {
+	MatcherPtr readNestedMatcher(uint min, uint max, const char* lbrace, const char* rbrace,
+								 bool allow, bool canBeBinding) {
+		uint before_pos = pos;
+
 		readStrFollows(lbrace);
-		std::vector<std::vector<MatcherPtr> > alts = readAlternatives();
+		std::vector<std::vector<MatcherPtr> > alts;
+		try {
+			alts = readAlternatives();
+		} catch (PatternBuildingException &e) {
+			if (!canBeBinding) throw e;
+			pos = before_pos;
+			return nullptr;
+		}
+		if (canBeBinding && alts.size() == 1) {
+			pos = before_pos;
+			return nullptr;
+		}
+
 		readStrFollows(rbrace);
 
 		if (allow && strFollows("<") && !strFollows("<<")) {
@@ -400,6 +418,17 @@ private:
 	}
 
 	/**
+	 * Получить имя аттрибута по его имени или сокращению
+	 */
+	AttributeKey searchForAttributeByName(const std::string &name) {
+		AttributeKey key = AttributeKey::findByAbbrevation(name);
+		if (key != AttributeKey::UNDEFINED)
+			return key;
+		key = AttributeKey::findByName(name);
+		return key;
+	}
+
+	/**
 	 * Создаёт для сопоставителя ограничение на характеристику attributeName, которая в качестве
 	 * значений может принимать аргументы из набора attributeNames
 	 *
@@ -413,7 +442,7 @@ private:
 		if ((it = std::find(values.begin(), values.end(), AttributeValue::UNDEFINED)) != values.end())
 			throw produceException("Unknown attribute value \"" + attributeNames[it - values.begin()] + "\"");
 
-		AttributeKey key = attributeName != "" ? AttributeKey::findByAbbrevation(attributeName)
+		AttributeKey key = attributeName != "" ? searchForAttributeByName(attributeName)
 											   : Morphology::instance().getAttributeKeyByValue(attributeNames.front());
 		if (key == AttributeKey::UNDEFINED)
 			throw produceException("Unable to retrieve attribute type");
@@ -698,16 +727,27 @@ private:
 		std::vector<MatcherPtr> matchers;
 		std::vector<MatcherPtr> permutation;
 		permutation.push_back(readMatcher());
+		if (!permutation.back()) {
+			permutation.pop_back();
+			return permutation;
+		}
+
 		static std::string followers = "[({\"~";
 
-		while (!seekEndOfInput() && (isLatin(buffer[pos]) || followers.find(buffer[pos]) != std::string::npos)) {
+		while (!seekEndOfInput()
+			   && (isLatin(buffer[pos]) || followers.find(buffer[pos]) != std::string::npos)
+			   && permutation.back()) {
 			if (strFollows("~"))
 				readStrFollows("~");
 			else
 				matchers.push_back(makePermutationMatcher(std::move(permutation)));
 			permutation.push_back(readMatcher());
 		}
-		matchers.push_back(makePermutationMatcher(std::move(permutation)));
+
+		if (!permutation.back())
+			permutation.pop_back();
+		if (!permutation.empty())
+			matchers.push_back(makePermutationMatcher(std::move(permutation)));
 		if (strFollows("<<"))
 			readPermutationRestrictions(matchers);
 		return matchers;
@@ -784,8 +824,10 @@ private:
 
 		std::vector<Expression*> arguments;
 		uint alternativeCountBefore = pattern->alternatives.size();
+		bool hasPatternAttributes = false;
 		// Параметры шаблона (слева)
 		if (strFollows("(")) {
+			hasPatternAttributes = true;
 			arguments = readPatternArguments(pattern);
 		}
 
@@ -794,6 +836,13 @@ private:
 		while (strFollows("|")) {
 			readStrFollows("|");
 			readAlternativeWithSource(pattern);
+		}
+
+		if (strFollows("(")) {
+			if (hasPatternAttributes)
+				throw produceException("Double pattern attributes declaration");
+			hasPatternAttributes = true;
+			arguments = readPatternArguments(pattern);
 		}
 
 		for (Expression *exp : arguments) {
