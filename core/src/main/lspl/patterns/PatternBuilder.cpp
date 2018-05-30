@@ -136,13 +136,20 @@ private:
 	 */
 	uint readUInt() {
 		std::string token = readToken();
+		if (token.length() == 0) {
+			throw produceException(std::string("Integer expected, but ") +
+					(seekEndOfInput()
+							? std::string("end of file")
+							: std::string() + buffer[pos])
+					+ " found");
+		}
 		uint index = 0;
 		try {
 			index = std::stoul(token);
 		} catch (std::out_of_range &e) {
 			throw produceException("Integer overflow");
-		} catch (...) {
-			throw produceException("Unknown exception");
+		} catch (std::invalid_argument &e) {
+			throw produceException("Invalid integer \"" + token + "\"");
 		}
 		return index;
 	}
