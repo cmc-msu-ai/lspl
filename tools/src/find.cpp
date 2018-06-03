@@ -104,11 +104,25 @@ lspl::patterns::PatternList buildGoals( const lspl::patterns::PatternBuilderRef 
 	return goals;
 }
 
+template<class T>
+bool checkForTransformType(const lspl::patterns::PatternRef &pattern) {
+	for (const lspl::patterns::Alternative &alt : pattern->getAlternatives()) {
+		if (!alt.hasTransform()) continue;
+		try {
+			dynamic_cast<const T&>(alt.getTransform());
+		} catch (...) {
+			continue;
+		}
+		return true;
+	}
+	return false;
+}
+
 void processGoal( const lspl::patterns::PatternRef & goal, const lspl::text::TextRef & text, std::ostream *outs[], std::ostream & err ) {
 	int patternType;
-	if (goal->getSource().find("=pattern>") != std::string::npos) {
+	if (checkForTransformType<lspl::transforms::PatternTransform>(goal)) {
 		patternType = 2;
-	} else if (goal->getSource().find("=text>") != std::string::npos) {
+	} else if (checkForTransformType<lspl::transforms::TextTransform>(goal)) {
 		patternType = 1;
 	} else {
 		patternType = 0;

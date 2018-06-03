@@ -63,7 +63,7 @@ public:
 
 public:
 	PatternBuilder( const NamespaceRef & ns = new Namespace() );
-	PatternBuilder( const NamespaceRef & ns, transforms::TransformBuilderRef defaultTransformBuilder);
+
 	virtual ~PatternBuilder();
 
 	/**

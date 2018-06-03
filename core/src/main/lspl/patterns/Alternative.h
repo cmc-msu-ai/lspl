@@ -102,6 +102,8 @@ public:
 
 public:
 
+	std::string transformSource;
+
 	/**
 	 * Добавить связывания аттрибутов
 	 */
@@ -151,8 +153,6 @@ private:
 	 * Исходный текст альтернативы
 	 */
 	std::string source;
-
-	std::string transformSource;
 
 	/**
 	 * Список связываний аттрибутов шаблона

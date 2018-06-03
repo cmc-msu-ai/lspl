@@ -121,12 +121,21 @@ private:
 	}
 
 	/**
+	 * Допустим ли символ в токене
+	 */
+	static bool isAllowedCharacterInToken(char c) {
+		if (c == '_' || c == '-')
+			return true;
+		return !isInvalidChar(c) && !isPunct(c) && !isSpace(c);
+	}
+
+	/**
 	 * Считывает токен
 	 */
 	std::string readToken() {
 		skipSpaces();
 		std::string token;
-		while (!isInvalidChar(buffer[pos]) && !isPunct(buffer[pos]) && !isSpace(buffer[pos]))
+		while (isAllowedCharacterInToken(buffer[pos]))
 			token += buffer[pos++];
 		return token;
 	}
@@ -257,9 +266,9 @@ private:
 	 * Обработка элемента шаблона
 	 *
 	 * элемент_шаблона ::= простой_элемент | опциональный_элемент | повторение_элементов
-     *                                     | (набор_альтернатив)
-     *
-     * простой элемент := элемент_строка | элемент_слово | экземпляр_шаблона
+	 *                                     | (набор_альтернатив)
+	 *
+	 * простой элемент := элемент_строка | элемент_слово | экземпляр_шаблона
 	 */
 	MatcherPtr readMatcher() {
 		skipSpaces();
@@ -722,13 +731,13 @@ private:
 	 * Обработка шаблона распознавания (последовательности перестановок)
 	 *
 	 * шаблон_распознавания ::= последовательность_перестановок
-     *
-     * последовательность_перестановок ::= последовательность_элементов
-     *                                     { ~ последовательность_элементов }
-     *                                     [ <<условия>> ]
-     *
-     * последовательность элементов := элемент_шаблона { элемент_шаблона }
-     *
+	 *
+	 * последовательность_перестановок ::= последовательность_элементов
+	 *                                     { ~ последовательность_элементов }
+	 *                                     [ <<условия>> ]
+	 *
+	 * последовательность элементов := элемент_шаблона { элемент_шаблона }
+	 *
 	 */
 	std::vector<MatcherPtr> readPermutation() {
 		std::vector<MatcherPtr> matchers;
@@ -821,7 +830,6 @@ private:
 	 *                      [ (параметры_шаблона) ]
 	 *                      [ =text> шаблоны_извлечения_текста ]
 	 *
-	 *  TODO: =>text пока никак не обрабатывается
 	 */
 	void readPattern() {
 		std::string patternName = readPatternName();
@@ -838,6 +846,7 @@ private:
 			arguments = readPatternArguments(pattern);
 		}
 
+		// Описание шаблона
 		readStrFollows("=");
 		readAlternativeWithSource(pattern);
 		while (strFollows("|")) {
@@ -845,6 +854,7 @@ private:
 			readAlternativeWithSource(pattern);
 		}
 
+		// Параметры шаблона (справа)
 		if (strFollows("(")) {
 			if (hasPatternAttributes)
 				throw produceException("Double pattern attributes declaration");
@@ -852,10 +862,39 @@ private:
 			arguments = readPatternArguments(pattern);
 		}
 
+		// Подключение параметров шаблона к соответствующим им альтернативам
 		for (Expression *exp : arguments) {
 			for (uint i = alternativeCountBefore; i < pattern->alternatives.size(); ++i)
 				appendAlternativeBinding(pattern->alternatives[i], exp);
 			delete exp;
+		}
+
+		// Преобразование(?)
+		if (strFollows("=")) {
+			readStrFollows("=");
+			std::string transformName = readToken();
+			readStrFollows(">");
+
+			auto tf = transformBuilders.find(transformName);
+			if (tf == transformBuilders.end())
+				throw produceException("Undefined transform name =" + transformName + ">");
+
+			// Предсказываем окончание преобразования
+			uint end_pos = pos;
+			while (buffer[end_pos] != '\0' && buffer[end_pos] != '\n' && buffer[end_pos] != '\r')
+				++end_pos;
+
+			for (uint i = alternativeCountBefore; i < pattern->alternatives.size(); ++i) {
+				pattern->alternatives[i].transformSource = std::string(buffer + pos, buffer + end_pos);
+				pattern->alternatives[i].setTransform(
+						std::auto_ptr<transforms::Transform>(tf->second->build(
+								pattern->alternatives[i],
+								pattern->alternatives[i].getTransformSource()
+						))
+				);
+			}
+
+			pos = end_pos;
 		}
 	}
 
@@ -879,16 +918,11 @@ public:
 };
 
 
-PatternBuilder::PatternBuilder( const NamespaceRef & ns, transforms::TransformBuilderRef defaultTransformBuilder ) :
+PatternBuilder::PatternBuilder( const NamespaceRef & ns ) :
     space( ns ),
     parser( new ParserImpl( space, transformBuilders ) ) {
-    transformBuilders.insert(std::make_pair("", defaultTransformBuilder));
     transformBuilders.insert(std::make_pair("text", new transforms::TextTransformBuilder( space )));
     transformBuilders.insert(std::make_pair("pattern", new transforms::PatternTransformBuilder( space )));
-}
-
-PatternBuilder::PatternBuilder( const NamespaceRef & ns ) : PatternBuilder(ns, new transforms::DummyTransformBuilder()) {
-    // Just delegate to two-arg constructor with dummy transform as default
 }
 
 PatternBuilder::~PatternBuilder() {
