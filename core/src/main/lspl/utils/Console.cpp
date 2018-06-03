@@ -66,12 +66,24 @@ void Console::run() {
 			return;
 		} else if ( command == "define" ) {
 			std::ostringstream out;
-			patterns::PatternBuilder::BuildInfo bi = patternBuilder.build( args );
+			bool success = true;
 
-			out << "Parsed " << bi.parseLength << " characters. ";
+			patterns::PatternBuilder::BuildInfo bi;
+			try {
+				 bi = patternBuilder.build( args );
+			} catch (patterns::PatternBuildingException &e) {
+				success = false;
+				out << "Exception happened during parsing: " << std::endl;
+				out << "  " << e.what() << std::endl;
+				out << "Context:" << std::endl;
+				out << "  " << e.input << std::endl << "  ";
+				for (uint i = 0; i < e.errorPos; ++i)
+					out << ' ';
+				out << '^' << std::endl;
+			}
 
-			if ( bi.parseTail.length() > 0 )
-				out << "Not parsed: \"" << bi.parseTail << "\" ";
+			if (success)
+				out << "Ok, parsed " << bi.parseLength << " characters";
 
 			output << outputConversion.convert( out.str() ) << std::endl;
 		} else if ( command == "dump" ){
