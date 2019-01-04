@@ -112,7 +112,7 @@ lspl::patterns::PatternList buildGoals( const lspl::patterns::PatternBuilderRef 
 	return goals;
 }
 
-void processGoal( const lspl::patterns::PatternRef & goal, const lspl::text::TextRef & text, std::ostream *outs[], std::ostream & err, const std::string& enc) {
+void processGoal( const lspl::patterns::PatternRef & goal, const lspl::text::TextRef & text, std::ostream *outs[], const std::string& enc) {
 	int patternType;
 	if (goal->getSource().find("=pattern>") != std::string::npos) {
 		patternType = 2;
@@ -263,8 +263,15 @@ int main(int argc, char ** argv) {
 
 	std::ostream *outs[] = {out, outt, outp};
 
-	for ( uint goalIndex = 0; goalIndex < goals.size(); ++ goalIndex )
-		processGoal( goals[ goalIndex ], text, outs, *err, encoding);
+	for ( uint goalIndex = 0; goalIndex < goals.size(); ++ goalIndex ) {
+		try {
+			processGoal( goals[goalIndex], text, outs, encoding );
+		} catch( std::exception & ex ) {
+			*err << "Error during process goal '" << goals[goalIndex]->getName() << "': " << ex.what() << std::endl;
+		} catch( ... ) {
+			*err << "Unknown error during process goal '" << goals[goalIndex]->getName() << "'" << std::endl;
+		}
+	}
 
 	*out << "\t</text>\n</texts>\n";
 	if (outt != out)
