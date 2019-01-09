@@ -145,7 +145,7 @@ set(LSPL_TEST_SOURCES
 
 add_executable(lspl-test ${LSPL_TEST_SOURCES})
 
-target_link_libraries(lspl-test lspl boost_system)
+target_link_libraries(lspl-test lspl)
 
 ### lspl-benchmark binary
 
@@ -155,7 +155,7 @@ set(LSPL_BENCHMARK_SOURCES
 
 add_executable(lspl-benchmark ${LSPL_BENCHMARK_SOURCES})
 
-target_link_libraries(lspl-benchmark lspl boost_system)
+target_link_libraries(lspl-benchmark lspl)
 
 # Flags for effective error parsing
 
