@@ -903,7 +903,7 @@ public:
 		Parser(space, tbs), buffer(nullptr), pos(0) {}
 	~ParserImpl() {}
 
-	PatternBuilder::BuildInfo build(const char * str) throw (PatternBuildingException) {
+	PatternBuilder::BuildInfo build(const char * str) {
 		buffer = str;
 		pos = 0;
 
@@ -928,8 +928,7 @@ PatternBuilder::PatternBuilder( const NamespaceRef & ns ) :
 PatternBuilder::~PatternBuilder() {
 }
 
-
-PatternBuilder::BuildInfo PatternBuilder::build( const std::string & str ) throw (PatternBuildingException) {
+PatternBuilder::BuildInfo PatternBuilder::build( const std::string & str ) {
 	return parser->build( str.c_str() );
 }
 

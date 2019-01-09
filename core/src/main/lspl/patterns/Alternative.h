@@ -128,7 +128,7 @@ public:
 	 *
 	 * @param t преобразование
 	 */
-	void setTransform( std::auto_ptr<transforms::Transform> t );
+	void setTransform( std::unique_ptr<transforms::Transform> t );
 
 	/**
 	 * Обновить список зависимостей альтернативы
@@ -147,7 +147,7 @@ private:
 	/**
 	 * Преобразование, осуществляемое альтернативой
 	 */
-	std::auto_ptr<transforms::Transform> transform;
+	std::unique_ptr<transforms::Transform> transform;
 
 	/**
 	 * Исходный текст альтернативы
@@ -168,6 +168,11 @@ private:
 
 	friend class Pattern;
 };
+
+inline Alternative* new_clone( const Alternative& r )
+{
+	return nullptr;
+}
 
 } }
 

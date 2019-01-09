@@ -5,8 +5,6 @@
 
 #include <vector>
 
-#include <boost/shared_ptr.hpp>
-
 namespace lspl { namespace patterns { namespace matchers {
 
 class Matcher;
@@ -14,7 +12,7 @@ class PatternMatcher;
 class LoopMatcher;
 class WordMatcher;
 class TokenMatcher;
-
+class MatcherContainer;
 class Variable;
 class Context;
 

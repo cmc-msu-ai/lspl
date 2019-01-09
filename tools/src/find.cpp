@@ -13,7 +13,11 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef _WIN32
+#include "getopt.c" // simple workaround for windows
+#else
 #include <unistd.h>
+#endif
 
 #include <lspl/Namespace.h>
 #include <lspl/patterns/Pattern.h>
@@ -21,6 +25,7 @@
 
 #include <lspl/text/Text.h>
 #include <lspl/text/readers/PlainTextReader.h>
+#include <lspl/text/writers/StreamTextWriter.h>
 
 #include <lspl/transforms/TextTransform.h>
 #include <lspl/transforms/PatternTransform.h>
@@ -31,24 +36,27 @@ void printHelp() {
 	std::cout << "Usage: lspl-gen [options] patterns" << std::endl
 		<< "Options:" << std::endl
 		<< "  -h - show this help message" << std::endl
-		<< "  -p <file> - specify patterns file (in CP1251 encoding)" << std::endl
-		<< "  -s <file> - specify target patterns file (in CP1251 encoding)" << std::endl
-		<< "  -i <file> - specify input file (in CP1251 encoding)" << std::endl
-		<< "  -o <file> - specify output file for all patterns (in CP1251 encoding)" << std::endl
-		<< "  -t <file> - specify output file for patterns with text transformation (in CP1251 encoding)" << std::endl
-		<< "  -r <file> - specify output file for patterns with pattern transformation (in CP1251 encoding)" << std::endl
-		<< "  -e <file> - specify error output file (in CP1251 encoding)" << std::endl;
+		<< "  -p <file> - specify patterns file " << std::endl
+		<< "  -s <file> - specify target patterns file " << std::endl
+		<< "  -i <file> - specify input file " << std::endl
+		<< "  -o <file> - specify output file for all patterns " << std::endl
+		<< "  -t <file> - specify output file for patterns with text transformation " << std::endl
+		<< "  -r <file> - specify output file for patterns with pattern transformation " << std::endl
+		<< "  -e <file> - specify error output file " << std::endl
+		<< "  -c <enc>  - specify encoding of input files (windows-1251 default)" << std::endl;
 }
 
-void buildPatterns( const lspl::patterns::PatternBuilderRef builder, std::istream & in, std::ostream & err ) {
+void buildPatterns( const lspl::patterns::PatternBuilderRef builder, std::istream & in, std::ostream & err, const std::string& enc) {
 	char buffer[1000];
+	lspl::text::readers::PlainTextReader reader;
 	while (!in.eof()) {
 		in.getline( buffer, sizeof(buffer), '\n' );
 
 		buffer[in.gcount()] = 0;
 
 		try {
-			std::string pattern(buffer);
+			std::string pattern = reader.readFromString(buffer, enc)->getContent();
+
 			const auto info = builder->build( pattern );
 			if ( info.parseTail.length() > 0 ) {
 				err << "Error during parsing '" << buffer << "': '" << info.parseTail << "' not parsed" << std::endl;
@@ -87,7 +95,7 @@ void buildGoal(const std::string& source, const lspl::patterns::PatternBuilderRe
 	}
 }
 
-lspl::patterns::PatternList buildGoals( const lspl::patterns::PatternBuilderRef builder, char ** argv, int start, int end, std::ostream & err, std::istream * tpin ) {
+lspl::patterns::PatternList buildGoals( const lspl::patterns::PatternBuilderRef builder, char ** argv, int start, int end, std::ostream & err, std::istream * tpin) {
 	lspl::patterns::PatternList goals;
 	if (tpin) {
 		char buffer[1000];
@@ -98,7 +106,7 @@ lspl::patterns::PatternList buildGoals( const lspl::patterns::PatternBuilderRef 
 		}
 	} else {
 		for ( int i = start; i < end; ++i ) {
-			buildGoal(std::string(argv[i]), builder, err, goals);
+			buildGoal(argv[i], builder, err, goals);
 		}
 	}
 	return goals;
@@ -118,7 +126,7 @@ bool checkForTransformType(const lspl::patterns::PatternRef &pattern) {
 	return false;
 }
 
-void processGoal( const lspl::patterns::PatternRef & goal, const lspl::text::TextRef & text, std::ostream *outs[], std::ostream & err ) {
+void processGoal( const lspl::patterns::PatternRef & goal, const lspl::text::TextRef & text, std::ostream *outs[], std::ostream & err, const std::string& enc) {
 	int patternType;
 	if (checkForTransformType<lspl::transforms::PatternTransform>(goal)) {
 		patternType = 2;
@@ -127,38 +135,38 @@ void processGoal( const lspl::patterns::PatternRef & goal, const lspl::text::Tex
 	} else {
 		patternType = 0;
 	}
-	std::ostream& out = *outs[patternType];
-	
+
+	lspl::text::writers::StreamTextWriter writer(outs[patternType], enc);
 
 	lspl::text::MatchList matches = text->getMatches( goal );
 
 	lspl::text::MatchList matchesPos;
 
-	out << "\t\t<goal name=\"" << goal->name << "\">\n";
+	writer <<"\t\t<goal name=\"" << goal->name << "\">\n";
 
 	for ( uint matchIndex = 0; matchIndex < matches.size(); ++ matchIndex ) {
 		lspl::text::MatchRef match = matches[ matchIndex ];
 
-		out << "\t\t\t<match startPos=\"" << match->getRangeStart() << "\" endPos=\"" << match->getRangeEnd() << "\">\n";
-		out << "\t\t\t\t<fragment>" << match->getRangeString() << "</fragment>\n";
+		writer << "\t\t\t<match startPos=\"" << match->getRangeStart() << "\" endPos=\"" << match->getRangeEnd() << "\">\n";
+		writer << "\t\t\t\t<fragment>" << match->getRangeString() << "</fragment>\n";
 
 		if (patternType == 1) {
 			for ( uint variantIndex = 0; variantIndex < match->getVariantCount(); ++ variantIndex ) {
 				const auto& result = match->getVariant(variantIndex)->getTransformResult<lspl::transforms::TextTransformResult>();
-				out << "\t\t\t\t<result pos=\"" << result.pos << "\">" << result.text << "</result>\n";
+				writer << "\t\t\t\t<result pos=\"" << result.pos << "\">" << result.text << "</result>\n";
 			}
 		} else if (patternType == 2) {
 			for ( uint variantIndex = 0; variantIndex < match->getVariantCount(); ++ variantIndex ) {
 				lspl::patterns::PatternRef pt = match->getVariant(variantIndex)->getTransformResult<lspl::patterns::PatternRef>();
-				out << "\t\t\t\t<result><![CDATA[" << pt->getName() << " = " << pt->getSource() << "]]></result>\n";
+				writer << "\t\t\t\t<result><![CDATA[" << pt->getName() << " = " << pt->getSource() << "]]></result>\n";
 			}
 		}
 
-		out << "\t\t\t</match>\n";
+		writer << "\t\t\t</match>\n";
 	}
 
-	out << "\t\t</goal>\n";
-	out.flush();
+	writer << "\t\t</goal>\n";
+	outs[patternType]->flush();
 }
 
 int main(int argc, char ** argv) {
@@ -171,6 +179,7 @@ int main(int argc, char ** argv) {
 	std::ostream * outt = &std::cout;
 	std::ostream * outp = &std::cout;
 	std::ostream * err = &std::cerr;
+	std::string encoding = "windows-1251";
 
 	if ( argc <= 1 ) {
 		printHelp();
@@ -178,7 +187,7 @@ int main(int argc, char ** argv) {
 	}
 
 	char c;
-	while ((c = getopt(argc, argv, "hi:o:e:p:t:r:s:")) != -1) {
+	while ((c = getopt(argc, argv, "hi:o:e:p:t:r:s:c:")) != -1) {
 		switch (c) {
 		case 'i':
 			in = new std::ifstream( optarg );
@@ -229,6 +238,9 @@ int main(int argc, char ** argv) {
 				return 1;
 			}
 			break;
+		case 'c':
+			encoding = optarg;
+			break;
 		case 'h':
 		default:
 			printHelp();
@@ -249,24 +261,24 @@ int main(int argc, char ** argv) {
 	lspl::text::readers::PlainTextReader r;
 
 	if ( pin ) {
-		buildPatterns( builder, *pin, *err );
+		buildPatterns( builder, *pin, *err, encoding);
 		delete pin;
 		pin = 0;
 	}
 
-	lspl::patterns::PatternList goals = buildGoals( builder, argv, optind, argc, *err, tpin );
-	lspl::text::TextRef text = r.readFromStream( *in );
+	lspl::patterns::PatternList goals = buildGoals( builder, argv, optind, argc, *err, tpin);
+	lspl::text::TextRef text = r.readFromStream( *in, encoding );
 
-	*out << "<?xml version=\"1.0\" encoding=\"windows-1251\"?>\n<texts>\n\t<text>\n";
+	*out << "<?xml version=\"1.0\" encoding=\"" << encoding << "\"?>\n<texts>\n\t<text>\n";
 	if (outt != out)
-		*outt << "<?xml version=\"1.0\" encoding=\"windows-1251\"?>\n<texts>\n\t<text>\n";
+		*outt << "<?xml version=\"1.0\" encoding=\"" << encoding << "\"?>\n<texts>\n\t<text>\n";
 	if (outp != out)
-		*outp << "<?xml version=\"1.0\" encoding=\"windows-1251\"?>\n<texts>\n\t<text>\n";
+		*outp << "<?xml version=\"1.0\" encoding=\"" << encoding << "\"?>\n<texts>\n\t<text>\n";
 
 	std::ostream *outs[] = {out, outt, outp};
 
 	for ( uint goalIndex = 0; goalIndex < goals.size(); ++ goalIndex )
-		processGoal( goals[ goalIndex ], text, outs, *err );
+		processGoal( goals[ goalIndex ], text, outs, *err, encoding);
 
 	*out << "\t</text>\n</texts>\n";
 	if (outt != out)

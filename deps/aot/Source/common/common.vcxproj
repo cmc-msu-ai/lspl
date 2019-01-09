@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{FDF5C0DA-AE02-46FB-91C1-A31B60F120D6}</ProjectGuid>
+    <RootNamespace>common</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>14.0.25431.1</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\..\deps-win32\libiconv-1.9.2-1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <PreprocessorDefinitions>WIN32;NO_UNISTD;USE_FSEEK32;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <PreprocessorDefinitions>WIN32;NO_UNISTD;USE_FSEEK32;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <AdditionalIncludeDirectories>..\..\..\..\deps-win32\libiconv-1.9.2-1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="AncodePattern.h" />
+    <ClInclude Include="BigramsReader.h" />
+    <ClInclude Include="bserialize.h" />
+    <ClInclude Include="cgic.h" />
+    <ClInclude Include="Chunk.h" />
+    <ClInclude Include="cortege.h" />
+    <ClInclude Include="DDCInternalError.h" />
+    <ClInclude Include="DDC_common.h" />
+    <ClInclude Include="DwdsThesaurus.h" />
+    <ClInclude Include="GramInfo.h" />
+    <ClInclude Include="Graspace.h" />
+    <ClInclude Include="gra_descr.h" />
+    <ClInclude Include="gra_descr_primitives.h" />
+    <ClInclude Include="Homonym.h" />
+    <ClInclude Include="iconv_cpp.h" />
+    <ClInclude Include="LemWord.h" />
+    <ClInclude Include="MorphologyHolder.h" />
+    <ClInclude Include="MorphXmlToken.h" />
+    <ClInclude Include="PlmLine.h" />
+    <ClInclude Include="rus_numerals.h" />
+    <ClInclude Include="SortWithTempFiles.h" />
+    <ClInclude Include="string_socket.h" />
+    <ClInclude Include="utilit.h" />
+    <ClInclude Include="util_classes.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AncodePattern.cpp" />
+    <ClCompile Include="BigramsReader.cpp" />
+    <ClCompile Include="cgic.cpp" />
+    <ClCompile Include="DwdsThesaurus.cpp" />
+    <ClCompile Include="gra_descr.cpp" />
+    <ClCompile Include="Homonym.cpp" />
+    <ClCompile Include="iconv_cpp.cpp" />
+    <ClCompile Include="LemWord.cpp" />
+    <ClCompile Include="MorhologyHolder.cpp" />
+    <ClCompile Include="MorphXmlToken.cpp" />
+    <ClCompile Include="PlmLine.cpp" />
+    <ClCompile Include="ReadQueryFromInternet.cpp" />
+    <ClCompile Include="rus_numerals.cpp" />
+    <ClCompile Include="string_socket.cpp" />
+    <ClCompile Include="utilit.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

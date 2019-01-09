@@ -69,7 +69,7 @@ private:
 /**
  * Информация об объекте, которая живет объект или хотя бы одна его слабая ссылка
  */
-class LSPL_EXPORT WeakRefInfo {
+class WeakRefInfo {
 public:
 	WeakRefInfo( RefCountObject * obj ) : object( obj ), weakRefCount( 0 ) {}
 	~WeakRefInfo() {}
@@ -135,7 +135,7 @@ private:
  * Ссылка на объект, увеличвающая время жизни объекта
  */
 template <typename Type>
-class LSPL_EXPORT Reference {
+class Reference {
 public:
 	Reference() : ptr( 0 ) {
 	}
@@ -215,7 +215,7 @@ private:
  * Ссылка на объект, не увеличивающая время жизни объекта
  */
 template <typename Type>
-class LSPL_EXPORT WeakReference {
+class WeakReference {
 public:
 	WeakReference() : info( 0 ) {
 	}

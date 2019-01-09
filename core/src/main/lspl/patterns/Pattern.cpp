@@ -2,6 +2,7 @@
 
 #include "Pattern.h"
 #include "Alternative.h"
+#include "matchers/Matcher.h"
 
 #include "../text/Text.h"
 
@@ -47,21 +48,21 @@ void Pattern::addAlternative( Alternative * alt ) {
 }
 
 void Pattern::addAlternatives( boost::ptr_vector<Alternative> & r ) {
-	alternatives.transfer( alternatives.end(), r.begin(), r.end(), r );
-	for( int i = 0; i < alternatives.size(); ++ i ) {
-		alternatives[i].pattern = this;
+	for( Alternative & alt : r ) {
+		alt.pattern = this;
 	}
+	alternatives.transfer( alternatives.end(), r.begin(), r.end(), r );
 }
 
 void Pattern::updateDependencies() {
 	dependencies.clear();
 
-	for( boost::ptr_vector<Alternative>::const_iterator altIt = alternatives.begin(); altIt != alternatives.end(); ++ altIt ) {
-		const Alternative & alt = *altIt;
-		BOOST_FOREACH( const Pattern * ptr, alt.getDependencies() ) {
+	for( const Alternative & alt : alternatives ) {
+
+		for( const Pattern * ptr : alt.getDependencies() ) {
 			bool found = false;
 
-			BOOST_FOREACH( const Pattern * dep, dependencies ) {
+			for( const Pattern * dep : dependencies ) {
 				if ( dep == ptr ) {
 					found = true;
 					false;
@@ -103,7 +104,7 @@ bool Pattern::dependsOn( const Pattern & pattern, bool transitive ) const {
 
 		return deepDependsOn( &pattern, stack );
 	} else {
-		BOOST_FOREACH( const Pattern * p, dependencies ) {
+		for( const Pattern * p : dependencies ) {
 			if ( p == &pattern ) // Если нашли шаблон в зависимостях
 				return true;
 		}
@@ -113,13 +114,13 @@ bool Pattern::dependsOn( const Pattern & pattern, bool transitive ) const {
 }
 
 bool Pattern::deepDependsOn( const Pattern * target, std::vector<const Pattern*> & stack ) const {
-	BOOST_FOREACH( const Pattern * p, stack )
+	for( const Pattern * p : stack )
 		if ( p == this )
 			return false;
 
 	stack.push_back( this ); // Помещаем текущий шаблон в стек
 
-	BOOST_FOREACH( const Pattern * p, dependencies ) {
+	for( const Pattern * p : dependencies ) {
 		if ( p == target ) // Если нашли шаблон в зависимостях
 			return true;
 

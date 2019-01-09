@@ -25,6 +25,8 @@ public:
 	 */
 	class LSPL_EXPORT Iterator {
 	public:
+		virtual ~Iterator() = default;
+
 		Transition * operator  *() { return get(); }
 		Transition * operator ->() { return get(); }
 
@@ -36,8 +38,8 @@ public:
 	};
 
 public:
-	Index();
-	virtual ~Index();
+	Index() = default;
+	virtual ~Index() = default;
 };
 
 } } } // namespace lspl::text::indexes

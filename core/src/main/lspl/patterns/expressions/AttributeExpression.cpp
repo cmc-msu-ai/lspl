@@ -8,6 +8,7 @@
 #include "../../text/attributes/AttributeContainer.h"
 #include "AttributeExpression.h"
 #include "../matchers/Context.h"
+#include "../matchers/Matcher.h"
 #include "../../text/Transition.h"
 
 using namespace lspl::patterns::matchers;

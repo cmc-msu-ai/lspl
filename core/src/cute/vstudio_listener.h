@@ -28,10 +28,7 @@
 #include <sstream>
 #include <iostream>
 namespace cute{
-	class vstudio_listener
-	{
-		std::ostringstream out;
-	public:
+	struct vstudio_listener {
 		void begin(suite const &t,char const *info){
 		}
 		void end(suite const &t, char const *info){
@@ -42,11 +39,13 @@ namespace cute{
 			std::cerr <<  t.name() <<" " << msg<< std::endl;
 		}
 		void failure(test const &t,test_failure const &e){
+			std::ostringstream out;
 			out << e.filename << "(" << e.lineno << ") : testcase failed: " <<e.reason << " in " << t.name()<< std::endl;
 			OutputDebugString(out.str().c_str());
 			std::cerr << out.str() << std::flush;
 		}
 		void error(test const &t, char const *what){
+			std::ostringstream out;
 			out << what << " in " << t.name() << std::endl;
 			OutputDebugString(out.str().c_str());
 			std::cerr << out.str() << std::flush;

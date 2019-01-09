@@ -8,6 +8,7 @@
 #include "../../text/Transition.h"
 #include "../../text/attributes/AttributeKey.h"
 #include "../matchers/Context.h"
+#include "../matchers/Matcher.h"
 #include "DictionaryRestriction.h"
 
 using namespace lspl::text::attributes;
@@ -36,7 +37,7 @@ bool DictionaryRestriction::matches( const text::Transition * currentAnnotation,
 }
 
 void DictionaryRestriction::dump( std::ostream & out, const std::string & tabs ) const {
-	out << dictionary->name;
+	out << dictionary->Name();
 }
 
 bool DictionaryRestriction::equals( const Restriction & r ) const {

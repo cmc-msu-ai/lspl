@@ -4,6 +4,7 @@
 #include "Text.h"
 #include "Node.h"
 #include "Transition.h"
+#include "../patterns/matchers/Matcher.h"
 
 #include <string>
 

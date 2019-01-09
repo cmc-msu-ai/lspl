@@ -12,7 +12,7 @@
 
 #include "../attributes/SpeechPart.h"
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 namespace lspl { namespace text { namespace indexes {
 
@@ -35,7 +35,7 @@ private:
 	class IteratorImpl;
 
 private:
-	boost::scoped_ptr<Impl> impl;
+	std::unique_ptr<Impl> impl;
 
 };
 

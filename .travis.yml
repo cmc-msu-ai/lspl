@@ -5,6 +5,10 @@ jdk:
 addons:
   apt:
     packages:
-      - libboost-dev
+      - libboost-all-dev
 script:
   - make
+env:
+  - IS_INSIDE_TRAVIS_CI=1
+git:
+  submodules: false

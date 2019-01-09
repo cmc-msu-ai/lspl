@@ -10,7 +10,7 @@
 #include "../base/Base.h"
 #include "Dictionary.h"
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
 
 namespace lspl { namespace dictionaries {
 
@@ -32,7 +32,7 @@ protected:
 private:
 	class WordListMap;
 private:
-	boost::scoped_ptr<WordListMap> map;
+	std::unique_ptr<WordListMap> map;
 };
 
 } } // namespace lspl::dictionaries

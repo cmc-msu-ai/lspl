@@ -3,8 +3,8 @@
 #include "Loop.h"
 
 #include "../text/Node.h"
-
 #include "../text/attributes/AttributeValue.h"
+#include "../patterns/matchers/Matcher.h"
 
 using namespace lspl::text::attributes;
 

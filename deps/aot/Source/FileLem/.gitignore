@@ -1,5 +1,4 @@
 *.d
 *.ormst
 *.orst
-FileLem*.exe
-FileLem
+*.a

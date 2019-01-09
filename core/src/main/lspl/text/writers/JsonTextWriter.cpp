@@ -3,6 +3,7 @@
 #include "JsonTextWriter.h"
 #include "../Text.h"
 #include "../../patterns/Pattern.h"
+#include "../../patterns/matchers/Matcher.h"
 
 using lspl::text::attributes::AttributeValue;
 using lspl::text::attributes::AttributeType;

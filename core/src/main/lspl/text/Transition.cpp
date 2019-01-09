@@ -3,6 +3,7 @@
 #include "Transition.h"
 #include "Node.h"
 #include "Text.h"
+#include "../patterns/matchers/Matcher.h"
 
 #include <iostream>
 

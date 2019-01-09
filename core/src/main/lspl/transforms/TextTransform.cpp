@@ -426,7 +426,7 @@ void TextTransform::buildStr( TextTransformResult & result, const MatchVariant &
 									(((tmpGrammem >> 22) & 1) << 13) |
 									(((tmpGrammem >> 49) & 1) << 14) |
 									//для прилагательных/причастий принудительно отметить, что нет степени сравнения
-									((aotsp==1 | aotsp==17 | aotsp==18 | aotsp==20)?(((((tmpGrammem >> 22) & 1) | ((tmpGrammem >> 49) & 1))?0:1) << 15):0) |
+									(((aotsp==1) | (aotsp==17) | (aotsp==18) | (aotsp==20))?(((((tmpGrammem >> 22) & 1) | ((tmpGrammem >> 49) & 1))?0:1) << 15):0) |
 
 									(((tmpGrammem >> 13) & 1) << 16) |
 									(((tmpGrammem >> 15) & 1) << 17) |

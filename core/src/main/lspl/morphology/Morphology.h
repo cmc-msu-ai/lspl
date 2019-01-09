@@ -10,7 +10,7 @@
 
 namespace lspl { namespace morphology {
 
-class LSPL_EXPORT MorphologyInitException : public base::Exception{
+class MorphologyInitException : public base::Exception{
 public:
 	MorphologyInitException(const std::string & description, const std::string & sourceFileName, int sourceLineNumber) :
 		Exception( description, sourceFileName, sourceLineNumber) {}
@@ -51,7 +51,7 @@ public:
 	 * @param token слово для анализа
 	 * @return ptr_vector интерпретаций слова
 	 */
-	std::auto_ptr< boost::ptr_vector<WordForm> > getWordForms( const std::string & token ) {
+	std::unique_ptr< boost::ptr_vector<WordForm> > getWordForms( const std::string & token ) {
 		boost::ptr_vector<WordForm> result;
 		appendWordForms( token, result );
 		return result.release();

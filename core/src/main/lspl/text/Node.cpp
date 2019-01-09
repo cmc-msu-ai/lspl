@@ -11,6 +11,8 @@
 #include "markup/Word.h"
 #include "markup/Token.h"
 
+#include "../patterns/matchers/Matcher.h"
+
 LSPL_REFCOUNT_CLASS( lspl::text::Node )
 
 namespace lspl { namespace text {
@@ -35,7 +37,7 @@ void Node::dump(std::ostream & out, std::string tabs) const {
 
 	bool first = true;
 
-	BOOST_FOREACH( const TransitionRef & tr, transitions ) {
+	for( const TransitionRef & tr : transitions ) {
 		if ( first ) {
 			first = false;
 		} else {

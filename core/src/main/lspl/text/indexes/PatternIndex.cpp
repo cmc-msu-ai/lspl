@@ -8,6 +8,7 @@
 #include "PatternIndex.h"
 
 #include "../../patterns/Pattern.h"
+#include "../../patterns/matchers/Matcher.h"
 #include "../Match.h"
 
 #include <iostream>

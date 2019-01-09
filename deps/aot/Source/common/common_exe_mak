@@ -8,7 +8,7 @@ lib_pathes := $(subst ..,-L..,$(subst lib, -l,$(libs)))
 # we have to use "--start-group --end-group" in order to solve cross-references
 
 ifeq ($(link_pcre),1)
-	pcre_libs := -L$(RML_PCRE_LIB) -lpcrecpp -L$(RML_PCRE_LIB) -lpcre
+	pcre_libs := -L../../../pcre -lpcrecpp -L../../../pcre -lpcre
 endif
 
 
@@ -22,7 +22,7 @@ endif
 $(ExeName) : $(objects) $(libs)
 	$(mode_error)
 ifneq ($(shell uname), Darwin)
-	$(CXX)  $(lib_mode_switch) $(lparams)  $(objects) $(contrib) $(libs_argument) $(stllib)  -o $(ExeName)
+	$(CXX)  $(lib_mode_switch) $(lparams)  $(objects) $(contrib) $(stllib)  -o $(ExeName) $(libs_argument) 
 	cp $(ExeName) ../../Bin
 endif
 

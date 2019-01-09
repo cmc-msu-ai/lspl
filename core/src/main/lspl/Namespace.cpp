@@ -2,12 +2,14 @@
 
 #include "Namespace.h"
 
+#include "patterns/matchers/Matcher.h"
 #include "patterns/Pattern.h"
 
 #include <boost/multi_index_container.hpp>
 #include <boost/multi_index/hashed_index.hpp>
 #include <boost/multi_index/random_access_index.hpp>
 #include <boost/multi_index/member.hpp>
+#include <boost/multi_index/mem_fun.hpp>
 
 #include <map>
 #include <string>
@@ -43,7 +45,7 @@ public:
 		base::Reference< Dictionary >,
 		boost::multi_index::indexed_by<
 			boost::multi_index::hashed_unique<
-				boost::multi_index::member< Dictionary, const std::string, &Dictionary::name >
+				boost::multi_index::const_mem_fun< Dictionary, const std::string&, &Dictionary::Name >
 			>,
 			boost::multi_index::random_access<
 			>
@@ -83,7 +85,7 @@ PatternRef Namespace::getPatternByName( const std::string & name ) const {
 	if ( i != patternMap->map.end() )
 		return *i;
 
-	BOOST_FOREACH( const NamespaceRef parent, parents )
+	for( const NamespaceRef parent : parents )
 		if ( PatternRef ref = parent->getPatternByName( name ) )
 			return ref;
 
@@ -110,7 +112,7 @@ DictionaryRef Namespace::getDictionaryByName( const std::string & name ) const {
 	if ( i != dictionaryMap->map.end() )
 		return *i;
 
-	BOOST_FOREACH( const NamespaceRef parent, parents )
+	for( const NamespaceRef parent : parents )
 		if ( DictionaryRef ref = parent->getDictionaryByName( name ) )
 			return ref;
 

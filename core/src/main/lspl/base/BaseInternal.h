@@ -9,19 +9,12 @@
 #	endif
 #endif
 
-#include <boost/foreach.hpp>
+#define LSPL_REFCOUNT_CLASS(className) \
+template<> lspl::uint lspl::base::IdentifiedObject<className>::count = 0;
 
-#ifdef MSVC // Версия для Microsoft Visual Studio
-
-#	define LSPL_REFCOUNT_CLASS(className) \
-	template<> lspl::uint lspl::base::IdentifiedObject<className>::count = 0; \
-	template lspl::base::RefCountPtr<className>;
-
-#else
-
-#	define LSPL_REFCOUNT_CLASS(className) \
-	template<> lspl::uint lspl::base::IdentifiedObject<className>::count = 0;
-
-#endif
+namespace lspl {
+	typedef unsigned int uint;
+	typedef unsigned long long uint64;
+}
 
 #endif//_LSPL_BASE_BASEINTERNAL_H_

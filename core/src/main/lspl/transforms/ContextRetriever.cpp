@@ -6,14 +6,15 @@
  */
 #include "../base/BaseInternal.h"
 
-#include "ContextRetriever.h"
-
 #include "../text/Match.h"
 #include "../text/Loop.h"
 #include "../patterns/Alternative.h"
+#include "../patterns/matchers/Context.h"
 #include "../patterns/matchers/Matcher.h"
 #include "../patterns/matchers/MatcherContainer.h"
 #include "../patterns/matchers/LoopMatcher.h"
+
+#include "ContextRetriever.h"
 
 using lspl::patterns::matchers::Context;
 using lspl::patterns::matchers::LoopMatcher;

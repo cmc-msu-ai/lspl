@@ -75,21 +75,14 @@ AotMorphology::AotMorphology() {
 		lemmatizer->m_bMaximalPrediction = true;
 		lemmatizer->m_bUseStatistic = true;
 
-#ifdef MSVC
-		if (!lemmatizer->LoadDictionariesRegistry(strError))
-			throw MorphologyInitException( strError, __FILE__, 0 );
-
-		agramtab = new CRusGramTab();
-		if (!agramtab->LoadFromRegistry())
-			throw MorphologyInitException( "Couldn't load gramtab", __FILE__, 0 );
-#else
-		if (!lemmatizer->LoadDictionariesRegistry(strError))
+		if( !lemmatizer->LoadDictionariesRegistry( strError ) ) {
 			throw MorphologyInitException( strError, __FILE__, __LINE__ );
+		}
 
 		agramtab = new CRusGramTab();
-		if (!agramtab->LoadFromRegistry())
+		if( !agramtab->LoadFromRegistry() ) {
 			throw MorphologyInitException( "Couldn't load gramtab", __FILE__, __LINE__ );
-#endif
+		}
 	} catch ( const MorphologyInitException & e ) {
 		throw e;
 	} catch ( const CExpc & e ) {

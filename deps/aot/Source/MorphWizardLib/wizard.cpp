@@ -2,12 +2,11 @@
 #pragma warning(disable:4786)
 
 #include "wizard.h"
+#include "pcre_rml.h"
 #include "../common/util_classes.h"
 #include "../AgramtabLib/EngGramTab.h"
 #include "../AgramtabLib/RusGramTab.h"
 #include "../AgramtabLib/GerGramTab.h"
-
-#include "../PCRE/pcre_rml.h"
 
 //----------------------------------------------------------------------------
 const char* AnyCommonAncode = " ";

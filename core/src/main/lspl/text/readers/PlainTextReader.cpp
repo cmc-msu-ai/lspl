@@ -5,7 +5,7 @@
 #include "../TextBuilder.h"
 #include "../../morphology/Morphology.h"
 #include "../../graphan/Graphan.h"
-
+#include "../../patterns/matchers/Matcher.h"
 #include "../../utils/Conversion.h"
 
 #include <string>
@@ -26,35 +26,13 @@ PlainTextReader::~PlainTextReader() {
 }
 
 TextRef PlainTextReader::readFromStream( std::istream & is, const std::string & enc ) {
-	is.seekg( 0, std::ios_base::end );
-	int size = is.tellg();
-	char * buffer = new char[ size ];
-
-	is.seekg( 0, std::ios_base::beg );
-	is.read( buffer, size );
-
-	TextRef text = readFromString( Conversion( enc, Conversion::DEFAULT_ENCODING ).convert( buffer, size ) );
-
-	delete[] buffer;
-
-	return text;
+	const std::string buffer( std::istreambuf_iterator<char>( is ), {} );
+	return readFromString( Conversion( enc, Conversion::DEFAULT_ENCODING ).convert( buffer ) );
 }
 
 TextRef PlainTextReader::readFromStream( std::istream & is ) {
-	is.seekg( 0, std::ios_base::end );
-	int size = is.tellg();
-	is.seekg( 0, std::ios_base::beg );
-
-	// TODO Оптимизировать, не выделять
-	char * buffer = new char[ size ];
-
-	is.read( buffer, size );
-
-	std::string content( buffer, size );
-
-	delete[] buffer;
-
-	return readFromString( content ); // Создаем новый экзмпляр текста
+	const std::string buffer( std::istreambuf_iterator<char>( is ), {} );
+	return readFromString( buffer ); // Создаем новый экзмпляр текста
 }
 
 TextRef PlainTextReader::readFromString( const std::string & content, const std::string & enc ) {

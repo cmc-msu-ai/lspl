@@ -7,6 +7,7 @@
 #include "../../base/BaseInternal.h"
 #include "CurrentAnnotationExpression.h"
 #include "../matchers/Context.h"
+#include "../matchers/Matcher.h"
 #include "../../text/Transition.h"
 
 using namespace lspl::text::attributes;
