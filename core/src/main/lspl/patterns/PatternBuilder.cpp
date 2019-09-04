@@ -22,6 +22,7 @@
 #include "restrictions/AgreementRestriction.h"
 #include "restrictions/NotRestriction.h"
 #include "restrictions/OrRestriction.h"
+#include "restrictions/SharedRestriction.h"
 
 #include "expressions/CurrentAnnotationExpression.h"
 #include "expressions/ConstantExpression.h"
@@ -678,6 +679,35 @@ private:
 		throw produceException("= or == expected");
 	}
 
+	template<class MatcherPtrT>
+	bool tryToAddAgreementRestriction(MatcherPtrT* matchers, int size, SharedRestriction &r) {
+		Variable nullvar;
+		for (int i = size - 1; i >= 0; --i)
+			if (matchers[i]->variable == nullvar) {
+				LoopMatcher *loop = dynamic_cast<LoopMatcher*>(&*matchers[i]);
+				if (!loop)
+					continue;
+				bool restrictionAdded = false;
+				if (loop->is_permutation) {
+					for (Matcher &matcher : loop->alternatives[0].getMatchers())
+						if (matcher.variable != nullvar && r.containsVariable(matcher.variable)) {
+							restrictionAdded = true;
+							matcher.addRestriction(new SharedRestriction(r));
+						}
+				} else {
+					// В целом, ситуаций, когда LoopMatcher оказывается не-перестановкой быть не должно,
+					// но мы все же рассмотрим её
+					for (MatcherContainer& alt : loop->alternatives)
+						restrictionAdded |= tryToAddAgreementRestriction(alt.getMatchers().c_array(), alt.getMatchers().size(), r);
+				}
+				return restrictionAdded;
+			} else if (r.containsVariable(matchers[i]->variable)) {
+				matchers[i]->addRestriction(new SharedRestriction(r));
+				return true;
+			}
+		return false;
+	}
+
 	/**
 	 * Считать одно ограничение согласования для перестановки
 	 *
@@ -685,7 +715,6 @@ private:
 	 * условие_ согласования ::= имя = имя { = имя } | имя == имя { == имя }
 	 */
 	void readPermutationRestriction(std::vector<MatcherPtr> &matchers) {
-
 		std::vector<Expression*> exps(1, readAttributeExpression());
 		std::string agreementType = readAgreement();
 		exps.push_back(readAttributeExpression());
@@ -694,22 +723,16 @@ private:
 				throw produceException("Weak (=) and strong (==) agreements mixed");
 			exps.push_back(readAttributeExpression());
 		}
-		AgreementRestriction *restriction = new AgreementRestriction(agreementType == "=");
+
+		AgreementRestriction *agreement_r = new AgreementRestriction(agreementType == "=");
 		for (Expression *e : exps)
-			restriction->addArgument(e);
+			agreement_r->addArgument(e);
 
-
-		// Ок, теперь нужно найти необходимый сопоставитель. Перебираем их от последнего к первому и смотрим
-		for (std::vector<MatcherPtr>::reverse_iterator it = matchers.rbegin(); it != matchers.rend(); ++it)
-			if ((*it)->variable != Variable() && restriction->containsVariable((*it)->variable)) {
-				(*it)->addRestriction(restriction);
-				return;
-			}
-
-		// Ограничение не подошло ни к одному сопоставителю. Возможно, тут совсем ничего не нужно делать?
-		// Мы пересрахуемся и всё же добавим ограничение в конец.
-		matchers.back()->addRestriction(restriction);
-		// FIXME: возможно, нужно бросить исключение?
+		SharedRestriction shared_r(agreement_r);
+		if (tryToAddAgreementRestriction(matchers.data(), matchers.size(), shared_r))
+			return;
+		for (Expression *e : exps)
+			delete e;
 	}
 
 	/**

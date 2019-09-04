@@ -74,4 +74,4 @@ bool AndRestriction::containsCurrentAnnotation() const {
 	return false;
 }
 
-} } } // namespace lspl::patterns::matchers
+} } } // namespace lspl::patterns::restrictions

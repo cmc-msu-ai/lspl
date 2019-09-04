@@ -272,7 +272,7 @@ void LoopMatcher::dump( std::ostream & out, const std::string & tabs ) const {
 		if ( j != 0 )
 			out << ",\n\t" << tabs;
 
-		out << "[\n\t\t";
+		out << "[\n\t\t" << tabs;
 
 		const boost::ptr_vector<Matcher> & matchers = alternatives[j].getMatchers();
 

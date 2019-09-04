@@ -24,6 +24,6 @@ private:
 
 };
 
-} } } // namespace lspl::patterns::matchers
+} } } // namespace lspl::patterns::restrictions
 
 #endif /* _LSPL_PATTERNS_RESTRICTIONS_NOTRESTRICTION_H_ */

@@ -1,26 +1,17 @@
-#ifndef _LSPL_PATTERNS_RESTRICTIONS_ORRESTRICTION_H_
-#define _LSPL_PATTERNS_RESTRICTIONS_ORRESTRICTION_H_
+#ifndef _LSPL_PATTERNS_RESTRICTIONS_SHAREDRESTRICTION_H_
+#define _LSPL_PATTERNS_RESTRICTIONS_SHAREDRESTRICTION_H_
 
+#include <memory>
 #include "Restriction.h"
-
-#include <boost/ptr_container/ptr_vector.hpp>
 
 namespace lspl { namespace patterns { namespace restrictions {
 
-class LSPL_EXPORT OrRestriction : public Restriction {
+class LSPL_EXPORT SharedRestriction : public Restriction {
+
 public:
-	OrRestriction();
-	virtual ~OrRestriction();
-
-	void addArgument( Restriction * arg ) {
-		args.push_back( arg );
-	}
-
-	template <class PtrContainer>
-	void addArguments( PtrContainer & r ) {
-		if ( r.begin() != r.end() )
-			args.transfer( args.end(), r.begin(), r.end(), r );
-	}
+	SharedRestriction( Restriction * arg );
+	SharedRestriction( const SharedRestriction &r );
+	virtual ~SharedRestriction();
 
 	virtual bool matches( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const;
 	virtual void dump( std::ostream & out, const std::string & tabs = "" ) const;
@@ -31,11 +22,9 @@ public:
 	virtual bool containsCurrentAnnotation() const;
 
 private:
-
-	boost::ptr_vector<Restriction> args;
-
+    std::shared_ptr<Restriction> ptr;
 };
 
 } } } // namespace lspl::patterns::restrictions
 
-#endif /* _LSPL_PATTERNS_RESTRICTIONS_ORRESTRICTION_H_ */
+#endif /* _LSPL_PATTERNS_RESTRICTIONS_SHAREDRESTRICTION_H_ */

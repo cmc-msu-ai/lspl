@@ -41,4 +41,4 @@ bool NotRestriction::containsCurrentAnnotation() const {
 	return arg->containsCurrentAnnotation();
 }
 
-} } } // namespace lspl::patterns::matchers
+} } } // namespace lspl::patterns::restrictions

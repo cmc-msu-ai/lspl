@@ -59,7 +59,7 @@ void AgreementRestriction::dump( std::ostream & out, const std::string & tabs ) 
 	args[0].dump( out );
 
 	for ( uint i = 1; i < args.size(); ++i ) {
-		out << " ~ ";
+		out << (weak ? " = " : " == ");
 		args[i].dump( out );
 	}
 }

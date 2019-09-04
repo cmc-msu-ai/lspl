@@ -54,6 +54,7 @@ set(LSPL_CORE_SOURCES
     src/main/lspl/patterns/restrictions/AndRestriction.cpp
     src/main/lspl/patterns/restrictions/NotRestriction.cpp
     src/main/lspl/patterns/restrictions/OrRestriction.cpp
+    src/main/lspl/patterns/restrictions/SharedRestriction.cpp
 
     src/main/lspl/patterns/parsers/CharacterSets.cpp
     src/main/lspl/patterns/parsers/Functions.cpp
