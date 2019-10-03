@@ -65,6 +65,15 @@ private:
 	}
 
 	/**
+	* Проверка на наличие конца строки / ввода
+	*/
+	bool seekEndOfLine() {
+		while (buffer[pos] == ' ')
+			++pos;
+		return buffer[pos] == '\0' || buffer[pos] == '\n' || buffer[pos] == '\r';
+	}
+
+	/**
 	 * Создаёт экземпляр исключения с заданным сообщением об ошибке, хранящий
 	 * информацию о текущей позиции парсера и входных данных
 	 */
@@ -331,12 +340,19 @@ private:
 			pos = before_pos;
 			return nullptr;
 		}
-		if (canBeBinding && alts.size() == 1) {
+		readStrFollows(rbrace);
+
+		// Потенциально вложенный сопоставитель все ещё может быть параметром шаблона, если
+		// параметр всего один. В таком случае нужно проверить, что
+		//   1. внутри скобок есть только один параметр;
+		//   2. этот параметр не является составным;
+		//   3. после параметра ничего нет (кроме, возможно, шаблона извлечения).
+		if (canBeBinding && alts.size() == 1 && alts[0].size() == 1
+		    && dynamic_cast<LoopMatcher*>(alts[0][0].get()) == nullptr
+		    && (seekEndOfLine() || strFollows("="))) {
 			pos = before_pos;
 			return nullptr;
 		}
-
-		readStrFollows(rbrace);
 
 		if (allow && strFollows("<") && !strFollows("<<")) {
 			readStrFollows("<");
