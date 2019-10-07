@@ -18,6 +18,7 @@
 #include "../patterns/restrictions/Restriction.h"
 #include "../transforms/ContextRetriever.h"
 
+using lspl::patterns::Alternative;
 using lspl::patterns::Pattern;
 using lspl::patterns::matchers::Context;
 using lspl::patterns::matchers::Matcher;
@@ -131,7 +132,7 @@ bool Text::prepareIndices( const Pattern & pattern, IndexIteratorsList & iterato
 	using namespace lspl::patterns;
 
 	for ( uint i = 0; i < pattern.getAlternatives().size(); ++ i ) { // Перебираем все альтернативы шаблона
-		const Alternative & alternative = pattern.getAlternatives()[i]; // Получаем ссылку на альтернативу
+		const Alternative & alternative = *pattern.getAlternatives()[i]; // Получаем ссылку на альтернативу
 		const std::vector<const Matcher*> & startMatchers = alternative.getStartMatchers(); // Получаем информацию о подходящих индексах из альтернативы
 
 
@@ -186,8 +187,8 @@ void Text::processWithoutIndices( const Pattern & pattern ) {
 	Context context; // Контекст сопоставления
 
 	for ( uint nodeIndex = 0; nodeIndex < nodes.size(); ++ nodeIndex ) {
-		for( boost::ptr_vector<patterns::Alternative>::const_iterator altIt = pattern.getAlternatives().begin(); altIt != pattern.getAlternatives().end(); ++ altIt ) // Перебираем все альтернативы шаблона
-			matcher.buildTransitions( *nodes[nodeIndex], pattern, *altIt, context, results );
+		for( const std::unique_ptr<Alternative> &alt : pattern.getAlternatives() ) // Перебираем все альтернативы шаблона
+			matcher.buildTransitions( *nodes[nodeIndex], pattern, *alt, context, results );
 
 		for ( uint i = 0; i < results.size(); ++ i )
 			addMatchToMarkup( results[i].cast<Match>() );
@@ -226,7 +227,7 @@ void Text::processWithIndices( const Pattern & pattern, IndexIteratorsList & ite
 		if ( !index ) // Если не нашли подходящего индекса, значит поиск завершен
 			return;
 
-		matcher.buildTransitions( *index->get(), pattern, pattern.getAlternatives()[ alternative ], context, results ); // Производим поиск начиная с текущего индекса
+		matcher.buildTransitions( *index->get(), pattern, *pattern.getAlternatives()[ alternative ], context, results ); // Производим поиск начиная с текущего индекса
 
 		lastNode = &index->get()->start;
 		index->increment();

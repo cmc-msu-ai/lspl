@@ -115,17 +115,6 @@ private:
 	const std::map<std::string, transforms::TransformBuilderRef>& transformBuilders;
 };
 
-struct AddPatternDefinitionImpl : public DefinePattern {
-
-	template <typename Arg1, typename Arg2>
-	   struct result { typedef void type; };
-
-	AddPatternDefinitionImpl( Namespace & space, boost::spirit::classic::symbols<uint> & typeSymbol) :
-		DefinePattern( space, typeSymbol ) {}
-
-	void operator()( const std::string & name, boost::ptr_vector<Alternative> & alts ) const;
-};
-
 struct AddImpl {
 	template <typename Arg1, typename Arg2>
 	struct result { typedef void type; };

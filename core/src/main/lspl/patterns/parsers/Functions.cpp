@@ -140,13 +140,6 @@ void AddAlternativeDefinitionImpl::operator()( boost::ptr_vector<Alternative> & 
 	alts.push_back( alternative );
 }
 
-void AddPatternDefinitionImpl::operator()( const std::string & name, boost::ptr_vector<Alternative> & alts ) const {
-	PatternRef pattern = getPattern( name );
-
-	pattern->addAlternatives( alts ); // Добавляем альтернативы к шаблону
-	pattern->updateDependencies(); // Обновляем зависимости шаблона
-}
-
 void AddRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matchers, Restriction * restriction ) const {
 	findLastMatcher( matchers, restriction ).addRestriction( restriction );
 }

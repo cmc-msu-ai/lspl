@@ -2,10 +2,9 @@
 #define _LSPL_PATTERNS_PATTERN_H_
 
 #include <string>
+#include <memory>
 #include "Forward.h"
 #include "../text/Forward.h"
-
-#include <boost/ptr_container/ptr_vector.hpp>
 
 namespace lspl { namespace patterns {
 
@@ -44,7 +43,13 @@ public:
 	/**
 	 * Добавить альтернативы к шаблону
 	 */
-	void addAlternatives( boost::ptr_vector<Alternative> & r );
+	void addAlternatives( std::vector<std::unique_ptr<Alternative>> & r );
+
+	/**
+	 * Перенести все альтернативы шаблона other к текущему (подразумевается, что
+	 * они имеют одно имя)
+	 */
+	void mergePattern ( Pattern &other );
 
 	/**
 	 * Обновить список зависимостей альтернативы
@@ -86,7 +91,7 @@ public:
 	/**
 	 * Получить список внешних альтернатив шаблона
 	 */
-	const boost::ptr_vector<Alternative> & getAlternatives() const {
+	const std::vector<std::unique_ptr<Alternative>> & getAlternatives() const {
 		return alternatives;
 	}
 
@@ -104,7 +109,7 @@ public:
 	/**
 	 * Список альтернатив шаблона
 	 */
-	boost::ptr_vector<Alternative> alternatives;
+	std::vector<std::unique_ptr<Alternative>> alternatives;
 
     /**
      * Количество объектов в памяти

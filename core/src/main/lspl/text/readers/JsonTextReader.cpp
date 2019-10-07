@@ -147,7 +147,7 @@ public:
 
 		void operator()( uint start, uint end, const std::string & patternName, const Match::AttributesMap & attributes ) const {
 			patterns::Pattern & p = *parser.ns.getPatternByName( patternName );
-			parser.builder.addMatch( new Match( parser.builder.getNodeByIndex( start ), parser.builder.getNodeByIndex( end ), p, new MatchVariant( p.getAlternatives()[0] ), attributes ) ); // TODO Transitions
+			parser.builder.addMatch( new Match( parser.builder.getNodeByIndex( start ), parser.builder.getNodeByIndex( end ), p, new MatchVariant( *p.getAlternatives()[0] ), attributes ) ); // TODO Transitions
 		}
 	private:
 		Parser & parser;

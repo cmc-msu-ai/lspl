@@ -114,10 +114,10 @@ lspl::patterns::PatternList buildGoals( const lspl::patterns::PatternBuilderRef 
 
 template<class T>
 bool checkForTransformType(const lspl::patterns::PatternRef &pattern) {
-	for (const lspl::patterns::Alternative &alt : pattern->getAlternatives()) {
-		if (!alt.hasTransform()) continue;
+	for (const std::unique_ptr<lspl::patterns::Alternative> &alt : pattern->getAlternatives()) {
+		if (!alt->hasTransform()) continue;
 		try {
-			dynamic_cast<const T&>(alt.getTransform());
+			dynamic_cast<const T&>(alt->getTransform());
 		} catch (...) {
 			continue;
 		}

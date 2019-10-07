@@ -42,6 +42,7 @@ LSPL_REFCOUNT_CLASS( lspl::patterns::PatternBuilder );
 namespace lspl { namespace patterns {
 
 typedef std::unique_ptr<Matcher> MatcherPtr;
+typedef std::unique_ptr<Pattern> PatternPtr;
 
 class ParserImpl: public PatternBuilder::Parser {
 private:
@@ -189,7 +190,7 @@ private:
 	/**
 	 * Обработка параметров шаблона
 	 */
-	std::vector<Expression*> readPatternArguments(PatternRef pattern) {
+	std::vector<Expression*> readPatternArguments() {
 		std::vector<Expression*> result;
 		readStrFollows("(");
 		result.push_back(readAttributeExpression());
@@ -821,7 +822,7 @@ private:
 	/**
 	 * Считать альтернативу шаблона pattern, сохранив её source
 	 */
-	void readAlternativeWithSource(PatternRef pattern) {
+	void readAlternativeWithSource(const PatternPtr &pattern) {
 		uint before_pos = pos;
 		std::vector<MatcherPtr> alt = readPermutation();
 		pattern->newAlternative(std::string(buffer + before_pos, buffer + pos)).addMatchers(alt);
@@ -872,17 +873,15 @@ private:
 	 */
 	void readPattern() {
 		std::string patternName = readPatternName();
-		PatternRef pattern = space->getPatternByName(patternName);
-		if (!pattern)
-			pattern = space->addPattern(new Pattern(patternName));
 
+		PatternPtr pattern(new Pattern(patternName));
 		std::vector<Expression*> arguments;
 		uint alternativeCountBefore = pattern->alternatives.size();
 		bool hasPatternAttributes = false;
 		// Параметры шаблона (слева)
 		if (strFollows("(")) {
 			hasPatternAttributes = true;
-			arguments = readPatternArguments(pattern);
+			arguments = readPatternArguments();
 		}
 
 		// Описание шаблона
@@ -898,13 +897,13 @@ private:
 			if (hasPatternAttributes)
 				throw produceException("Double pattern attributes declaration");
 			hasPatternAttributes = true;
-			arguments = readPatternArguments(pattern);
+			arguments = readPatternArguments();
 		}
 
 		// Подключение параметров шаблона к соответствующим им альтернативам
 		for (Expression *exp : arguments) {
 			for (uint i = alternativeCountBefore; i < pattern->alternatives.size(); ++i)
-				appendAlternativeBinding(pattern->alternatives[i], exp);
+				appendAlternativeBinding(*pattern->alternatives[i], exp);
 			delete exp;
 		}
 
@@ -924,17 +923,23 @@ private:
 				++end_pos;
 
 			for (uint i = alternativeCountBefore; i < pattern->alternatives.size(); ++i) {
-				pattern->alternatives[i].transformSource = std::string(buffer + pos, buffer + end_pos);
-				pattern->alternatives[i].setTransform(
+				pattern->alternatives[i]->transformSource = std::string(buffer + pos, buffer + end_pos);
+				pattern->alternatives[i]->setTransform(
 						std::auto_ptr<transforms::Transform>(tf->second->build(
-								pattern->alternatives[i],
-								pattern->alternatives[i].getTransformSource()
+								*pattern->alternatives[i],
+								pattern->alternatives[i]->getTransformSource()
 						))
 				);
 			}
 
 			pos = end_pos;
 		}
+
+		PatternRef patternRef = space->getPatternByName(patternName);
+		if (!patternRef) {
+			space->addPattern(pattern.release());
+		} else
+			patternRef->mergePattern(*pattern);
 	}
 
 public:

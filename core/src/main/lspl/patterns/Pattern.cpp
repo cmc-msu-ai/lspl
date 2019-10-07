@@ -21,14 +21,14 @@ void Pattern::dump( std::ostream & out, const std::string & tabs ) const {
 	out << "Pattern{ name = " << name << ", alternatives = [\n\t" << tabs;
 
 	bool first = true;
-	for( boost::ptr_vector<Alternative>::const_iterator altIt = alternatives.begin(); altIt != alternatives.end(); ++ altIt ) {
+	for( const std::unique_ptr<Alternative> &alt : alternatives ) {
 		if ( first ) {
 			first = false;
 		} else {
 			out << ",\n\t" << tabs;
 		}
 
-		altIt->dump( out, tabs + "\t" );
+		alt->dump( out, tabs + "\t" );
 	}
 
 	out << "\n" << tabs << "] }";
@@ -44,22 +44,29 @@ Alternative & Pattern::newAlternative( const std::string & source )  {
 
 void Pattern::addAlternative( Alternative * alt ) {
 	alt->pattern = this;
-	alternatives.push_back( alt );
+	alternatives.emplace_back( alt );
 }
 
-void Pattern::addAlternatives( boost::ptr_vector<Alternative> & r ) {
-	for( Alternative & alt : r ) {
-		alt.pattern = this;
+void Pattern::addAlternatives( std::vector<std::unique_ptr<Alternative>> & r ) {
+	for( const std::unique_ptr<Alternative> & alt : r ) {
+		alt->pattern = this;
 	}
-	alternatives.transfer( alternatives.end(), r.begin(), r.end(), r );
+	int oldSize = alternatives.size();
+	alternatives.resize(oldSize + r.size());
+	std::move(r.begin(), r.end(), alternatives.begin() + oldSize);
+}
+
+void Pattern::mergePattern ( Pattern &other ) {
+	addAlternatives(other.alternatives);
+	other.alternatives.clear();
 }
 
 void Pattern::updateDependencies() {
 	dependencies.clear();
 
-	for( const Alternative & alt : alternatives ) {
+	for( const std::unique_ptr<Alternative> & alt : alternatives ) {
 
-		for( const Pattern * ptr : alt.getDependencies() ) {
+		for( const Pattern * ptr : alt->getDependencies() ) {
 			bool found = false;
 
 			for( const Pattern * dep : dependencies ) {
@@ -82,7 +89,7 @@ void Pattern::removeDuplicateAlternatives() {
 	while ( i < alternatives.size() ) {
 		bool found = false;
 		for ( uint j = 0; j < i; ++ j ) {
-			if ( alternatives[i].equals( alternatives[j] ) ) {
+			if ( alternatives[i]->equals( *alternatives[j] ) ) {
 				found = true;
 				break;
 			}
@@ -137,14 +144,14 @@ std::string Pattern::getSource() const {
 	std::string result = "";
 
 	bool first = true;
-	for( boost::ptr_vector<Alternative>::const_iterator altIt = alternatives.begin(); altIt != alternatives.end(); ++ altIt ) {
+	for( const std::unique_ptr<Alternative> &alt : alternatives ) {
 		if ( first ) {
 			first = false;
 		} else {
 			result += " | ";
 		}
 
-		result += altIt->getSource();
+		result += alt->getSource();
 	}
 
 	return result;
