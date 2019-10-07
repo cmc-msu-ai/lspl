@@ -184,6 +184,9 @@ private:
 		std::string patternName = readToken();
 		if (!isLatin(patternName.back()))
 			throw produceException("Pattern name should end with a latin letter");
+		for (int i = 0; i < SpeechPart::COUNT; ++i)
+			if (patternName == SpeechPart(i).getAbbrevation())
+				throw produceException("Speech part name \"" + patternName + "\" can't be used as a pattern name");
 		return patternName;
 	}
 
