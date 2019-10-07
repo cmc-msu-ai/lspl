@@ -21,6 +21,7 @@ AttributeExpression::AttributeExpression( const Expression * base, const Attribu
 }
 
 AttributeExpression::~AttributeExpression() {
+	delete base;
 }
 
 void AttributeExpression::evaluateTo( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const Context & ctx, ValueList & results ) const {
