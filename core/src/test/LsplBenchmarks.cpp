@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-#include <boost/timer.hpp>
+#include <boost/timer/timer.hpp>
 
 #include <lspl/Namespace.h>
 #include <lspl/patterns/Pattern.h>
@@ -15,6 +15,9 @@
 using namespace lspl;
 using lspl::uint;
 using lspl::morphology::Morphology;
+using boost::timer::cpu_timer;
+
+const uint DEFAULT_TIMER_PLACES = 3;
 
 text::TextRef loadTextFromFile( const char * fileName ) {
 	std::ifstream textStream( fileName );
@@ -23,9 +26,9 @@ text::TextRef loadTextFromFile( const char * fileName ) {
 	std::cout << "Loading text from file " << fileName << "... ";
 	std::cout.flush();
 
-	boost::timer tm;
+	cpu_timer tm;
 	text::TextRef text = reader.readFromStream( textStream );
-	std::cout << "Done in " << tm.elapsed() << " seconds" << std::endl;
+	std::cout << tm.format(DEFAULT_TIMER_PLACES, "Done in %t seconds.") << std::endl;
 
 	return text;
 }
@@ -36,7 +39,7 @@ void definePatterns( NamespaceRef ns ) {
 	std::cout << "Building patterns... ";
 	std::cout.flush();
 
-	boost::timer tm;
+	cpu_timer tm;
 
 	builder->build( "Pact = N V" );              // 5582  [v]
 	builder->build( "Act = N V <<N=V>>" );       // 4505  [v]
@@ -47,7 +50,7 @@ void definePatterns( NamespaceRef ns ) {
 	builder->build( "AEE = N \"è\" N" );         // 446   [v]
 	builder->build( "ANom = N<c=nom> V" );       // 4199  [v]
 	builder->build( "AGen = N<c=gen> V" );       // 1373  [v]
-	std::cout << "Done in " << tm.elapsed() << " seconds." << std::endl;
+	std::cout << tm.format(DEFAULT_TIMER_PLACES, "Done in %t seconds.") << std::endl;
 }
 
 void findPatterns() {
@@ -58,16 +61,13 @@ void findPatterns() {
 
 	for ( uint i = 0; i < ns->getPatternCount(); ++ i ) {
 		patterns::PatternRef pt = ns->getPatternByIndex( i );
-		std::cout << "Dumping: ";
-		pt->dump(std::cout);
-		std::cout << std::endl << std::endl;
 
 		std::cout << "Matching " << pt->getSource() << "... ";
 		std::cout.flush();
 
-		boost::timer tm;
+		cpu_timer tm;
 		uint count = text->getMatches( *pt ).size();
-		std::cout << "Done in " << tm.elapsed() << " seconds, " << count << " matches found"<< std::endl;
+		std::cout << tm.format(DEFAULT_TIMER_PLACES, "Done in %t seconds, ") << count << " matches found" << std::endl;
 	}
 
 	std::cout << text->getWords( text::attributes::SpeechPart::NOUN ).size() << std::endl;
@@ -77,9 +77,9 @@ void loadMorphology() {
 	std::cout << "Loading morphology system... ";
 	std::cout.flush();
 
-	boost::timer tm;
+	cpu_timer tm;
 	Morphology::instance();
-	std::cout << "Done in " << tm.elapsed() << " seconds." << std::endl;
+	std::cout << tm.format(DEFAULT_TIMER_PLACES, "Done in %t seconds.") << std::endl;
 }
 
 int main() {
