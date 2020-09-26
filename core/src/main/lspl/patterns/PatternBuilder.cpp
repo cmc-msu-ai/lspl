@@ -15,7 +15,6 @@
 #include "matchers/PatternMatcher.h"
 #include "matchers/WordMatcher.h"
 
-#include "../transforms/TransformBuilder.h"
 #include "../transforms/TextTransformBuilder.h"
 #include "../transforms/PatternTransformBuilder.h"
 
@@ -49,7 +48,7 @@ private:
 	const char *buffer;
 	uint pos;
 
-	/*
+	/**
 	 * Пропускает пробельные символы в буфере
 	 */
 	void skipSpaces() {
@@ -85,7 +84,7 @@ private:
 		return e;
 	}
 
-	/*
+	/**
 	 * Вырезать из токена-идентификатора индекс
 	 */
 	bool cutIndexFromToken(std::string &token, uint &index) {
@@ -110,7 +109,7 @@ private:
 		return true;
 	}
 
-	/*
+	/**
 	 *  Убеждается, что текст продолжается строкой pattern
 	 */
 	bool strFollows(const char *pattern) {
@@ -121,7 +120,7 @@ private:
 		return pattern[i] == '\0';
 	}
 
-	/*
+	/**
 	 * В точности повторяет действие функции strFollows, но считывает pattern из буфера
 	 * и кидает исключение, если не встречает строку
 	 */
@@ -151,7 +150,7 @@ private:
 		return token;
 	}
 
-	/*
+	/**
 	 * Считывает беззнаковое целое
 	 */
 	uint readUInt() {
@@ -218,7 +217,7 @@ private:
 		return false;
 	}
 
-	/*
+	/**
 	 * Разделить строку на токены
 	 */
 	static std::vector<std::string> split(const std::string &contents) {
@@ -312,7 +311,7 @@ private:
 		return readPatternMatcher(pattern, index);
 	}
 
-	/*
+	/**
 	 * Считать сопоставитель с вложенным списком альтернатив, т.е.
 	 *
 	 *   1) опциональный_элемент
@@ -401,7 +400,7 @@ private:
 	}
 
 	/**
-	 * условия_на_лемму ::= [ lemma = ] лемма { | лемма }  |  [ lemma ]  != лемма { | лемма }
+	 * условия_на_лемму ::= [ lemma = ] лемма { | лемма }  |  [ lemma ]  != лемма { | лемма }
 	 */
 	void readLemmaRestriction(MatcherPtr &matcher) {
 		WordMatcher *word_m = dynamic_cast<WordMatcher*>(matcher.get());
@@ -430,7 +429,7 @@ private:
 	}
 
 	/**
-	  * условия_на_основу ::= stem = основа { | основа } | stem  != основа { | основа}
+	  * условия_на_основу ::= stem = основа { | основа } | stem  != основа { | основа}
 	  */
 	void readStemRestriction(MatcherPtr &matcher) {
 		readStrFollows("stem");
@@ -549,7 +548,7 @@ private:
 
 		valueNames.push_back(readToken());
 		while (strFollows("|")) {
-			readStrFollows("");
+			readStrFollows("|");
 			valueNames.push_back(readToken());
 			if (valueNames.back().length() == 0)
 				throw produceException("Expression value expected");
@@ -560,7 +559,6 @@ private:
 
 	/**
 	 * Чтение одного ограничения сопоставителя
-	 *
 	 */
 	void readMatcherRestriction(MatcherPtr &matcher) {
 		if (strFollows("lemma") || isCyrillic(buffer[pos]) || strFollows("\""))
@@ -585,7 +583,7 @@ private:
 			readAttributeRestriction(matcher);
 	}
 
-	/*
+	/**
 	 * Чтение списка ограничений сопоставителя
 	 */
 	void readMatcherRestrictions(MatcherPtr &matcher) {
@@ -624,7 +622,7 @@ private:
 		return result;
 	}
 
-	/*
+	/**
 	 * Сгенерировать сопоставитель, реализующий перестановку из
 	 * указанного набора сопоставителей
 	 */
