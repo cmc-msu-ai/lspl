@@ -338,12 +338,12 @@ private:
 		std::vector<std::vector<MatcherPtr> > alts;
 		try {
 			alts = readAlternatives();
+			readStrFollows(rbrace);
 		} catch (PatternBuildingException &e) {
 			if (!canBeBinding) throw e;
 			pos = before_pos;
 			return nullptr;
 		}
-		readStrFollows(rbrace);
 
 		// Потенциально вложенный сопоставитель все ещё может быть параметром шаблона, если
 		// параметр всего один. В таком случае нужно проверить, что
@@ -964,10 +964,10 @@ public:
 
 
 PatternBuilder::PatternBuilder( const NamespaceRef & ns ) :
-    space( ns ),
-    parser( new ParserImpl( space, transformBuilders ) ) {
-    transformBuilders.insert(std::make_pair("text", new transforms::TextTransformBuilder( space )));
-    transformBuilders.insert(std::make_pair("pattern", new transforms::PatternTransformBuilder( space )));
+	space( ns ),
+	parser( new ParserImpl( space, transformBuilders ) ) {
+	transformBuilders.insert(std::make_pair("text", new transforms::TextTransformBuilder( space )));
+	transformBuilders.insert(std::make_pair("pattern", new transforms::PatternTransformBuilder( space )));
 }
 
 PatternBuilder::~PatternBuilder() {
