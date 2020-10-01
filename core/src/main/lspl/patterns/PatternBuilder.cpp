@@ -47,6 +47,7 @@ class ParserImpl: public PatternBuilder::Parser {
 private:
 	const char *buffer;
 	uint pos;
+	Pattern *currentPattern;
 
 	/**
 	 * Пропускает пробельные символы в буфере
@@ -305,10 +306,7 @@ private:
 				return readWordMatcher(SpeechPart(i), index);
 
 		// экземпляр_шаблона
-		PatternRef pattern = space->getPatternByName(token);
-		if (!pattern)
-			throw produceException("No pattern with specified name");
-		return readPatternMatcher(pattern, index);
+		return readPatternMatcher(token, index);
 	}
 
 	/**
@@ -596,12 +594,22 @@ private:
 		readStrFollows(">");
 	}
 
+	Pattern *findPatternPtr(const std::string &patternName) {
+		PatternRef patternRef = space->getPatternByName(patternName);
+		if (patternRef)
+			return &*patternRef;
+		if (currentPattern->getName() == patternName)
+			return currentPattern;
+		throw produceException("No pattern with name \"" + patternName + "\"");
+	}
+
 	/**
 	 * Считать сопоставитель-шаблон
 	 *
 	 * экземпляр-шаблона ::= имя_шаблона [индекс] | имя_шаблона [индекс]  <характеристика { , характеристика }>
 	 */
-	MatcherPtr readPatternMatcher(PatternRef pattern, uint index) {
+	MatcherPtr readPatternMatcher(const std::string &patternName, uint index) {
+		Pattern *pattern = findPatternPtr(patternName);
 		PatternMatcher *matcher = new PatternMatcher(*pattern);
 		MatcherPtr result(matcher);
 		matcher->variable = Variable(*pattern, index);
@@ -665,10 +673,7 @@ private:
 
 		// Шаблон
 		if (!result) {
-			PatternRef pattern = space->getPatternByName(token);
-			if (!pattern)
-				throw produceException("No pattern with specified name");
-			result = new VariableExpression(*pattern, index);
+			result = new VariableExpression(*findPatternPtr(token), index);
 		}
 
 		if (strFollows(".")) {
@@ -876,7 +881,7 @@ private:
 	void readPattern() {
 		std::string patternName = readPatternName();
 
-		PatternPtr pattern(new Pattern(patternName));
+		PatternPtr pattern(currentPattern = new Pattern(patternName));
 		std::vector<Expression*> arguments;
 		uint alternativeCountBefore = pattern->alternatives.size();
 		bool hasPatternAttributes = false;
