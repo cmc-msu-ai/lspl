@@ -674,8 +674,10 @@ private:
 		if (strFollows(".")) {
 			readStrFollows(".");
 			AttributeKey key = AttributeKey::findByAbbrevation(readToken());
-			if (key == AttributeKey::UNDEFINED)
+			if (key == AttributeKey::UNDEFINED) {
+				delete result;
 				throw produceException("Unknown attribute");
+			}
 			result = new AttributeExpression(result, key);
 		}
 
@@ -733,24 +735,23 @@ private:
 	 * условие_ согласования ::= имя = имя { = имя } | имя == имя { == имя }
 	 */
 	void readPermutationRestriction(std::vector<MatcherPtr> &matchers) {
-		std::vector<Expression*> exps(1, readAttributeExpression());
+		std::vector<std::unique_ptr<Expression>> exps;
+		exps.push_back(std::unique_ptr<Expression>(readAttributeExpression()));
 		std::string agreementType = readAgreement();
-		exps.push_back(readAttributeExpression());
+		exps.push_back(std::unique_ptr<Expression>(readAttributeExpression()));
 		while (strFollows("=")) {
 			if (readAgreement() != agreementType)
 				throw produceException("Weak (=) and strong (==) agreements mixed");
-			exps.push_back(readAttributeExpression());
+			exps.push_back(std::unique_ptr<Expression>(readAttributeExpression()));
 		}
 
 		AgreementRestriction *agreement_r = new AgreementRestriction(agreementType == "=");
-		for (Expression *e : exps)
-			agreement_r->addArgument(e);
+		for (std::unique_ptr<Expression> &e : exps)
+			agreement_r->addArgument(e.release());
 
 		SharedRestriction shared_r(agreement_r);
 		if (tryToAddAgreementRestriction(matchers.data(), matchers.size(), shared_r))
 			return;
-		for (Expression *e : exps)
-			delete e;
 	}
 
 	/**
