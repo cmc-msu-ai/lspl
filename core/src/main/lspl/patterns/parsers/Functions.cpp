@@ -46,30 +46,21 @@ using lspl::morphology::Morphology;
 
 namespace lspl { namespace patterns { namespace parsers {
 
-static bool isRegexp( const std::string & str ) {
-	static std::string regexSymbols( ".[{()\\*+?|^$'" );
-
-	for ( uint i = 0; i < regexSymbols.length(); ++ i )
-		if ( str.find( regexSymbols.at(i) ) != std::string::npos )
-			return true;
-
-	return false;
-}
-
 void AddWordMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, const std::string & base, SpeechPart speechPart, uint index, boost::ptr_vector< Restriction > & restrictions ) const {
-   	Matcher * matcher = new WordMatcher( base, speechPart );
+   	WordMatcher * matcher;
+
+   	if (base == "")
+   		matcher = new WordMatcher( speechPart );
+   	else {
+   		LemmaComparator *lcmp = new LemmaComparator(false);
+   		lcmp->addAlternativeBase(base);
+   		matcher = new WordMatcher( speechPart, lcmp );
+   	}
 
    	matcher->variable = Variable( speechPart, index );
    	matcher->addRestrictions( restrictions );
 
    	matchers.push_back( matcher );
-}
-
-void AddTokenMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, const std::string & token ) const {
-	if ( isRegexp( token ) )
-		matchers.push_back( new RegexpMatcher( token ) );
-	else
-		matchers.push_back( new TokenMatcher( token ) );
 }
 
 void AddTokenMatcherNoRegexpImpl::operator()( boost::ptr_vector<Matcher> & matchers, const std::string & token ) const {
@@ -78,20 +69,6 @@ void AddTokenMatcherNoRegexpImpl::operator()( boost::ptr_vector<Matcher> & match
 
 void AddStringMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, const std::string & token ) const {
 	matchers.push_back( new StringMatcher( token ) );
-}
-
-void AddLoopMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, uint min, uint max, std::vector<uint> & alternativesCount ) const {
-	LoopMatcher * matcher = new LoopMatcher( min, max );
-
-	for ( int i = alternativesCount.size() - 1; i >= 0 ; -- i ) { // Важно!! Здесь перебираем в обратном порядке!
-		MatcherContainer * matcherGroup = new MatcherContainer(); // Создаем контейнер для альтернативы
-
-		matcherGroup->addMatchers( matchers.end() - alternativesCount[ i ], matchers.end(), matchers );
-
-		matcher->addAlternative( matcherGroup );
-	}
-
-	matchers.push_back( matcher );
 }
 
 PatternRef DefinePattern::getPattern( const std::string & name ) const {
@@ -116,29 +93,6 @@ void AddPatternMatcherImpl::operator()( boost::ptr_vector<Matcher> & matchers, c
 	matchers.push_back( matcher );
 }
 
-void AddAlternativeDefinitionImpl::operator()( boost::ptr_vector<Alternative> & alts, boost::ptr_vector<Matcher> & matchers, boost::ptr_map<AttributeKey,Expression> & bindings, const std::string & source, const std::string & transformSource, const std::string & transformType ) const {
-	Alternative * alternative = new Alternative( source, transformSource ); // Добавляем новую альтернативу к шаблону
-
-	alternative->addMatchers( matchers ); // Добавляем сопоставители
-	alternative->addBindings( bindings ); // Добавляем связывания
-	alternative->updateDependencies(); // Обновляем зависимости альтернативы
-
-	const auto transformBuilder = transformBuilders.find(transformType);
-	if (transformBuilder == transformBuilders.end())
-		throw PatternBuildingException("Invalid transform type: =" + transformType + ">");
-
-	alternative->setTransform( std::unique_ptr<transforms::Transform>( transformBuilder->second->build( *alternative, alternative->getTransformSource() ) ) );
-
-	alts.push_back( alternative );
-}
-
-void AddPatternDefinitionImpl::operator()( const std::string & name, boost::ptr_vector<Alternative> & alts ) const {
-	PatternRef pattern = getPattern( name );
-
-	pattern->addAlternatives( alts ); // Добавляем альтернативы к шаблону
-	pattern->updateDependencies(); // Обновляем зависимости шаблона
-}
-
 void AddRestrictionImpl::operator()( boost::ptr_vector<Matcher> & matchers, Restriction * restriction ) const {
 	findLastMatcher( matchers, restriction ).addRestriction( restriction );
 }
@@ -160,29 +114,6 @@ void AddNormalizationRestrictionImpl::operator()( boost::ptr_vector<Restriction>
 	agrRestr->addArgument(new ConstantExpression("1"));
 	Restriction * restriction = agrRestr;
 	restrictions.push_back( restriction );
-}
-
-void AddBindingImpl::operator()( boost::ptr_map<AttributeKey,Expression> & bindings, AttributeKey att, Expression * exp ) const {
-	if ( att == AttributeKey::UNDEFINED && dynamic_cast<AttributeExpression*>( exp ) ) {
-		bindings.insert( static_cast<AttributeExpression*>( exp )->attribute, exp ); // Если у аттрибута не указано связывание, связываем его с соответствующим аттрибутом
-	} else if ( att == AttributeKey::UNDEFINED && dynamic_cast<ConcatenationExpression*>( exp ) ) {
-		bindings.insert( att = AttributeKey::TEXT, exp ); // Если у текстового выражения не указано связывание, связываем его с аттрибутом TEXT
-	} else {
-		bindings.insert( att, exp );
-	}
-}
-
-Restriction * CreateDictionaryRestrictionImpl::operator()( const std::string & dictionaryName, boost::ptr_vector<Expression> & args ) const {
-	dictionaries::DictionaryRef dict = ns.getDictionaryByName( dictionaryName );
-
-	if ( !dict ) // Не нашли словаря - выкидываем исключение
-		throw PatternBuildingException( "No dictionary found" );
-
-	DictionaryRestriction * dr = new DictionaryRestriction( dict );
-
-	dr->addArguments( args );
-
-	return dr;
 }
 
 Restriction * CreateAgreementRestrictionImpl::operator()( boost::ptr_vector<Expression> & args ) const {

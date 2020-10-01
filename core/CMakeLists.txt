@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.6)
 project(LSPL_CORE)
 
 include(../common/CMakeCommon.cmake)
-find_package(Boost COMPONENTS system)
+find_package(Boost COMPONENTS system timer)
 
 if(WIN32)
 else(WIN32)
@@ -30,6 +30,7 @@ set(LSPL_CORE_SOURCES
     src/main/lspl/morphology/AotMorphology.cpp
 
     src/main/lspl/patterns/Alternative.cpp
+    src/main/lspl/patterns/matchers/BaseComparator.cpp
     src/main/lspl/patterns/matchers/Context.cpp
     src/main/lspl/patterns/matchers/LoopMatcher.cpp
     src/main/lspl/patterns/matchers/Matcher.cpp
@@ -51,8 +52,13 @@ set(LSPL_CORE_SOURCES
     src/main/lspl/patterns/restrictions/DictionaryRestriction.cpp
     src/main/lspl/patterns/restrictions/AgreementRestriction.cpp
     src/main/lspl/patterns/restrictions/AndRestriction.cpp
+    src/main/lspl/patterns/restrictions/NotRestriction.cpp
+    src/main/lspl/patterns/restrictions/OrRestriction.cpp
+    src/main/lspl/patterns/restrictions/SharedRestriction.cpp
 
+    src/main/lspl/patterns/parsers/CharacterSets.cpp
     src/main/lspl/patterns/parsers/Functions.cpp
+
     src/main/lspl/patterns/Pattern.cpp
     src/main/lspl/patterns/PatternBuilder.cpp
     src/main/lspl/utils/Conversion.cpp
@@ -150,7 +156,7 @@ set(LSPL_BENCHMARK_SOURCES
 
 add_executable(lspl-benchmark ${LSPL_BENCHMARK_SOURCES})
 
-target_link_libraries(lspl-benchmark lspl)
+target_link_libraries(lspl-benchmark lspl ${Boost_TIMER_LIBRARY})
 
 # Flags for effective error parsing
 

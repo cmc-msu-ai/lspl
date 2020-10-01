@@ -37,7 +37,7 @@ else
 					lparams := -lgcov -pg
 					ct := .prof
 				else
-					cparams := $(cparams) -g -MD -c -O3 -funroll-loops  $(common_parms) -ftemplate-depth-1024			
+					cparams := $(cparams) -g -MD -c -O3 -funroll-loops  $(common_parms) -ftemplate-depth-1024
 					ct := .prof
 				endif
 			else

@@ -17,8 +17,11 @@ namespace lspl { namespace patterns {
 
 class PatternBuildingException : public base::Exception {
 public:
-	PatternBuildingException(const std::string & description) :
-		Exception( description ) {
+	uint errorPos;
+	std::string input;
+
+	PatternBuildingException(const std::string & description, const std::string &input, uint errorPos) :
+		Exception(description), input(input), errorPos(errorPos) {
 	}
 
 	~PatternBuildingException() {}
@@ -56,8 +59,6 @@ public:
 		virtual ~Parser() {}
 
 		virtual BuildInfo build( const char * str ) = 0;
-		virtual BuildInfo buildNoException(const char * str ) = 0;
-
 	public:
 		NamespaceRef space;
 		const std::map<std::string, transforms::TransformBuilderRef>& transformBuilders;
@@ -65,14 +66,13 @@ public:
 
 public:
 	PatternBuilder( const NamespaceRef & ns = new Namespace() );
-	PatternBuilder( const NamespaceRef & ns, transforms::TransformBuilderRef defaultTransformBuilder);
+
 	virtual ~PatternBuilder();
 
 	/**
 	 * Определить новые шаблоны из исходника
 	 */
 	BuildInfo build( const std::string & str );
-	BuildInfo buildNoException(const std::string& str);
 public:
 
 	NamespaceRef space;

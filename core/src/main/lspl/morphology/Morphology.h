@@ -57,6 +57,11 @@ public:
 		return result.release();
 	}
 
+	/**
+	 * По признаку получить его вид. Работает только для индексных (не составных и не строковых) признаков
+	 */
+	virtual text::attributes::AttributeKey getAttributeKeyByValue(text::attributes::AttributeValue value) const;
+
 	virtual std::string getAttributesString( uint64 attValues ) = 0;
 
 	std::string upcase( const std::string & str ) { return upcase( str.c_str() ); }

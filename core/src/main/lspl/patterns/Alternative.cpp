@@ -107,7 +107,14 @@ void Alternative::dump( std::ostream & out, const std::string & tabs ) const {
 		getMatcher( i ).dump( out, tabs + "\t" );
 	}
 
-	out << "\n" << tabs << "] }";
+	out << "\n" << tabs << "], bindings = [\n";
+
+	for ( BindingMap::const_iterator it = bindings.begin(); it != bindings.end(); ++ it ) {
+		out << tabs << "\t" << it->first.getAbbrevation() << " : ";
+		it->second->dump(out);
+		out << '\n';
+	}
+	out << tabs << "] }";
 }
 
 } } // namespace lspl::patterns

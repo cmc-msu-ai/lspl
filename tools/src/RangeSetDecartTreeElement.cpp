@@ -105,15 +105,15 @@ namespace lspl {
 				RangeSetDecartTreeElement *element) {
 			_parent_node = element;
 		}
-		int RangeSetDecartTreeElement::set_subtree_max_right_part_of_ranges(
+		void RangeSetDecartTreeElement::set_subtree_max_right_part_of_ranges(
 				const Range *subtree_max_right_part_of_ranges) {
 			_subtree_max_right_part_of_ranges = subtree_max_right_part_of_ranges;
 		}
-		int RangeSetDecartTreeElement::set_subtree_height(
+		void RangeSetDecartTreeElement::set_subtree_height(
 				const int &subtree_height) {
 			_subtree_height = subtree_height;
 		}
-		int RangeSetDecartTreeElement::set_subtree_size(const int &subtree_size) {
+		void RangeSetDecartTreeElement::set_subtree_size(const int &subtree_size) {
 			_subtree_size = subtree_size;
 		}
 			

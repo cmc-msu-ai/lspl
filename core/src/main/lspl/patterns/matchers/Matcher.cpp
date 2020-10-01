@@ -59,6 +59,10 @@ void Matcher::dumpRestrictions( std::ostream & out, const std::string & tabs ) c
 	out << " >";
 }
 
+bool Matcher::containsVariable(const Variable &v) const {
+	return variable == v;
+}
+
 TransitionList AnnotationMatcher::buildTransitions( const text::Node & node, const Context & context ) const {
 	TransitionList transitions;
 

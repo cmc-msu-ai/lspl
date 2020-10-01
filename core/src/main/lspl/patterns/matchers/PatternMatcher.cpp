@@ -164,7 +164,7 @@ TransitionList PatternMatcher::buildTransitions( const text::Node & node, const 
 				newTransitions.push_back( node.getTransition( i ) );
 	} else {
 		for ( uint i = 0; i < pattern.alternatives.size(); ++ i ) {
-			PatternMatchState state( pattern, pattern.alternatives[i], node );
+			PatternMatchState state( pattern, *pattern.alternatives[i], node );
 			processCompoundPattern( state, newTransitions );
 		}
 	}

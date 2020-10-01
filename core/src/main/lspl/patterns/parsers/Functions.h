@@ -47,14 +47,6 @@ struct AddWordMatcherImpl {
 	void operator()( boost::ptr_vector<Matcher> & matchers, const std::string & base, SpeechPart speechPart, uint index, boost::ptr_vector< Restriction > & restrictions ) const;
 };
 
-struct AddTokenMatcherImpl {
-
-	template <typename Arg1, typename Arg2>
-	struct result { typedef void type; };
-
-	void operator()( boost::ptr_vector<Matcher> & matchers, const std::string & token ) const;
-};
-
 struct AddTokenMatcherNoRegexpImpl {
 
 	template <typename Arg1, typename Arg2>
@@ -69,14 +61,6 @@ struct AddStringMatcherImpl {
 	struct result { typedef void type; };
 
 	void operator()( boost::ptr_vector<Matcher> & matchers, const std::string & token ) const;
-};
-
-struct AddLoopMatcherImpl {
-
-	template <typename Arg1, typename Arg2, typename Arg3, typename Arg4>
-	struct result { typedef void type; };
-
-	void operator()( boost::ptr_vector<Matcher> & matchers, uint min, uint max, std::vector<uint> & alternativesCount ) const ;
 };
 
 struct DefinePattern {
@@ -99,31 +83,6 @@ struct AddPatternMatcherImpl : public DefinePattern {
 		DefinePattern( space, typeSymbol ) {}
 
 	void operator()( boost::ptr_vector<Matcher> & matchers, const std::string & name, uint index, boost::ptr_vector< Restriction > & restrictions ) const;
-};
-
-struct AddAlternativeDefinitionImpl {
-
-	template <typename Arg1, typename Arg2, typename Arg3, typename Arg4, typename Arg5, typename Arg6>
-	struct result { typedef void type; };
-
-	AddAlternativeDefinitionImpl( const std::map<std::string, transforms::TransformBuilderRef>& transformBuilders ) :
-		transformBuilders( transformBuilders ) {}
-
-	void operator()( boost::ptr_vector<Alternative> & alts, boost::ptr_vector<Matcher> & matchers, boost::ptr_map<AttributeKey,Expression> & bindings, const std::string & source, const std::string & transformSource, const std::string & transformType ) const;
-
-private:
-	const std::map<std::string, transforms::TransformBuilderRef>& transformBuilders;
-};
-
-struct AddPatternDefinitionImpl : public DefinePattern {
-
-	template <typename Arg1, typename Arg2>
-	   struct result { typedef void type; };
-
-	AddPatternDefinitionImpl( Namespace & space, boost::spirit::classic::symbols<uint> & typeSymbol) :
-		DefinePattern( space, typeSymbol ) {}
-
-	void operator()( const std::string & name, boost::ptr_vector<Alternative> & alts ) const;
 };
 
 struct AddImpl {
@@ -150,26 +109,6 @@ struct AddNormalizationRestrictionImpl {
 	struct result { typedef void type; };
 
 	void operator()( boost::ptr_vector<Restriction> & restrictions ) const;
-};
-
-struct AddBindingImpl {
-	template <typename Arg1, typename Arg2, typename Arg3>
-	struct result { typedef void type; };
-
-	void operator()( boost::ptr_map<AttributeKey,Expression> & bindings, AttributeKey att, Expression * exp ) const;
-};
-
-struct CreateDictionaryRestrictionImpl {
-	template <typename Arg1, typename Arg2>
-	struct result { typedef Restriction * type; };
-
-	CreateDictionaryRestrictionImpl( Namespace & ns ) :
-		ns( ns ) {
-	}
-
-	Restriction * operator()( const std::string & dictionaryName, boost::ptr_vector<Expression> & args ) const;
-
-	Namespace & ns;
 };
 
 struct CreateAgreementRestrictionImpl {

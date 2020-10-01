@@ -29,7 +29,7 @@ PatternTransform * PatternTransformBuilder::build(
 	lspl::patterns::PatternTransformParser pars(space);
 	boost::ptr_vector<lspl::patterns::matchers::Matcher>* matchers=NULL;
 	if(!boost::spirit::classic::parse( source.c_str(), pars[ var(matchers) = arg1 ], space_p ).full) {
-		throw lspl::patterns::PatternBuildingException( source.c_str() );
+		throw lspl::patterns::PatternBuildingException( "Pattern transform builder failed", source.c_str(), 0 );
 	}
 
 	return new PatternTransform( space, matchers );

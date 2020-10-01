@@ -34,7 +34,7 @@ public:
 	/**
 	 * Создать новый сопоставитель слов
 	 */
-	WordMatcher & newWordMatcher( const std::string & base, text::attributes::SpeechPart speechPart );
+	WordMatcher & newWordMatcher( text::attributes::SpeechPart speechPart );
 
 	/**
 	 * Создать новый сопоставитель шаблона
@@ -83,6 +83,15 @@ public:
 	}
 
 	/**
+	 * Переместить сопоставители в контейнер
+	 */
+	void addMatchers(std::vector<std::unique_ptr<Matcher> > &v) {
+		for (uint i = 0; i < v.size(); ++i)
+			addMatcher(v[i].release());
+	}
+
+
+	/**
 	 * Получить количество сопоставителей в контейнере. Этот метод возвращает размер массива сопоставителей, т.е. кол-во как существующих сопоставителей, так и путсых ссылок на них в контейнере.
 	 * @return кол-во сопоставителей
 	 */
@@ -94,6 +103,10 @@ public:
 	 * Получить список сопоставителей в контейнере
 	 */
 	const boost::ptr_vector<Matcher> & getMatchers() const {
+		return matchers;
+	}
+
+	boost::ptr_vector<Matcher> & getMatchers() {
 		return matchers;
 	}
 

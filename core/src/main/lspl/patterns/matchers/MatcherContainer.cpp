@@ -27,8 +27,8 @@ TokenMatcher & MatcherContainer::newTokenMatcher( const std::string & token ) {
 	return *matcher;
 }
 
-WordMatcher & MatcherContainer::newWordMatcher( const std::string & base, text::attributes::SpeechPart speechPart ) {
-	WordMatcher * matcher = new WordMatcher( base, speechPart );
+WordMatcher & MatcherContainer::newWordMatcher( text::attributes::SpeechPart speechPart ) {
+	WordMatcher * matcher = new WordMatcher( speechPart );
 
 	addMatcher( matcher );
 

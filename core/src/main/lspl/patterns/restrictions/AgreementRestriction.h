@@ -28,7 +28,7 @@ namespace lspl { namespace patterns { namespace restrictions {
  */
 class LSPL_EXPORT AgreementRestriction : public Restriction {
 public:
-	AgreementRestriction();
+	AgreementRestriction(bool weak = true);
 	virtual ~AgreementRestriction();
 
 	void addArgument( expressions::Expression * arg ) {
@@ -64,6 +64,10 @@ private:
 	bool checkAgreement( text::attributes::AttributeValue val1, text::attributes::AttributeValue val2 ) const;
 	bool checkAgreement( const std::vector<text::attributes::AttributeValue> & val1, const std::vector<text::attributes::AttributeValue> & val2 ) const;
 
+	/**
+	 * Слабое согласование (одинарное =)
+	 */
+	bool weak;
 private:
 
 	/**

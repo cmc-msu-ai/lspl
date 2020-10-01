@@ -35,7 +35,13 @@ public:
 	 * @param min минимальное число повторений. 0 - без ограничений.
 	 * @param max максимальное число повторений. 0 - без ограничений.
 	 */
-	LoopMatcher( uint min, uint max );
+	LoopMatcher( uint min, uint max, bool is_permutation = false );
+
+
+	/**
+	 * Содержит ли переменную?
+	 */
+	virtual bool containsVariable(const Variable &) const;
 
 	/**
 	 * Деструктор
@@ -76,6 +82,11 @@ public:
 	 * Максимальное число повторений. 0 - без ограничений.
 	 */
 	uint maxLoops;
+
+	/**
+	 * Является ли перестановкой?
+	 */
+	bool is_permutation;
 
 	/**
 	 * Список альтернатив последовательности.

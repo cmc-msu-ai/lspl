@@ -56,9 +56,9 @@ namespace lspl {
 			void set_left_child(RangeSetDecartTreeElement *element);
 			void set_right_child(RangeSetDecartTreeElement *element);
 			void set_parent_node(RangeSetDecartTreeElement *element);
-			int set_subtree_max_right_part_of_ranges(const Range *subtree_max_right_part_of_ranges);
-			int set_subtree_height(const int &subtree_height);
-			int set_subtree_size(const int &subtree_size);
+			void set_subtree_max_right_part_of_ranges(const Range *subtree_max_right_part_of_ranges);
+			void set_subtree_height(const int &subtree_height);
+			void set_subtree_size(const int &subtree_size);
 
 			// Returns true, if the element is a left child.
 			bool IsLeftChild() const;

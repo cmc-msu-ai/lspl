@@ -32,7 +32,7 @@ public:
 
 public:
 
-	/*std::unique_ptr<const Expression>*/ const Expression* base;
+	const Expression* base;
 	text::attributes::AttributeKey attribute;
 };
 

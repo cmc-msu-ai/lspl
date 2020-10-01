@@ -1,43 +1,37 @@
-/*
- * AndRestriction.cpp
- *
- *  Created on: Dec 6, 2009
- *      Author: alno
- */
 #include "../../base/BaseInternal.h"
 
-#include "AndRestriction.h"
+#include "OrRestriction.h"
 
 namespace lspl { namespace patterns { namespace restrictions {
 
-AndRestriction::AndRestriction() {
+OrRestriction::OrRestriction() {
 }
 
-AndRestriction::~AndRestriction() {
+OrRestriction::~OrRestriction() {
 }
 
-bool AndRestriction::matches( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const {
+bool OrRestriction::matches( const text::Transition * currentAnnotation, const matchers::Variable currentVar, const matchers::Context & ctx ) const {
 	for( boost::ptr_vector<Restriction>::const_iterator it = args.begin(); it != args.end(); ++ it )
-		if ( !it->matches( currentAnnotation, currentVar, ctx ) )
-			return false;
+		if ( it->matches( currentAnnotation, currentVar, ctx ) )
+			return true;
 
-	return true;
+	return false;
 }
 
-void AndRestriction::dump( std::ostream & out, const std::string & tabs ) const {
+void OrRestriction::dump( std::ostream & out, const std::string & tabs ) const {
 	if ( args.size() <= 1 )
 		throw std::logic_error( "Too less arguments" );
 
 	args[0].dump( out );
 
 	for ( uint i = 1; i < args.size(); ++i ) {
-		out << " && ";
+		out << " || ";
 		args[i].dump( out );
 	}
 }
 
-bool AndRestriction::equals( const Restriction & r ) const {
-	if ( const AndRestriction * ar = dynamic_cast<const AndRestriction *>( &r ) ) {
+bool OrRestriction::equals( const Restriction & r ) const {
+	if ( const OrRestriction * ar = dynamic_cast<const OrRestriction *>( &r ) ) {
 		if ( ar->args.size() != args.size() ) return false;
 
 		for ( uint i = 0, l = args.size(); i < l; ++ i )
@@ -50,7 +44,7 @@ bool AndRestriction::equals( const Restriction & r ) const {
 	}
 }
 
-bool AndRestriction::containsVariable( matchers::Variable var ) const {
+bool OrRestriction::containsVariable( matchers::Variable var ) const {
 	for( boost::ptr_vector<Restriction>::const_iterator it = args.begin(); it != args.end(); ++ it )
 		if ( it->containsVariable( var ) )
 			return true;
@@ -58,7 +52,7 @@ bool AndRestriction::containsVariable( matchers::Variable var ) const {
 	return false;
 }
 
-bool AndRestriction::containsVariables() const {
+bool OrRestriction::containsVariables() const {
 	for( boost::ptr_vector<Restriction>::const_iterator it = args.begin(); it != args.end(); ++ it )
 		if ( it->containsVariables() )
 			return true;
@@ -66,7 +60,7 @@ bool AndRestriction::containsVariables() const {
 	return false;
 }
 
-bool AndRestriction::containsCurrentAnnotation() const {
+bool OrRestriction::containsCurrentAnnotation() const {
 	for( boost::ptr_vector<Restriction>::const_iterator it = args.begin(); it != args.end(); ++ it )
 		if ( it->containsCurrentAnnotation() )
 			return true;

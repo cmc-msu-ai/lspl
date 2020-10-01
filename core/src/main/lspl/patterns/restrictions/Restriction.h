@@ -9,7 +9,7 @@
 
 #include "../matchers/Variable.h"
 
-#include <ostream>
+#include <iostream>
 
 namespace lspl { namespace patterns { namespace restrictions {
 
@@ -96,6 +96,6 @@ inline Restriction* new_clone( const Restriction& r )
 	return nullptr;
 }
 
-} } } // namespace lspl::patterns::matchers
+} } } // namespace lspl::patterns::restrictions
 
 #endif//_LSPL_PATTERNS_RESTRICTIONS_RESTRICTION_H_

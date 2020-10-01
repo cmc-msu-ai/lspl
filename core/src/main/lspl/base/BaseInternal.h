@@ -12,4 +12,9 @@
 #define LSPL_REFCOUNT_CLASS(className) \
 template<> lspl::uint lspl::base::IdentifiedObject<className>::count = 0;
 
+namespace lspl {
+	typedef unsigned int uint;
+	typedef unsigned long long uint64;
+}
+
 #endif//_LSPL_BASE_BASEINTERNAL_H_
